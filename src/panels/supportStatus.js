@@ -1,5 +1,5 @@
 const { ChannelType } = require('discord.js');
-const { CATEGORY_NAMES, CHANNELS, STAFF_ROLES } = require('../config/constants');
+const { CATEGORY_NAMES, CHANNELS, STAFF_ROLES, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
 
 const SUPPORT_CATEGORY_NAMES = [
   CATEGORY_NAMES.support,
@@ -10,7 +10,7 @@ const SUPPORT_CATEGORY_NAMES = [
   '🔴・SUPORTE'
 ];
 
-const SUPPORT_NAME_MATCHES = ['atendimento-1', 'atendimento-2', 'atendimento'];
+const SUPPORT_NAME_MATCHES = [...SUPPORT_VOICE_CHANNELS];
 
 function isStaffMember(member) {
   if (!member || member.user?.bot) return false;
@@ -18,13 +18,14 @@ function isStaffMember(member) {
 }
 
 function getMainStaffRole(member) {
-  const role = member.roles?.cache?.find((item) => STAFF_ROLES.includes(item.name));
-  return role?.name || 'Staff';
+  if (!member?.roles?.cache) return 'Staff';
+  const orderedRole = STAFF_ROLES.find((roleName) => member.roles.cache.some((role) => role.name === roleName));
+  return orderedRole || 'Staff';
 }
 
 function isSupportVoiceChannel(channel) {
   if (!channel || !channel.isVoiceBased?.()) return false;
-  return SUPPORT_NAME_MATCHES.some((name) => channel.name.includes(name));
+  return SUPPORT_NAME_MATCHES.includes(channel.name);
 }
 
 function findSupportCategory(guild) {
@@ -43,7 +44,6 @@ function findSupportCategory(guild) {
 function memberIsOnline(member) {
   if (!member || member.user?.bot) return false;
 
-  // Voz conta como online mesmo se o Discord não entregar Presence.
   if (member.voice?.channelId) return true;
 
   const status = member.presence?.status;
@@ -73,7 +73,7 @@ function getSupportStatus(guild) {
       emoji: '🟢',
       categoryName: '🟢・SUPORTE',
       label: 'ATENDIMENTO ON',
-      description: 'Há staff dentro dos canais de atendimento por voz agora.',
+      description: 'Tem staff dentro dos canais de atendimento agora.',
       staffInSupport
     };
   }
@@ -83,7 +83,7 @@ function getSupportStatus(guild) {
       emoji: '🟡',
       categoryName: '🟡・SUPORTE',
       label: 'STAFF ONLINE',
-      description: 'Há staff online no Discord, mas ninguém está nos canais de atendimento por voz agora.',
+      description: 'Tem staff online, mas fora dos canais de atendimento.',
       staffInSupport: []
     };
   }

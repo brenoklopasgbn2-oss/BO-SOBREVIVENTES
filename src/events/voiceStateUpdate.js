@@ -1,5 +1,5 @@
 const { Events, PermissionFlagsBits } = require('discord.js');
-const { CHANNELS, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
+const { CHANNELS } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
 const { isStaffMember, isSupportVoiceChannel } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
@@ -70,7 +70,6 @@ async function assignWaitingMembers(guild) {
   for (const supportChannel of supportChannelsWithStaff) {
     if (queue.length === 0) break;
 
-    // Regra: vários staff podem ficar no atendimento, mas só 1 player por canal.
     const activePlayers = getPlayers(supportChannel);
     if (activePlayers.length > 0) continue;
 
@@ -97,23 +96,33 @@ async function enforceSinglePlayerPerSupport(oldState, newState) {
   ]);
 }
 
+async function refreshSupportUi(guild) {
+  await refreshTicketPanel(guild).catch(() => null);
+  setTimeout(() => refreshTicketPanel(guild).catch(() => null), 250);
+  setTimeout(() => refreshTicketPanel(guild).catch(() => null), 1200);
+}
+
 module.exports = {
   name: Events.VoiceStateUpdate,
   async execute(oldState, newState) {
     const guild = newState.guild || oldState.guild;
     if (!guild) return;
 
-    const oldRelevant = oldState.channel && (oldState.channel.name === CHANNELS.waitingRoom || isSupportVoiceChannel(oldState.channel));
-    const newRelevant = newState.channel && (newState.channel.name === CHANNELS.waitingRoom || isSupportVoiceChannel(newState.channel));
+    const relevantChannelIds = [CHANNELS.waitingRoom, CHANNELS.supportRoom1, CHANNELS.supportRoom2];
+    const oldName = oldState.channel?.name;
+    const newName = newState.channel?.name;
+    const oldRelevant = oldName && relevantChannelIds.includes(oldName);
+    const newRelevant = newName && relevantChannelIds.includes(newName);
+    const staffChanged = isStaffMember(newState.member || oldState.member);
 
-    if (!oldRelevant && !newRelevant) return;
+    if (!oldRelevant && !newRelevant && !staffChanged) return;
 
     await enforceSinglePlayerPerSupport(oldState, newState);
     await assignWaitingMembers(guild);
-    await refreshTicketPanel(guild);
+    await refreshSupportUi(guild);
 
     setTimeout(() => {
-      assignWaitingMembers(guild).then(() => refreshTicketPanel(guild)).catch(() => null);
-    }, 1000);
+      assignWaitingMembers(guild).then(() => refreshSupportUi(guild)).catch(() => null);
+    }, 800);
   }
 };

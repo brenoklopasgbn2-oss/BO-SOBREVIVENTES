@@ -129,7 +129,7 @@ async function claimTicket(interaction, channelId) {
 
   await channel.setTopic(`${channel.topic || ''}|CLAIMED_BY:${interaction.user.id}`.slice(0, 1024)).catch(() => null);
   const roleName = getMainStaffRole(interaction.member);
-  await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket como **${roleName}**.`)] });
+  await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket como **${roleName.toUpperCase()}**.`)] });
   await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu ${channel}.`, [
     { name: 'Cargo', value: roleName, inline: true }
   ]);

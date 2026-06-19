@@ -54,9 +54,21 @@ async function autoClaimTicket(message) {
   if (!isStaffMember(message.member)) return false;
 
   const claimedBy = parseClaimedBy(message.channel.topic || '');
-  if (claimedBy) return false;
-
   const roleName = getMainStaffRole(message.member);
+
+  if (claimedBy) {
+    if (claimedBy === message.author.id) return false;
+
+    const embed = baseEmbed()
+      .setColor(0x3498db)
+      .setTitle('👥 Apoio no atendimento')
+      .setDescription(`${message.author} entrou para ajudar neste ticket.`)
+      .addFields({ name: '🛡️ Cargo em destaque', value: `**${roleName}**`, inline: true });
+
+    await message.channel.send({ embeds: [embed] }).catch(() => null);
+    return false;
+  }
+
   await message.channel.setTopic(`${message.channel.topic || ''}|CLAIMED_BY:${message.author.id}`.slice(0, 1024)).catch(() => null);
 
   const embed = baseEmbed()
@@ -65,7 +77,7 @@ async function autoClaimTicket(message) {
     .setDescription(`${message.author} assumiu este atendimento automaticamente.`)
     .addFields(
       { name: '👤 Atendente', value: `${message.author}`, inline: true },
-      { name: '🛡️ Cargo', value: roleName, inline: true }
+      { name: '🛡️ Cargo em destaque', value: `**${roleName}**`, inline: true }
     );
 
   await message.channel.send({ embeds: [embed] }).catch(() => null);
@@ -90,11 +102,13 @@ module.exports = {
     if (!isStaffMember(message.member)) return;
 
     const attachment = message.attachments.find((file) => file.contentType?.startsWith('image/')) || null;
+    const roleName = getMainStaffRole(message.member);
     const embed = baseEmbed()
       .setColor(mode.color)
       .setAuthor({ name: `Publicado por ${message.member.displayName || message.author.username}`, iconURL: message.author.displayAvatarURL() })
       .setTitle(mode.title)
       .setDescription(message.content?.trim() || 'Sem descrição informada.')
+      .addFields({ name: '🛡️ Cargo', value: `**${roleName}**`, inline: true })
       .setFooter({ text: mode.footer })
       .setTimestamp();
 
