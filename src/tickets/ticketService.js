@@ -4,6 +4,7 @@ const { CATEGORY_NAMES, CHANNELS, ROLE_NAMES, STAFF_ROLES, TICKET_TYPES } = requ
 const { baseEmbed, errorEmbed, successEmbed } = require('../utils/embeds');
 const { resolveRoles, staffPermissionOverwrites } = require('../utils/permissions');
 const { logEvent } = require('../utils/logger');
+const { getMainStaffRole } = require('../panels/supportStatus');
 const { createTranscriptAttachment } = require('./transcript');
 
 function buildTicketControls(channelId) {
@@ -127,8 +128,11 @@ async function claimTicket(interaction, channelId) {
   }
 
   await channel.setTopic(`${channel.topic || ''}|CLAIMED_BY:${interaction.user.id}`.slice(0, 1024)).catch(() => null);
-  await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket.`)] });
-  await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu ${channel}.`);
+  const roleName = getMainStaffRole(interaction.member);
+  await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket como **${roleName}**.`)] });
+  await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu ${channel}.`, [
+    { name: 'Cargo', value: roleName, inline: true }
+  ]);
 }
 
 async function saveTranscript(interaction, channelId, closeAfter = false) {

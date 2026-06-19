@@ -1,13 +1,9 @@
 const path = require('path');
-const { AttachmentBuilder, Events, PermissionFlagsBits } = require('discord.js');
-const { CHANNELS, PANEL_IMAGES, STAFF_ROLES } = require('../config/constants');
+const { AttachmentBuilder, Events } = require('discord.js');
+const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
-
-function isStaffMember(member) {
-  return member?.permissions?.has(PermissionFlagsBits.ManageGuild)
-    || member?.permissions?.has(PermissionFlagsBits.Administrator)
-    || member?.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
-}
+const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
+const { logEvent } = require('../utils/logger');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -44,10 +40,48 @@ function channelMode(channelName) {
   return null;
 }
 
+function parseClaimedBy(topic = '') {
+  return topic.match(/CLAIMED_BY:(\d+)/)?.[1] || null;
+}
+
+function isTicketChannel(channel) {
+  return Boolean(channel?.topic?.includes('SZ_TICKET') || channel?.name?.includes('ticket-'));
+}
+
+async function autoClaimTicket(message) {
+  if (!isTicketChannel(message.channel)) return false;
+  if (!isStaffMember(message.member)) return false;
+
+  const claimedBy = parseClaimedBy(message.channel.topic || '');
+  if (claimedBy) return false;
+
+  const roleName = getMainStaffRole(message.member);
+  await message.channel.setTopic(`${message.channel.topic || ''}|CLAIMED_BY:${message.author.id}`.slice(0, 1024)).catch(() => null);
+
+  const embed = baseEmbed()
+    .setColor(0x2ecc71)
+    .setTitle('🙋 Ticket assumido')
+    .setDescription(`${message.author} assumiu este atendimento automaticamente.`)
+    .addFields(
+      { name: '👤 Atendente', value: `${message.author}`, inline: true },
+      { name: '🛡️ Cargo', value: roleName, inline: true }
+    );
+
+  await message.channel.send({ embeds: [embed] }).catch(() => null);
+  await logEvent(message.guild, 'ticket_auto_claimed', '🙋 Ticket assumido automaticamente', `${message.author} assumiu ${message.channel}.`, [
+    { name: 'Cargo', value: roleName, inline: true }
+  ]);
+
+  return true;
+}
+
 module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     if (!message.guild || !message.channel || message.author.bot) return;
+
+    await autoClaimTicket(message);
+
     const mode = channelMode(message.channel.name);
     if (!mode) return;
     if (!isStaffMember(message.member)) return;

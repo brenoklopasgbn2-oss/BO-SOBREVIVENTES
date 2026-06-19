@@ -1,4 +1,4 @@
-const { PermissionFlagsBits } = require('discord.js');
+const { ChannelType } = require('discord.js');
 const { CATEGORY_NAMES, CHANNELS, STAFF_ROLES, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
 
 const SUPPORT_CATEGORY_NAMES = [
@@ -7,18 +7,20 @@ const SUPPORT_CATEGORY_NAMES = [
   '🎫 SUPORTE',
   '🟢・SUPORTE',
   '🟡・SUPORTE',
-  '🔴・SUPORTE'
+  '🔴・SUPORTE',
+  '🟢・SUPORTE・ON',
+  '🟡・SUPORTE・ONLINE',
+  '🔴・SUPORTE・OFF'
 ];
 
 function isStaffMember(member) {
   if (!member || member.user?.bot) return false;
+  return member.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
+}
 
-  return Boolean(
-    member.permissions?.has(PermissionFlagsBits.Administrator) ||
-    member.permissions?.has(PermissionFlagsBits.ManageGuild) ||
-    member.permissions?.has(PermissionFlagsBits.ManageChannels) ||
-    member.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name))
-  );
+function getMainStaffRole(member) {
+  const role = member.roles?.cache?.find((item) => STAFF_ROLES.includes(item.name));
+  return role?.name || 'Staff';
 }
 
 function findVoiceChannel(guild, name) {
@@ -26,8 +28,15 @@ function findVoiceChannel(guild, name) {
 }
 
 function findSupportCategory(guild) {
+  const ticketChannel = guild.channels.cache.find((channel) => channel.name === CHANNELS.openTicket);
+  if (ticketChannel?.parent && ticketChannel.parent.type === ChannelType.GuildCategory) {
+    return ticketChannel.parent;
+  }
+
   return guild.channels.cache.find(
-    (channel) => channel.type === 4 && SUPPORT_CATEGORY_NAMES.includes(channel.name)
+    (channel) =>
+      channel.type === ChannelType.GuildCategory &&
+      (SUPPORT_CATEGORY_NAMES.includes(channel.name) || channel.name.includes('SUPORTE'))
   );
 }
 
@@ -54,7 +63,6 @@ function getSupportStatus(guild) {
   );
 
   const staffMembers = getStaffMembers(guild);
-
   const staffOnline = staffMembers.some((member) =>
     memberIsOnlineByPresence(member) || memberIsInAnyVoice(member)
   );
@@ -100,6 +108,7 @@ async function updateSupportCategoryStatus(guild) {
 module.exports = {
   SUPPORT_CATEGORY_NAMES,
   findSupportCategory,
+  getMainStaffRole,
   getSupportStatus,
   isStaffMember,
   updateSupportCategoryStatus
