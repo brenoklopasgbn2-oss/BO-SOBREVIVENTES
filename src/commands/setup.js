@@ -132,25 +132,43 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
 async function clearAndSendPanel(channel, panelBuilder) {
   if (!channel?.isTextBased()) return;
 
-  // Segurança:
-  // O /setup só apaga mensagens do PRÓPRIO BOT.
-  // Ele não apaga mensagens de players, staff ou outros bots.
   const ownBotId = channel.client.user.id;
-
-  for (let i = 0; i < 5; i += 1) {
-    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    const botMessages = messages?.filter((message) => message.author.id === ownBotId) || [];
-    if (!botMessages.size) break;
-
-    await Promise.all(botMessages.map((message) => message.delete().catch(() => null)));
-    if (botMessages.size < 100) break;
-  }
-
   const payloads = panelBuilder();
   const list = Array.isArray(payloads) ? payloads : [payloads];
 
+  // 1) Envia o painel novo primeiro.
+  // Se o Discord der erro no envio, o bot não apaga o painel antigo.
+  const sentMessages = [];
   for (const payload of list) {
-    await channel.send(payload);
+    const sent = await channel.send(payload).catch((error) => {
+      console.error(`Erro ao enviar painel no canal ${channel.name}:`, error);
+      return null;
+    });
+
+    if (sent) sentMessages.push(sent);
+  }
+
+  if (sentMessages.length === 0) return;
+
+  // 2) Apaga TODOS os painéis antigos do próprio bot, sem apagar os novos.
+  // Isso evita duplicar regras quando roda /setup várias vezes.
+  const keepIds = new Set(sentMessages.map((message) => message.id));
+
+  for (let i = 0; i < 10; i += 1) {
+    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+    if (!messages?.size) break;
+
+    const oldBotMessages = messages.filter((message) =>
+      message.author.id === ownBotId &&
+      !keepIds.has(message.id)
+    );
+
+    if (!oldBotMessages.size) break;
+
+    await Promise.all(oldBotMessages.map((message) => message.delete().catch(() => null)));
+
+    // Pequena pausa para o Discord atualizar o cache antes da próxima busca.
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 
@@ -176,19 +194,30 @@ module.exports = {
     }
 
     const categories = [];
+    const ensuredChannels = new Map();
+
     for (const [index, definition] of CATEGORY_DEFINITIONS.entries()) {
       const category = await ensureCategory(interaction.guild, definition, index);
       categories.push(category);
+
       for (const channelDefinition of definition.channels) {
+        let channel;
+
         if ((channelDefinition.type || 'text') === 'voice') {
-          await ensureVoiceChannel(interaction.guild, category, channelDefinition);
+          channel = await ensureVoiceChannel(interaction.guild, category, channelDefinition);
         } else {
-          await ensureTextChannel(interaction.guild, category, channelDefinition, definition);
+          channel = await ensureTextChannel(interaction.guild, category, channelDefinition, definition);
+        }
+
+        if (channel) {
+          ensuredChannels.set(channelDefinition.name, channel);
         }
       }
     }
 
-    const findChannel = (name) => interaction.guild.channels.cache.find((channel) => channel.name === name);
+    const findChannel = (name) =>
+      ensuredChannels.get(name) ||
+      interaction.guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased?.());
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel);
     await clearAndSendPanel(findChannel(CHANNELS.rules), () => buildRulesPanel('geral'));
