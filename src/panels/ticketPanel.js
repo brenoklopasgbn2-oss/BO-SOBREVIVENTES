@@ -13,28 +13,29 @@ function buildTicketPanel() {
     .setColor(0xe74c3c)
     .setTitle('🎫 Central de Atendimento')
     .setDescription([
-      'Precisa de ajuda? Abra um ticket para falar com a equipe da **Sobreviventes Z**.',
+      'Abra o atendimento correto para falar com a equipe da **Sobreviventes Z**.',
       '',
-      'Escolha a categoria correta para agilizar o atendimento.'
+      'Use este painel para suporte geral, loja/doações, problemas em base e reports de PvP.',
+      'Os canais **denúncias** e **reportar-bug** possuem painéis próprios para agilizar o atendimento.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
     .addFields(
-      { name: '🎧 Suporte Geral', value: 'Dúvidas e problemas gerais.', inline: true },
-      { name: '⚠️ Denúncias', value: 'Jogadores quebrando regras.', inline: true },
-      { name: '💰 Loja / Base / PvP', value: 'Doações, problemas em base e reports de PvP.', inline: false }
+      { name: '🎧 Suporte Geral', value: 'Dúvidas, ajuda e suporte comum.', inline: true },
+      { name: '💰 Loja / Doações', value: 'VIP, benefícios e contribuições.', inline: true },
+      { name: '🏠 / ⚔️ Base e PvP', value: 'Problemas em base e report PvP.', inline: false }
     );
 
-  const row = new ActionRowBuilder().addComponents(
-    Object.values(TICKET_TYPES).map((type) =>
-      new ButtonBuilder()
-        .setCustomId(type.customId)
-        .setLabel(type.label)
-        .setEmoji(type.emoji)
-        .setStyle(type.name === 'denuncia' ? ButtonStyle.Danger : ButtonStyle.Secondary)
-    )
+  const row1 = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId(TICKET_TYPES.support.customId).setLabel(TICKET_TYPES.support.label).setEmoji(TICKET_TYPES.support.emoji).setStyle(ButtonStyle.Primary),
+    new ButtonBuilder().setCustomId(TICKET_TYPES.vip.customId).setLabel(TICKET_TYPES.vip.label).setEmoji(TICKET_TYPES.vip.emoji).setStyle(ButtonStyle.Success),
+    new ButtonBuilder().setCustomId(TICKET_TYPES.base.customId).setLabel(TICKET_TYPES.base.label).setEmoji(TICKET_TYPES.base.emoji).setStyle(ButtonStyle.Secondary)
   );
 
-  return { embeds: [embed], components: [row], files: [panelImage(imageName)] };
+  const row2 = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId(TICKET_TYPES.pvp.customId).setLabel(TICKET_TYPES.pvp.label).setEmoji(TICKET_TYPES.pvp.emoji).setStyle(ButtonStyle.Secondary)
+  );
+
+  return { embeds: [embed], components: [row1, row2], files: [panelImage(imageName)] };
 }
 
 module.exports = { buildTicketPanel };

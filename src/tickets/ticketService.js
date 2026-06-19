@@ -1,11 +1,13 @@
+const path = require('path');
 const {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ChannelType,
   PermissionFlagsBits
 } = require('discord.js');
-const { STAFF_ROLES, TICKET_TYPES } = require('../config/constants');
+const { CATEGORY_NAMES, ROLE_NAMES, STAFF_ROLES, TICKET_TYPES } = require('../config/constants');
 const { baseEmbed, errorEmbed, successEmbed } = require('../utils/embeds');
 const { resolveRoles, staffPermissionOverwrites } = require('../utils/permissions');
 const { logEvent } = require('../utils/logger');
@@ -33,6 +35,25 @@ function buildTicketControls(channelId) {
 
 function isStaffMember(member) {
   return member.roles.cache.some((role) => STAFF_ROLES.includes(role.name));
+}
+
+function panelImage(fileName) {
+  return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
+}
+
+function getMemberServerInfo(member) {
+  const servers = [
+    { roleName: ROLE_NAMES.vanilla, emoji: '🔴', prefix: '🔴', label: 'Vanilla' },
+    { roleName: ROLE_NAMES.bbp, emoji: '🔵', prefix: '🔵', label: 'BBP' },
+    { roleName: ROLE_NAMES.deathmatch, emoji: '🌈', prefix: '🌈', label: 'Deathmatch' }
+  ];
+
+  return servers.find((server) => member.roles.cache.some((role) => role.name === server.roleName)) || {
+    roleName: null,
+    emoji: '⚪',
+    prefix: '⚪',
+    label: 'Sem servidor escolhido'
+  };
 }
 
 function parseTicketTopic(topic = '') {
@@ -74,17 +95,19 @@ async function openTicket(interaction, typeKey) {
     });
   }
 
-  const categoryName = '🎫 SUPORTE';
   const category = interaction.guild.channels.cache.find(
-    (channel) => channel.type === ChannelType.GuildCategory && channel.name === categoryName
+    (channel) => channel.type === ChannelType.GuildCategory && channel.name === CATEGORY_NAMES.ticketsOpen
+  ) || interaction.guild.channels.cache.find(
+    (channel) => channel.type === ChannelType.GuildCategory && channel.name === CATEGORY_NAMES.support
   );
 
-  const safeName = interaction.user.username.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 18) || 'usuario';
+  const serverInfo = getMemberServerInfo(interaction.member);
+  const safeName = interaction.user.username.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 16) || 'usuario';
   const channel = await interaction.guild.channels.create({
-    name: `ticket-${ticketType.name}-${safeName}`,
+    name: `${serverInfo.prefix}-ticket-${ticketType.name}-${safeName}`,
     type: ChannelType.GuildText,
     parent: category?.id,
-    topic: `SZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|STATUS:OPEN`,
+    topic: `SZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|STATUS:OPEN`,
     permissionOverwrites: [
       { id: interaction.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
       {
@@ -101,28 +124,35 @@ async function openTicket(interaction, typeKey) {
     ]
   });
 
+  const imageName = '02-tickets.png';
   const embed = baseEmbed()
     .setColor(ticketType.color)
     .setTitle(`${ticketType.emoji} Ticket de ${ticketType.label}`)
     .setDescription([
-      `${interaction.user}, a equipe já pode acompanhar seu atendimento.`,
+      `${interaction.user}, seu ticket foi criado com sucesso e a equipe já pode acompanhar o atendimento.`,
+      `${serverInfo.emoji} **Servidor detectado:** ${serverInfo.label}.`,
       '',
-      'Explique o caso com detalhes e envie prints, vídeos, IDs ou horários quando necessário.'
+      'Envie **todas as informações importantes**, como prints, vídeos, IDs, nomes, horários e detalhes do ocorrido.',
+      'Isso ajuda a equipe a responder muito mais rápido.'
     ].join('\n'))
+    .setImage(`attachment://${imageName}`)
     .addFields(
-      { name: 'Autor', value: `${interaction.user} (${interaction.user.id})`, inline: true },
-      { name: 'Categoria', value: ticketType.label, inline: true },
-      { name: 'Status', value: 'Aberto', inline: true }
+      { name: '👤 Autor', value: `${interaction.user} (${interaction.user.id})`, inline: false },
+      { name: '📂 Categoria', value: ticketType.label, inline: true },
+      { name: `${serverInfo.emoji} Servidor`, value: serverInfo.label, inline: true },
+      { name: '📌 Status', value: 'Aberto', inline: true }
     );
 
   await channel.send({
     content: `${interaction.user} ${resolveRoles(interaction.guild, STAFF_ROLES).join(' ')}`,
     embeds: [embed],
-    components: [buildTicketControls(channel.id)]
+    components: [buildTicketControls(channel.id)],
+    files: [panelImage(imageName)]
   });
 
   await logEvent(interaction.guild, 'ticket_opened', '🎫 Ticket aberto', `${interaction.user} abriu ${channel}.`, [
     { name: 'Tipo', value: ticketType.label, inline: true },
+    { name: 'Servidor', value: `${serverInfo.emoji} ${serverInfo.label}`, inline: true },
     { name: 'Canal', value: `${channel}`, inline: true }
   ]);
 
