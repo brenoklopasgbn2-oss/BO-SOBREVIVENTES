@@ -4,6 +4,7 @@ const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
+const { handleAntiXinga } = require('../moderation/antiXinga');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -79,6 +80,8 @@ module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     if (!message.guild || !message.channel || message.author.bot) return;
+
+    if (await handleAntiXinga(message)) return;
 
     await autoClaimTicket(message);
 
