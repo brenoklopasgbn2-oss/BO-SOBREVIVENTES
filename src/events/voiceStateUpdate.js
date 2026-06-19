@@ -36,6 +36,22 @@ async function assignWaitingMembers(guild) {
   }
 }
 
+async function enforceSinglePlayerPerSupport(oldState, newState) {
+  const guild = newState.guild || oldState.guild;
+  const waitingChannel = findVoiceChannel(guild, CHANNELS.waitingRoom);
+  const joinedSupport = newState.channel && SUPPORT_VOICE_CHANNELS.includes(newState.channel.name);
+  if (!joinedSupport || !waitingChannel) return;
+  if (!newState.member || newState.member.user.bot || isStaffMember(newState.member)) return;
+
+  const nonStaffMembers = [...newState.channel.members.values()].filter((member) => !member.user.bot && !isStaffMember(member));
+  if (nonStaffMembers.length <= 1) return;
+
+  await newState.member.voice.setChannel(waitingChannel).catch(() => null);
+  await logEvent(guild, 'voice_support_queue', '⏳ Fila de atendimento', `${newState.member.user} voltou para ${waitingChannel} porque ${newState.channel} já possuía um jogador em atendimento.`, [
+    { name: 'Canal ocupado', value: newState.channel.name, inline: true }
+  ]);
+}
+
 module.exports = {
   name: Events.VoiceStateUpdate,
   async execute(oldState, newState) {
@@ -47,6 +63,7 @@ module.exports = {
     const newName = newState.channel?.name;
     if (!watchedNames.includes(oldName) && !watchedNames.includes(newName)) return;
 
+    await enforceSinglePlayerPerSupport(oldState, newState);
     await assignWaitingMembers(guild);
   }
 };
