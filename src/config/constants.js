@@ -4,7 +4,7 @@ const ROLE_NAMES = {
   moderator: 'Moderador',
   support: 'Suporte',
   developer: 'Desenvolvedor',
-  vip: 'VIP',
+  vip: 'Impulsionador',
   vanilla: 'Sobrevivente Vanilla',
   bbp: 'Sobrevivente BBP',
   deathmatch: 'Sobrevivente Deathmatch'
@@ -19,7 +19,7 @@ const ROLE_DEFINITIONS = [
   { name: ROLE_NAMES.moderator, color: 0x3498db, hoist: true },
   { name: ROLE_NAMES.support, color: 0x2ecc71, hoist: true },
   { name: ROLE_NAMES.developer, color: 0x9b59b6, hoist: true },
-  { name: ROLE_NAMES.vip, color: 0x00d1ff, hoist: true },
+  { name: ROLE_NAMES.vip, color: 0xff7ee2, hoist: true },
   { name: ROLE_NAMES.vanilla, color: 0xe74c3c, hoist: false },
   { name: ROLE_NAMES.bbp, color: 0x3498db, hoist: false },
   { name: ROLE_NAMES.deathmatch, color: 0xff00ff, hoist: false }
@@ -34,7 +34,7 @@ const CATEGORY_NAMES = {
   community: '🤝・COMUNIDADE',
   support: '🎫・SUPORTE',
   ticketsOpen: '📂・TICKETS-ABERTOS',
-  vip: '💎・VIP',
+  vip: '🚀・IMPULSIONADORES',
   staff: '👑・STAFF',
   bot: '🤖・BOT'
 };
@@ -48,7 +48,7 @@ const CATEGORY_ALIASES = {
   [CATEGORY_NAMES.community]: ['🤝 COMUNIDADE'],
   [CATEGORY_NAMES.support]: ['🎫 SUPORTE'],
   [CATEGORY_NAMES.ticketsOpen]: ['📂 TICKETS ABERTOS'],
-  [CATEGORY_NAMES.vip]: ['💎 VIP'],
+  [CATEGORY_NAMES.vip]: ['💎 VIP', '🚀 IMPULSIONADORES'],
   [CATEGORY_NAMES.staff]: ['👑 STAFF'],
   [CATEGORY_NAMES.bot]: ['🤖 BOT']
 };
@@ -120,7 +120,11 @@ const PANEL_IMAGES = {
   ticket: '04-suporte-geral.png',
   report: '08-denuncias.png',
   bug: '09-bug.png',
-  ban: '10-banimentos.png'
+  announcement: '11-comunicado-fino.png',
+  welcomeMember: '12-boas-vindas-fino.png',
+  leaveMember: '13-saida-fino.png',
+  banPanel: '14-ban-painel-fino.png',
+  banApplied: '15-ban-aplicado-fino.png'
 };
 
 const CATEGORY_DEFINITIONS = [
@@ -213,8 +217,8 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.vip],
     allowedRoles: [ROLE_NAMES.vip],
     channels: [
-      { type: 'text', name: '💎・chat-vip', aliases: ['chat-vip'], topic: 'Chat exclusivo para VIPs.' },
-      { type: 'text', name: '🎁・beneficios-vip', aliases: ['benefícios', 'beneficios'], topic: 'Benefícios e informações VIP.', readOnly: true }
+      { type: 'text', name: '🚀・chat-boosters', aliases: ['chat-vip', 'chat-boosters'], topic: 'Chat exclusivo para quem impulsiona o servidor.' },
+      { type: 'text', name: '🎁・beneficios-boost', aliases: ['benefícios', 'beneficios', 'beneficios-vip'], topic: 'Benefícios dos impulsionadores: cargo exclusivo, canal privado, prioridade no suporte e novidades antecipadas.', readOnly: true }
     ]
   },
   {

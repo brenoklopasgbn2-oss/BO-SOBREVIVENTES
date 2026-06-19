@@ -1,12 +1,18 @@
 const { PermissionFlagsBits } = require('discord.js');
-const { SERVER_ROLES, STAFF_ROLES } = require('../config/constants');
+const { ROLE_NAMES, SERVER_ROLES, STAFF_ROLES } = require('../config/constants');
 
 function findRole(guild, roleName) {
   return guild.roles.cache.find((role) => role.name === roleName);
 }
 
 function resolveRoles(guild, roleNames) {
-  return roleNames.map((roleName) => findRole(guild, roleName)).filter(Boolean);
+  const roles = roleNames.map((roleName) => findRole(guild, roleName)).filter(Boolean);
+
+  if (roleNames.includes(ROLE_NAMES.vip) && guild.roles.premiumSubscriberRole) {
+    roles.push(guild.roles.premiumSubscriberRole);
+  }
+
+  return [...new Map(roles.map((role) => [role.id, role])).values()];
 }
 
 function staffPermissionOverwrites(guild) {

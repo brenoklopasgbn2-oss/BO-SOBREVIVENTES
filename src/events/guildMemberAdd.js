@@ -1,9 +1,14 @@
-const { EmbedBuilder, Events } = require('discord.js');
-const { CHANNELS } = require('../config/constants');
+const path = require('path');
+const { AttachmentBuilder, EmbedBuilder, Events } = require('discord.js');
+const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
 
 function findTextChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased());
+}
+
+function panelImage(fileName) {
+  return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
 
 module.exports = {
@@ -14,6 +19,7 @@ module.exports = {
 
     if (welcomeChannel) {
       const accountCreated = Math.floor(member.user.createdTimestamp / 1000);
+      const imageName = PANEL_IMAGES.welcomeMember;
       const embed = new EmbedBuilder()
         .setColor(0xe74c3c)
         .setAuthor({ name: `Novo sobrevivente: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
@@ -32,6 +38,7 @@ module.exports = {
           'Leia as regras, respeite a comunidade e boa sobrevivência!'
         ].join('\n'))
         .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
+        .setImage(`attachment://${imageName}`)
         .addFields(
           { name: '👤 Usuário', value: `${member.user.tag}`, inline: true },
           { name: '🆔 ID', value: member.id, inline: true },
@@ -41,7 +48,7 @@ module.exports = {
         .setFooter({ text: 'Sobreviventes Z • Seja bem-vindo ao apocalipse' })
         .setTimestamp();
 
-      await welcomeChannel.send({ content: `👋 Bem-vindo, ${member}!`, embeds: [embed] }).catch(() => null);
+      await welcomeChannel.send({ content: `👋 Bem-vindo, ${member}!`, embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);
     }
 
     await logEvent(member.guild, 'member_join', '📥 Entrada de usuário', `${member.user} entrou no servidor.`, [

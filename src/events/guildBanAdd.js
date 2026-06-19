@@ -27,7 +27,7 @@ module.exports = {
     }
 
     if (channel) {
-      const imageName = PANEL_IMAGES.ban;
+      const imageName = PANEL_IMAGES.banApplied;
       const embed = baseEmbed()
         .setColor(0xc0392b)
         .setTitle('🚫 Banimento Aplicado')

@@ -8,7 +8,7 @@ function panelImage(fileName) {
 }
 
 function buildBanPanel() {
-  const imageName = PANEL_IMAGES.ban;
+  const imageName = PANEL_IMAGES.banPanel;
   const embed = baseEmbed()
     .setColor(0xc0392b)
     .setTitle('🚫 Canal de Banimentos e Punições')

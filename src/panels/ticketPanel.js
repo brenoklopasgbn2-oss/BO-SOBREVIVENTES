@@ -1,20 +1,24 @@
 const path = require('path');
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { PANEL_IMAGES, TICKET_TYPES } = require('../config/constants');
+const { CHANNELS, PANEL_IMAGES, TICKET_TYPES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
+const { getSupportStatus } = require('./supportStatus');
 
 function panelImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
 
-function buildTicketPanel() {
+function buildTicketPanel(guild) {
   const imageName = PANEL_IMAGES.ticket;
+  const supportStatus = guild ? getSupportStatus(guild) : { emoji: '🟡', label: 'EQUIPE ONLINE', description: 'Status será exibido quando o setup for executado no servidor.' };
   const embed = baseEmbed()
     .setColor(0xe74c3c)
     .setTitle('🎫 Central de Atendimento Sobreviventes Z')
     .setDescription([
-      'Abra o atendimento correto para falar com a equipe da comunidade.',
+      `${supportStatus.emoji} **${supportStatus.label}**`,
+      `${supportStatus.description}`,
       '',
+      'Abra o atendimento correto para falar com a equipe da comunidade.',
       'Aqui você pode abrir tickets de **suporte geral**, **loja / doações**, **problemas em base** e **report PvP**.',
       'Para **denúncias** e **bugs**, use os canais próprios logo abaixo com painéis específicos.'
     ].join('\n'))
@@ -22,7 +26,7 @@ function buildTicketPanel() {
     .addFields(
       { name: '🎧 Atendimento', value: 'Suporte humano, rápido e organizado.', inline: true },
       { name: '📂 Tickets', value: 'Cada ticket é separado em categoria própria.', inline: true },
-      { name: '🎙️ Voz', value: 'Entre em `aguardando-atendimento` para suporte por voz.', inline: false }
+      { name: '🎙️ Voz', value: `Entre em ${CHANNELS.waitingRoom} para atendimento por voz.`, inline: false }
     );
 
   const row1 = new ActionRowBuilder().addComponents(

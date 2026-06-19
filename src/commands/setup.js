@@ -153,7 +153,7 @@ module.exports = {
     const findChannel = (name) => interaction.guild.channels.cache.find((channel) => channel.name === name);
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel);
-    await clearAndSendPanel(findChannel(CHANNELS.openTicket), buildTicketPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(interaction.guild));
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bugPanel), buildBugPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bans), buildBanPanel);

@@ -1,5 +1,5 @@
 const path = require('path');
-const { AttachmentBuilder, AuditLogEvent, Events, PermissionFlagsBits } = require('discord.js');
+const { AttachmentBuilder, Events, PermissionFlagsBits } = require('discord.js');
 const { CHANNELS, PANEL_IMAGES, STAFF_ROLES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 
@@ -18,7 +18,7 @@ function channelMode(channelName) {
     return {
       color: 0xf39c12,
       title: '📣 Comunicado Oficial',
-      fallbackImage: '03-paineis-comunidade.png',
+      fallbackImage: PANEL_IMAGES.announcement,
       footer: 'Sobreviventes Z • Aviso da Administração'
     };
   }
@@ -27,7 +27,7 @@ function channelMode(channelName) {
     return {
       color: 0xc0392b,
       title: '🚫 Registro de Banimento / Punição',
-      fallbackImage: PANEL_IMAGES.ban,
+      fallbackImage: PANEL_IMAGES.banPanel,
       footer: 'Sobreviventes Z • Banimentos e Punições'
     };
   }

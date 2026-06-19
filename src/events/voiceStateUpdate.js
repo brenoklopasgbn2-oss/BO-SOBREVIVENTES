@@ -1,10 +1,8 @@
 const { Events } = require('discord.js');
-const { CHANNELS, STAFF_ROLES, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
+const { CHANNELS, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
-
-function isStaffMember(member) {
-  return member?.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
-}
+const { isStaffMember } = require('../panels/supportStatus');
+const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 
 function findVoiceChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isVoiceBased());
@@ -65,5 +63,6 @@ module.exports = {
 
     await enforceSinglePlayerPerSupport(oldState, newState);
     await assignWaitingMembers(guild);
+    await refreshTicketPanel(guild);
   }
 };
