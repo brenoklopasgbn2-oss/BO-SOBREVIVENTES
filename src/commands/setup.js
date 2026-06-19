@@ -107,10 +107,22 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
 
 async function clearAndSendPanel(channel, panelBuilder) {
   if (!channel?.isTextBased()) return;
-  const messages = await channel.messages.fetch({ limit: 50 }).catch(() => null);
-  const botMessages = messages?.filter((message) => message.author.bot) || [];
-  await Promise.all(botMessages.map((message) => message.delete().catch(() => null)));
-  await channel.send(panelBuilder());
+
+  for (let i = 0; i < 5; i += 1) {
+    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+    const botMessages = messages?.filter((message) => message.author.bot) || [];
+    if (!botMessages.size) break;
+
+    await Promise.all(botMessages.map((message) => message.delete().catch(() => null)));
+    if (botMessages.size < 100) break;
+  }
+
+  const payloads = panelBuilder();
+  const list = Array.isArray(payloads) ? payloads : [payloads];
+
+  for (const payload of list) {
+    await channel.send(payload);
+  }
 }
 
 module.exports = {

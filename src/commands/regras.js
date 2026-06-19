@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { buildRulesPanel } = require('../panels/rulesPanel');
+const { buildRulesMessages } = require('../panels/rulesPanel');
 const { inferRuleSetFromChannel } = require('../data/rulesRepository');
 
 function addServerOption(option) {
@@ -18,11 +18,17 @@ function addServerOption(option) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('regras')
-    .setDescription('Mostra o índice numerado das regras.')
+    .setDescription('Mostra as regras completas.')
     .addStringOption(addServerOption),
 
   async execute(interaction) {
     const selected = interaction.options.getString('servidor') || inferRuleSetFromChannel(interaction.channel?.name || '');
-    await interaction.reply(buildRulesPanel(selected));
+    const payloads = buildRulesMessages(selected);
+
+    await interaction.reply(payloads[0]);
+
+    for (const payload of payloads.slice(1)) {
+      await interaction.followUp(payload);
+    }
   }
 };
