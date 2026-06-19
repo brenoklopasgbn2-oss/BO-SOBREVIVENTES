@@ -1,11 +1,10 @@
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { config, validateConfig } = require('./config');
-const { connectDatabase } = require('./database/mongoose');
 const { loadButtons } = require('./utils/loadButtons');
 const { loadCommands } = require('./utils/loadCommands');
 const { loadEvents } = require('./utils/loadEvents');
 
-validateConfig();
+validateConfig(['TOKEN']);
 
 const client = new Client({
   intents: [
@@ -24,9 +23,7 @@ loadCommands(client);
 loadButtons(client);
 loadEvents(client);
 
-connectDatabase(config.MONGODB_URI)
-  .then(() => client.login(config.TOKEN))
-  .catch((error) => {
-    console.error('Falha ao iniciar o bot:', error);
-    process.exit(1);
-  });
+client.login(config.TOKEN).catch((error) => {
+  console.error('Falha ao iniciar o bot. Confira TOKEN no Railway:', error);
+  process.exit(1);
+});

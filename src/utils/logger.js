@@ -1,17 +1,14 @@
 const { AuditLogEvent } = require('discord.js');
-const LogEntry = require('../database/models/LogEntry');
 const { CHANNELS } = require('../config/constants');
 const { baseEmbed } = require('./embeds');
 
 async function saveLog(type, data) {
-  try {
-    await LogEntry.create({ type, data });
-  } catch (error) {
-    console.error('Erro ao salvar log no MongoDB:', error);
-  }
+  // Bot simples: sem banco de dados. Os logs ficam no canal logs-staff.
+  return { type, data };
 }
 
 async function sendLog(guild, title, description, fields = []) {
+  if (!guild) return;
   const channel = guild.channels.cache.find((item) => item.name === CHANNELS.logsStaff);
   if (!channel || !channel.isTextBased()) return;
 
@@ -22,7 +19,7 @@ async function sendLog(guild, title, description, fields = []) {
 }
 
 async function logEvent(guild, type, title, description, fields = []) {
-  await saveLog(type, { guildId: guild.id, title, description, fields });
+  await saveLog(type, { guildId: guild?.id, title, description, fields });
   await sendLog(guild, title, description, fields);
 }
 

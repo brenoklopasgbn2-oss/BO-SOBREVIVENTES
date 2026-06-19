@@ -1,6 +1,5 @@
 {
   "TOKEN": "",
   "CLIENT_ID": "",
-  "GUILD_ID": "",
-  "MONGODB_URI": ""
+  "GUILD_ID": ""
 }

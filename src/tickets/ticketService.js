@@ -5,27 +5,26 @@ const {
   ChannelType,
   PermissionFlagsBits
 } = require('discord.js');
-const Ticket = require('../database/models/Ticket');
 const { STAFF_ROLES, TICKET_TYPES } = require('../config/constants');
 const { baseEmbed, errorEmbed, successEmbed } = require('../utils/embeds');
 const { resolveRoles, staffPermissionOverwrites } = require('../utils/permissions');
 const { logEvent } = require('../utils/logger');
 const { createTranscriptAttachment } = require('./transcript');
 
-function buildTicketControls(ticketId) {
+function buildTicketControls(channelId) {
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setCustomId(`ticket_claim:${ticketId}`)
+      .setCustomId(`ticket_claim:${channelId}`)
       .setLabel('Assumir Ticket')
       .setEmoji('🙋')
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
-      .setCustomId(`ticket_transcript:${ticketId}`)
+      .setCustomId(`ticket_transcript:${channelId}`)
       .setLabel('Salvar Transcript')
       .setEmoji('🧾')
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
-      .setCustomId(`ticket_close:${ticketId}`)
+      .setCustomId(`ticket_close:${channelId}`)
       .setLabel('Fechar Ticket')
       .setEmoji('🔒')
       .setStyle(ButtonStyle.Danger)
@@ -36,8 +35,29 @@ function isStaffMember(member) {
   return member.roles.cache.some((role) => STAFF_ROLES.includes(role.name));
 }
 
-function canCloseTicket(member, ticket) {
-  return isStaffMember(member) || member.id === ticket.ownerId;
+function parseTicketTopic(topic = '') {
+  const ownerId = topic.match(/OWNER_ID:(\d+)/)?.[1] || null;
+  const type = topic.match(/TYPE:([a-z_]+)/)?.[1] || null;
+  const claimedById = topic.match(/CLAIMED_BY:(\d+)/)?.[1] || null;
+  return { ownerId, type, claimedById };
+}
+
+function findOpenTicketByOwner(guild, ownerId) {
+  return guild.channels.cache.find((channel) => {
+    if (channel.type !== ChannelType.GuildText) return false;
+    if (!channel.name.startsWith('ticket-')) return false;
+    const data = parseTicketTopic(channel.topic || '');
+    return data.ownerId === ownerId;
+  });
+}
+
+async function resolveTicketChannel(interaction, channelId) {
+  if (interaction.channel?.id === channelId) return interaction.channel;
+  return interaction.guild.channels.fetch(channelId).catch(() => null);
+}
+
+function canCloseTicket(member, ownerId) {
+  return isStaffMember(member) || member.id === ownerId;
 }
 
 async function openTicket(interaction, typeKey) {
@@ -46,15 +66,10 @@ async function openTicket(interaction, typeKey) {
     return interaction.reply({ embeds: [errorEmbed('Tipo de ticket inválido.')], ephemeral: true });
   }
 
-  const existing = await Ticket.findOne({
-    guildId: interaction.guild.id,
-    ownerId: interaction.user.id,
-    status: 'open'
-  });
-
+  const existing = findOpenTicketByOwner(interaction.guild, interaction.user.id);
   if (existing) {
     return interaction.reply({
-      embeds: [errorEmbed(`Você já possui um ticket aberto: <#${existing.channelId}>`)],
+      embeds: [errorEmbed(`Você já possui um ticket aberto: <#${existing.id}>`)],
       ephemeral: true
     });
   }
@@ -69,7 +84,7 @@ async function openTicket(interaction, typeKey) {
     name: `ticket-${ticketType.name}-${safeName}`,
     type: ChannelType.GuildText,
     parent: category?.id,
-    topic: `Ticket ${ticketType.label} aberto por ${interaction.user.tag} (${interaction.user.id})`,
+    topic: `SZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|STATUS:OPEN`,
     permissionOverwrites: [
       { id: interaction.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
       {
@@ -84,13 +99,6 @@ async function openTicket(interaction, typeKey) {
       },
       ...staffPermissionOverwrites(interaction.guild)
     ]
-  });
-
-  const ticket = await Ticket.create({
-    guildId: interaction.guild.id,
-    channelId: channel.id,
-    ownerId: interaction.user.id,
-    type: typeKey
   });
 
   const embed = baseEmbed()
@@ -110,7 +118,7 @@ async function openTicket(interaction, typeKey) {
   await channel.send({
     content: `${interaction.user} ${resolveRoles(interaction.guild, STAFF_ROLES).join(' ')}`,
     embeds: [embed],
-    components: [buildTicketControls(ticket.id)]
+    components: [buildTicketControls(channel.id)]
   });
 
   await logEvent(interaction.guild, 'ticket_opened', '🎫 Ticket aberto', `${interaction.user} abriu ${channel}.`, [
@@ -124,36 +132,33 @@ async function openTicket(interaction, typeKey) {
   });
 }
 
-async function claimTicket(interaction, ticketId) {
-  const ticket = await Ticket.findById(ticketId);
-  if (!ticket || ticket.status !== 'open') {
-    return interaction.reply({ embeds: [errorEmbed('Ticket não encontrado ou já fechado.')], ephemeral: true });
+async function claimTicket(interaction, channelId) {
+  const channel = await resolveTicketChannel(interaction, channelId);
+  if (!channel) {
+    return interaction.reply({ embeds: [errorEmbed('Ticket não encontrado.')], ephemeral: true });
   }
 
   if (!isStaffMember(interaction.member)) {
     return interaction.reply({ embeds: [errorEmbed('Apenas a equipe pode assumir tickets.')], ephemeral: true });
   }
 
-  if (ticket.claimedById) {
+  const data = parseTicketTopic(channel.topic || '');
+  if (data.claimedById) {
     return interaction.reply({
-      embeds: [errorEmbed(`Esse ticket já foi assumido por <@${ticket.claimedById}>.`)],
+      embeds: [errorEmbed(`Esse ticket já foi assumido por <@${data.claimedById}>.`)],
       ephemeral: true
     });
   }
 
-  ticket.claimedById = interaction.user.id;
-  await ticket.save();
+  await channel.setTopic(`${channel.topic || ''}|CLAIMED_BY:${interaction.user.id}`.slice(0, 1024)).catch(() => null);
 
-  await interaction.reply({
-    embeds: [successEmbed(`${interaction.user} assumiu este ticket.`)]
-  });
-
-  await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu <#${ticket.channelId}>.`);
+  await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket.`)] });
+  await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu ${channel}.`);
 }
 
-async function saveTranscript(interaction, ticketId, closeAfter = false) {
-  const ticket = await Ticket.findById(ticketId);
-  if (!ticket) {
+async function saveTranscript(interaction, channelId, closeAfter = false) {
+  const channel = await resolveTicketChannel(interaction, channelId);
+  if (!channel) {
     return interaction.reply({ embeds: [errorEmbed('Ticket não encontrado.')], ephemeral: true });
   }
 
@@ -162,57 +167,56 @@ async function saveTranscript(interaction, ticketId, closeAfter = false) {
   }
 
   await interaction.deferReply({ ephemeral: true });
-  const attachment = await createTranscriptAttachment(interaction.channel);
-  const logChannel = interaction.guild.channels.cache.find((channel) => channel.name === 'logs-staff');
+  const attachment = await createTranscriptAttachment(channel);
+  const logChannel = interaction.guild.channels.cache.find((item) => item.name === 'logs-staff');
+  const ticketData = parseTicketTopic(channel.topic || '');
 
   if (logChannel?.isTextBased()) {
-    const message = await logChannel.send({
+    await logChannel.send({
       embeds: [
         baseEmbed()
           .setTitle('🧾 Transcript salvo')
-          .setDescription(`Transcript do ticket <#${ticket.channelId}> salvo por ${interaction.user}.`)
+          .setDescription(`Transcript do ticket ${channel} salvo por ${interaction.user}.`)
           .addFields(
-            { name: 'Autor do ticket', value: `<@${ticket.ownerId}>`, inline: true },
+            { name: 'Autor do ticket', value: ticketData.ownerId ? `<@${ticketData.ownerId}>` : 'Não identificado', inline: true },
             { name: 'Status', value: closeAfter ? 'Fechado' : 'Aberto', inline: true }
           )
       ],
       files: [attachment]
     });
-    ticket.transcriptUrl = message.attachments.first()?.url || null;
-    await ticket.save();
   }
 
   await interaction.editReply({ embeds: [successEmbed('Transcript salvo em logs-staff.')] });
 }
 
-async function closeTicket(interaction, ticketId) {
-  const ticket = await Ticket.findById(ticketId);
-  if (!ticket || ticket.status !== 'open') {
+async function closeTicket(interaction, channelId) {
+  const channel = await resolveTicketChannel(interaction, channelId);
+  if (!channel) {
     return interaction.reply({ embeds: [errorEmbed('Ticket não encontrado ou já fechado.')], ephemeral: true });
   }
 
-  if (!canCloseTicket(interaction.member, ticket)) {
+  const ticketData = parseTicketTopic(channel.topic || '');
+  if (!ticketData.ownerId) {
+    return interaction.reply({ embeds: [errorEmbed('Não consegui identificar o dono deste ticket.')], ephemeral: true });
+  }
+
+  if (!canCloseTicket(interaction.member, ticketData.ownerId)) {
     return interaction.reply({ embeds: [errorEmbed('Apenas o autor ou a equipe pode fechar este ticket.')], ephemeral: true });
   }
 
   if (isStaffMember(interaction.member)) {
-    await saveTranscript(interaction, ticketId, true);
+    await saveTranscript(interaction, channelId, true);
   } else {
     await interaction.deferReply({ ephemeral: true });
     await interaction.editReply({ embeds: [successEmbed('Ticket fechado. A equipe ainda poderá consultar os logs do canal se necessário.')] });
   }
 
-  await Ticket.updateOne(
-    { _id: ticket.id },
-    { $set: { status: 'closed', closedById: interaction.user.id } }
-  );
-
-  await logEvent(interaction.guild, 'ticket_closed', '🔒 Ticket fechado', `${interaction.user} fechou <#${ticket.channelId}>.`, [
-    { name: 'Autor', value: `<@${ticket.ownerId}>`, inline: true }
+  await logEvent(interaction.guild, 'ticket_closed', '🔒 Ticket fechado', `${interaction.user} fechou ${channel}.`, [
+    { name: 'Autor', value: `<@${ticketData.ownerId}>`, inline: true }
   ]);
 
-  await interaction.channel.send({ embeds: [successEmbed('Ticket fechado. Este canal será removido em 10 segundos.')] });
-  setTimeout(() => interaction.channel.delete('Ticket fechado').catch(() => null), 10000);
+  await channel.send({ embeds: [successEmbed('Ticket fechado. Este canal será removido em 10 segundos.')] }).catch(() => null);
+  setTimeout(() => channel.delete('Ticket fechado').catch(() => null), 10000);
 }
 
 module.exports = { openTicket, claimTicket, saveTranscript, closeTicket };
