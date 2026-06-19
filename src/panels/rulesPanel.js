@@ -3,17 +3,24 @@ const { AttachmentBuilder } = require('discord.js');
 const { baseEmbed } = require('../utils/embeds');
 const { getCategories, getCategorySummary, getRuleSet } = require('../data/rulesRepository');
 
-const DESCRIPTION_LIMIT = 3800;
+const DESCRIPTION_LIMIT = 3600;
 
 function rulesImageAttachment(ruleSetKey = 'geral') {
   const set = getRuleSet(ruleSetKey);
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', set.image));
 }
 
+function quoteDescription(description = '') {
+  return String(description)
+    .split('\n')
+    .map((line) => line.trim() ? `> ${line.trim()}` : '>')
+    .join('\n');
+}
+
 function formatRuleBlock(rule) {
   return [
-    `**${rule.number}. ${rule.title}**`,
-    rule.description
+    `**${rule.emoji || '📌'} ${rule.number}. ${rule.title}**`,
+    quoteDescription(rule.description)
   ].join('\n');
 }
 
@@ -24,7 +31,7 @@ function chunkRuleBlocks(rules) {
 
   for (const rule of rules) {
     const block = formatRuleBlock(rule);
-    const extraLength = block.length + (current.length > 0 ? 2 : 0);
+    const extraLength = block.length + (current.length > 0 ? 24 : 0);
 
     if (current.length > 0 && currentLength + extraLength > DESCRIPTION_LIMIT) {
       chunks.push(current);
@@ -46,16 +53,20 @@ function buildRulesHeaderPayload(ruleSetKey = 'geral') {
 
   const description = hasRules
     ? [
+        '```ansi',
+        'REGRAS OFICIAIS • SOBREVIVENTES Z',
+        '```',
         '📌 **Leia com atenção antes de jogar.**',
         'As regras abaixo estão completas, separadas por parte e numeradas.',
         '',
-        'Use **/regra numero servidor** para puxar uma regra específica.',
-        `Exemplo: **/regra numero: 34 servidor: ${set.server}**`,
+        '🔎 **Consultar uma regra específica:**',
+        `Use **/regra numero servidor**`,
+        `Exemplo: **/regra numero: 1 servidor: ${set.server}**`,
         '',
-        '**Partes cadastradas:**',
+        '🧭 **Partes cadastradas:**',
         getCategorySummary(set.key),
         '',
-        `Total de regras cadastradas: **${set.rules.length}**`
+        `📊 Total cadastrado: **${set.rules.length} regras**`
       ].join('\n')
     : [
         `⚠️ **${set.emptyMessage}**`,
@@ -89,10 +100,10 @@ function buildRulesMessages(ruleSetKey = 'geral') {
     for (const [index, chunk] of chunks.entries()) {
       const first = chunk[0].number;
       const last = chunk[chunk.length - 1].number;
-      const description = chunk.map(formatRuleBlock).join('\n\n');
+      const description = chunk.map(formatRuleBlock).join('\n\n━━━━━━━━━━━━━━━━━━\n\n');
 
       const titleSuffix = chunks.length > 1
-        ? ` — Parte ${index + 1}/${chunks.length}`
+        ? ` — Página ${index + 1}/${chunks.length}`
         : '';
 
       payloads.push({
@@ -103,7 +114,7 @@ function buildRulesMessages(ruleSetKey = 'geral') {
             .setDescription(description)
             .addFields(
               { name: '🎮 Servidor', value: set.server, inline: true },
-              { name: '🔢 Numeração', value: `Regras **${first} a ${last}**`, inline: true }
+              { name: '🔢 Numeração', value: first === last ? `Regra **${first}**` : `Regras **${first} a ${last}**`, inline: true }
             )
         ]
       });
@@ -113,7 +124,7 @@ function buildRulesMessages(ruleSetKey = 'geral') {
   return payloads;
 }
 
-// Compatibilidade com os comandos antigos: agora painel = mensagens completas.
+// Compatibilidade com comandos antigos: painel = mensagens completas.
 function buildRulesPanel(ruleSetKey = 'geral') {
   return buildRulesMessages(ruleSetKey);
 }

@@ -8,7 +8,7 @@ function addServerOption(option) {
     .setDescription('Qual lista de regras deseja ver?')
     .setRequired(false)
     .addChoices(
-      { name: 'Gerais', value: 'geral' },
+      { name: 'Gerais / Discord', value: 'geral' },
       { name: 'Vanilla', value: 'vanilla' },
       { name: 'BBP', value: 'bbp' },
       { name: 'Deathmatch', value: 'deathmatch' }

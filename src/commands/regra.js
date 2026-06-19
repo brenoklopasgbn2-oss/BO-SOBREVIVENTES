@@ -9,11 +9,18 @@ function addServerOption(option) {
     .setDescription('De qual servidor é a regra?')
     .setRequired(false)
     .addChoices(
-      { name: 'Gerais', value: 'geral' },
+      { name: 'Gerais / Discord', value: 'geral' },
       { name: 'Vanilla', value: 'vanilla' },
       { name: 'BBP', value: 'bbp' },
       { name: 'Deathmatch', value: 'deathmatch' }
     );
+}
+
+function quoteDescription(description = '') {
+  return String(description)
+    .split('\n')
+    .map((line) => line.trim() ? `> ${line.trim()}` : '>')
+    .join('\n');
 }
 
 module.exports = {
@@ -50,7 +57,7 @@ module.exports = {
     const embed = baseEmbed()
       .setColor(set.color)
       .setTitle(`${rule.emoji} Regra ${rule.number} — ${rule.title}`)
-      .setDescription(rule.description)
+      .setDescription(quoteDescription(rule.description))
       .setImage(`attachment://${set.image}`)
       .addFields(
         { name: '🎮 Servidor', value: rule.server || set.server, inline: true },

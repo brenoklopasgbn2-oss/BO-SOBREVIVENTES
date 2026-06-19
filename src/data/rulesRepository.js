@@ -1,4 +1,6 @@
+const geral = require('./rulesGeneral');
 const vanilla = require('./rulesVanilla');
+const deathmatch = require('./rulesDeathmatch');
 
 const DEFAULT_RULE_IMAGE = vanilla.RULE_IMAGE || '16-regras-sobrevivente.png';
 
@@ -9,9 +11,9 @@ const RULE_SETS = {
     server: 'Geral',
     emoji: '📜',
     color: 0xf1c40f,
-    image: DEFAULT_RULE_IMAGE,
-    rules: [],
-    emptyMessage: 'As regras gerais ainda serão cadastradas. Quando você mandar o texto, eu separo, numero e encaixo aqui.'
+    image: geral.RULE_IMAGE || DEFAULT_RULE_IMAGE,
+    rules: geral.RULES,
+    emptyMessage: 'As regras gerais ainda serão cadastradas.'
   },
   vanilla: {
     key: 'vanilla',
@@ -19,7 +21,7 @@ const RULE_SETS = {
     server: 'Vanilla',
     emoji: '🔴',
     color: 0xc0392b,
-    image: DEFAULT_RULE_IMAGE,
+    image: vanilla.RULE_IMAGE || DEFAULT_RULE_IMAGE,
     rules: vanilla.RULES,
     emptyMessage: 'As regras do Vanilla ainda não foram cadastradas.'
   },
@@ -39,18 +41,18 @@ const RULE_SETS = {
     server: 'Deathmatch',
     emoji: '🌈',
     color: 0xff00ff,
-    image: DEFAULT_RULE_IMAGE,
-    rules: [],
-    emptyMessage: 'As regras do Deathmatch ainda serão cadastradas. Quando você mandar, eu separo e coloco nesse painel.'
+    image: deathmatch.RULE_IMAGE || DEFAULT_RULE_IMAGE,
+    rules: deathmatch.RULES,
+    emptyMessage: 'As regras do Deathmatch ainda não foram cadastradas.'
   }
 };
 
 function normalizeRuleSetKey(key = 'geral') {
   const value = String(key || '').toLowerCase();
-  if (['geral', 'gerais', 'global'].includes(value)) return 'geral';
+  if (['geral', 'gerais', 'global', 'discord'].includes(value)) return 'geral';
   if (['vanilla', 'vanila'].includes(value)) return 'vanilla';
   if (['bbp'].includes(value)) return 'bbp';
-  if (['dm', 'deathmatch', 'death', 'death-match'].includes(value)) return 'deathmatch';
+  if (['dm', 'deathmatch', 'death', 'death-match', 'death math'].includes(value)) return 'deathmatch';
   return 'geral';
 }
 
@@ -95,7 +97,8 @@ function getCategorySummary(key = 'geral') {
   return categories.map((category) => {
     const first = category.rules[0].number;
     const last = category.rules[category.rules.length - 1].number;
-    return `${category.emoji} **${category.name}** — regras **${first} a ${last}**`;
+    const range = first === last ? `regra **${first}**` : `regras **${first} a ${last}**`;
+    return `${category.emoji} **${category.name}** — ${range}`;
   }).join('\n');
 }
 
