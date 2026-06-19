@@ -77,7 +77,17 @@ async function ensureCategory(guild, definition, position) {
 
 async function ensureTextChannel(guild, category, channelDefinition, categoryDefinition) {
   const acceptableNames = matchNames(channelDefinition.name, channelDefinition.aliases);
-  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && acceptableNames.includes(channel.name));
+
+  // Segurança:
+  // O /setup NÃO deve pegar canais manuais espalhados pelo servidor e mover/editar.
+  // Ele só reaproveita canal que já está dentro da categoria oficial.
+  // Se existir canal com mesmo nome em outra categoria, o bot cria o canal oficial separado.
+  const existing = guild.channels.cache.find((channel) =>
+    channel.type === ChannelType.GuildText &&
+    acceptableNames.includes(channel.name) &&
+    channel.parentId === category.id
+  );
+
   const permissionOverwrites = channelDefinition.readOnly
     ? readOnlyChannelOverwrites(guild, categoryDefinition)
     : cloneCategoryOverwrites(category);
@@ -93,7 +103,15 @@ async function ensureTextChannel(guild, category, channelDefinition, categoryDef
 
 async function ensureVoiceChannel(guild, category, channelDefinition) {
   const acceptableNames = matchNames(channelDefinition.name, channelDefinition.aliases);
-  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildVoice && acceptableNames.includes(channel.name));
+
+  // Mesma segurança dos canais de texto:
+  // só reaproveita voz que já está dentro da categoria oficial.
+  const existing = guild.channels.cache.find((channel) =>
+    channel.type === ChannelType.GuildVoice &&
+    acceptableNames.includes(channel.name) &&
+    channel.parentId === category.id
+  );
+
   const permissionOverwrites = enrichVoiceOverwrites(cloneCategoryOverwrites(category), guild);
   const options = { name: channelDefinition.name, parent: category.id, userLimit: channelDefinition.userLimit || 0, bitrate: 64000, permissionOverwrites };
 
@@ -108,9 +126,14 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
 async function clearAndSendPanel(channel, panelBuilder) {
   if (!channel?.isTextBased()) return;
 
+  // Segurança:
+  // O /setup só apaga mensagens do PRÓPRIO BOT.
+  // Ele não apaga mensagens de players, staff ou outros bots.
+  const ownBotId = channel.client.user.id;
+
   for (let i = 0; i < 5; i += 1) {
     const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    const botMessages = messages?.filter((message) => message.author.bot) || [];
+    const botMessages = messages?.filter((message) => message.author.id === ownBotId) || [];
     if (!botMessages.size) break;
 
     await Promise.all(botMessages.map((message) => message.delete().catch(() => null)));
