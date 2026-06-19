@@ -1,7 +1,7 @@
 const { Events, PermissionFlagsBits } = require('discord.js');
 const { CHANNELS, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
-const { isStaffMember } = require('../panels/supportStatus');
+const { isStaffMember, isSupportVoiceChannel } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 
 function findVoiceChannel(guild, name) {
@@ -31,10 +31,10 @@ function getWaitingPlayers(guild) {
 }
 
 function getSupportChannelsWithStaff(guild) {
-  return SUPPORT_VOICE_CHANNELS
-    .map((name) => findVoiceChannel(guild, name))
-    .filter(Boolean)
-    .filter((channel) => getStaff(channel).length > 0);
+  return guild.channels.cache
+    .filter((channel) => channel.isVoiceBased?.() && isSupportVoiceChannel(channel))
+    .filter((channel) => getStaff(channel).length > 0)
+    .map((channel) => channel);
 }
 
 async function movePlayerToStaffChannel(player, targetChannel, waitingChannel) {
@@ -70,7 +70,7 @@ async function assignWaitingMembers(guild) {
   for (const supportChannel of supportChannelsWithStaff) {
     if (queue.length === 0) break;
 
-    // Regra: quantos admins/staff quiser, mas só 1 player por canal de atendimento.
+    // Regra: vários staff podem ficar no atendimento, mas só 1 player por canal.
     const activePlayers = getPlayers(supportChannel);
     if (activePlayers.length > 0) continue;
 
@@ -82,7 +82,7 @@ async function assignWaitingMembers(guild) {
 async function enforceSinglePlayerPerSupport(oldState, newState) {
   const guild = newState.guild || oldState.guild;
   const waitingChannel = findVoiceChannel(guild, CHANNELS.waitingRoom);
-  const joinedSupport = newState.channel && SUPPORT_VOICE_CHANNELS.includes(newState.channel.name);
+  const joinedSupport = newState.channel && isSupportVoiceChannel(newState.channel);
 
   if (!joinedSupport || !waitingChannel) return;
   if (!isPlayer(newState.member)) return;
@@ -103,16 +103,17 @@ module.exports = {
     const guild = newState.guild || oldState.guild;
     if (!guild) return;
 
-    const watchedNames = [CHANNELS.waitingRoom, ...SUPPORT_VOICE_CHANNELS];
-    const oldName = oldState.channel?.name;
-    const newName = newState.channel?.name;
+    const oldRelevant = oldState.channel && (oldState.channel.name === CHANNELS.waitingRoom || isSupportVoiceChannel(oldState.channel));
+    const newRelevant = newState.channel && (newState.channel.name === CHANNELS.waitingRoom || isSupportVoiceChannel(newState.channel));
 
-    if (!watchedNames.includes(oldName) && !watchedNames.includes(newName)) return;
+    if (!oldRelevant && !newRelevant) return;
 
-    // Se um player entrou na espera e já tem staff em atendimento, puxa o player.
-    // Se um staff entrou no atendimento e já tem player esperando, puxa o player.
     await enforceSinglePlayerPerSupport(oldState, newState);
     await assignWaitingMembers(guild);
     await refreshTicketPanel(guild);
+
+    setTimeout(() => {
+      assignWaitingMembers(guild).then(() => refreshTicketPanel(guild)).catch(() => null);
+    }, 1000);
   }
 };

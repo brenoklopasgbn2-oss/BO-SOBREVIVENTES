@@ -3,6 +3,7 @@ const { updateSupportCategoryStatus } = require('./supportStatus');
 const { buildTicketPanel } = require('./ticketPanel');
 
 async function refreshTicketPanel(guild) {
+  await guild.members.fetch().catch(() => null);
   await updateSupportCategoryStatus(guild);
 
   const channel = guild.channels.cache.find((item) => item.name === CHANNELS.openTicket && item.isTextBased());

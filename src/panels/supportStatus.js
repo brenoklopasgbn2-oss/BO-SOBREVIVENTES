@@ -1,5 +1,5 @@
 const { ChannelType } = require('discord.js');
-const { CATEGORY_NAMES, CHANNELS, STAFF_ROLES, SUPPORT_VOICE_CHANNELS } = require('../config/constants');
+const { CATEGORY_NAMES, CHANNELS, STAFF_ROLES } = require('../config/constants');
 
 const SUPPORT_CATEGORY_NAMES = [
   CATEGORY_NAMES.support,
@@ -7,11 +7,10 @@ const SUPPORT_CATEGORY_NAMES = [
   '🎫 SUPORTE',
   '🟢・SUPORTE',
   '🟡・SUPORTE',
-  '🔴・SUPORTE',
-  '🟢・SUPORTE・ON',
-  '🟡・SUPORTE・ONLINE',
-  '🔴・SUPORTE・OFF'
+  '🔴・SUPORTE'
 ];
+
+const SUPPORT_NAME_MATCHES = ['atendimento-1', 'atendimento-2', 'atendimento'];
 
 function isStaffMember(member) {
   if (!member || member.user?.bot) return false;
@@ -23,8 +22,9 @@ function getMainStaffRole(member) {
   return role?.name || 'Staff';
 }
 
-function findVoiceChannel(guild, name) {
-  return guild.channels.cache.find((channel) => channel.name === name && channel.isVoiceBased());
+function isSupportVoiceChannel(channel) {
+  if (!channel || !channel.isVoiceBased?.()) return false;
+  return SUPPORT_NAME_MATCHES.some((name) => channel.name.includes(name));
 }
 
 function findSupportCategory(guild) {
@@ -40,39 +40,41 @@ function findSupportCategory(guild) {
   );
 }
 
-function memberIsOnlineByPresence(member) {
-  const status = member?.presence?.status;
-  return status && status !== 'offline' && status !== 'invisible';
-}
+function memberIsOnline(member) {
+  if (!member || member.user?.bot) return false;
 
-function memberIsInAnyVoice(member) {
-  return Boolean(member?.voice?.channelId);
+  // Voz conta como online mesmo se o Discord não entregar Presence.
+  if (member.voice?.channelId) return true;
+
+  const status = member.presence?.status;
+  return Boolean(status && status !== 'offline' && status !== 'invisible');
 }
 
 function getStaffMembers(guild) {
   return [...guild.members.cache.values()].filter((member) => isStaffMember(member));
 }
 
-function getSupportStatus(guild) {
-  const supportChannels = SUPPORT_VOICE_CHANNELS
-    .map((name) => findVoiceChannel(guild, name))
-    .filter(Boolean);
-
-  const staffInSupport = supportChannels.some((channel) =>
-    [...channel.members.values()].some((member) => isStaffMember(member))
-  );
-
+function getStaffInSupport(guild) {
   const staffMembers = getStaffMembers(guild);
-  const staffOnline = staffMembers.some((member) =>
-    memberIsOnlineByPresence(member) || memberIsInAnyVoice(member)
-  );
 
-  if (staffInSupport) {
+  return staffMembers.filter((member) => {
+    const channel = member.voice?.channel;
+    return isSupportVoiceChannel(channel);
+  });
+}
+
+function getSupportStatus(guild) {
+  const staffInSupport = getStaffInSupport(guild);
+  const staffMembers = getStaffMembers(guild);
+  const staffOnline = staffMembers.some(memberIsOnline);
+
+  if (staffInSupport.length > 0) {
     return {
       emoji: '🟢',
       categoryName: '🟢・SUPORTE',
       label: 'ATENDIMENTO ON',
-      description: 'Há staff dentro dos canais de atendimento por voz agora.'
+      description: 'Há staff dentro dos canais de atendimento por voz agora.',
+      staffInSupport
     };
   }
 
@@ -81,7 +83,8 @@ function getSupportStatus(guild) {
       emoji: '🟡',
       categoryName: '🟡・SUPORTE',
       label: 'STAFF ONLINE',
-      description: 'Há staff online no Discord, mas ninguém está nos canais de atendimento por voz agora.'
+      description: 'Há staff online no Discord, mas ninguém está nos canais de atendimento por voz agora.',
+      staffInSupport: []
     };
   }
 
@@ -89,7 +92,8 @@ function getSupportStatus(guild) {
     emoji: '🔴',
     categoryName: '🔴・SUPORTE',
     label: 'SEM STAFF ONLINE',
-    description: 'Nenhum membro da equipe está online no Discord agora.'
+    description: 'Nenhum membro da equipe está online no Discord agora.',
+    staffInSupport: []
   };
 }
 
@@ -109,7 +113,9 @@ module.exports = {
   SUPPORT_CATEGORY_NAMES,
   findSupportCategory,
   getMainStaffRole,
+  getStaffInSupport,
   getSupportStatus,
   isStaffMember,
+  isSupportVoiceChannel,
   updateSupportCategoryStatus
 };
