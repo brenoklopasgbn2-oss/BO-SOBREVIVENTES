@@ -1,6 +1,7 @@
 const { Events, ActivityType, REST, Routes } = require('discord.js');
 const { config } = require('../config');
 const { readCommandFiles } = require('../utils/readFiles');
+const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 
 async function registerGuildCommands() {
   if (!config.CLIENT_ID || !config.GUILD_ID) {
@@ -33,6 +34,11 @@ module.exports = {
       await registerGuildCommands();
     } catch (error) {
       console.error('Erro ao registrar comandos slash automaticamente:', error);
+    }
+
+    for (const guild of client.guilds.cache.values()) {
+      await guild.members.fetch().catch(() => null);
+      await refreshTicketPanel(guild).catch(() => null);
     }
   }
 };

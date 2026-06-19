@@ -1,7 +1,10 @@
 const { CHANNELS } = require('../config/constants');
+const { updateSupportCategoryStatus } = require('./supportStatus');
 const { buildTicketPanel } = require('./ticketPanel');
 
 async function refreshTicketPanel(guild) {
+  await updateSupportCategoryStatus(guild);
+
   const channel = guild.channels.cache.find((item) => item.name === CHANNELS.openTicket && item.isTextBased());
   if (!channel) return;
 

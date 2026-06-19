@@ -10,13 +10,21 @@ function panelImage(fileName) {
 
 function buildTicketPanel(guild) {
   const imageName = PANEL_IMAGES.ticket;
-  const supportStatus = guild ? getSupportStatus(guild) : { emoji: '🟡', label: 'EQUIPE ONLINE', description: 'Status será exibido quando o setup for executado no servidor.' };
+  const supportStatus = guild
+    ? getSupportStatus(guild)
+    : { emoji: '🟡', label: 'STAFF ONLINE', description: 'Status será atualizado quando o bot estiver ligado no servidor.' };
+
   const embed = baseEmbed()
-    .setColor(0xe74c3c)
+    .setColor(supportStatus.emoji === '🟢' ? 0x2ecc71 : supportStatus.emoji === '🟡' ? 0xf1c40f : 0xe74c3c)
     .setTitle('🎫 Central de Atendimento Sobreviventes Z')
     .setDescription([
       `${supportStatus.emoji} **${supportStatus.label}**`,
       `${supportStatus.description}`,
+      '',
+      '**Legenda das bolinhas:**',
+      '🟢 **Atendimento ON** — tem staff dentro dos canais de atendimento.',
+      '🟡 **Staff online** — tem staff online, mas fora do atendimento por voz.',
+      '🔴 **Sem staff online** — nenhum staff online no Discord.',
       '',
       'Abra o atendimento correto para falar com a equipe da comunidade.',
       'Aqui você pode abrir tickets de **suporte geral**, **loja / doações**, **problemas em base** e **report PvP**.',

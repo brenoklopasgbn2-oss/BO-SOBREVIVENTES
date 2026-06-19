@@ -5,6 +5,8 @@ const { buildTicketPanel } = require('../panels/ticketPanel');
 const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
+const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
+const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
 const { successEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
@@ -52,7 +54,9 @@ async function ensureRole(guild, roleDefinition) {
 }
 
 async function ensureCategory(guild, definition, position) {
-  const acceptableNames = matchNames(definition.name, definition.aliases);
+  const acceptableNames = definition.name.includes('SUPORTE')
+    ? [...new Set([...matchNames(definition.name, definition.aliases), ...SUPPORT_CATEGORY_NAMES])]
+    : matchNames(definition.name, definition.aliases);
   const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildCategory && acceptableNames.includes(channel.name));
   const overwrites = getCategoryOverwrites(guild, definition);
 
@@ -154,9 +158,11 @@ module.exports = {
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel);
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(interaction.guild));
+    await updateSupportCategoryStatus(interaction.guild);
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bugPanel), buildBugPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bans), buildBanPanel);
+    await refreshTicketPanel(interaction.guild);
 
     await logEvent(interaction.guild, 'setup_completed', '✅ Setup executado', `${interaction.user} executou o setup automático.`, [
       { name: 'Categorias', value: String(categories.length), inline: true },

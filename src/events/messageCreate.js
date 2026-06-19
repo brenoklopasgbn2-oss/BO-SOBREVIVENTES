@@ -27,7 +27,7 @@ function channelMode(channelName) {
     return {
       color: 0xc0392b,
       title: '🚫 Registro de Banimento / Punição',
-      fallbackImage: PANEL_IMAGES.banPanel,
+      fallbackImage: PANEL_IMAGES.banApplied,
       footer: 'Sobreviventes Z • Banimentos e Punições'
     };
   }

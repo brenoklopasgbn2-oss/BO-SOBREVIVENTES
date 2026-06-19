@@ -32,7 +32,7 @@ const CATEGORY_NAMES = {
   bbp: '🔵・BBP',
   deathmatch: '🌈・DEATHMATCH',
   community: '🤝・COMUNIDADE',
-  support: '🎫・SUPORTE',
+  support: '🟡・SUPORTE',
   ticketsOpen: '📂・TICKETS-ABERTOS',
   vip: '🚀・IMPULSIONADORES',
   staff: '👑・STAFF',
@@ -46,7 +46,7 @@ const CATEGORY_ALIASES = {
   [CATEGORY_NAMES.bbp]: ['🏗️ BBP'],
   [CATEGORY_NAMES.deathmatch]: ['⚔️ DEATHMATCH'],
   [CATEGORY_NAMES.community]: ['🤝 COMUNIDADE'],
-  [CATEGORY_NAMES.support]: ['🎫 SUPORTE'],
+  [CATEGORY_NAMES.support]: ['🎫・SUPORTE', '🎫 SUPORTE', '🟢・SUPORTE', '🟡・SUPORTE', '🔴・SUPORTE'],
   [CATEGORY_NAMES.ticketsOpen]: ['📂 TICKETS ABERTOS'],
   [CATEGORY_NAMES.vip]: ['💎 VIP', '🚀 IMPULSIONADORES'],
   [CATEGORY_NAMES.staff]: ['👑 STAFF'],
@@ -61,6 +61,7 @@ const CHANNELS = {
   rules: '📜・regras',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
+  suggestions: '💡・sugestoes',
   logsStaff: '📜・logs-staff',
   openTicket: '🎫・abrir-ticket',
   reportsPanel: '🚨・denuncias',
@@ -83,6 +84,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.rules]: ['regras'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
+  [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
   [CHANNELS.reportsPanel]: ['denúncias', 'denuncias'],
@@ -146,7 +148,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais da comunidade Sobreviventes Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais do Discord e dos servidores DayZ.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
-      { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true }
+      { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
+      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false }
     ]
   },
   {
