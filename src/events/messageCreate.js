@@ -32,6 +32,15 @@ function channelMode(channelName) {
     };
   }
 
+  if (channelName === CHANNELS.info) {
+    return {
+      color: 0x3498db,
+      title: '📘 Informação Importante',
+      fallbackImage: PANEL_IMAGES.announcement,
+      footer: 'Sobreviventes Z • Central de Informações'
+    };
+  }
+
   return null;
 }
 
