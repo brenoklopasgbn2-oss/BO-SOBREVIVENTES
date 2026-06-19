@@ -5,9 +5,10 @@ const { buildTicketPanel } = require('../panels/ticketPanel');
 const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
+const { buildRulesPanel } = require('../panels/rulesPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
-const { roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
+const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
 const { successEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
 
@@ -74,23 +75,12 @@ async function ensureCategory(guild, definition, position) {
   });
 }
 
-async function ensureTextChannel(guild, category, channelDefinition) {
+async function ensureTextChannel(guild, category, channelDefinition, categoryDefinition) {
   const acceptableNames = matchNames(channelDefinition.name, channelDefinition.aliases);
   const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && acceptableNames.includes(channel.name));
-  const permissionOverwrites = cloneCategoryOverwrites(category);
-
-  if (channelDefinition.readOnly) {
-    const everyoneOverwrite = permissionOverwrites.find((item) => item.id === guild.roles.everyone.id);
-    if (everyoneOverwrite) everyoneOverwrite.deny = BigInt(everyoneOverwrite.deny) | BigInt(PermissionFlagsBits.SendMessages);
-
-    const readOnlyRoleNames = [...SERVER_ROLES, ROLE_NAMES.vip];
-    for (const roleName of readOnlyRoleNames) {
-      const role = guild.roles.cache.find((item) => item.name === roleName);
-      if (!role) continue;
-      const overwrite = permissionOverwrites.find((item) => item.id === role.id);
-      if (overwrite) overwrite.deny = BigInt(overwrite.deny) | BigInt(PermissionFlagsBits.SendMessages);
-    }
-  }
+  const permissionOverwrites = channelDefinition.readOnly
+    ? readOnlyChannelOverwrites(guild, categoryDefinition)
+    : cloneCategoryOverwrites(category);
 
   const options = { name: channelDefinition.name, topic: channelDefinition.topic, parent: category.id, permissionOverwrites };
   if (existing) {
@@ -149,7 +139,7 @@ module.exports = {
         if ((channelDefinition.type || 'text') === 'voice') {
           await ensureVoiceChannel(interaction.guild, category, channelDefinition);
         } else {
-          await ensureTextChannel(interaction.guild, category, channelDefinition);
+          await ensureTextChannel(interaction.guild, category, channelDefinition, definition);
         }
       }
     }
@@ -157,6 +147,10 @@ module.exports = {
     const findChannel = (name) => interaction.guild.channels.cache.find((channel) => channel.name === name);
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel);
+    await clearAndSendPanel(findChannel(CHANNELS.rules), () => buildRulesPanel('geral'));
+    await clearAndSendPanel(findChannel(CHANNELS.rulesVanilla), () => buildRulesPanel('vanilla'));
+    await clearAndSendPanel(findChannel(CHANNELS.rulesBbp), () => buildRulesPanel('bbp'));
+    await clearAndSendPanel(findChannel(CHANNELS.rulesDeathmatch), () => buildRulesPanel('deathmatch'));
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(interaction.guild));
     await updateSupportCategoryStatus(interaction.guild);
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel);

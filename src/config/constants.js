@@ -58,7 +58,10 @@ const CHANNELS = {
   memberWelcome: '👋・boas-vindas',
   memberLeave: '📤・saidas',
   announcements: '📣・avisos',
-  rules: '📜・regras',
+  rules: '📜・regras-gerais',
+  rulesVanilla: '📜・regras-vanilla',
+  rulesBbp: '📜・regras-bbp',
+  rulesDeathmatch: '📜・regras-dm',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
@@ -81,7 +84,10 @@ const CHANNEL_ALIASES = {
   [CHANNELS.memberWelcome]: ['boas-vindas'],
   [CHANNELS.memberLeave]: ['saidas'],
   [CHANNELS.announcements]: ['avisos'],
-  [CHANNELS.rules]: ['regras'],
+  [CHANNELS.rules]: ['regras', 'regras-gerais'],
+  [CHANNELS.rulesVanilla]: ['regras-vanilla', 'vanilla-regras'],
+  [CHANNELS.rulesBbp]: ['regras-bbp', 'bbp-regras'],
+  [CHANNELS.rulesDeathmatch]: ['regras-dm', 'dm-regras', 'regras-deathmatch'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
@@ -146,7 +152,7 @@ const CATEGORY_DEFINITIONS = [
     visibleToServerMembers: true,
     channels: [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais da comunidade Sobreviventes Z.', readOnly: true },
-      { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais do Discord e dos servidores DayZ.', readOnly: true },
+      { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais da comunidade, Discord e conduta dos jogadores.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
       { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false }
@@ -157,6 +163,7 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.vanilla],
     allowedRoles: [ROLE_NAMES.vanilla],
     channels: [
+      { type: 'text', name: CHANNELS.rulesVanilla, aliases: CHANNEL_ALIASES[CHANNELS.rulesVanilla], topic: 'Regras específicas do servidor Sobreviventes Z Vanilla.', readOnly: true },
       { type: 'text', name: '📌・vanilla-info', aliases: ['vanilla-info'], topic: 'Informações do servidor Sobreviventes Z Vanilla.', readOnly: true },
       { type: 'text', name: '💬・vanilla-chat', aliases: ['vanilla-chat'], topic: 'Chat do servidor Vanilla.' },
       { type: 'text', name: '🎬・vanilla-clips', aliases: ['vanilla-clips'], topic: 'Clipes e momentos do Vanilla.' }
@@ -167,6 +174,7 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.bbp],
     allowedRoles: [ROLE_NAMES.bbp],
     channels: [
+      { type: 'text', name: CHANNELS.rulesBbp, aliases: CHANNEL_ALIASES[CHANNELS.rulesBbp], topic: 'Regras específicas do servidor Sobreviventes Z BBP.', readOnly: true },
       { type: 'text', name: '📌・bbp-info', aliases: ['bbp-info'], topic: 'Informações do servidor Sobreviventes Z BBP.', readOnly: true },
       { type: 'text', name: '💬・bbp-chat', aliases: ['bbp-chat'], topic: 'Chat do servidor BBP.' },
       { type: 'text', name: '🎬・bbp-clips', aliases: ['bbp-clips'], topic: 'Clipes e bases do BBP.' }
@@ -177,6 +185,7 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.deathmatch],
     allowedRoles: [ROLE_NAMES.deathmatch],
     channels: [
+      { type: 'text', name: CHANNELS.rulesDeathmatch, aliases: CHANNEL_ALIASES[CHANNELS.rulesDeathmatch], topic: 'Regras específicas do servidor Sobreviventes Z Deathmatch.', readOnly: true },
       { type: 'text', name: '📌・dm-info', aliases: ['dm-info'], topic: 'Informações do servidor Sobreviventes Z Deathmatch.', readOnly: true },
       { type: 'text', name: '💬・dm-chat', aliases: ['dm-chat'], topic: 'Chat do servidor Deathmatch.' },
       { type: 'text', name: '🎬・dm-clips', aliases: ['dm-clips'], topic: 'Clipes e highlights do Deathmatch.' }

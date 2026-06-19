@@ -1,6 +1,18 @@
 const { PermissionFlagsBits } = require('discord.js');
 const { ROLE_NAMES, SERVER_ROLES, STAFF_ROLES } = require('../config/constants');
 
+const READ_ONLY_DENY = [
+  PermissionFlagsBits.SendMessages,
+  PermissionFlagsBits.SendMessagesInThreads,
+  PermissionFlagsBits.CreatePublicThreads,
+  PermissionFlagsBits.CreatePrivateThreads,
+  PermissionFlagsBits.AddReactions,
+  PermissionFlagsBits.AttachFiles,
+  PermissionFlagsBits.EmbedLinks,
+  PermissionFlagsBits.UseExternalEmojis,
+  PermissionFlagsBits.UseExternalStickers
+];
+
 function findRole(guild, roleName) {
   return guild.roles.cache.find((role) => role.name === roleName);
 }
@@ -22,7 +34,13 @@ function staffPermissionOverwrites(guild) {
       PermissionFlagsBits.ViewChannel,
       PermissionFlagsBits.SendMessages,
       PermissionFlagsBits.ReadMessageHistory,
-      PermissionFlagsBits.ManageMessages
+      PermissionFlagsBits.ManageMessages,
+      PermissionFlagsBits.AttachFiles,
+      PermissionFlagsBits.EmbedLinks,
+      PermissionFlagsBits.AddReactions,
+      PermissionFlagsBits.CreatePublicThreads,
+      PermissionFlagsBits.CreatePrivateThreads,
+      PermissionFlagsBits.SendMessagesInThreads
     ]
   }));
 }
@@ -62,11 +80,50 @@ function serverMemberOverwrites(guild) {
   return roleOnlyOverwrites(guild, SERVER_ROLES);
 }
 
+function readOnlyRoleOverwrite(role) {
+  return {
+    id: role.id,
+    allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
+    deny: READ_ONLY_DENY
+  };
+}
+
+function readOnlyChannelOverwrites(guild, categoryDefinition = {}) {
+  const overwrites = [];
+
+  if (categoryDefinition.visibleToEveryone) {
+    overwrites.push({
+      id: guild.roles.everyone.id,
+      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
+      deny: READ_ONLY_DENY
+    });
+  } else {
+    overwrites.push({
+      id: guild.roles.everyone.id,
+      deny: [PermissionFlagsBits.ViewChannel, ...READ_ONLY_DENY]
+    });
+
+    const roleNames = categoryDefinition.visibleToServerMembers
+      ? SERVER_ROLES
+      : (categoryDefinition.allowedRoles || []);
+
+    for (const role of resolveRoles(guild, roleNames)) {
+      overwrites.push(readOnlyRoleOverwrite(role));
+    }
+  }
+
+  return [
+    ...overwrites,
+    ...staffPermissionOverwrites(guild)
+  ];
+}
+
 module.exports = {
   findRole,
   resolveRoles,
   staffPermissionOverwrites,
   visibleToEveryoneOverwrites,
   roleOnlyOverwrites,
-  serverMemberOverwrites
+  serverMemberOverwrites,
+  readOnlyChannelOverwrites
 };
