@@ -1,5 +1,5 @@
 const { ChannelType, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const { CATEGORY_DEFINITIONS, CHANNELS, ROLE_DEFINITIONS, ROLE_NAMES, SERVER_ROLES } = require('../config/constants');
+const { CATEGORY_DEFINITIONS, CHANNELS, ROLE_DEFINITIONS, ROLE_NAMES, SERVER_ROLES, STAFF_ROLES } = require('../config/constants');
 const { buildWelcomePanel } = require('../panels/welcomePanel');
 const { buildTicketPanel } = require('../panels/ticketPanel');
 const { buildReportPanel } = require('../panels/reportPanel');
@@ -43,6 +43,12 @@ function enrichVoiceOverwrites(permissionOverwrites, guild) {
 
 function matchNames(name, aliases = []) {
   return [name, ...aliases].filter(Boolean);
+}
+
+function canUseSetup(member) {
+  if (!member) return false;
+  if (member.permissions?.has(PermissionFlagsBits.Administrator)) return true;
+  return member.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
 }
 
 async function ensureRole(guild, roleDefinition) {
@@ -151,11 +157,14 @@ async function clearAndSendPanel(channel, panelBuilder) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setup')
-    .setDescription('Cria ou atualiza cargos, canais, permissões e painéis da Sobreviventes Z.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    .setDescription('Cria ou atualiza cargos, canais, permissões e painéis da Sobreviventes Z.'),
 
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
+
+    if (!canUseSetup(interaction.member)) {
+      return interaction.editReply('❌ Apenas Fundador, Administrador, Moderador, Suporte, Desenvolvedor ou alguém com permissão Administrador pode usar este comando.');
+    }
 
     const botMember = await interaction.guild.members.fetchMe();
     if (!botMember.permissions.has(PermissionFlagsBits.Administrator)) {
