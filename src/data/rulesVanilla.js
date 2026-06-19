@@ -7,7 +7,7 @@ const RULES = [
     "category": "Conduta e Segurança",
     "emoji": "📜",
     "title": "Verificações e Telagem",
-    "description": "Ao jogar no servidor, o jogador concorda em passar por verificações administrativas, também chamadas de telagem, sempre que solicitado. A equipe poderá utilizar programas de acesso remoto, como AnyDesk ou TeamViewer, para análise da máquina em casos suspeitos."
+    "description": "Ao jogar no servidor, o jogador concorda em passar por verificações administrativas quando houver suspeita real. A verificação deve ser feita somente por staff autorizada, com acompanhamento pelo Discord oficial. Recusa, fuga ou demora excessiva poderá gerar punição."
   },
   {
     "number": 2,
@@ -15,15 +15,15 @@ const RULES = [
     "category": "Conduta e Segurança",
     "emoji": "📜",
     "title": "Chamado da Administração",
-    "description": "Caso um administrador solicite sua presença no suporte do Discord para verificação, o jogador deverá entrar imediatamente. Recusa ou demora excessiva poderá resultar em punição administrativa."
+    "description": "Caso um administrador solicite sua presença no suporte do Discord para verificação ou atendimento, o jogador deverá entrar assim que possível. Recusa, fuga ou demora sem justificativa poderá resultar em punição administrativa."
   },
   {
     "number": 3,
     "server": "Vanilla",
     "category": "Conduta e Segurança",
     "emoji": "📜",
-    "title": "Segurança Obrigatória",
-    "description": "É obrigatório manter o Windows Defender ativo enquanto estiver jogando no servidor. Sistemas de proteção desativados ou alterados poderão gerar punições sem aviso prévio."
+    "title": "Proteção do Sistema",
+    "description": "O jogador deve manter o sistema de proteção ativo, como Windows Defender ou antivírus confiável. Programas suspeitos, proteção desativada de forma irregular ou alterações usadas para esconder vantagem poderão gerar punição após análise da staff."
   },
   {
     "number": 4,
@@ -47,7 +47,7 @@ const RULES = [
     "category": "Conduta e Segurança",
     "emoji": "📜",
     "title": "Divulgação de Bases",
-    "description": "É proibido compartilhar localização de bases inimigas por meios externos, chats públicos ou qualquer método considerado spot."
+    "description": "É proibido compartilhar localização de bases inimigas por meios externos, chats públicos, lives ou qualquer método usado para entregar informação de base, rota ou posição de outro grupo."
   },
   {
     "number": 7,
@@ -63,7 +63,7 @@ const RULES = [
     "category": "Conduta e Segurança",
     "emoji": "📜",
     "title": "Farpas e Discussões",
-    "description": "Provocações e discussões devem permanecer exclusivamente no canal destinado para isso no Discord."
+    "description": "Provocações leves devem ficar no canal adequado do Discord. Discussões pesadas, perseguição e brigas em canais públicos poderão gerar punição."
   },
   {
     "number": 9,
@@ -159,7 +159,7 @@ const RULES = [
     "category": "Base e Construção",
     "emoji": "🏰",
     "title": "FOBs",
-    "description": "Cada clã poderá possuir FOB sem limites.\n\nRegras para FOB:\n• Portões obrigatoriamente em construção Vanilla oficial;\n• Máximo de 2 portões por FOB."
+    "description": "Cada clã poderá possuir FOB sem limite fixo, desde que não abuse da regra e não prejudique o servidor.\n\nRegras para FOB:\n• Portões obrigatoriamente em construção Vanilla oficial;\n• Máximo de 2 portões por FOB;\n• FOB não pode bloquear área pública ou ponto militar essencial."
   },
   {
     "number": 21,
@@ -199,7 +199,7 @@ const RULES = [
     "category": "Base e Construção",
     "emoji": "🏰",
     "title": "Medidas Mínimas Obrigatórias",
-    "description": "Corredores devem permitir a passagem do player. Se tiver arame dos dois lados, deve existir espaço para o player passar no meio. É proibido criar corredor onde o player não passe por causa do arame. Estruturas fora do padrão poderão ser removidas pela administração sem aviso prévio."
+    "description": "Corredores devem permitir a passagem normal do jogador. Se houver arame dos dois lados, deve existir espaço livre para o player passar no meio. É proibido criar corredor onde o jogador fique travado, obrigado a bugar animação ou impedido de passar por causa do arame."
   },
   {
     "number": 26,
@@ -255,7 +255,7 @@ const RULES = [
     "category": "Base e Construção",
     "emoji": "🏰",
     "title": "Bases Abandonadas",
-    "description": "Bases sem atividade por mais de 7 dias poderão ser invadidas, ocupadas ou desmontadas. Antes de qualquer ação, consulte um administrador para confirmação de abandono."
+    "description": "Bases sem atividade por mais de 7 dias poderão ser analisadas pela staff e, após confirmação de abandono, poderão ser invadidas, ocupadas ou desmontadas. Antes de qualquer ação, consulte um administrador."
   },
   {
     "number": 33,
@@ -335,7 +335,7 @@ const RULES = [
     "category": "Raid Oficial",
     "emoji": "💥",
     "title": "Tendas e Coberturas",
-    "description": "Não será permitido utilizar tendas, armários ou estruturas improvisadas na base inimiga para obter vantagem ou cover. Exceção: permitida apenas 1 Tenda de Festa por raid. Se ela for perdida ou roubada, não poderá colocar outra."
+    "description": "Não será permitido utilizar tendas, armários ou estruturas improvisadas na base inimiga para obter vantagem ou cover.\n\nExceção: é permitida apenas 1 Tenda de Festa por raid. Caso a tenda seja perdida ou roubada, não será permitido colocar outra."
   },
   {
     "number": 43,
@@ -351,7 +351,7 @@ const RULES = [
     "category": "Raid Oficial",
     "emoji": "💥",
     "title": "Construção Indevida",
-    "description": "Caso seja constatado que defensores construíram após a quebra do primeiro codelock, a administração poderá abrir a base para os atacantes."
+    "description": "Caso seja constatado que defensores construíram após a quebra do primeiro codelock, a staff poderá invalidar a defesa, remover construções irregulares ou aplicar ação administrativa conforme a situação."
   },
   {
     "number": 45,
@@ -438,8 +438,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Raid Oficial",
     "emoji": "💥",
-    "title": "Bases Vanilla",
-    "description": "Bases oficiais/Vanilla, não BBP, poderão ser raidadas em qualquer horário do dia."
+    "title": "Estruturas Fora da Base Principal",
+    "description": "Bases principais seguem o horário oficial de raid. Estruturas soltas, tendas fora de base e FOBs seguem suas próprias regras. Em caso de dúvida se algo conta como base principal, abra ticket antes de atacar."
   },
   {
     "number": 56,
@@ -447,7 +447,7 @@ const RULES = [
     "category": "Raid Oficial",
     "emoji": "💥",
     "title": "Tempo Para Retirada",
-    "description": "Após o encerramento do horário oficial de raid, às 23:00, os atacantes terão até 30 minutos para deixar a base. Caso contrário, o raid será inválido por desobediência."
+    "description": "Após o encerramento do horário oficial de raid, às 23:00, os atacantes terão até 30 minutos para sair da base raideada. Permanecer após esse prazo sem motivo poderá invalidar o raid por desobediência."
   },
   {
     "number": 57,
@@ -462,8 +462,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Raid por Falha",
     "emoji": "⚠️",
-    "title": "Horário de Raid por Falha",
-    "description": "Raid por falha será permitido 24 horas por dia, 7 dias por semana."
+    "title": "Raid por Falha de Construção",
+    "description": "Raid por falha será permitido 24 horas por dia, 7 dias por semana, somente quando a entrada ocorrer por falha natural da construção da base. Glitch, bug, textura, colisão ou animação irregular continuam proibidos."
   },
   {
     "number": 59,
@@ -471,7 +471,7 @@ const RULES = [
     "category": "Raid por Falha",
     "emoji": "⚠️",
     "title": "Loot do Raid por Falha",
-    "description": "Todo loot deverá permanecer separado do seu loot pessoal. Nada poderá ser utilizado, vendido ou movimentado até a validação da administração. Se misturar e o raid for invalidado, você poderá perder loot que era seu."
+    "description": "Todo loot retirado em raid por falha deverá ficar separado do loot pessoal até validação da staff. Nada poderá ser usado, vendido ou movimentado. Se misturar e o raid for invalidado, você poderá perder loot que era seu."
   },
   {
     "number": 60,
@@ -495,7 +495,7 @@ const RULES = [
     "category": "Raid por Falha",
     "emoji": "⚠️",
     "title": "Exploits e Passagens Impossíveis",
-    "description": "É proibido utilizar glitches, bugs ou animações impossíveis para acessar locais indevidos. Exemplos proibidos: passar por grades, atravessar paredes, explorar falhas de colisão e utilizar animações bugadas."
+    "description": "É proibido utilizar glitches, bugs ou animações impossíveis para acessar locais indevidos.\n\nExemplos proibidos:\n• Passar por grades;\n• Atravessar paredes;\n• Explorar colisão;\n• Usar animação bugada;\n• Entrar em textura ou local inacessível."
   },
   {
     "number": 63,
@@ -503,7 +503,7 @@ const RULES = [
     "category": "Raid por Falha",
     "emoji": "⚠️",
     "title": "Regras do Pezinho",
-    "description": "Será permitido apenas 1 jogador em cima de 1 jogador. Também será permitida fila de jogadores, desde que o acesso final aconteça com apenas 1 player sobre outro. Qualquer formação além disso será considerada irregular."
+    "description": "Será permitido apenas 1 jogador em cima de 1 jogador. Fila de jogadores só será aceita quando o acesso final acontecer com apenas 1 player sobre outro. Qualquer formação acima disso será considerada irregular."
   },
   {
     "number": 64,
@@ -527,7 +527,7 @@ const RULES = [
     "category": "Raid por Falha",
     "emoji": "⚠️",
     "title": "Raid Invalidado",
-    "description": "Caso o raid seja invalidado, o loot deverá ser devolvido integralmente. Não devolução do loot resulta em banimento permanente. Devolução parcial gera advertência e, em caso de continuação do player ou do clã, banimento permanente."
+    "description": "Caso o raid seja invalidado, o loot deverá ser devolvido integralmente. Não devolver o loot poderá resultar em banimento permanente. Devolução parcial poderá gerar advertência e, em caso de reincidência do player ou do clã, banimento permanente."
   },
   {
     "number": 67,
@@ -550,8 +550,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Clãs e Identificação",
     "emoji": "👥",
-    "title": "Traição",
-    "description": "Qualquer tipo de traição entre jogadores ou clãs será considerado infração grave e resultará em banimento. Todos os IPs poderão ser verificados pela staff."
+    "title": "Traição e Roubo Interno",
+    "description": "Traição, roubo interno ou golpe entre jogadores/clãs será tratado como infração grave quando houver prova. A staff poderá analisar registros do servidor, prints, vídeos e conexões relacionadas, sem expor dados pessoais."
   },
   {
     "number": 70,
@@ -559,7 +559,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Aliança Entre Clãs",
-    "description": "Parcerias, alianças ou combinações entre clãs são proibidas. A administração poderá analisar Discord, prints, vídeos, participações conjuntas e relatórios de jogadores."
+    "description": "Parcerias, alianças ou combinações entre clãs são proibidas. A administração poderá analisar Discord, prints, vídeos, participação conjunta em PvP/raid e relatos de jogadores."
   },
   {
     "number": 71,
@@ -582,8 +582,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Clãs e Identificação",
     "emoji": "👥",
-    "title": "Limite Durante Raid",
-    "description": "Caso o clã esteja sofrendo raid, o limite de 5 online deverá permanecer fixo. A administração poderá abrir toda a base para os atacantes em caso de descumprimento."
+    "title": "Limite Durante Defesa de Raid",
+    "description": "Caso o clã esteja sofrendo raid, o limite de 5 jogadores online deverá permanecer fixo. Descumprimento poderá gerar punição, invalidação de defesa ou ação administrativa definida pela staff."
   },
   {
     "number": 74,
@@ -591,7 +591,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Jogadores Sem Registro",
-    "description": "Jogadores pertencentes a clãs não poderão logar sem tag, utilizar nick oculto ou ficar sem identificação. Se o clã já possuir 5 jogadores online, nenhum outro integrante poderá entrar no servidor."
+    "description": "Jogadores pertencentes a clãs não poderão logar sem tag, utilizar nick oculto ou ficar sem identificação. Caso o clã já possua 5 jogadores online, outro integrante não poderá entrar para participar da ação."
   },
   {
     "number": 75,
@@ -647,7 +647,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Ex-Membros de Clã",
-    "description": "Jogadores que saírem de um clã não poderão participar, circular, auxiliar ou permanecer próximos de raids e PVPs envolvendo o antigo grupo por duas semanas. Apoio indireto, acompanhamento de rota ou presença suspeita poderá gerar punição para todos os envolvidos."
+    "description": "Jogadores que saírem de um clã não poderão participar, circular, auxiliar ou permanecer próximos de raids e PVPs envolvendo o antigo grupo por duas semanas. Apoio indireto, acompanhamento de rota ou presença suspeita poderá gerar punição aos envolvidos."
   },
   {
     "number": 82,
@@ -734,8 +734,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Avisos Temporários",
     "emoji": "✨",
-    "title": "Raid por Falha e FOBs Proibidos Temporariamente",
-    "description": "Raid por falha e raid em FOBs estão proibidos até a data definida pela administração. Qualquer jogador que desrespeitar essa regra será punido. Sem exceções e sem tolerância."
+    "title": "Suspensão Temporária de Regras Especiais",
+    "description": "A staff poderá suspender temporariamente raid por falha, raid em FOBs ou outras regras especiais através de aviso oficial no Discord. Quando houver suspensão ativa, o descumprimento poderá gerar punição sem exceções."
   }
 ];
 

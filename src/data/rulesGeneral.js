@@ -15,7 +15,7 @@ const RULES = [
     "category": "Regras do Discord",
     "emoji": "📌",
     "title": "Use os Canais Corretos",
-    "description": "Cada assunto deve ficar no canal certo: dúvidas no suporte, denúncias em denúncias, bugs em reportar bug e conversa no chat geral."
+    "description": "Cada assunto deve ficar no canal correto: dúvidas no suporte, denúncias em denúncias, bugs em reportar bug e conversa no chat geral."
   },
   {
     "number": 3,
@@ -54,7 +54,7 @@ const RULES = [
     "server": "Geral",
     "category": "Regras do Discord",
     "emoji": "📌",
-    "title": "Não Marque Staff à Toa",
+    "title": "Evite Marcar Staff Sem Necessidade",
     "description": "Marque a equipe somente quando for necessário. Para atendimento, use ticket ou o canal correto de suporte."
   },
   {
@@ -71,7 +71,7 @@ const RULES = [
     "category": "Regras do Discord",
     "emoji": "📌",
     "title": "Respeite Decisões da Staff",
-    "description": "A staff pode intervir para manter a ordem. Discussões sobre punições devem ser tratadas por ticket, não no chat público."
+    "description": "A staff pode intervir para manter a ordem. Dúvidas sobre punições devem ser tratadas por ticket, não em discussão no chat público."
   },
   {
     "number": 10,

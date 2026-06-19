@@ -16,11 +16,10 @@ function addServerOption(option) {
     );
 }
 
-function quoteDescription(description = '') {
+function cleanDescription(description = '') {
   return String(description)
-    .split('\n')
-    .map((line) => line.trim() ? `> ${line.trim()}` : '>')
-    .join('\n');
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 module.exports = {
@@ -56,8 +55,13 @@ module.exports = {
 
     const embed = baseEmbed()
       .setColor(set.color)
-      .setTitle(`${rule.emoji} Regra ${rule.number} — ${rule.title}`)
-      .setDescription(quoteDescription(rule.description))
+      .setTitle(`${rule.emoji} Regra ${String(rule.number).padStart(2, '0')} — ${rule.title}`)
+      .setDescription([
+        '```',
+        `${set.label.toUpperCase()} • SOBREVIVENTES Z`,
+        '```',
+        cleanDescription(rule.description)
+      ].join('\n'))
       .setImage(`attachment://${set.image}`)
       .addFields(
         { name: '🎮 Servidor', value: rule.server || set.server, inline: true },

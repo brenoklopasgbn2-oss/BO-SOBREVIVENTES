@@ -22,8 +22,8 @@ const RULES = [
     "server": "Deathmatch",
     "category": "Regras Deathmatch",
     "emoji": "🌈",
-    "title": "Sem Choro no Chat",
-    "description": "Morreu no PvP, faz parte. Evite floodar o chat reclamando de morte, arma, posição ou jogador."
+    "title": "Sem Flood de Reclamação",
+    "description": "Morreu no PvP, faz parte. Evite floodar o chat reclamando de morte, arma, posição, spawn ou jogador."
   },
   {
     "number": 4,
@@ -47,7 +47,7 @@ const RULES = [
     "category": "Regras Deathmatch",
     "emoji": "🌈",
     "title": "Proibido Camperar Spawn",
-    "description": "Não fique matando jogador no ponto de nascimento e não use spawn para ganhar vantagem ou fugir de combate."
+    "description": "Não fique matando jogador diretamente no ponto de nascimento e não use spawn para ganhar vantagem ou fugir de combate."
   },
   {
     "number": 7,
@@ -78,7 +78,7 @@ const RULES = [
     "server": "Deathmatch",
     "category": "Regras Deathmatch",
     "emoji": "🌈",
-    "title": "Staff Tem Decisão Final",
+    "title": "Decisão da Staff",
     "description": "A administração pode analisar cada caso e aplicar punição conforme a gravidade da situação."
   }
 ];

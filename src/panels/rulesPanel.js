@@ -3,44 +3,47 @@ const { AttachmentBuilder } = require('discord.js');
 const { baseEmbed } = require('../utils/embeds');
 const { getCategories, getCategorySummary, getRuleSet } = require('../data/rulesRepository');
 
-const DESCRIPTION_LIMIT = 3600;
+const RULES_PER_CARD = 4;
+const DESCRIPTION_LIMIT = 3900;
 
 function rulesImageAttachment(ruleSetKey = 'geral') {
   const set = getRuleSet(ruleSetKey);
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', set.image));
 }
 
-function quoteDescription(description = '') {
+function cleanDescription(description = '') {
   return String(description)
-    .split('\n')
-    .map((line) => line.trim() ? `> ${line.trim()}` : '>')
-    .join('\n');
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 function formatRuleBlock(rule) {
+  const desc = cleanDescription(rule.description);
   return [
-    `**${rule.emoji || '📌'} ${rule.number}. ${rule.title}**`,
-    quoteDescription(rule.description)
+    `### ${rule.emoji || '📌'} Regra ${String(rule.number).padStart(2, '0')} — ${rule.title}`,
+    `${desc}`
   ].join('\n');
 }
 
-function chunkRuleBlocks(rules) {
+function splitCategoryRules(rules) {
   const chunks = [];
   let current = [];
   let currentLength = 0;
 
   for (const rule of rules) {
     const block = formatRuleBlock(rule);
-    const extraLength = block.length + (current.length > 0 ? 24 : 0);
+    const extra = block.length + (current.length > 0 ? 34 : 0);
+    const reachedCount = current.length >= RULES_PER_CARD;
+    const reachedLimit = current.length > 0 && currentLength + extra > DESCRIPTION_LIMIT;
 
-    if (current.length > 0 && currentLength + extraLength > DESCRIPTION_LIMIT) {
+    if (reachedCount || reachedLimit) {
       chunks.push(current);
       current = [];
       currentLength = 0;
     }
 
     current.push(rule);
-    currentLength += extraLength;
+    currentLength += extra;
   }
 
   if (current.length > 0) chunks.push(current);
@@ -53,22 +56,27 @@ function buildRulesHeaderPayload(ruleSetKey = 'geral') {
 
   const description = hasRules
     ? [
-        '```ansi',
-        'REGRAS OFICIAIS • SOBREVIVENTES Z',
         '```',
+        'SOBREVIVENTES Z • REGRAS OFICIAIS',
+        '```',
+        `🎮 **Servidor:** ${set.server}`,
         '📌 **Leia com atenção antes de jogar.**',
-        'As regras abaixo estão completas, separadas por parte e numeradas.',
+        '',
+        'As regras abaixo estão separadas por parte e numeradas para ficar fácil de consultar.',
         '',
         '🔎 **Consultar uma regra específica:**',
         `Use **/regra numero servidor**`,
         `Exemplo: **/regra numero: 1 servidor: ${set.server}**`,
         '',
-        '🧭 **Partes cadastradas:**',
+        '🧭 **Partes:**',
         getCategorySummary(set.key),
         '',
-        `📊 Total cadastrado: **${set.rules.length} regras**`
+        `📊 **Total:** ${set.rules.length} regras`
       ].join('\n')
     : [
+        '```',
+        'SOBREVIVENTES Z • REGRAS OFICIAIS',
+        '```',
         `⚠️ **${set.emptyMessage}**`,
         '',
         'Quando as regras forem cadastradas, este canal será preenchido automaticamente pelo **/setup**.'
@@ -76,7 +84,7 @@ function buildRulesHeaderPayload(ruleSetKey = 'geral') {
 
   const embed = baseEmbed()
     .setColor(set.color)
-    .setTitle(`${set.emoji} ${set.label} — Sobreviventes Z`)
+    .setTitle(`${set.emoji} ${set.label}`)
     .setDescription(description)
     .setImage(`attachment://${set.image}`);
 
@@ -95,27 +103,24 @@ function buildRulesMessages(ruleSetKey = 'geral') {
   const categories = getCategories(set.key);
 
   for (const category of categories) {
-    const chunks = chunkRuleBlocks(category.rules);
+    const chunks = splitCategoryRules(category.rules);
 
     for (const [index, chunk] of chunks.entries()) {
       const first = chunk[0].number;
       const last = chunk[chunk.length - 1].number;
-      const description = chunk.map(formatRuleBlock).join('\n\n━━━━━━━━━━━━━━━━━━\n\n');
+      const body = chunk.map(formatRuleBlock).join('\n\n━━━━━━━━━━━━━━━━━━━━\n\n');
 
-      const titleSuffix = chunks.length > 1
-        ? ` — Página ${index + 1}/${chunks.length}`
-        : '';
+      const title = chunks.length > 1
+        ? `${category.emoji} ${category.name} • ${String(first).padStart(2, '0')} até ${String(last).padStart(2, '0')}`
+        : `${category.emoji} ${category.name}`;
 
       payloads.push({
         embeds: [
           baseEmbed()
             .setColor(set.color)
-            .setTitle(`${category.emoji} ${category.name}${titleSuffix}`)
-            .setDescription(description)
-            .addFields(
-              { name: '🎮 Servidor', value: set.server, inline: true },
-              { name: '🔢 Numeração', value: first === last ? `Regra **${first}**` : `Regras **${first} a ${last}**`, inline: true }
-            )
+            .setTitle(title)
+            .setDescription(body)
+            .setFooter({ text: `Sobreviventes Z • ${set.server} • use /regra numero servidor para consultar rápido` })
         ]
       });
     }
@@ -124,7 +129,6 @@ function buildRulesMessages(ruleSetKey = 'geral') {
   return payloads;
 }
 
-// Compatibilidade com comandos antigos: painel = mensagens completas.
 function buildRulesPanel(ruleSetKey = 'geral') {
   return buildRulesMessages(ruleSetKey);
 }
