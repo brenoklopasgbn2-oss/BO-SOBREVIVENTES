@@ -65,6 +65,7 @@ const CHANNELS = {
   info: '📘・informacoes',
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
+  rulesAsk: '❓・pergunte-as-regras',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   openTicket: '🎫・abrir-ticket',
@@ -92,6 +93,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
+  [CHANNELS.rulesAsk]: ['pergunte-as-regras', 'duvidas-regras', 'perguntas-regras'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
@@ -157,7 +159,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais da comunidade, Discord e conduta dos jogadores.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
-      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false }
+      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false },
+      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Pergunte algo sobre as regras. O bot pesquisa nas regras da comunidade e responde.', readOnly: false }
     ]
   },
   {

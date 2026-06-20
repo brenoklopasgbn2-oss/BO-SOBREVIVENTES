@@ -6,6 +6,7 @@ const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
 const { handleAntiXinga } = require('../moderation/antiXinga');
 const { recordTicketAnswered, recordTicketMessage } = require('../stats/staffStats');
+const { handleRulesQuestion } = require('../rules/rulesAssistant');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -98,6 +99,8 @@ module.exports = {
     if (!message.guild || !message.channel || message.author.bot) return;
 
     if (await handleAntiXinga(message)) return;
+
+    if (await handleRulesQuestion(message)) return;
 
     await autoClaimTicket(message);
 
