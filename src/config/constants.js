@@ -66,6 +66,7 @@ const CHANNELS = {
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
   logsStaff: '📜・logs-staff',
+  staffRanking: '📊・ranking-staff',
   openTicket: '🎫・abrir-ticket',
   reportsPanel: '🚨・denuncias',
   bugPanel: '🐞・reportar-bug',
@@ -92,6 +93,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
   [CHANNELS.logsStaff]: ['logs-staff'],
+  [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
   [CHANNELS.reportsPanel]: ['denúncias', 'denuncias'],
   [CHANNELS.bugPanel]: ['reportar-bug'],
@@ -240,6 +242,7 @@ const CATEGORY_DEFINITIONS = [
     channels: [
       { type: 'text', name: '💼・chat-staff', aliases: ['chat-staff'], topic: 'Comunicação interna da equipe.' },
       { type: 'text', name: CHANNELS.logsStaff, aliases: CHANNEL_ALIASES[CHANNELS.logsStaff], topic: 'Logs automáticos do bot e atendimento.' },
+      { type: 'text', name: CHANNELS.staffRanking, aliases: CHANNEL_ALIASES[CHANNELS.staffRanking], topic: 'Ranking e estatísticas da equipe.', readOnly: true },
       { type: 'text', name: '⛔・punições', aliases: ['punições', 'punicoes'], topic: 'Registro e discussão de punições.' },
       { type: 'voice', name: CHANNELS.staffVoice, aliases: CHANNEL_ALIASES[CHANNELS.staffVoice], topic: 'Canal geral de voz da staff.', userLimit: 0 }
     ]

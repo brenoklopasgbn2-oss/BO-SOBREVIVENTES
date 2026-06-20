@@ -5,6 +5,7 @@ const { baseEmbed } = require('../utils/embeds');
 const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
 const { handleAntiXinga } = require('../moderation/antiXinga');
+const { recordTicketAnswered, recordTicketMessage } = require('../stats/staffStats');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -52,6 +53,9 @@ function isTicketChannel(channel) {
 async function autoClaimTicket(message) {
   if (!isTicketChannel(message.channel)) return false;
   if (!isStaffMember(message.member)) return false;
+
+  recordTicketAnswered(message.member, message.channel.id);
+  recordTicketMessage(message.member, message.channel.id);
 
   const claimedBy = parseClaimedBy(message.channel.topic || '');
   const roleName = getMainStaffRole(message.member);

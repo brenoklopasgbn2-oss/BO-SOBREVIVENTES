@@ -6,6 +6,7 @@ const { resolveRoles, staffPermissionOverwrites } = require('../utils/permission
 const { logEvent } = require('../utils/logger');
 const { getMainStaffRole } = require('../panels/supportStatus');
 const { createTranscriptAttachment } = require('./transcript');
+const { recordTicketAnswered } = require('../stats/staffStats');
 
 function buildTicketControls(channelId) {
   return new ActionRowBuilder().addComponents(
@@ -128,6 +129,7 @@ async function claimTicket(interaction, channelId) {
   }
 
   await channel.setTopic(`${channel.topic || ''}|CLAIMED_BY:${interaction.user.id}`.slice(0, 1024)).catch(() => null);
+  recordTicketAnswered(interaction.member, channel.id);
   const roleName = getMainStaffRole(interaction.member);
   await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket como **${roleName.toUpperCase()}**.`)] });
   await logEvent(interaction.guild, 'ticket_claimed', '🙋 Ticket assumido', `${interaction.user} assumiu ${channel}.`, [

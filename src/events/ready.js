@@ -2,6 +2,7 @@ const { Events, ActivityType, REST, Routes } = require('discord.js');
 const { config } = require('../config');
 const { readCommandFiles } = require('../utils/readFiles');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
+const { initializeStaffStatsForGuild, setupDailyStaffStatsReport } = require('../stats/staffStats');
 
 function getLocalCommands() {
   return readCommandFiles()
@@ -60,8 +61,11 @@ module.exports = {
       console.error('Erro ao registrar comandos slash automaticamente:', error);
     }
 
+    setupDailyStaffStatsReport(client);
+
     for (const guild of client.guilds.cache.values()) {
       await guild.members.fetch().catch(() => null);
+      initializeStaffStatsForGuild(guild);
       await refreshTicketPanel(guild).catch(() => null);
     }
   }

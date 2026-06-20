@@ -3,6 +3,7 @@ const { CHANNELS } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
 const { isStaffMember, isSupportVoiceChannel } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
+const { handleStaffVoiceStateUpdate } = require('../stats/staffStats');
 
 function findVoiceChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isVoiceBased());
@@ -107,6 +108,8 @@ module.exports = {
   async execute(oldState, newState) {
     const guild = newState.guild || oldState.guild;
     if (!guild) return;
+
+    handleStaffVoiceStateUpdate(oldState, newState);
 
     const relevantChannelIds = [CHANNELS.waitingRoom, CHANNELS.supportRoom1, CHANNELS.supportRoom2];
     const oldName = oldState.channel?.name;
