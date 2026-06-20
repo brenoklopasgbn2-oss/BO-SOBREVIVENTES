@@ -1,6 +1,7 @@
 const geral = require('./rulesGeneral');
 const vanilla = require('./rulesVanilla');
 const deathmatch = require('./rulesDeathmatch');
+const bbp = require('./rulesBbp');
 
 const DEFAULT_RULE_IMAGE = vanilla.RULE_IMAGE || '16-regras-sobrevivente.png';
 
@@ -31,9 +32,9 @@ const RULE_SETS = {
     server: 'BBP',
     emoji: '🔵',
     color: 0x3498db,
-    image: DEFAULT_RULE_IMAGE,
-    rules: [],
-    emptyMessage: 'As regras do BBP ainda serão cadastradas. Quando você mandar, eu separo e coloco nesse painel.'
+    image: bbp.RULE_IMAGE || DEFAULT_RULE_IMAGE,
+    rules: bbp.RULES,
+    emptyMessage: 'As regras do BBP ainda não foram cadastradas.'
   },
   deathmatch: {
     key: 'deathmatch',

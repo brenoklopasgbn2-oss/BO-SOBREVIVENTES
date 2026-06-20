@@ -542,8 +542,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Clãs e Identificação",
     "emoji": "👥",
-    "title": "Limite de Jogadores",
-    "description": "Cada clã poderá possuir quantidade livre de membros cadastrados, porém máximo de 5 jogadores online simultaneamente."
+    "title": "Limite de Jogadores no Vanilla",
+    "description": "No servidor Vanilla, os grupos são permitidos apenas nos formatos: Solo, Duo, Trio, Squad ou Quinteto. O limite máximo é de 5 jogadores atuando juntos/online pelo mesmo grupo. Qualquer formação acima disso será considerada irregular e poderá gerar punição."
   },
   {
     "number": 69,

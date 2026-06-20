@@ -492,12 +492,8 @@ async function handleAntiXinga(message) {
 
   const response = pickRoast(`${message.author}`);
   await message.delete().catch(() => null);
-  const sent = await message.channel.send({ content: response }).catch(() => null);
-
-  // Apaga a zoeira depois de 20 segundos para não poluir demais.
-  if (sent) {
-    setTimeout(() => sent.delete().catch(() => null), 20000);
-  }
+  // Mensagem normal no canal: todos que têm acesso ao canal conseguem ver.
+  await message.channel.send({ content: response }).catch(() => null);
 
   return true;
 }
