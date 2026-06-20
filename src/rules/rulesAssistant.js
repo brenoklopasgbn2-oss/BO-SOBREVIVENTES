@@ -15,7 +15,7 @@ const STOP_WORDS = new Set([
   'por','pra','para','com','sem','sobre','isso','essa','esse','aquele','eu','ele','ela','eles','elas',
   'meu','minha','nosso','nossa','pode','posso','podemos','tem','ter','regra','regras','duvida','dúvida',
   'é','e','ou','que','qual','quando','onde','como','quanto','quantos','jogar','servidor','server','serve',
-  'player','jogador','jogadores','usar','uso','usa','faz','fazer','preciso','precisa','ai','ia','dayz','jogo','game','mod','mods','expansion','navigation','navegacao','navegação'
+  'player','jogador','jogadores','usar','uso','usa','faz','fazer','preciso','precisa','ai','ia','dayz','jogo','game','mod','mods'
 ]);
 
 const FAQS = [
@@ -141,6 +141,264 @@ const FAQS = [
   }
 ];
 
+
+const MOD_GUIDES = [
+  {
+    title: 'Lista de mods do servidor',
+    server: 'Mods',
+    keywords: ['mods','modpack','lista','quais mods','mod instalado','modificacoes','modificações'],
+    answer: [
+      'Os mods que a IA conhece neste projeto são: **CF**, **Dabs Framework**, **VPPAdminTools**, **AC-Mod-Pack**, **DeathMatch_SobreviventesZ**, **Advanced Weapon Scopes**, **Restart_Server**, **MMG Base Storage NoCodeLock**, **BaseBuildingPlus/BBP**, **KeyCard-Rooms**, **Airdrop-Upgraded**, **Sobreviventesz_pack**, **CBD Loot Rooms**, **SobreviventesZ 2.0**, **Plane Crash**, **MZ KOTH**, **SpawnerBubaku**, **DayZ Editor Loader** e **DayZ Expansion Navigation**.',
+      'Alguns são para player usar direto; outros são apenas dependência ou server-side.'
+    ].join('\n')
+  },
+  {
+    title: 'CF / Community Framework',
+    server: 'Mods base',
+    keywords: ['cf','community framework','framework','dependencia','dependência','erro cf','falta cf'],
+    answer: [
+      '**CF** é um framework/dependência usado por outros mods do DayZ.',
+      '**Player normalmente não usa CF diretamente.** Ele só precisa estar inscrito/baixado e carregando na ordem certa pelo launcher.',
+      'Se der erro de CF, tente: fechar o DayZ, reparar/verificar mods no launcher, desinscrever/inscrever de novo no Workshop e entrar novamente.',
+      'Se continuar, envie print do erro em ticket.'
+    ].join('\n')
+  },
+  {
+    title: 'Dabs Framework',
+    server: 'Mods base',
+    keywords: ['dabs','dabs framework','framework dabs','erro dabs','dependencia dabs'],
+    answer: [
+      '**Dabs Framework** é uma dependência/framework para outros mods.',
+      '**Player não usa como item nem abre menu dele.** Ele precisa estar baixado e carregando corretamente.',
+      'Se aparecer erro de Dabs, repare os mods pelo launcher, verifique se não está faltando dependência e reinicie o jogo.'
+    ].join('\n')
+  },
+  {
+    title: 'VPPAdminTools',
+    server: 'Admin',
+    keywords: ['vpp','vppadmin','vppadmintools','admin tools','ferramenta admin','admintools'],
+    answer: [
+      '**VPPAdminTools é ferramenta de administração.** Player comum não usa.',
+      'Serve para staff/admin gerenciar servidor, teleportar, checar jogador, suporte e testes internos.',
+      'Se você é player e está perguntando como usar VPP, a resposta é: você não usa; abra ticket se precisar de ajuda.'
+    ].join('\n')
+  },
+  {
+    title: 'AC-Mod-Pack',
+    server: 'Mods utilitários',
+    keywords: ['ac','ac mod','ac-mod-pack','acmodpack','autorun','auto run','boost','chat global','global chat','ear plugs','earplugs','tampao','tampão','compass','bussola','bússola','killfeed','check identity','identidade'],
+    answer: [
+      '**AC-Mod-Pack** reúne vários módulos de qualidade de vida, como AutoRun, Boost, Chat Global, Check Identity, Clear Zone, Compass, Ear Plugs, KillFeed, Loading Screen, Stamina e SpawnPoint.',
+      '**Como usar:** as teclas podem mudar conforme a configuração do servidor. Abra **ESC > Controls/Controles** e procure os atalhos do AC-Mod-Pack ou teste o menu/configuração do mod.',
+      'Dúvidas comuns:',
+      '• **AutoRun:** ativa corrida automática na tecla configurada.',
+      '• **Ear Plugs/Tampão:** reduz som alto do jogo na tecla configurada.',
+      '• **Compass/Bússola:** mostra direção/HUD se o servidor habilitou.',
+      '• **Chat Global/KillFeed:** aparecem automaticamente se o servidor habilitou.',
+      'Se uma função não aparece, pode estar desativada pelo servidor.'
+    ].join('\n')
+  },
+  {
+    title: 'Advanced Weapon Scopes',
+    server: 'Armas',
+    keywords: ['advanced weapon scopes','weapon scopes','scopes','scope','mira','miras','luneta','zoom','arma','sniper','zeroing','zerar mira','distancia','distância'],
+    answer: [
+      '**Advanced Weapon Scopes** adiciona/ajusta miras e lunetas.',
+      '**Como usar:** coloque a mira compatível na arma, mire normalmente e use os atalhos configurados no jogo/mod para zoom, ajuste de distância/zeroing e troca de visão quando existir.',
+      'Se o zoom ou zeroing não funcionar, confira se a mira é compatível com a arma, se está em bom estado e veja os atalhos em **Controles**.',
+      'Dica: em combate longo, ajuste a distância da mira antes de atirar; em combate curto, prefira mira com zoom menor.'
+    ].join('\n')
+  },
+  {
+    title: 'Restart_Server',
+    server: 'Server-side',
+    keywords: ['restart_server','restart server','restart','reinicio','reinício','servidor reinicia','reset','server restart'],
+    answer: [
+      '**Restart_Server** é mod/ferramenta do lado do servidor.',
+      '**Player não usa botão nem item dele.** Ele serve para avisos/controle de reinício automático.',
+      'Se o servidor avisar restart, guarde o loot, pare veículo em local seguro e deslogue com cuidado antes do reinício.'
+    ].join('\n')
+  },
+  {
+    title: 'BaseBuildingPlus / BBP — básico',
+    server: 'BBP',
+    keywords: ['bbp','basebuildingplus','base building plus','basebuilding','construir','construção','construcao','base','parede','piso','foundation','gate','portao','portão','kit','holograma'],
+    answer: [
+      '**BaseBuildingPlus (BBP)** é o mod de construção avançada de base.',
+      '**Uso básico:** tenha o kit/blueprint correto, posicione o holograma onde é permitido, rotacione/ajuste a peça, confirme a posição e construa usando os materiais/ferramentas exigidos.',
+      'Normalmente o fluxo é: **pegar/craftar kit > colocar holograma > alinhar > construir frame > adicionar madeira/metal/concreto > finalizar**.',
+      'Se não deixa construir, pode ser área bloqueada, peça colidindo, terreno ruim, falta de ferramenta/material ou regra de construção do servidor.'
+    ].join('\n')
+  },
+  {
+    title: 'BBP — Workbench / Bancada',
+    server: 'BBP',
+    keywords: ['bbp','workbench','bancada','mesa','craft','craftar','crafting book','livro','blueprint','planks','prancha','5 planks','5 pranchas'],
+    answer: [
+      '**Workbench/Bancada BBP** é usada para criar/organizar construções do BaseBuildingPlus.',
+      'Receita comum encontrada em guias do BBP: **5 pranchas + 1 BBP Crafting Book/Blueprint**. Em alguns servidores isso pode mudar por configuração.',
+      'Depois de criar, coloque a bancada em local seguro. A partir dela você cria kits/hologramas e prepara peças conforme o mod/servidor permite.',
+      'Se não aparecer a opção de craft, confira se os itens estão nas mãos/inventário correto, se o livro é o correto e se o servidor alterou a receita.'
+    ].join('\n')
+  },
+  {
+    title: 'BBP — materiais e evolução de parede/portão',
+    server: 'BBP',
+    keywords: ['bbp','material','materiais','nails','pregos','planks','pranchas','sheet metal','metal','concreto','concrete','t1','t2','t3','frame','estrutura','parede','portao','gate'],
+    answer: [
+      'No BBP, muitas peças seguem evolução por tiers:',
+      '• **Frame/estrutura:** base inicial da peça.',
+      '• **T1 madeira:** usa pranchas/pregos.',
+      '• **T2 metal:** melhora usando metal/sheet metal e pregos.',
+      '• **T3 concreto:** usa concreto/mortar/concrete bricks conforme configuração.',
+      'As quantidades podem mudar por servidor. Se a construção não avança, confira item certo na mão, ferramenta correta, posição permitida e se a peça já está no tier anterior.'
+    ].join('\n')
+  },
+  {
+    title: 'BBP — desmontar/remover construção',
+    server: 'BBP',
+    keywords: ['bbp','desmontar','remover','dismantle','demolir','quebrar','destruir','construção','base'],
+    answer: [
+      'Para desmontar no BBP, normalmente você precisa estar autorizado na base/território, usar a ferramenta correta e interagir pelo ponto da peça.',
+      'Se não aparece opção, pode ser porque você não é dono/autorizado, a peça está bloqueada, não é horário/condição permitida ou o servidor desativou desmontagem.',
+      'Nunca use bug/glitch para remover peça; abra ticket se uma estrutura travou.'
+    ].join('\n')
+  },
+  {
+    title: 'MMG Base Storage NoCodeLock — o que é',
+    server: 'Storage',
+    keywords: ['mmg','mmg storage','mmg base storage','nocodelock','no codelock','storage','storages','caixa','armario','armário','locker','crate','crates','guardar loot','bau','baú'],
+    answer: [
+      '**MMG Base Storage NoCodeLock** adiciona storages/caixas/armários para guardar loot em base.',
+      'Os itens costumam aparecer marcados como **MMG** para diferenciar de outros storages.',
+      '**NoCodeLock** quer dizer que essa versão não usa codelock nesses storages, então proteja dentro da base e não deixe exposto.',
+      'Se o storage não abre ou some slot, pode ser conflito/configuração do servidor ou bug de storage; tire print e abra ticket.'
+    ].join('\n')
+  },
+  {
+    title: 'Como criar/usar storage MMG',
+    server: 'Storage',
+    keywords: ['criar storage','fazer storage','craft storage','craftar storage','mmg','storage','storages','guardar','colocar storage','posicionar storage','desmontar storage','screwdriver','chave de fenda'],
+    answer: [
+      '**Como usar storage MMG:** encontre/craft/compre o storage conforme o servidor configurou, coloque em local permitido dentro da base, posicione no chão e abra o inventário dele para guardar itens.',
+      'Em muitos servidores o craft/compra pode variar; por isso, se a receita não aparece, é configuração do servidor.',
+      'Dica importante: alguns storages MMG podem ser desmontados com **chave de fenda/screwdriver** conforme o mod/configuração. Não deixe storage bloqueando passagem ou bugando parede.'
+    ].join('\n')
+  },
+  {
+    title: 'Code Lock / Codelock',
+    server: 'Base',
+    keywords: ['codelock','code lock','cadeado','senha','trocar senha','colocar senha','portao','portão','porta','base'],
+    answer: [
+      '**Code Lock/Codelock** é usado para proteger portões/portas compatíveis.',
+      '**Como usar:** coloque o codelock no portão/porta, defina uma senha e teste se abre/fecha. Compartilhe a senha só com membros confiáveis do grupo.',
+      'Se esqueceu a senha, alguém trocou ou bugou, abra ticket com prova. Staff não deve resolver briga interna sem evidência.'
+    ].join('\n')
+  },
+  {
+    title: 'KeyCard-Rooms',
+    server: 'Keycard',
+    keywords: ['keycard','key card','keycards','cartao','cartão','sala keycard','keycard rooms','keycard-rooms','room','rooms','porta keycard','loot room','bunker','abrir sala','cartão acesso'],
+    answer: [
+      '**KeyCard-Rooms** adiciona salas/portas/loot rooms que exigem keycard/cartão.',
+      '**Como usar:** encontre o keycard correto, vá até a porta/sala correspondente e interaja no leitor/porta com o cartão. Dependendo da configuração, o cartão pode ser consumido ou ficar marcado como usado.',
+      'As cores/tiers/locais e o loot são definidos pelo servidor. Se o cartão não abre, talvez seja tier errado, sala errada, evento ainda fechado ou config do servidor.'
+    ].join('\n')
+  },
+  {
+    title: 'CBD Loot Rooms',
+    server: 'Loot Rooms',
+    keywords: ['cbd','cbd loot rooms','lootrooms','loot rooms','sala loot','sala de loot','loot room','porta bloqueada','alarme','security','segurança','chave lootroom'],
+    answer: [
+      '**CBD Loot Rooms** permite transformar prédios/salas do mapa em loot rooms configuradas pela staff.',
+      '**Como player usa:** encontre a chave/cartão/item exigido, vá até a sala correta, interaja com a porta/entrada e esteja preparado para PvP, alarme, zumbis ou outras defesas configuradas.',
+      'O loot, dificuldade, sons, segurança e portas são 100% configuráveis pela staff. Se uma sala não abre, pode faltar item certo ou estar em cooldown.'
+    ].join('\n')
+  },
+  {
+    title: 'Airdrop-Upgraded',
+    server: 'Eventos',
+    keywords: ['airdrop','airdrop-upgraded','air drop','drop','queda','caixa drop','flare','sinalizador','airdrops','evento airdrop'],
+    answer: [
+      '**Airdrop-Upgraded** cria drops de loot em locais do mapa e também pode permitir drop chamado por player usando **Airdrop Flare**, se o servidor habilitou.',
+      '**Como usar:** fique atento ao aviso/marker/fumaça do drop, vá até a área, limpe inimigos/zumbis e abra o container. Se tiver flare, use em local aberto e seguro para chamar o drop.',
+      'Cuidado: airdrop chama atenção e costuma virar PvP. Não fique parado lootando sem cobertura.'
+    ].join('\n')
+  },
+  {
+    title: 'Plane Crash',
+    server: 'Eventos',
+    keywords: ['plane crash','plane','aviao','avião','queda de aviao','queda de avião','crash','container colorido','chave do avião','zumbi avião','fumaça avião'],
+    answer: [
+      '**Plane Crash** cria evento dinâmico de avião caído.',
+      '**Como player usa:** procure fumaça/som/local do crash, elimine os zumbis do evento, procure a **chave** em um dos zumbis e use para abrir o container/caixa do crash.',
+      'O loot e tempo de spawn dependem da configuração do servidor. Normalmente é área de risco alto por causa do loot e PvP.'
+    ].join('\n')
+  },
+  {
+    title: 'MZ KOTH / King of The Hill',
+    server: 'Eventos',
+    keywords: ['mz koth','koth','king of the hill','rei do morro','hill','zona koth','evento koth','capturar zona','marker koth','marcador koth'],
+    answer: [
+      '**MZ KOTH** é evento King of The Hill: uma zona aparece no mapa e os players disputam o controle.',
+      '**Como jogar:** vá até o marcador da KOTH, entre/permaneça na área, defenda posição e tente manter controle até finalizar. Se tiver inimigo na zona, o evento pode ficar contestado.',
+      'O mod pode mostrar marcadores via Expansion Navigation/LB Groups e avisos quando KOTH nasce, termina ou alguém vence, se o servidor habilitou.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ Expansion Navigation',
+    server: 'Mapa',
+    keywords: ['expansion navigation','dayz expansion navigation','expansion','navigation','navegação','navegacao','map marker','marker','marcador','mapa','gps','compass hud','bússola','bussola','player position','posição','posicao'],
+    answer: [
+      '**DayZ Expansion Navigation** adiciona recursos de navegação como mapa/markers, HUD de bússola e GPS, dependendo da configuração do servidor.',
+      '**Como usar:** abra o mapa pela tecla configurada, crie/remova marcadores pelo menu do mapa e use GPS/bússola para se orientar. Se estiver em grupo, alguns markers/pings podem ser compartilhados se o servidor/mod de grupo permitir.',
+      'Se marker não aparece, confira se o servidor habilitou essa função, se você está com o mod carregado e se a tecla está configurada nos controles.'
+    ].join('\n')
+  },
+  {
+    title: 'SpawnerBubaku',
+    server: 'Server-side',
+    keywords: ['spawnerbubaku','spawner bubaku','bubaku','spawn zumbi','spawn infected','zumbi spawn','triggers','trigger','area zumbi','bunker zumbi'],
+    answer: [
+      '**SpawnerBubaku** é mod server-side que usa triggers/áreas para spawnar zumbis, infectados ou outros elementos quando alguém entra numa região.',
+      '**Player não usa botão.** Você só percebe quando entra em bunker/área/evento e os zumbis ou entidades aparecem.',
+      'Se zumbi nasce bugado, em parede ou sem parar, grave e abra ticket.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ Editor Loader',
+    server: 'Server-side',
+    keywords: ['dayz editor loader','editor loader','dayz editor','mapa editado','mapeamento','mapping','objetos mapa','custom area','area custom','área custom'],
+    answer: [
+      '**DayZ Editor Loader** carrega no servidor áreas/objetos criados no DayZ Editor.',
+      '**Player não usa item nem tecla.** Ele serve para aparecerem construções, áreas custom, bunkers, cidades editadas e objetos adicionados pela staff.',
+      'Se uma área custom estiver bugada, com objeto flutuando ou prendendo player, abra ticket com print/localização.'
+    ].join('\n')
+  },
+  {
+    title: 'DeathMatch_SobreviventesZ',
+    server: 'Deathmatch',
+    keywords: ['deathmatch_sobreviventesz','deathmatch sobreviventesz','deathmatch','dm','arena','pvp','spawn dm','kit dm','death math'],
+    answer: [
+      '**DeathMatch_SobreviventesZ** é pacote/configuração do servidor para modo DM/PvP.',
+      'Use para jogar rápido, treinar mira e PvP. Respeite regras do DM: sem cheat, sem bug, sem camperar spawn e sem kill farm.',
+      'Se spawn, kit ou arma bugou no DM, mande print/vídeo no ticket de bug.'
+    ].join('\n'),
+    related: [{ set: 'deathmatch', rule: 1 }, { set: 'deathmatch', rule: 6 }, { set: 'deathmatch', rule: 8 }]
+  },
+  {
+    title: 'Sobreviventesz_pack / SobreviventesZ 2.0',
+    server: 'Pack do servidor',
+    keywords: ['sobreviventesz_pack','sobreviventesz pack','sobreviventesz 2.0','sobreviventesz2','pack sobreviventes','pack do servidor','mod proprio','mod próprio','item sobreviventes','roupa sobreviventes'],
+    answer: [
+      '**Sobreviventesz_pack / SobreviventesZ 2.0** é pacote próprio/custom do servidor.',
+      'Ele pode conter itens, roupas, ajustes, classes, objetos ou configurações exclusivas da comunidade.',
+      'Como é pack próprio, a função exata de cada item depende do que a staff colocou. Pergunte o nome do item ou mande print para a IA tentar ajudar; se for algo específico/bug, abra ticket.'
+    ].join('\n')
+  }
+];
+
+
 function normalizeText(text = '') {
   return String(text)
     .toLowerCase()
@@ -194,22 +452,24 @@ function hasUnknownModOrExternalQuestion(question = '') {
 function shouldUseWebBeforeRules(question = '') {
   const text = normalizeText(question);
 
-  // Perguntas de regra do servidor devem priorizar regra interna.
-  if (text.includes('limite') || text.includes('raid') || text.includes('ban') || text.includes('clan') || text.includes('cla') || text.includes('base')) {
-    return false;
-  }
-
-  return hasUnknownModOrExternalQuestion(question);
+  // Só força web quando o player pedir claramente pesquisa externa.
+  // No normal, a IA responde primeiro pela base interna dos mods/regras e usa SerpApi só se não achar nada.
+  return text.includes('pesquisa') || text.includes('pesquisar') || text.includes('procura') || text.includes('google');
 }
 
 
 function searchFaq(question) {
   const tokens = tokenize(question);
-  return FAQS.map((faq) => {
-    const keywordScore = faq.keywords.reduce((sum, kw) => sum + (tokens.includes(normalizeText(kw)) ? 5 : 0), 0);
+  const normalizedQuestion = normalizeText(question);
+  return [...FAQS, ...MOD_GUIDES].map((faq) => {
+    const keywordScore = faq.keywords.reduce((sum, kw) => {
+      const normalizedKeyword = normalizeText(kw);
+      const directMatch = tokens.includes(normalizedKeyword) || normalizedQuestion.includes(normalizedKeyword);
+      return sum + (directMatch ? 8 : 0);
+    }, 0);
     const textScore = scoreText(`${faq.title} ${faq.server} ${faq.answer}`, tokens);
     return { faq, score: keywordScore + textScore };
-  }).filter((item) => item.score >= 5).sort((a, b) => b.score - a.score).slice(0, 3);
+  }).filter((item) => item.score >= 8).sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
 function scoreRule(rule, tokens) {
@@ -331,7 +591,7 @@ function requestJson(url) {
 
 function buildWebQuery(question = '') {
   const clean = String(question).replace(/<@!?\d+>|<@&\d+>/g, '').trim();
-  return `DayZ ${clean} guia tutorial mod servidor`;
+  return `DayZ PC mod ${clean} tutorial how to use Steam Workshop guide`;
 }
 
 async function searchGoogleCustom(question) {
@@ -403,7 +663,7 @@ function buildWebFallbackEmbed(message, web) {
         `${message.author}, não achei isso nas regras nem nos meus guias rápidos.`,
         '',
         configured
-          ? 'Tente perguntar com outras palavras ou abra ticket para a staff confirmar.'
+          ? 'Tente perguntar com outras palavras, use "pesquisa:" no começo da pergunta ou abra ticket para a staff confirmar.'
           : 'A pesquisa na web ainda não foi configurada. A staff precisa colocar uma chave de busca no Railway.',
         '',
         '⚠️ Em dúvida sobre regra do servidor, a decisão final sempre é da staff.'

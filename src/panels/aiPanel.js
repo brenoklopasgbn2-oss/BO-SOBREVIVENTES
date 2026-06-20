@@ -19,7 +19,8 @@ function buildAiPanel(guild) {
     .setDescription([
       `Olá, eu sou a **Sobrevivente IA**.`,
       '',
-      'Pergunte aqui sobre **regras, raid, base, clã, tickets, atendimento e mods comuns do DayZ**.',
+      'Pergunte aqui sobre **regras, raid, base, clã, tickets, atendimento e mods do servidor**.',
+      'Conheço guias de **BBP, MMG Storage, KeyCard, Airdrop, KOTH, Plane Crash, CBD Loot Rooms, Expansion Navigation, AC-Mod-Pack, Scopes** e outros.',
       'Se eu não achar nas regras, posso pesquisar na web quando a busca estiver configurada.',
       `Você também pode me marcar em outros canais usando ${mention}.`,
       '',
