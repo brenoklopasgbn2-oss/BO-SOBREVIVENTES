@@ -1513,6 +1513,68 @@ function buildWebFallbackEmbed(message, web) {
 
   return embed;
 }
+
+function preferBestFaq(question = '', faqResults = []) {
+  if (!Array.isArray(faqResults) || faqResults.length === 0) return [];
+
+  const normalizedQuestion = normalizeText(question);
+  const tokens = tokenize(question);
+
+  const boosted = faqResults.map((item, index) => {
+    const faq = item.faq || {};
+    const server = normalizeText(faq.server || '');
+    const title = normalizeText(faq.title || '');
+    let bonus = 0;
+
+    // Dá prioridade para guia do servidor/mod citado na pergunta.
+    if (normalizedQuestion.includes('bbp') && server.includes('bbp')) bonus += 30;
+    if ((normalizedQuestion.includes('vanilla') || normalizedQuestion.includes('vanila')) && server.includes('vanilla')) bonus += 30;
+    if ((normalizedQuestion.includes('deathmatch') || normalizedQuestion.includes('death math') || normalizedQuestion.includes('dm')) && server.includes('deathmatch')) bonus += 30;
+
+    // Dá prioridade para frase exata: "qual carne posso comer", "como fazer bancada", etc.
+    for (const keyword of (faq.keywords || [])) {
+      const normalizedKeyword = normalizeText(keyword);
+      if (!keywordIsStrong(normalizedKeyword)) continue;
+
+      if (normalizedQuestion.includes(normalizedKeyword)) {
+        bonus += normalizedKeyword.includes(' ') ? 18 : 6;
+      }
+
+      if (tokens.includes(normalizedKeyword)) {
+        bonus += 4;
+      }
+    }
+
+    // Se o título tem várias palavras da pergunta, aumenta confiança.
+    bonus += scoreText(title, tokens);
+
+    return {
+      ...item,
+      score: Number(item.score || 0) + bonus,
+      index
+    };
+  });
+
+  boosted.sort((a, b) => b.score - a.score || a.index - b.index);
+
+  // A IA deve responder direto, sem despejar 3 assuntos parecidos no Discord.
+  return boosted.slice(0, 1);
+}
+
+function shouldShowRulesTogether(question = '', bestFaqs = []) {
+  if (!Array.isArray(bestFaqs) || bestFaqs.length === 0) return true;
+
+  const text = normalizeText(question);
+  const asksForRule = [
+    'regra', 'regras', 'limite', 'proibido', 'permitido', 'pode raid', 'raid',
+    'ban', 'banimento', 'punicao', 'punição', 'codelock', 'portao', 'portão'
+  ].some((word) => text.includes(normalizeText(word)));
+
+  // Para perguntas de tutorial tipo "qual carne posso comer" e "como fazer bancada",
+  // mostra só a resposta limpa. Para dúvidas de regra, mostra regra junto.
+  return asksForRule;
+}
+
 function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '') {
   if (!faqResults.length && !ruleResults.length) {
     return baseEmbed()
