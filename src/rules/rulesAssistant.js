@@ -235,10 +235,21 @@ const MOD_GUIDES = [
     server: 'BBP',
     keywords: ['bbp','workbench','bancada','mesa','craft','craftar','crafting book','livro','blueprint','planks','prancha','5 planks','5 pranchas'],
     answer: [
-      '**Workbench/Bancada BBP** é usada para criar/organizar construções do BaseBuildingPlus.',
-      'Receita comum encontrada em guias do BBP: **5 pranchas + 1 BBP Crafting Book/Blueprint**. Em alguns servidores isso pode mudar por configuração.',
-      'Depois de criar, coloque a bancada em local seguro. A partir dela você cria kits/hologramas e prepara peças conforme o mod/servidor permite.',
-      'Se não aparecer a opção de craft, confira se os itens estão nas mãos/inventário correto, se o livro é o correto e se o servidor alterou a receita.'
+      '**Resposta direta:** para fazer a **bancada/workbench do BBP**, normalmente você precisa de **5 pranchas + 1 BBP Crafting Book/Blueprint**. No seu servidor a receita pode ser alterada pela staff.',
+      '',
+      '**Passo a passo para o player:**',
+      '1. Pegue/ache o **BBP Crafting Book/Blueprint**.',
+      '2. Tenha **5 pranchas** no inventário/mãos.',
+      '3. No inventário, combine as pranchas com o livro/blueprint ou use a ação de craft que aparecer.',
+      '4. Quando criar o kit/bancada, coloque no chão em lugar plano e dentro da sua base.',
+      '5. Depois de posicionar, use a tecla de interação do DayZ/mod para confirmar. A tecla pode mudar por configuração; confira em **ESC > Controles**.',
+      '',
+      '**Se não aparecer opção de craft:**',
+      '• confirme se o item é o **BBP Crafting Book/Blueprint** correto;',
+      '• confira se as pranchas estão empilhadas/quantidade certa;',
+      '• teste com o item na mão e depois no inventário;',
+      '• o servidor pode ter mudado a receita ou bloqueado a bancada;',
+      '• se mesmo assim não funcionar, mande print em ticket.'
     ].join('\n')
   },
   {
@@ -399,6 +410,593 @@ const MOD_GUIDES = [
 ];
 
 
+
+const DEEP_GUIDES = [
+  {
+    title: 'BBP — Bancada / Workbench passo a passo completo',
+    server: 'BBP',
+    keywords: ['bbp','basebuildingplus','base building plus','bancada','workbench','mesa','crafting book','blueprint','livro','prancha','pranchas','planks','como fazer bancada','fazer bancada','criar bancada','craftar bancada'],
+    answer: [
+      '**Resposta direta:** para fazer a **bancada/workbench do BBP**, normalmente é **5 pranchas + 1 BBP Crafting Book/Blueprint**. Mas servidor pode alterar receita.',
+      '',
+      '**Passo a passo para o player:**',
+      '1. Pegue **5 pranchas**.',
+      '2. Pegue o item **BBP Crafting Book/Blueprint**.',
+      '3. Abra o inventário e tente combinar o livro com as pranchas. Em alguns servidores precisa segurar o livro na mão; em outros, deixar tudo no inventário e usar o menu de craft.',
+      '4. Criou o kit/bancada? Coloque no chão em área plana, de preferência dentro da sua base.',
+      '5. Confirme o posicionamento pelo menu de interação do DayZ/mod.',
+      '6. Depois use a bancada para criar kits/peças de construção do BBP, conforme a configuração do servidor.',
+      '',
+      '**Se não aparecer opção:**',
+      '• veja se é o **livro/blueprint correto do BBP**;',
+      '• separe e junte as pranchas novamente;',
+      '• teste livro na mão e pranchas no inventário;',
+      '• confira se a bancada está liberada no servidor;',
+      '• se continuar, mande print em ticket porque a receita pode estar alterada.'
+    ].join('\n')
+  },
+  {
+    title: 'BBP — Como construir parede, piso, teto, porta e portão',
+    server: 'BBP',
+    keywords: ['bbp','construir','construção','construcao','parede','piso','teto','roof','floor','wall','door','gate','portao','portão','foundation','base','holograma','kit bbp'],
+    answer: [
+      '**Como construir no BBP:**',
+      '1. Faça ou pegue o **kit** da peça que quer colocar: foundation, floor, wall, door, gate, roof etc.',
+      '2. Coloque o kit no chão e ajuste o **holograma** da peça.',
+      '3. Gire/alinha até ficar correto. Se estiver vermelho ou não deixa colocar, tem colisão, terreno ruim ou área bloqueada.',
+      '4. Confirme a posição.',
+      '5. Adicione materiais exigidos pela peça: pranchas, pregos, metal/concreto conforme o tier.',
+      '6. Use a ferramenta correta para construir/avançar a peça.',
+      '',
+      '**Dicas:**',
+      '• comece pela fundação/piso para alinhar a base;',
+      '• evite colocar peça atravessando terreno/árvore/pedra;',
+      '• deixe espaço para passar; corredor bugado pode dar problema com regra;',
+      '• se a peça não aceita material, olhe a peça pelo ângulo certo e confira se está no estágio anterior.'
+    ].join('\n')
+  },
+  {
+    title: 'BBP — Materiais, tiers e evolução de construção',
+    server: 'BBP',
+    keywords: ['bbp','materiais','material','tier','t1','t2','t3','madeira','metal','concreto','pregos','nails','sheet metal','concrete','frame','estrutura','upgrade'],
+    answer: [
+      'No BBP, as peças podem ter estágios/tiers. O servidor pode mudar valores, mas a lógica comum é:',
+      '',
+      '• **Frame/estrutura:** primeira etapa da peça.',
+      '• **T1 madeira:** usa pranchas/pregos.',
+      '• **T2 metal:** usa metal/sheet metal e mais material.',
+      '• **T3 concreto:** usa concreto/itens de concreto se habilitado.',
+      '',
+      '**Como evoluir:** olhe para a peça, coloque material correto no inventário/mão, use a ferramenta certa e execute a opção de construir/upgrade.',
+      '**Se não evolui:** falta material, ferramenta errada, peça bugada, tier não habilitado ou servidor mudou a receita.'
+    ].join('\n')
+  },
+  {
+    title: 'MMG Storage — Como criar, colocar e usar storage',
+    server: 'Storage',
+    keywords: ['mmg','mmg storage','mmg base storage','storage','storages','caixa','armario','armário','locker','crate','crates','bau','baú','guardar loot','criar storage','craft storage','fazer storage','colocar storage'],
+    answer: [
+      '**MMG Base Storage** adiciona caixas/armários/storages para guardar loot. Os itens geralmente vêm marcados com **MMG**.',
+      '',
+      '**Como usar:**',
+      '1. Ache, compre ou crafte o storage conforme o servidor configurou.',
+      '2. Coloque o storage dentro da sua base, em local sem bloquear passagem.',
+      '3. Posicione no chão e confirme.',
+      '4. Abra o inventário do storage e guarde o loot.',
+      '5. Proteja o storage com a base, porque a versão **NoCodeLock** normalmente não usa codelock no storage.',
+      '',
+      '**Problemas comuns:**',
+      '• se slot sumir, pode ser conflito com outro mod de storage;',
+      '• se não abre, tente relogar e testar outro ângulo;',
+      '• em alguns servidores storage pode desmontar com **screwdriver/chave de fenda**;',
+      '• se bugou loot, abra ticket com print/vídeo.'
+    ].join('\n')
+  },
+  {
+    title: 'KeyCard-Rooms — Como abrir salas de keycard',
+    server: 'KeyCard',
+    keywords: ['keycard','key card','cartao','cartão','keycards','sala keycard','keycard rooms','loot room','porta keycard','abrir keycard','bunker keycard','room'],
+    answer: [
+      '**KeyCard-Rooms** cria salas/portas de loot que exigem cartão/keycard.',
+      '',
+      '**Como usar:**',
+      '1. Encontre o **keycard/cartão** correto.',
+      '2. Vá até a sala/porta correspondente.',
+      '3. Segure o cartão ou deixe no inventário e interaja com o leitor/porta.',
+      '4. Espere abrir e entre rápido, porque normalmente a área chama PvP.',
+      '5. Lootie e saia com cuidado.',
+      '',
+      '**Se não abrir:** cartão pode ser de tier/cor errada, porta errada, evento em cooldown, cartão já usado, falta de energia/configuração ou item desabilitado.'
+    ].join('\n')
+  },
+  {
+    title: 'Airdrop-Upgraded — Como pegar ou chamar airdrop',
+    server: 'Eventos',
+    keywords: ['airdrop','airdrop-upgraded','air drop','drop','caixa drop','pegar drop','chamar drop','flare','sinalizador','airdrop flare','fumaça','fumaça do drop'],
+    answer: [
+      '**Airdrop-Upgraded** cria drops de loot pelo mapa e, se o servidor habilitar, permite chamar drop com **Airdrop Flare**.',
+      '',
+      '**Como pegar drop que apareceu:**',
+      '1. Veja o aviso/marcação/fumaça do drop.',
+      '2. Chegue com cuidado, porque geralmente vira PvP.',
+      '3. Limpe zumbis/players da área.',
+      '4. Abra o container/caixa e pegue o loot rápido.',
+      '5. Saia da área; não fique parado separando item no meio do drop.',
+      '',
+      '**Como chamar com flare:** equipe o flare, use em local aberto, espere o avião/drop e cuide da área até a caixa cair. Se não funcionar, o servidor pode ter bloqueado drop por player.'
+    ].join('\n')
+  },
+  {
+    title: 'Plane Crash — Como funciona e como pegar o loot',
+    server: 'Eventos',
+    keywords: ['plane crash','plane','aviao','avião','queda de aviao','queda de avião','crash','container avião','chave avião','chave do avião','zumbi avião','fumaça avião'],
+    answer: [
+      '**Plane Crash** cria evento de avião caído em locais aleatórios.',
+      '',
+      '**Como fazer o evento:**',
+      '1. Procure fumaça/som/local do crash.',
+      '2. Chegue com cuidado, porque é evento de loot alto e chama PvP.',
+      '3. Mate os zumbis do evento.',
+      '4. Procure a **chave** em um dos zumbis.',
+      '5. Use a chave para abrir o container/caixa colorida.',
+      '6. Pegue o loot e saia rápido.',
+      '',
+      'Se não achar chave, provavelmente outro player pegou, zumbi bugou, evento reiniciou ou a staff configurou diferente.'
+    ].join('\n')
+  },
+  {
+    title: 'MZ KOTH — Como jogar King of The Hill',
+    server: 'Eventos',
+    keywords: ['mz koth','koth','king of the hill','rei do morro','capturar koth','zona koth','evento koth','marker koth','ganhar koth'],
+    answer: [
+      '**MZ KOTH** é evento de disputa de zona.',
+      '',
+      '**Como jogar:**',
+      '1. Quando aparecer o aviso/marcador da KOTH, vá até a área.',
+      '2. Entre na zona e segure posição.',
+      '3. Se houver inimigo dentro, a zona pode ficar contestada.',
+      '4. Fique vivo e controle a área até terminar.',
+      '5. Ao vencer, pegue a recompensa conforme o servidor configurou.',
+      '',
+      'Dicas: leve munição, bandagem, granada/fumaça, não chegue correndo no aberto e cuidado com sniper em volta da zona.'
+    ].join('\n')
+  },
+  {
+    title: 'Expansion Navigation — Mapa, GPS, compass e marcadores',
+    server: 'Mapa',
+    keywords: ['expansion navigation','dayz expansion navigation','expansion','navigation','navegação','navegacao','mapa','map','gps','compass','bussola','bússola','marker','marcador','marcadores','ping','posição','posicao'],
+    answer: [
+      '**DayZ Expansion Navigation** adiciona recursos como mapa colorido, marcadores 2D/3D, HUD de bússola, GPS e posição do player, dependendo do servidor.',
+      '',
+      '**Como usar:**',
+      '1. Abra o mapa pela tecla configurada no servidor/cliente.',
+      '2. Use o menu do mapa para criar marcador/marker.',
+      '3. Se tiver GPS/bússola habilitado, acompanhe direção e posição pela HUD.',
+      '4. Se o servidor usar sistema de grupo, alguns marcadores/pings podem ser compartilhados.',
+      '5. Se marker não aparece, veja se a função foi habilitada pela staff.',
+      '',
+      'As teclas variam. Peça no Discord o bind oficial do servidor ou confira **ESC > Controles**.'
+    ].join('\n')
+  },
+  {
+    title: 'AC-Mod-Pack — AutoRun, Ear Plugs, Compass e funções',
+    server: 'Utilidades',
+    keywords: ['ac','ac mod','ac-mod-pack','acmodpack','autorun','auto run','ear plugs','earplugs','tampao','tampão','compass','bussola','bússola','killfeed','chat global','boost','check identity'],
+    answer: [
+      '**AC-Mod-Pack** é um pacote de utilidades. Pode incluir AutoRun, Boost, Chat Global, Check Identity, Clear Zone, Compass, Ear Plugs, KillFeed, LoadingScreen, Stamina e SpawnPoint.',
+      '',
+      '**Como usar:**',
+      '• **AutoRun:** ativa corrida automática no atalho configurado.',
+      '• **Ear Plugs/Tampão:** reduz volume do jogo no atalho configurado.',
+      '• **Compass/Bússola:** mostra direção se o servidor habilitou.',
+      '• **KillFeed/Chat Global:** aparecem automaticamente se estiverem ligados.',
+      '• **Check Identity:** pode mostrar/checar identidade conforme config.',
+      '',
+      'Se a função não abre, ela pode estar desabilitada ou a tecla mudou. Confira **ESC > Controles** ou pergunte o bind oficial da staff.'
+    ].join('\n')
+  },
+  {
+    title: 'Advanced Weapon Scopes — Como usar miras e lunetas',
+    server: 'Armas',
+    keywords: ['advanced weapon scopes','weapon scopes','scope','scopes','mira','miras','luneta','eotech','g33','leupold','zoom','zeroing','zerar mira','distancia','distância','sniper'],
+    answer: [
+      '**Advanced Weapon Scopes** troca/adiciona miras com recursos melhores que as miras vanilla.',
+      '',
+      '**Como usar:**',
+      '1. Ache uma mira compatível com sua arma.',
+      '2. Coloque a mira no slot da arma.',
+      '3. Mire normalmente.',
+      '4. Use os atalhos do jogo/mod para zoom, magnifier ou ajuste de distância quando a mira tiver essa função.',
+      '5. Se for tiro longo, ajuste zeroing/distância antes de disparar.',
+      '',
+      'Se não encaixa, a mira não é compatível com a arma. Se zoom não funciona, veja o bind nos controles.'
+    ].join('\n')
+  },
+  {
+    title: 'CBD Loot Rooms — Como usar salas de loot',
+    server: 'Loot Rooms',
+    keywords: ['cbd','cbd loot rooms','loot rooms','lootroom','sala loot','sala de loot','porta bloqueada','chave loot','abrir loot room','security','alarme'],
+    answer: [
+      '**CBD Loot Rooms** cria salas/prédios de loot especiais configurados pela staff.',
+      '',
+      '**Como usar:**',
+      '1. Descubra qual item abre a sala: chave, cartão, código ou requisito do servidor.',
+      '2. Vá até a sala correta.',
+      '3. Interaja com a porta/entrada.',
+      '4. Prepare-se para zumbis, alarme, PvP ou defesas configuradas.',
+      '5. Lootie rápido e saia.',
+      '',
+      'Se não abrir, pode estar em cooldown, item errado, falta de permissão/configuração ou evento desativado.'
+    ].join('\n')
+  },
+  {
+    title: 'SpawnerBubaku, DayZ Editor Loader e Restart_Server — o player usa?',
+    server: 'Server-side',
+    keywords: ['spawnerbubaku','dayz editor loader','editor loader','restart_server','restart server','server side','server-side','zumbi spawn','reinicio','reinício','mapa editado'],
+    answer: [
+      '**Esses mods são principalmente do servidor.** Player comum não usa botão nem menu deles.',
+      '',
+      '• **SpawnerBubaku:** cria triggers/áreas que spawnam zumbis ou entidades quando alguém entra.',
+      '• **DayZ Editor Loader:** carrega áreas/objetos custom feitos no DayZ Editor.',
+      '• **Restart_Server:** controla/avisa reinícios automáticos do servidor.',
+      '',
+      'Como player, você só percebe os efeitos: área custom, zumbis spawnando em bunker/evento ou aviso de restart. Se algo bugou, grave e abra ticket.'
+    ].join('\n')
+  }
+];
+
+
+
+const GENERAL_DAYZ_GUIDES = [
+  {
+    title: 'DayZ — O que comer e quais carnes são seguras',
+    server: 'Sobrevivência',
+    keywords: ['carne','carnes','comer','comida','alimento','alimentos','frango','galinha','vaca','boi','porco','ovelha','cabra','cervo','veado','lobo','urso','peixe','humana','human meat','gordura humana','fat','que carne posso comer'],
+    answer: [
+      '**Resposta direta:** você pode comer carne de animais como **galinha, porco, vaca/boi, ovelha, cabra, cervo/veado, javali, lobo, urso e peixe**, desde que esteja **bem cozida/assada/defumada**.',
+      '',
+      '**Nunca coma:** carne humana ou gordura humana. Isso pode causar **Kuru**, doença sem cura no DayZ.',
+      '',
+      '**Cuidado importante:** depois de esquartejar animal ou player, sua mão pode ficar suja de sangue. Lave as mãos ou use luvas antes de comer, senão pode ficar doente.',
+      '**Evite:** carne crua, podre/rotten ou comida estragada. Se precisar comer algo suspeito, coma bem pouco e procure remédio.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como curar cólera / doença da água',
+    server: 'Medicina',
+    keywords: ['colera','cólera','cholera','agua suja','água suja','agua contaminada','vomitando','vomito','vômito','beber agua','beber água','doenca agua','doença água'],
+    answer: [
+      '**Cólera** geralmente vem de beber água suja, garrafa/cantil contaminado ou água não tratada.',
+      '',
+      '**Como tratar:**',
+      '1. Tome **Tetracycline** e espere o efeito acabar antes de tomar outra.',
+      '2. Se tiver, use **Multivitamin** junto para aumentar imunidade.',
+      '3. Beba água em **pequenos goles** e coma em **pequenas mordidas**, senão vomita.',
+      '4. Esvazie/desinfete garrafa/cantil suspeito antes de usar de novo.',
+      '5. Mantenha comida, água, sangue e temperatura altos.',
+      '',
+      'Para prevenir: beba em poço, ferva água ou use **Chlorine Tablets**.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como curar gripe/resfriado',
+    server: 'Medicina',
+    keywords: ['gripe','resfriado','cold','flu','influenza','espirrando','tossindo','tosse','espirro','doente frio','frio','molhado','chuva'],
+    answer: [
+      '**Gripe/resfriado** aparece quando você fica frio, molhado, com imunidade baixa ou perto de player doente.',
+      '',
+      '**Como curar:**',
+      '1. Fique **seco e quente**: faça fogueira, troque roupa molhada ou torça roupa.',
+      '2. Tome **Tetracycline** ou **Multivitamin**.',
+      '3. Mantenha comida e água no branco/alto.',
+      '4. Evite dividir comida/garrafa com outro player, porque pode espalhar doença.',
+      '5. Use máscara se tiver contato com grupo.',
+      '',
+      'Se só tomar remédio mas continuar com frio/fome/sede, a doença demora mais para sair.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Salmonella / comida crua ou mão suja',
+    server: 'Medicina',
+    keywords: ['salmonella','comi cru','carne crua','mão suja','mao suja','sangue na mao','sangue na mão','vomitando comida','doente comida','comida podre','rotten'],
+    answer: [
+      '**Salmonella** costuma vir de carne crua, comida podre ou comer com mãos sujas de sangue.',
+      '',
+      '**Como curar:**',
+      '1. Tome **Charcoal Tablets** se tiver.',
+      '2. Multivitamin ajuda a imunidade.',
+      '3. Coma e beba em pequenas quantidades para não vomitar.',
+      '4. Lave as mãos, use luvas e jogue fora comida suspeita.',
+      '',
+      'Prevenção: cozinhe carne, lave as mãos depois de cortar animal/player e não coma comida rotten.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Infecção de ferida',
+    server: 'Medicina',
+    keywords: ['infecção','infeccao','wound infection','ferida infeccionada','curativo sujo','rag sujo','pano sujo','bandagem suja','corte infectado','doença ferida'],
+    answer: [
+      '**Infecção de ferida** pode acontecer ao usar pano/rag sujo ou tratar corte sem item limpo.',
+      '',
+      '**No começo:** desinfete a ferida com **Alcohol Tincture, Iodine ou Disinfectant Spray**.',
+      '**Se avançou:** use **Tetracycline** e mantenha status bons.',
+      '',
+      '**Prevenção:** use bandagem limpa, rags desinfetados e evite costurar/cuidar ferida com item ruim. Se usar rags, desinfete antes.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Kuru / doença da carne humana',
+    server: 'Medicina',
+    keywords: ['kuru','risada','rindo','tremendo','tremedeira','carne humana','gordura humana','human meat','human steak','human fat','canibalismo','canibal'],
+    answer: [
+      '**Kuru** vem de comer **carne humana ou gordura humana**.',
+      '',
+      '**Sintomas:** risadas involuntárias, tremedeira e dificuldade para mirar.',
+      '**Cura:** não tem cura normal no DayZ.',
+      '',
+      'Se você não quer ficar com Kuru, nunca coma carne/fat humana. Cuidado: gordura humana pode parecer gordura comum, então não confie em carne/gordura de origem desconhecida.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Sangramento, corte e bandagem',
+    server: 'Medicina',
+    keywords: ['sangrando','sangramento','bleeding','corte','cortes','bandagem','bandage','rag','pano','curativo','como estancar','perdendo sangue'],
+    answer: [
+      '**Para parar sangramento:** use **Bandage** ou **Rags**.',
+      '',
+      '**Passo a passo:**',
+      '1. Saia da linha de tiro e deite/esconda se possível.',
+      '2. Use bandage limpa. Se for usar rag, melhor estar desinfetado.',
+      '3. Se tiver muitos cortes, cure um por um.',
+      '4. Depois recupere sangue com comida/água ou use saline/blood se tiver.',
+      '',
+      'Evite usar pano sujo porque pode gerar infecção de ferida.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Perna quebrada / splint',
+    server: 'Medicina',
+    keywords: ['perna quebrada','quebrei a perna','broken leg','fratura','splint','tala','morphine','morfina','não consigo andar','nao consigo andar'],
+    answer: [
+      '**Perna quebrada** precisa de **Splint/Tala** para recuperar direito.',
+      '',
+      '**Como resolver:**',
+      '1. Faça uma tala com **sticks + rags/bandage** ou use splint pronto.',
+      '2. Coloque a tala.',
+      '3. Evite correr/pular até recuperar.',
+      '4. Morphine pode ajudar temporariamente, mas não substitui a tala.',
+      '',
+      'Se estiver sozinho, rasteje até árvore/arbusto, pegue sticks e faça a tala.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Para que serve cada remédio principal',
+    server: 'Medicina',
+    keywords: ['remedio','remédio','remedios','remédios','tetracycline','tetraciclina','charcoal','carvão','vitamina','multivitamin','morphine','epinephrine','epi','saline','blood bag','po-x','antidote','iodine','alcool','alcohol'],
+    answer: [
+      '**Resumo dos remédios:**',
+      '• **Tetracycline:** cólera, gripe/resfriado, infecção avançada.',
+      '• **Charcoal Tablets:** intoxicação alimentar/salmonella/veneno leve.',
+      '• **Multivitamin:** aumenta imunidade e ajuda a curar/prevenir doenças.',
+      '• **Morphine:** ajuda com dor/perna por tempo curto.',
+      '• **Epinephrine:** dá energia/ajuda a acordar/agir em emergência.',
+      '• **Saline Bag + IV:** ajuda recuperar volume/sangue.',
+      '• **Blood Bag:** recupera sangue, mas precisa tipo sanguíneo compatível.',
+      '• **Iodine/Alcohol/Disinfectant:** desinfeta ferida/rags/itens.',
+      '• **PO-X Antidote:** usado contra contaminação química/gás quando disponível.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como consertar carro',
+    server: 'Veículos',
+    keywords: ['consertar carro','concertar carro','arrumar carro','reparar carro','carro','veiculo','veículo','veiculos','veículos','radiador','spark plug','vela','bateria','pneu','roda','gasolina','agua no radiador','água no radiador'],
+    answer: [
+      '**Para um carro funcionar, normalmente precisa:**',
+      '• **Bateria de carro** carregada/boa;',
+      '• **Spark Plug/Vela** boa;',
+      '• **Radiador** bom e com água;',
+      '• **Rodas/pneus** bons;',
+      '• **Gasolina** no tanque.',
+      '',
+      '**Passo a passo:**',
+      '1. Coloque bateria, vela e radiador.',
+      '2. Encha o radiador com água antes de ligar, senão o motor superaquece.',
+      '3. Coloque gasolina no tanque.',
+      '4. Verifique pneus/rodas.',
+      '5. Entre, ligue e teste devagar.',
+      '',
+      '**Reparo:** pneu usa tire repair kit; algumas partes usam epoxy/blowtorch conforme versão/servidor. Motor ruined geralmente não tem conserto.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Radiador, água e superaquecimento',
+    server: 'Veículos',
+    keywords: ['radiador','radiator','agua radiador','água radiador','carro fumaçando','carro esquentando','superaqueceu','motor amarelo','motor vermelho','ferveu'],
+    answer: [
+      'Radiador sem água faz o carro superaquecer e pode destruir o motor.',
+      '',
+      '**Como cuidar:**',
+      '1. Coloque o radiador.',
+      '2. Encha com água usando garrafa/cantil/pote.',
+      '3. Antes de viajar, confira se ainda tem água.',
+      '4. Se o carro começar a fumaçar/esquentar, pare e confira radiador.',
+      '',
+      'Se o motor ficar ruined, normalmente não tem como recuperar.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Peças de carro e para que servem',
+    server: 'Veículos',
+    keywords: ['peças carro','pecas carro','itens carro','spark plug','vela','car battery','bateria carro','truck battery','bateria caminhão','glow plug','radiator','radiador','pneu','roda','gas canister','galão','galao'],
+    answer: [
+      '**Peças principais:**',
+      '• **Spark Plug/Vela:** ignição de carros pequenos.',
+      '• **Car Battery:** bateria de carro.',
+      '• **Truck Battery:** bateria de caminhão/veículos pesados.',
+      '• **Glow Plug:** usado em alguns veículos diesel/caminhão.',
+      '• **Radiator/Radiador:** resfria o motor e precisa de água.',
+      '• **Wheels/Rodas:** sem rodas boas o carro não anda direito.',
+      '• **Gasoline/Galão:** combustível.',
+      '• **Tire Repair Kit:** repara pneu danificado.',
+      '',
+      'Cada servidor/mod pode ter veículo extra com peça própria.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Para que servem ferramentas e itens comuns',
+    server: 'Itens',
+    keywords: ['para que serve','itens','ferramentas','ferramenta','knife','faca','machado','hatchet','serrote','saw','shovel','pá','pa','pliers','alicate','hammer','martelo','wrench','chave inglesa','duct tape','epoxy','sewing kit','leather sewing','sharpening stone'],
+    answer: [
+      '**Itens úteis:**',
+      '• **Faca:** cortar roupa, carne, casca de árvore, abrir lata, defesa.',
+      '• **Machado/Hatchet:** cortar árvore, lenha, construir e lutar.',
+      '• **Serrote/Saw:** fazer pranchas de madeira.',
+      '• **Shovel/Pá:** base, enterrar stash e algumas construções.',
+      '• **Pliers/Alicate:** arame, portão e construção vanilla.',
+      '• **Hammer/Martelo:** construção/reparo conforme servidor.',
+      '• **Duct Tape:** repara vários itens/roupas/alguns equipamentos.',
+      '• **Epoxy Putty:** repara capacete/partes plásticas e algumas peças.',
+      '• **Sewing Kit:** repara roupa comum.',
+      '• **Leather Sewing Kit:** repara colete/itens de couro.',
+      '• **Sharpening Stone:** repara faca/machado/ferramenta cortante.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Craft básico de sobrevivência',
+    server: 'Craft',
+    keywords: ['craft','craftar','fazer item','rags','trapo','pano','corda','rope','faca de pedra','stone knife','bone knife','vara de pesca','fishing rod','anzol','hook','fireplace','fogueira','hand drill','furadeira manual'],
+    answer: [
+      '**Crafts básicos:**',
+      '• **Rags/Panos:** corte roupa com faca/item afiado.',
+      '• **Rope/Corda:** pode ser feita com rags ou tripas, conforme versão/config.',
+      '• **Stone Knife:** combine pedras pequenas ou use pedra em rocha.',
+      '• **Bone Knife:** ossos + ferramenta/pedra.',
+      '• **Fishing Rod:** long stick + rope.',
+      '• **Hook/Anzol:** osso pode virar bone hook.',
+      '• **Fireplace/Fogueira:** sticks + rag/papel/casca.',
+      '• **Hand Drill Kit:** bark/casca + short stick para acender fogo sem fósforo.',
+      '',
+      'Se um craft não aparece, teste itens na mão/inventário e veja se o servidor alterou.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como fazer fogo e cozinhar',
+    server: 'Sobrevivência',
+    keywords: ['fogo','fogueira','fireplace','cozinhar','assar','cozinhar carne','cozinhar peixe','panela','cooking pot','frigideira','frying pan','gas stove','fogao','fogão','hand drill','match','fosforo','fósforo'],
+    answer: [
+      '**Como fazer fogo:**',
+      '1. Faça fireplace com sticks + papel/rag/casca.',
+      '2. Acenda com fósforo, isqueiro, flare ou hand drill kit.',
+      '3. Adicione lenha/sticks para manter.',
+      '',
+      '**Como cozinhar:**',
+      '• Carne em espeto: coloque carne no long stick e asse.',
+      '• Panela/frigideira: use em fogueira/fogão a gás.',
+      '• Evite comer cru. Carne assada/cozida/defumada é segura.',
+      '',
+      'Cuidado para não queimar a comida e não ficar muito tempo parado com fumaça visível.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Caça, pesca e comida no começo',
+    server: 'Sobrevivência',
+    keywords: ['caçar','cacar','pescar','pesca','fishing','hunt','hunting','comida começo','comida inicio','morrendo de fome','galinha','frango','peixe','maçã','maca','fruta','cogumelo'],
+    answer: [
+      '**Para não morrer de fome no começo:**',
+      '1. Procure frutas/cogumelos perto de árvores, mas evite podres.',
+      '2. Mate galinha/animal pequeno, corte com faca e cozinhe.',
+      '3. Faça vara de pesca com long stick + rope e anzol de osso.',
+      '4. Pesque em lago/mar, limpe o peixe e cozinhe.',
+      '5. Lave as mãos depois de cortar animal.',
+      '',
+      'Dica: pesca costuma ser uma das formas mais seguras de conseguir comida no começo.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Armas, munição e carregadores',
+    server: 'Combate',
+    keywords: ['arma','armas','munição','municao','carregador','magazine','recarregar','balas','calibre','juntar munição','colocar bala','rifle','pistola','shotgun','mira'],
+    answer: [
+      '**Como usar arma corretamente:**',
+      '1. Confira se a munição é do **calibre certo**.',
+      '2. Se a arma usa carregador, coloque as balas no carregador primeiro.',
+      '3. Coloque o carregador na arma.',
+      '4. Recarregue/cicle a arma se necessário.',
+      '5. Repare arma com **Weapon Cleaning Kit** se estiver danificada.',
+      '',
+      'Munição errada não entra. Carregador errado também não encaixa. Sempre cheque calibre e estado da arma.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Base vanilla: kit, parede, portão e codelock',
+    server: 'Base',
+    keywords: ['base vanilla','construir base','wall kit','fence kit','watchtower kit','portão','portao','gate','arame','wire','pliers','codelock','cadeado','nails','pregos','planks','pranchas'],
+    answer: [
+      '**Base vanilla básica:**',
+      '1. Faça/pegue **Fence Kit** ou Watchtower Kit.',
+      '2. Posicione no chão.',
+      '3. Coloque logs/postes se necessário.',
+      '4. Adicione pranchas e pregos.',
+      '5. Use martelo/hatchet para construir.',
+      '6. Para virar portão, use **metal wire/arame + pliers/alicate**.',
+      '7. Coloque codelock/cadeado para proteger.',
+      '',
+      'No seu servidor, respeite limite de portões, distância de área militar/bunker e regras de base.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Navegação sem se perder',
+    server: 'Mapa',
+    keywords: ['me perdi','perdido','mapa','navegar','navegação','navegacao','bussola','bússola','placa cidade','cidade','gps','coordenada','coordenadas','como achar base'],
+    answer: [
+      '**Como se localizar:**',
+      '1. Leia placas de cidade na estrada.',
+      '2. Use mapa/GPS/Expansion Navigation se o servidor tiver.',
+      '3. Compare costa, estrada, trilho, rio e montanha.',
+      '4. Use bússola para seguir norte/sul/leste/oeste.',
+      '5. Marque pontos importantes como base, poço, militar e trader/evento.',
+      '',
+      'Se spawnou na costa, siga estradas até achar placa e depois trace rota pelo mapa.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — O que fazer ao nascer / guia iniciante',
+    server: 'Iniciante',
+    keywords: ['iniciante','comecei','nasci','spawn','o que fazer','primeiros passos','guia iniciante','sobreviver começo','novo no dayz'],
+    answer: [
+      '**Primeiros passos no DayZ:**',
+      '1. Ache uma faca ou faça stone knife.',
+      '2. Procure poço para beber água segura.',
+      '3. Pegue roupa melhor e mochila.',
+      '4. Busque comida: fruta, galinha, pesca ou lata.',
+      '5. Faça rags com roupa extra.',
+      '6. Evite cidade grande sem arma; zumbi e player matam rápido.',
+      '7. Suba para o interior do mapa quando tiver comida/água.',
+      '',
+      'Prioridade: **faca > água > comida > roupa > arma > mapa/base**.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Todos os reparos principais',
+    server: 'Reparo',
+    keywords: ['reparar','consertar','concertar','arrumar','kit reparo','reparo roupa','reparo arma','reparo colete','reparo capacete','reparo pneu','tire repair','weapon cleaning','duct tape','epoxy','sewing'],
+    answer: [
+      '**Reparos comuns:**',
+      '• **Weapon Cleaning Kit:** armas.',
+      '• **Sewing Kit:** roupas comuns.',
+      '• **Leather Sewing Kit:** colete/itens de couro.',
+      '• **Duct Tape:** vários itens e roupas, depende do servidor.',
+      '• **Epoxy Putty:** capacete/itens duros e algumas peças.',
+      '• **Tire Repair Kit:** pneus.',
+      '• **Sharpening Stone:** faca, machado e ferramentas cortantes.',
+      '• **Blowtorch:** pode reparar partes/veículos conforme versão/config.',
+      '',
+      'Item ruined geralmente não conserta.'
+    ].join('\n')
+  }
+];
+
+
 function normalizeText(text = '') {
   return String(text)
     .toLowerCase()
@@ -461,7 +1059,7 @@ function shouldUseWebBeforeRules(question = '') {
 function searchFaq(question) {
   const tokens = tokenize(question);
   const normalizedQuestion = normalizeText(question);
-  return [...FAQS, ...MOD_GUIDES].map((faq) => {
+  return [...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
     const keywordScore = faq.keywords.reduce((sum, kw) => {
       const normalizedKeyword = normalizeText(kw);
       const directMatch = tokens.includes(normalizedKeyword) || normalizedQuestion.includes(normalizedKeyword);
@@ -507,6 +1105,117 @@ function searchRules(question = '') {
 
   return results.sort((a, b) => b.score - a.score || a.rule.number - b.rule.number).slice(0, 3);
 }
+
+
+function isRuleQuestion(question = '') {
+  const text = normalizeText(question);
+  return (
+    text.includes('regra') ||
+    text.includes('limite') ||
+    text.includes('pode') ||
+    text.includes('proibido') ||
+    text.includes('ban') ||
+    text.includes('raid') ||
+    text.includes('clan') ||
+    text.includes('cla') ||
+    text.includes('grupo') ||
+    text.includes('quantos')
+  );
+}
+
+function preferBestFaq(question, faqResults) {
+  if (!faqResults.length) return [];
+
+  const text = normalizeText(question);
+
+  // Se o player perguntou de BBP, não mistura resposta genérica de Mods nem regra de limite.
+  if (text.includes('bbp') || text.includes('basebuildingplus') || text.includes('base building plus')) {
+    const bbp = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.server}`).includes('bbp') || normalizeText(faq.answer).includes('basebuildingplus'));
+    if (bbp.length) return [bbp[0]];
+  }
+
+  if (text.includes('mmg') || text.includes('storage') || text.includes('storages')) {
+    const mmg = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('mmg') || normalizeText(`${faq.title} ${faq.answer}`).includes('storage'));
+    if (mmg.length) return [mmg[0]];
+  }
+
+  if (text.includes('keycard') || text.includes('key card')) {
+    const keycard = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('keycard'));
+    if (keycard.length) return [keycard[0]];
+  }
+
+  if (text.includes('airdrop') || text.includes('drop')) {
+    const airdrop = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('airdrop'));
+    if (airdrop.length) return [airdrop[0]];
+  }
+
+  if (text.includes('koth')) {
+    const koth = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('koth'));
+    if (koth.length) return [koth[0]];
+  }
+
+  if (text.includes('plane crash') || text.includes('aviao') || text.includes('avião')) {
+    const plane = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('plane crash'));
+    if (plane.length) return [plane[0]];
+  }
+
+  if (text.includes('expansion') || text.includes('navigation') || text.includes('navegacao') || text.includes('navegação')) {
+    const expansion = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('expansion'));
+    if (expansion.length) return [expansion[0]];
+  }
+
+
+  if (text.includes('colera') || text.includes('cholera') || text.includes('gripe') || text.includes('resfriado') || text.includes('salmonella') || text.includes('kuru') || text.includes('remedio') || text.includes('remédio') || text.includes('doenca') || text.includes('doença')) {
+    const med = faqResults.filter(({ faq }) => ['Medicina'].includes(faq.server));
+    if (med.length) return [med[0]];
+  }
+
+  if (text.includes('carne') || text.includes('comer') || text.includes('comida') || text.includes('fome')) {
+    const food = faqResults.filter(({ faq }) => ['Sobrevivência'].includes(faq.server) || normalizeText(faq.title).includes('comer'));
+    if (food.length) return [food[0]];
+  }
+
+  if (text.includes('carro') || text.includes('veiculo') || text.includes('veículo') || text.includes('radiador') || text.includes('spark') || text.includes('bateria')) {
+    const car = faqResults.filter(({ faq }) => ['Veículos'].includes(faq.server));
+    if (car.length) return [car[0]];
+  }
+
+  if (text.includes('para que serve') || text.includes('ferramenta') || text.includes('item') || text.includes('itens')) {
+    const item = faqResults.filter(({ faq }) => ['Itens','Reparo'].includes(faq.server));
+    if (item.length) return [item[0]];
+  }
+
+  if (text.includes('craft') || text.includes('craftar') || text.includes('fogueira') || text.includes('fogo') || text.includes('pescar') || text.includes('pesca')) {
+    const craft = faqResults.filter(({ faq }) => ['Craft','Sobrevivência'].includes(faq.server));
+    if (craft.length) return [craft[0]];
+  }
+
+  return [faqResults[0]];
+}
+
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function thinkBeforeAnswer(message, content = '') {
+  const base = 2200;
+  const byLength = Math.min(4200, String(content).length * 28);
+  const ms = Math.min(6500, base + byLength);
+
+  await message.channel.sendTyping().catch(() => null);
+  await sleep(Math.floor(ms / 2));
+  await message.channel.sendTyping().catch(() => null);
+  await sleep(Math.ceil(ms / 2));
+}
+
+function shouldShowRulesTogether(question = '', faqResults = []) {
+  if (!isRuleQuestion(question)) return false;
+  // Se já tem guia forte de mod, não mistura regras aleatórias junto.
+  if (faqResults.length && !normalizeText(question).includes('regra')) return false;
+  return true;
+}
+
 
 function shortText(text = '', max = 500) {
   const value = String(text).replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -695,7 +1404,7 @@ function buildWebFallbackEmbed(message, web) {
 }
 
 
-function buildQuestionAnswerEmbed(message, faqResults, ruleResults) {
+function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '') {
   if (!faqResults.length && !ruleResults.length) {
     return baseEmbed()
       .setColor(0xe67e22)
@@ -704,54 +1413,79 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults) {
         `${message.author}, não achei uma resposta exata para essa pergunta.`,
         '',
         'Tente perguntar mais direto, por exemplo:',
-        '• qual limite de grupo no vanilla?',
+        '• como fazer bancada no BBP?',
+        '• como criar storage MMG?',
+        '• como funciona Plane Crash?',
+        '• qual limite de grupo no Vanilla?',
         '• tem algum admin on?',
-        '• como usa codelock?',
-        '• como fazer bancada BBP?',
-        '• qual horário de raid?',
         '',
-        'Se for caso sério, abra ticket para a staff confirmar.'
+        'Você também pode começar com **pesquisa:** para eu buscar fora do bot com SerpApi.'
       ].join('\n'));
   }
+
+  const bestFaqs = preferBestFaq(question, faqResults);
+  const showRules = shouldShowRulesTogether(question, bestFaqs);
 
   const embed = baseEmbed()
     .setColor(0xff3131)
     .setTitle('🤖 Sobrevivente IA respondeu')
     .setDescription([
-      `${message.author}, encontrei isso para sua dúvida:`,
+      `${message.author}, vou responder direto o que você perguntou:`,
       '',
-      '⚠️ A IA ajuda com base nas regras/guias. A decisão final é da staff.'
+      '⚠️ Algumas teclas/receitas podem mudar por configuração do servidor. Se não funcionar igual, abra ticket com print.'
     ].join('\n'));
 
-  for (const { faq } of faqResults.slice(0, 2)) {
+  if (bestFaqs.length) {
+    const { faq } = bestFaqs[0];
+
     embed.addFields({
       name: `✅ ${faq.title}`,
       value: [
         `**Área:** ${faq.server}`,
-        shortText(faq.answer, 650),
-        faq.related?.length ? `**Base nas regras:** ${faq.related.map((item) => `/${item.set} regra ${item.rule}`).join(', ')}` : ''
-      ].filter(Boolean).join('\n'),
-      inline: false
-    });
-  }
-
-  const usedRuleKeys = new Set((faqResults || []).flatMap(({ faq }) => (faq.related || []).map((item) => `${item.set}:${item.rule}`)));
-
-  for (const { set, rule } of ruleResults) {
-    const key = `${set.key}:${rule.number}`;
-    if (usedRuleKeys.has(key)) continue;
-
-    embed.addFields({
-      name: `${set.emoji} ${set.server} • Regra ${rule.number} — ${rule.title}`,
-      value: [
-        `**Parte:** ${rule.category}`,
-        shortText(rule.description, 520),
-        `Use: **/regra numero:${rule.number} servidor:${set.server}**`
+        shortText(faq.answer, 1020)
       ].join('\n'),
       inline: false
     });
 
-    if ((embed.data.fields || []).length >= 4) break;
+    // Se a resposta for grande, manda uma segunda parte com o restante.
+    if (String(faq.answer).length > 1020) {
+      embed.addFields({
+        name: '📌 Continuação',
+        value: shortText(String(faq.answer).slice(1020), 1020),
+        inline: false
+      });
+    }
+
+    if (faq.related?.length) {
+      embed.addFields({
+        name: '📚 Base nas regras',
+        value: faq.related.map((item) => `• **/${item.set} regra ${item.rule}**`).join('\n'),
+        inline: false
+      });
+    }
+  }
+
+  if (showRules || !bestFaqs.length) {
+    const usedRuleKeys = new Set((bestFaqs || []).flatMap(({ faq }) => (faq.related || []).map((item) => `${item.set}:${item.rule}`)));
+    let added = 0;
+
+    for (const { set, rule } of ruleResults) {
+      const key = `${set.key}:${rule.number}`;
+      if (usedRuleKeys.has(key)) continue;
+
+      embed.addFields({
+        name: `${set.emoji} ${set.server} • Regra ${rule.number} — ${rule.title}`,
+        value: [
+          `**Parte:** ${rule.category}`,
+          shortText(rule.description, 620),
+          `Use: **/regra numero:${rule.number} servidor:${set.server}**`
+        ].join('\n'),
+        inline: false
+      });
+
+      added += 1;
+      if (added >= 2 || (embed.data.fields || []).length >= 4) break;
+    }
   }
 
   return embed;
@@ -786,6 +1520,8 @@ async function handleRulesQuestion(message) {
   const content = message.content?.trim();
   if (!content) return false;
 
+  await thinkBeforeAnswer(message, content);
+
   if (isAdminQuestion(content)) {
     return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] });
   }
@@ -807,7 +1543,7 @@ async function handleRulesQuestion(message) {
     return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
   }
 
-  const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults);
+  const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
 
   return temporaryReply(message, { embeds: [embed] });
 }
