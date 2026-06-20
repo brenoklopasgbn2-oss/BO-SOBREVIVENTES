@@ -1056,20 +1056,106 @@ function shouldUseWebBeforeRules(question = '') {
 }
 
 
+
+const GENERIC_KEYWORDS = new Set([
+  'como','usar','usa','uso','fazer','faz','criar','serve','pra que serve','quanto','quantos','qual','quais',
+  'player','players','jogador','jogadores','item','itens','coisa','coisas','posso','pode','tem','ter'
+]);
+
+function keywordIsStrong(keyword = '') {
+  const value = normalizeText(keyword);
+  return value.length >= 3 && !GENERIC_KEYWORDS.has(value);
+}
+
+function strongKeywordMatches(faq, question = '', tokens = []) {
+  const normalizedQuestion = normalizeText(question);
+  return (faq.keywords || []).filter((kw) => {
+    const normalizedKeyword = normalizeText(kw);
+    if (!keywordIsStrong(normalizedKeyword)) return false;
+    return tokens.includes(normalizedKeyword) || normalizedQuestion.includes(normalizedKeyword);
+  });
+}
+
+function isSimpleMathQuestion(question = '') {
+  const text = normalizeText(question).replace(/\s+/g, ' ');
+  if (!/[0-9]/.test(text)) return false;
+  if (!/[+\-*/x×÷]/.test(question)) return false;
+  return /(\d+(?:[.,]\d+)?)\s*([+\-*/x×÷])\s*(\d+(?:[.,]\d+)?)/.test(question);
+}
+
+function buildMathEmbed(message, question = '') {
+  const match = String(question).match(/(\d+(?:[.,]\d+)?)\s*([+\-*/x×÷])\s*(\d+(?:[.,]\d+)?)/);
+  if (!match) return null;
+
+  const a = Number(match[1].replace(',', '.'));
+  const op = match[2];
+  const b = Number(match[3].replace(',', '.'));
+
+  let result = null;
+  if (op === '+') result = a + b;
+  if (op === '-') result = a - b;
+  if (op === '*' || op === 'x' || op === '×') result = a * b;
+  if (op === '/' || op === '÷') result = b === 0 ? null : a / b;
+
+  if (result === null || Number.isNaN(result)) {
+    return baseEmbed()
+      .setColor(0xe67e22)
+      .setTitle('🧮 Conta')
+      .setDescription(`${message.author}, não consegui calcular essa conta.`);
+  }
+
+  return baseEmbed()
+    .setColor(0x2ecc71)
+    .setTitle('🧮 Sobrevivente IA calculou')
+    .setDescription(`${message.author}, **${match[1]} ${op} ${match[3]} = ${Number.isInteger(result) ? result : result.toFixed(2)}**.`);
+}
+
+function shouldSearchServerRules(question = '') {
+  const text = normalizeText(question);
+
+  const ruleWords = ['regra','limite','raid','ban','banimento','punição','punicao','proibido','permitido','clan','cla','clã','grupo','base','portao','portão','codelock','dm','deathmatch','vanilla','vanila','bbp'];
+  const hasRuleWord = ruleWords.some((word) => text.includes(normalizeText(word)));
+
+  // Evita cair em regra só porque o player falou "quantos".
+  return hasRuleWord;
+}
+
+function isClearlyDayZOrServerQuestion(question = '') {
+  const text = normalizeText(question);
+
+  const words = [
+    'dayz','vanilla','vanila','bbp','deathmatch','dm','raid','base','clan','clã','cla','zumbi','infectado',
+    'carne','comer','comida','fome','sede','agua','água','colera','cólera','gripe','resfriado','salmonella','kuru',
+    'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
+    'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
+    'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff'
+  ];
+
+  return words.some((word) => text.includes(normalizeText(word)));
+}
+
+
 function searchFaq(question) {
   const tokens = tokenize(question);
   const normalizedQuestion = normalizeText(question);
-  return [...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
-    const keywordScore = faq.keywords.reduce((sum, kw) => {
-      const normalizedKeyword = normalizeText(kw);
-      const directMatch = tokens.includes(normalizedKeyword) || normalizedQuestion.includes(normalizedKeyword);
-      return sum + (directMatch ? 8 : 0);
-    }, 0);
-    const textScore = scoreText(`${faq.title} ${faq.server} ${faq.answer}`, tokens);
-    return { faq, score: keywordScore + textScore };
-  }).filter((item) => item.score >= 8).sort((a, b) => b.score - a.score).slice(0, 3);
-}
 
+  return [...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
+    const strongMatches = strongKeywordMatches(faq, question, tokens);
+
+    // Se não bateu nenhuma palavra forte do guia, não usa esse guia.
+    if (!strongMatches.length) return { faq, score: 0 };
+
+    const phraseBonus = (faq.keywords || []).some((kw) => {
+      const normalizedKeyword = normalizeText(kw);
+      return keywordIsStrong(normalizedKeyword) && normalizedKeyword.includes(' ') && normalizedQuestion.includes(normalizedKeyword);
+    }) ? 12 : 0;
+
+    const keywordScore = strongMatches.length * 10;
+    const textScore = scoreText(`${faq.title} ${faq.server}`, tokens);
+
+    return { faq, score: keywordScore + textScore + phraseBonus };
+  }).filter((item) => item.score >= 10).sort((a, b) => b.score - a.score).slice(0, 3);
+}
 function scoreRule(rule, tokens) {
   let score = 0;
   const title = normalizeText(rule.title);
@@ -1088,6 +1174,8 @@ function scoreRule(rule, tokens) {
 }
 
 function searchRules(question = '') {
+  if (!shouldSearchServerRules(question)) return [];
+
   const tokens = tokenize(question);
   if (tokens.length === 0) return [];
 
@@ -1098,125 +1186,13 @@ function searchRules(question = '') {
     const set = getRuleSet(key);
     for (const rule of set.rules || []) {
       const score = scoreRule(rule, tokens);
-      if (score < 8) continue;
+      if (score < 10) continue;
       results.push({ set, rule, score });
     }
   }
 
   return results.sort((a, b) => b.score - a.score || a.rule.number - b.rule.number).slice(0, 3);
 }
-
-
-function isRuleQuestion(question = '') {
-  const text = normalizeText(question);
-  return (
-    text.includes('regra') ||
-    text.includes('limite') ||
-    text.includes('pode') ||
-    text.includes('proibido') ||
-    text.includes('ban') ||
-    text.includes('raid') ||
-    text.includes('clan') ||
-    text.includes('cla') ||
-    text.includes('grupo') ||
-    text.includes('quantos')
-  );
-}
-
-function preferBestFaq(question, faqResults) {
-  if (!faqResults.length) return [];
-
-  const text = normalizeText(question);
-
-  // Se o player perguntou de BBP, não mistura resposta genérica de Mods nem regra de limite.
-  if (text.includes('bbp') || text.includes('basebuildingplus') || text.includes('base building plus')) {
-    const bbp = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.server}`).includes('bbp') || normalizeText(faq.answer).includes('basebuildingplus'));
-    if (bbp.length) return [bbp[0]];
-  }
-
-  if (text.includes('mmg') || text.includes('storage') || text.includes('storages')) {
-    const mmg = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('mmg') || normalizeText(`${faq.title} ${faq.answer}`).includes('storage'));
-    if (mmg.length) return [mmg[0]];
-  }
-
-  if (text.includes('keycard') || text.includes('key card')) {
-    const keycard = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('keycard'));
-    if (keycard.length) return [keycard[0]];
-  }
-
-  if (text.includes('airdrop') || text.includes('drop')) {
-    const airdrop = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('airdrop'));
-    if (airdrop.length) return [airdrop[0]];
-  }
-
-  if (text.includes('koth')) {
-    const koth = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('koth'));
-    if (koth.length) return [koth[0]];
-  }
-
-  if (text.includes('plane crash') || text.includes('aviao') || text.includes('avião')) {
-    const plane = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('plane crash'));
-    if (plane.length) return [plane[0]];
-  }
-
-  if (text.includes('expansion') || text.includes('navigation') || text.includes('navegacao') || text.includes('navegação')) {
-    const expansion = faqResults.filter(({ faq }) => normalizeText(`${faq.title} ${faq.answer}`).includes('expansion'));
-    if (expansion.length) return [expansion[0]];
-  }
-
-
-  if (text.includes('colera') || text.includes('cholera') || text.includes('gripe') || text.includes('resfriado') || text.includes('salmonella') || text.includes('kuru') || text.includes('remedio') || text.includes('remédio') || text.includes('doenca') || text.includes('doença')) {
-    const med = faqResults.filter(({ faq }) => ['Medicina'].includes(faq.server));
-    if (med.length) return [med[0]];
-  }
-
-  if (text.includes('carne') || text.includes('comer') || text.includes('comida') || text.includes('fome')) {
-    const food = faqResults.filter(({ faq }) => ['Sobrevivência'].includes(faq.server) || normalizeText(faq.title).includes('comer'));
-    if (food.length) return [food[0]];
-  }
-
-  if (text.includes('carro') || text.includes('veiculo') || text.includes('veículo') || text.includes('radiador') || text.includes('spark') || text.includes('bateria')) {
-    const car = faqResults.filter(({ faq }) => ['Veículos'].includes(faq.server));
-    if (car.length) return [car[0]];
-  }
-
-  if (text.includes('para que serve') || text.includes('ferramenta') || text.includes('item') || text.includes('itens')) {
-    const item = faqResults.filter(({ faq }) => ['Itens','Reparo'].includes(faq.server));
-    if (item.length) return [item[0]];
-  }
-
-  if (text.includes('craft') || text.includes('craftar') || text.includes('fogueira') || text.includes('fogo') || text.includes('pescar') || text.includes('pesca')) {
-    const craft = faqResults.filter(({ faq }) => ['Craft','Sobrevivência'].includes(faq.server));
-    if (craft.length) return [craft[0]];
-  }
-
-  return [faqResults[0]];
-}
-
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function thinkBeforeAnswer(message, content = '') {
-  const base = 2200;
-  const byLength = Math.min(4200, String(content).length * 28);
-  const ms = Math.min(6500, base + byLength);
-
-  await message.channel.sendTyping().catch(() => null);
-  await sleep(Math.floor(ms / 2));
-  await message.channel.sendTyping().catch(() => null);
-  await sleep(Math.ceil(ms / 2));
-}
-
-function shouldShowRulesTogether(question = '', faqResults = []) {
-  if (!isRuleQuestion(question)) return false;
-  // Se já tem guia forte de mod, não mistura regras aleatórias junto.
-  if (faqResults.length && !normalizeText(question).includes('regra')) return false;
-  return true;
-}
-
-
 function shortText(text = '', max = 500) {
   const value = String(text).replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
   if (value.length <= max) return value;
@@ -1343,6 +1319,7 @@ async function searchSerpApi(question) {
 
   return {
     provider: 'Google via SerpApi',
+    answerBox: data?.answer_box || data?.knowledge_graph || null,
     results: items.slice(0, 3).map((item) => ({
       title: item.title || 'Resultado',
       snippet: item.snippet || 'Sem resumo disponível.',
@@ -1362,34 +1339,43 @@ async function searchWebFallback(question) {
 }
 
 function buildWebFallbackEmbed(message, web) {
-  if (!web?.results?.length) {
+  if (!web?.results?.length && !web?.answerBox) {
     const configured = Boolean((GOOGLE_SEARCH_API_KEY && GOOGLE_SEARCH_CX) || SERPAPI_KEY);
 
     return baseEmbed()
       .setColor(0xe67e22)
       .setTitle('🤖 Sobrevivente IA')
       .setDescription([
-        `${message.author}, não achei isso nas regras nem nos meus guias rápidos.`,
+        `${message.author}, eu não achei resposta confiável na minha base interna.`,
         '',
         configured
-          ? 'Tente perguntar com outras palavras, use "pesquisa:" no começo da pergunta ou abra ticket para a staff confirmar.'
-          : 'A pesquisa na web ainda não foi configurada. A staff precisa colocar uma chave de busca no Railway.',
+          ? 'Também tentei pesquisar fora, mas não encontrei resultado bom. Tente perguntar com mais detalhes.'
+          : 'A pesquisa externa ainda não está configurada. Coloque **SERPAPI_KEY** no Railway para eu buscar fora.',
         '',
-        '⚠️ Em dúvida sobre regra do servidor, a decisão final sempre é da staff.'
+        'Exemplo: **como curar cólera no DayZ?** ou **como usar Expansion Navigation?**'
       ].join('\n'));
   }
 
   const embed = baseEmbed()
     .setColor(0x00b894)
-    .setTitle('🌐 Sobrevivente IA pesquisou na web')
+    .setTitle('🌐 Sobrevivente IA pesquisou fora')
     .setDescription([
-      `${message.author}, não achei uma resposta direta nas regras, então pesquisei fora.`,
+      `${message.author}, não achei uma resposta exata na minha base interna, então usei a API de busca.`,
       '',
       `**Fonte da busca:** ${web.provider}`,
-      '⚠️ Confira as fontes. Para regra do servidor, a decisão final ainda é da staff.'
+      '⚠️ Para regras do servidor, vale sempre a decisão da staff.'
     ].join('\n'));
 
-  for (const item of web.results.slice(0, 3)) {
+  const answer = web.answerBox?.answer || web.answerBox?.snippet || web.answerBox?.description || web.answerBox?.title;
+  if (answer) {
+    embed.addFields({
+      name: '✅ Resposta rápida encontrada',
+      value: shortText(answer, 900),
+      inline: false
+    });
+  }
+
+  for (const item of (web.results || []).slice(0, 3)) {
     embed.addFields({
       name: `🔎 ${shortText(item.title, 90)}`,
       value: [
@@ -1402,8 +1388,6 @@ function buildWebFallbackEmbed(message, web) {
 
   return embed;
 }
-
-
 function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '') {
   if (!faqResults.length && !ruleResults.length) {
     return baseEmbed()
@@ -1526,28 +1510,31 @@ async function handleRulesQuestion(message) {
     return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] });
   }
 
+  if (isSimpleMathQuestion(content)) {
+    const embed = buildMathEmbed(message, content);
+    if (embed) return temporaryReply(message, { embeds: [embed] });
+  }
+
   const wantsExternalSearch = shouldUseWebBeforeRules(content);
 
   if (wantsExternalSearch) {
     const web = await searchWebFallback(content);
-    if (web?.results?.length) {
-      return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
-    }
+    return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
   }
 
   const faqResults = searchFaq(content);
   const ruleResults = searchRules(content);
 
-  if (!faqResults.length && !ruleResults.length) {
-    const web = await searchWebFallback(content);
-    return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
+  if (faqResults.length || ruleResults.length) {
+    const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
+    return temporaryReply(message, { embeds: [embed] });
   }
 
-  const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
-
-  return temporaryReply(message, { embeds: [embed] });
+  // Se não achou guia/regra forte, NÃO inventa e NÃO pega regra aleatória.
+  // Pesquisa na API configurada.
+  const web = await searchWebFallback(content);
+  return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
 }
-
 module.exports = {
   handleRulesQuestion,
   searchFaq,
