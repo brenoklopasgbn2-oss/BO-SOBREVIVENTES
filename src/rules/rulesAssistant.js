@@ -1523,10 +1523,9 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
         '',
         'Tente perguntar mais direto, por exemplo:',
         '• como fazer bancada no BBP?',
-        '• como criar storage MMG?',
-        '• como funciona Plane Crash?',
-        '• qual limite de grupo no Vanilla?',
-        '• tem algum admin on?',
+        '• qual carne posso comer no DayZ?',
+        '• como curar cólera?',
+        '• como consertar carro?',
         '',
         'Você também pode começar com **pesquisa:** para eu buscar fora do bot com SerpApi.'
       ].join('\n'));
@@ -1546,21 +1545,21 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
 
   if (bestFaqs.length) {
     const { faq } = bestFaqs[0];
+    const answer = String(faq.answer || '').trim();
 
     embed.addFields({
-      name: `✅ ${faq.title}`,
+      name: `✅ ${shortText(faq.title, 220)}`,
       value: [
         `**Área:** ${faq.server}`,
-        shortText(faq.answer, 1020)
+        shortText(answer, 900)
       ].join('\n'),
       inline: false
     });
 
-    // Se a resposta for grande, manda uma segunda parte com o restante.
-    if (String(faq.answer).length > 1020) {
+    if (answer.length > 900) {
       embed.addFields({
         name: '📌 Continuação',
-        value: shortText(String(faq.answer).slice(1020), 1020),
+        value: shortText(answer.slice(900), 900),
         inline: false
       });
     }
@@ -1568,7 +1567,7 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
     if (faq.related?.length) {
       embed.addFields({
         name: '📚 Base nas regras',
-        value: faq.related.map((item) => `• **/${item.set} regra ${item.rule}**`).join('\n'),
+        value: shortText(faq.related.map((item) => `• **/${item.set} regra ${item.rule}**`).join('\n'), 900),
         inline: false
       });
     }
@@ -1583,10 +1582,10 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
       if (usedRuleKeys.has(key)) continue;
 
       embed.addFields({
-        name: `${set.emoji} ${set.server} • Regra ${rule.number} — ${rule.title}`,
+        name: `${set.emoji} ${set.server} • Regra ${rule.number} — ${shortText(rule.title, 160)}`,
         value: [
           `**Parte:** ${rule.category}`,
-          shortText(rule.description, 620),
+          shortText(rule.description, 520),
           `Use: **/regra numero:${rule.number} servidor:${set.server}**`
         ].join('\n'),
         inline: false
@@ -1599,7 +1598,6 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
 
   return embed;
 }
-
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -1657,6 +1655,161 @@ async function thinkBeforeAnswer(message, content = '', thinkingMessage = null) 
 }
 
 
+
+function isServerPrivateQuestion(question = '') {
+  const text = normalizeText(question);
+
+  const privateWords = [
+    'temos', 'nosso servidor', 'nosso serve', 'meu servidor', 'meu serve',
+    'sobreviventes z', 'sobreviventesz', 'sz',
+    'quantos banidos', 'banidos temos', 'lista de banidos', 'banido temos',
+    'quantos tickets', 'tickets abertos', 'ticket aberto', 'quantos membros',
+    'quantos players online', 'players online', 'jogadores online',
+    'status do servidor', 'ip do servidor', 'ip do serve',
+    'admin online', 'adm online', 'staff online', 'suporte online',
+    'tem adm', 'tem admin', 'tem staff', 'tem suporte'
+  ];
+
+  if (privateWords.some((word) => text.includes(normalizeText(word)))) return true;
+
+  // Perguntas com "temos" normalmente são sobre a comunidade/servidor, não sobre a internet.
+  if (text.includes('temos')) return true;
+
+  return false;
+}
+
+function countOpenTickets(guild) {
+  return guild.channels.cache.filter((channel) =>
+    channel.isTextBased?.() &&
+    (channel.topic || '').includes('SZ_TICKET') &&
+    !(channel.topic || '').includes('STATUS:CLOSED')
+  ).size;
+}
+
+function countTicketChannels(guild) {
+  return guild.channels.cache.filter((channel) =>
+    channel.isTextBased?.() &&
+    ((channel.topic || '').includes('SZ_TICKET') || (channel.name || '').includes('ticket-'))
+  ).size;
+}
+
+function countOnlineDiscordMembers(guild) {
+  return guild.members.cache.filter((member) =>
+    !member.user?.bot &&
+    member.presence?.status &&
+    member.presence.status !== 'offline' &&
+    member.presence.status !== 'invisible'
+  ).size;
+}
+
+async function buildServerPrivateEmbed(message, question = '') {
+  const text = normalizeText(question);
+  const guild = message.guild;
+
+  const embed = baseEmbed()
+    .setColor(0xff3131)
+    .setTitle('🤖 Sobrevivente IA — Informação do servidor')
+    .setDescription([
+      `${message.author}, essa pergunta é sobre o **nosso servidor/comunidade**, então eu **não vou pesquisar na web**, porque o Google não sabe os dados internos daqui.`,
+      '',
+      'Vou responder usando o que eu consigo ver pelo Discord/bot.'
+    ].join('\n'));
+
+  if (text.includes('banido') || text.includes('banidos') || text.includes('banimento')) {
+    try {
+      const bans = await guild.bans.fetch();
+      embed.addFields({
+        name: '🚫 Banidos no Discord',
+        value: `No Discord, eu encontrei **${bans.size} banido(s)** na lista de banimentos do servidor.`,
+        inline: false
+      });
+    } catch (error) {
+      embed.addFields({
+        name: '🚫 Banidos',
+        value: [
+          'Eu não consegui ler a lista de banidos.',
+          'Provável motivo: meu cargo não tem permissão **Banir Membros** ou **Ver Registro/Auditoria** suficiente.',
+          '',
+          'Peça para um Fundador/Administrador conferir a lista em **Configurações do Servidor > Banimentos**.'
+        ].join('\n'),
+        inline: false
+      });
+    }
+
+    embed.addFields({
+      name: '📌 Observação',
+      value: 'Esse número é de **banidos do Discord**. Banidos do DayZ/RCON/CF Tools só consigo contar se o bot for integrado com essa lista.',
+      inline: false
+    });
+
+    return embed;
+  }
+
+  if (text.includes('ticket')) {
+    const open = countOpenTickets(guild);
+    const total = countTicketChannels(guild);
+
+    embed.addFields(
+      { name: '🎫 Tickets abertos', value: `Agora eu encontrei **${open} ticket(s) aberto(s)**.`, inline: true },
+      { name: '📂 Canais de ticket', value: `Total de canais de ticket encontrados: **${total}**.`, inline: true }
+    );
+
+    return embed;
+  }
+
+  if (text.includes('membro') || text.includes('membros')) {
+    embed.addFields({
+      name: '👥 Membros do Discord',
+      value: `O servidor tem aproximadamente **${guild.memberCount} membro(s)** no Discord.`,
+      inline: false
+    });
+
+    return embed;
+  }
+
+  if (text.includes('online') || text.includes('players') || text.includes('jogadores')) {
+    const onlineDiscord = countOnlineDiscordMembers(guild);
+
+    embed.addFields({
+      name: '🟦 Online no Discord',
+      value: `Eu consigo ver cerca de **${onlineDiscord} membro(s) online no Discord** pelo cache/presença do bot.`,
+      inline: false
+    });
+
+    embed.addFields({
+      name: '🎮 Online no DayZ',
+      value: 'Eu ainda **não consigo ver players online dentro do DayZ** sem integração com query/RCON/CF Tools. Se quiser, dá para adicionar isso depois.',
+      inline: false
+    });
+
+    return embed;
+  }
+
+  if (text.includes('ip')) {
+    embed.addFields({
+      name: '🌐 IP do servidor',
+      value: 'Eu não vou buscar isso na web. Coloque o IP/porta oficial em um canal de informação ou em uma variável do bot para eu responder automaticamente.',
+      inline: false
+    });
+
+    return embed;
+  }
+
+  embed.addFields({
+    name: '⚠️ Não tenho esse dado interno ainda',
+    value: [
+      'Essa informação parece ser específica do nosso servidor.',
+      'Eu não vou pesquisar na web para não responder coisa errada.',
+      '',
+      'A staff pode me ensinar essa resposta colocando nas regras/guias internos, ou integrar o bot com RCON/CF Tools/API do servidor.'
+    ].join('\n'),
+    inline: false
+  });
+
+  return embed;
+}
+
+
 function isMentioningAi(message) {
   if (message.mentions?.users?.has(message.client.user.id)) return true;
 
@@ -1671,23 +1824,41 @@ function isMentioningAi(message) {
 }
 async function temporaryReply(message, payload, thinkingMessage = null) {
   const safePayload = {
-    ...payload,
+    embeds: payload.embeds || [],
+    components: payload.components || [],
     allowedMentions: { users: [message.author.id], roles: [] }
   };
+
+  if (typeof payload.content === 'string' && payload.content.length > 0) {
+    safePayload.content = payload.content;
+  }
 
   let sent = null;
 
   if (thinkingMessage) {
-    sent = await thinkingMessage.edit({
-      content: safePayload.content ?? null,
-      embeds: safePayload.embeds || [],
-      components: safePayload.components || [],
+    const editPayload = {
+      embeds: safePayload.embeds,
+      components: safePayload.components,
       allowedMentions: safePayload.allowedMentions
-    }).catch(() => null);
+    };
+
+    if (safePayload.content) {
+      editPayload.content = safePayload.content;
+    } else {
+      editPayload.content = '';
+    }
+
+    sent = await thinkingMessage.edit(editPayload).catch((error) => {
+      console.error('Erro ao editar mensagem de pensamento da IA:', error);
+      return null;
+    });
   }
 
   if (!sent) {
-    sent = await message.channel.send(safePayload).catch(() => null);
+    sent = await message.channel.send(safePayload).catch((error) => {
+      console.error('Erro ao enviar resposta da IA:', error);
+      return null;
+    });
   }
 
   setTimeout(() => {
@@ -1705,59 +1876,87 @@ async function handleRulesQuestion(message) {
 
   if (!inAiChannel && !mentionedAi) return false;
 
-  const content = cleanQuestionContent(message);
-  const rawContent = message.content?.trim() || '';
+  let thinkingMessage = null;
 
-  if (!content) {
-    const thinkingMessage = await createThinkingMessage(message, rawContent);
-    return temporaryReply(message, {
-      embeds: [
-        baseEmbed()
-          .setColor(0xff3131)
-          .setTitle('🤖 Sobrevivente IA')
-          .setDescription([
-            `${message.author}, me diga sua dúvida junto com a marcação.`,
-            '',
-            'Exemplos:',
-            '• **@Sobrevivente IA como curar cólera?**',
-            '• **@Sobrevivente IA como fazer bancada no BBP?**',
-            '• **@Sobrevivente IA 2+3=?**'
-          ].join('\n'))
-      ]
-    }, thinkingMessage);
-  }
+  try {
+    const content = cleanQuestionContent(message);
+    const rawContent = message.content?.trim() || '';
 
-  const thinkingMessage = await createThinkingMessage(message, content);
-  await thinkBeforeAnswer(message, content, thinkingMessage);
+    if (!content) {
+      thinkingMessage = await createThinkingMessage(message, rawContent);
+      return temporaryReply(message, {
+        embeds: [
+          baseEmbed()
+            .setColor(0xff3131)
+            .setTitle('🤖 Sobrevivente IA')
+            .setDescription([
+              `${message.author}, me diga sua dúvida junto com a marcação.`,
+              '',
+              'Exemplos:',
+              '• **@Sobrevivente IA como curar cólera?**',
+              '• **@Sobrevivente IA como fazer bancada no BBP?**',
+              '• **@Sobrevivente IA quantos banidos temos?**',
+              '• **@Sobrevivente IA 2+3=?**'
+            ].join('\n'))
+        ]
+      }, thinkingMessage);
+    }
 
-  if (isAdminQuestion(content)) {
-    return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] }, thinkingMessage);
-  }
+    thinkingMessage = await createThinkingMessage(message, content);
+    await thinkBeforeAnswer(message, content, thinkingMessage);
 
-  if (isSimpleMathQuestion(content)) {
-    const embed = buildMathEmbed(message, content);
-    if (embed) return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
-  }
+    // Perguntas internas do servidor/comunidade NÃO devem ir para web.
+    // A web não sabe quantos banidos, tickets, membros ou dados do nosso Discord/DayZ.
+    if (isServerPrivateQuestion(content)) {
+      await updateThinkingMessage(thinkingMessage, `🛡️ ${message.author}, isso parece ser informação interna do servidor. Vou conferir só o que o bot consegue ver aqui, sem pesquisar na web...`);
+      const embed = await buildServerPrivateEmbed(message, content);
+      return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
+    }
 
-  const wantsExternalSearch = shouldUseWebBeforeRules(content);
+    if (isAdminQuestion(content)) {
+      return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] }, thinkingMessage);
+    }
 
-  if (wantsExternalSearch) {
-    await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, você pediu pesquisa externa. Estou buscando na API agora...`);
+    if (isSimpleMathQuestion(content)) {
+      const embed = buildMathEmbed(message, content);
+      if (embed) return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
+    }
+
+    const wantsExternalSearch = shouldUseWebBeforeRules(content);
+
+    if (wantsExternalSearch) {
+      await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, você pediu pesquisa externa. Estou buscando na API agora...`);
+      const web = await searchWebFallback(content);
+      return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
+    }
+
+    const faqResults = searchFaq(content);
+    const ruleResults = searchRules(content);
+
+    if (faqResults.length || ruleResults.length) {
+      const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
+      return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
+    }
+
+    await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, não achei resposta forte nos meus guias internos. Vou pesquisar na API para não falar abobrinha...`);
     const web = await searchWebFallback(content);
     return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
-  }
+  } catch (error) {
+    console.error('Erro na Sobrevivente IA:', error);
 
-  const faqResults = searchFaq(content);
-  const ruleResults = searchRules(content);
+    const embed = baseEmbed()
+      .setColor(0xe74c3c)
+      .setTitle('🤖 Sobrevivente IA')
+      .setDescription([
+        `${message.author}, tive um erro ao montar a resposta e por isso não vou inventar nada.`,
+        '',
+        'Tente perguntar de novo com menos palavras ou abra ticket para a staff conferir.',
+        '',
+        'Exemplo: **qual carne posso comer no DayZ?**'
+      ].join('\n'));
 
-  if (faqResults.length || ruleResults.length) {
-    const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
     return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
   }
-
-  await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, não achei resposta forte nos meus guias internos. Vou pesquisar na API para não falar abobrinha...`);
-  const web = await searchWebFallback(content);
-  return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
 }
 module.exports = {
   handleRulesQuestion,
