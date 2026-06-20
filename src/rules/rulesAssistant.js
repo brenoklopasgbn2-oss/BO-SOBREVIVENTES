@@ -15,7 +15,7 @@ const STOP_WORDS = new Set([
   'por','pra','para','com','sem','sobre','isso','essa','esse','aquele','eu','ele','ela','eles','elas',
   'meu','minha','nosso','nossa','pode','posso','podemos','tem','ter','regra','regras','duvida','dúvida',
   'é','e','ou','que','qual','quando','onde','como','quanto','quantos','jogar','servidor','server','serve',
-  'player','jogador','jogadores','usar','uso','usa','faz','fazer','preciso','precisa','ai','ia'
+  'player','jogador','jogadores','usar','uso','usa','faz','fazer','preciso','precisa','ai','ia','dayz','jogo','game','mod','mods','expansion','navigation','navegacao','navegação'
 ]);
 
 const FAQS = [
@@ -176,13 +176,40 @@ function wantedRuleSets(question = '') {
   return ['geral', 'vanilla', 'bbp', 'deathmatch'];
 }
 
+
+function hasUnknownModOrExternalQuestion(question = '') {
+  const text = normalizeText(question);
+
+  const externalWords = [
+    'expansion', 'navigation', 'navegacao', 'navegacao', 'mapa expansion',
+    'trader', 'market', 'garage', 'garagem', 'territory', 'territorio',
+    'banking', 'atm', 'helikopter', 'helicopter', 'heli', 'drone',
+    'keycard', 'key card', 'breachingcharge', 'breaching charge',
+    'dogtags', 'airdrop', 'airdrops', 'quest', 'quests'
+  ];
+
+  return externalWords.some((word) => text.includes(normalizeText(word)));
+}
+
+function shouldUseWebBeforeRules(question = '') {
+  const text = normalizeText(question);
+
+  // Perguntas de regra do servidor devem priorizar regra interna.
+  if (text.includes('limite') || text.includes('raid') || text.includes('ban') || text.includes('clan') || text.includes('cla') || text.includes('base')) {
+    return false;
+  }
+
+  return hasUnknownModOrExternalQuestion(question);
+}
+
+
 function searchFaq(question) {
   const tokens = tokenize(question);
   return FAQS.map((faq) => {
     const keywordScore = faq.keywords.reduce((sum, kw) => sum + (tokens.includes(normalizeText(kw)) ? 5 : 0), 0);
     const textScore = scoreText(`${faq.title} ${faq.server} ${faq.answer}`, tokens);
     return { faq, score: keywordScore + textScore };
-  }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+  }).filter((item) => item.score >= 5).sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
 function scoreRule(rule, tokens) {
@@ -213,7 +240,7 @@ function searchRules(question = '') {
     const set = getRuleSet(key);
     for (const rule of set.rules || []) {
       const score = scoreRule(rule, tokens);
-      if (score <= 0) continue;
+      if (score < 8) continue;
       results.push({ set, rule, score });
     }
   }
@@ -476,7 +503,9 @@ function isMentioningAi(message) {
 }
 
 async function temporaryReply(message, payload) {
-  const sent = await message.reply({ ...payload, allowedMentions: { repliedUser: true, roles: [] } }).catch(() => null);
+  // Mensagem pública no canal, para TODOS os players que têm acesso ao canal verem.
+  // Não usa "reply" do Discord para evitar parecer resposta privada/fechada no app.
+  const sent = await message.channel.send({ ...payload, allowedMentions: { users: [message.author.id], roles: [] } }).catch(() => null);
 
   setTimeout(() => {
     message.delete().catch(() => null);
@@ -499,6 +528,15 @@ async function handleRulesQuestion(message) {
 
   if (isAdminQuestion(content)) {
     return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] });
+  }
+
+  const wantsExternalSearch = shouldUseWebBeforeRules(content);
+
+  if (wantsExternalSearch) {
+    const web = await searchWebFallback(content);
+    if (web?.results?.length) {
+      return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
+    }
   }
 
   const faqResults = searchFaq(content);
