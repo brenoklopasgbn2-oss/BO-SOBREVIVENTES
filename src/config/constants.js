@@ -7,7 +7,8 @@ const ROLE_NAMES = {
   vip: 'Impulsionador',
   vanilla: 'Sobrevivente Vanilla',
   bbp: 'Sobrevivente BBP',
-  deathmatch: 'Sobrevivente Deathmatch'
+  deathmatch: 'Sobrevivente Deathmatch',
+  ai: 'Sobrevivente IA'
 };
 
 const SERVER_ROLES = [ROLE_NAMES.vanilla, ROLE_NAMES.bbp, ROLE_NAMES.deathmatch];
@@ -22,7 +23,8 @@ const ROLE_DEFINITIONS = [
   { name: ROLE_NAMES.vip, color: 0xff7ee2, hoist: true },
   { name: ROLE_NAMES.vanilla, color: 0xe74c3c, hoist: false },
   { name: ROLE_NAMES.bbp, color: 0x3498db, hoist: false },
-  { name: ROLE_NAMES.deathmatch, color: 0xff00ff, hoist: false }
+  { name: ROLE_NAMES.deathmatch, color: 0xff00ff, hoist: false },
+  { name: ROLE_NAMES.ai, color: 0xff3131, hoist: true }
 ];
 
 const CATEGORY_NAMES = {
@@ -65,7 +67,7 @@ const CHANNELS = {
   info: '📘・informacoes',
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
-  rulesAsk: '❓・pergunte-as-regras',
+  rulesAsk: '🤖・sobrevivente-ia',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   openTicket: '🎫・abrir-ticket',
@@ -93,7 +95,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
-  [CHANNELS.rulesAsk]: ['pergunte-as-regras', 'duvidas-regras', 'perguntas-regras'],
+  [CHANNELS.rulesAsk]: ['sobrevivente-ia', 'pergunte-as-regras', 'duvidas-regras', 'perguntas-regras'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
@@ -160,7 +162,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
       { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false },
-      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Pergunte algo sobre as regras. O bot pesquisa nas regras da comunidade e responde.', readOnly: false }
+      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Canal oficial da Sobrevivente IA: dúvidas sobre regras, mods, tickets, raid, base e atendimento.', readOnly: false }
     ]
   },
   {

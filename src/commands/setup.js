@@ -6,6 +6,7 @@ const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
+const { buildAiPanel } = require('../panels/aiPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
@@ -129,6 +130,38 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
   return guild.channels.create({ type: ChannelType.GuildVoice, ...options, reason: 'Setup automático Sobreviventes Z' });
 }
 
+
+async function cleanupLegacyAiChannels(guild, officialAiChannel) {
+  if (!officialAiChannel?.id) return;
+
+  const legacyNames = new Set([
+    '❓・pergunte-as-regras',
+    'pergunte-as-regras',
+    'duvidas-regras',
+    'perguntas-regras'
+  ]);
+
+  const legacyChannels = guild.channels.cache.filter((channel) =>
+    channel.type === ChannelType.GuildText &&
+    channel.id !== officialAiChannel.id &&
+    legacyNames.has(channel.name)
+  );
+
+  for (const channel of legacyChannels.values()) {
+    const topic = channel.topic || '';
+    const looksLikeOldAi =
+      topic.includes('Pergunte algo sobre as regras') ||
+      topic.includes('Sobrevivente IA') ||
+      topic.includes('regras');
+
+    // Só remove o canal antigo se ele parecer ser o canal antigo da IA/regras.
+    // Isso evita apagar canal manual sem relação.
+    if (!looksLikeOldAi) continue;
+
+    await channel.delete('Canal antigo de perguntas removido. Tudo agora fica no canal Sobrevivente IA.').catch(() => null);
+  }
+}
+
 async function clearAndSendPanel(channel, panelBuilder) {
   if (!channel?.isTextBased()) return;
 
@@ -193,6 +226,11 @@ module.exports = {
       await ensureRole(interaction.guild, roleDefinition);
     }
 
+    const aiRole = interaction.guild.roles.cache.find((role) => role.name === ROLE_NAMES.ai);
+    if (aiRole && !botMember.roles.cache.has(aiRole.id)) {
+      await botMember.roles.add(aiRole).catch(() => null);
+    }
+
     const categories = [];
     const ensuredChannels = new Map();
 
@@ -224,6 +262,9 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.rulesVanilla), () => buildRulesPanel('vanilla'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesBbp), () => buildRulesPanel('bbp'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesDeathmatch), () => buildRulesPanel('deathmatch'));
+    const aiChannel = findChannel(CHANNELS.rulesAsk);
+    await clearAndSendPanel(aiChannel, () => buildAiPanel(interaction.guild));
+    await cleanupLegacyAiChannels(interaction.guild, aiChannel);
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(interaction.guild));
     await updateSupportCategoryStatus(interaction.guild);
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel);
