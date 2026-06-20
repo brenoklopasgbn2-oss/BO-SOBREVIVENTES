@@ -997,6 +997,131 @@ const GENERAL_DAYZ_GUIDES = [
 ];
 
 
+
+const EXTRA_DAYZ_GUIDES = [
+  {
+    title: 'DayZ — Água segura, cantil e garrafa contaminada',
+    server: 'Sobrevivência',
+    keywords: ['agua','água','beber','cantil','garrafa','chlorine','cloro','chlorine tablets','poço','poco','ferver agua','água segura','agua segura','encher garrafa'],
+    answer: [
+      '**Água segura:** o jeito mais seguro é beber em **poço**.',
+      '',
+      '**Garrafa/cantil achado no mapa:** pode estar contaminado. O ideal é:',
+      '1. Esvaziar a garrafa/cantil.',
+      '2. Encher no poço.',
+      '3. Se não for poço, use **Chlorine Tablets** ou ferva.',
+      '',
+      '**Se bebeu água suja e ficou doente:** trate como cólera: **Tetracycline + Multivitamin**, coma/beba pouco por vez e mantenha status altos.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Área contaminada, gás e PO-X',
+    server: 'Sobrevivência',
+    keywords: ['gas','gás','gas zone','zona toxica','zona tóxica','contaminada','contaminação','contaminacao','pox','po-x','antidote','nbc','filtro','gas mask','mascara de gas','máscara de gás'],
+    answer: [
+      '**Zona contaminada/gás** exige equipamento NBC e proteção.',
+      '',
+      '**Para entrar com segurança:**',
+      '1. Use roupa NBC completa, máscara de gás e filtro.',
+      '2. Leve filtro extra e remédio se tiver.',
+      '3. Evite ficar parado dentro da zona.',
+      '4. Se começar a tossir/sangrar muito, saia rápido.',
+      '',
+      '**PO-X Antidote** ajuda contra contaminação química quando disponível. Se você entrou sem proteção, saia da zona e procure antídoto/suporte rápido.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como fazer corda, faca de pedra e anzol',
+    server: 'Craft',
+    keywords: ['corda','rope','faca de pedra','stone knife','anzol','hook','bone hook','osso','ossos','tripas','guts','craft corda','craft faca','craft anzol'],
+    answer: [
+      '**Crafts úteis:**',
+      '• **Faca de pedra:** combine pedras pequenas ou use pedra em rocha, dependendo da versão.',
+      '• **Corda/Rope:** pode ser feita com rags/panos ou tripas, dependendo da versão/config.',
+      '• **Anzol de osso/Bone Hook:** use ossos para craftar anzol.',
+      '',
+      'Com **long stick + rope** você faz vara de pesca. Com anzol e isca, consegue pescar e sobreviver melhor no começo.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como fazer pesca completa',
+    server: 'Sobrevivência',
+    keywords: ['pesca','pescar','fishing','vara de pesca','fishing rod','anzol','hook','isca','worm','minhoca','peixe','limpar peixe','cozinhar peixe'],
+    answer: [
+      '**Como pescar:**',
+      '1. Faça/ache uma **vara de pesca**.',
+      '2. Tenha **anzol** ou bone hook.',
+      '3. Cave/procure **minhoca/isca** se o servidor exigir.',
+      '4. Vá até água, equipe a vara com anzol/isca e pesque.',
+      '5. Use faca para limpar o peixe.',
+      '6. Cozinhe antes de comer.',
+      '',
+      'Pesca é uma das formas mais seguras de comida no começo.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Onde achar loot bom',
+    server: 'Loot',
+    keywords: ['loot','achar loot','loot bom','militar','arma boa','nails','pregos','ferramenta','hospital','remedio','remédio','policia','polícia','delegacia','bombeiro','fire station'],
+    answer: [
+      '**Locais comuns de loot:**',
+      '• **Casas:** comida, roupa, ferramentas pequenas.',
+      '• **Hospital/clínica:** remédios, bandagem, saline.',
+      '• **Polícia/delegacia:** pistola, munição, colete leve.',
+      '• **Bombeiro:** roupa resistente, machado, capacete.',
+      '• **Garagens/industriais:** ferramentas, pregos, peças de carro.',
+      '• **Militar:** armas, munição, colete, equipamento tático.',
+      '',
+      'Quanto mais para o interior/noroeste, normalmente melhor o loot e maior o risco de PvP.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Como lidar com zumbis',
+    server: 'Combate',
+    keywords: ['zumbi','zumbis','infectado','infectados','como matar zumbi','horda','aggro','zumbi correndo','sneak','furtivo'],
+    answer: [
+      '**Contra zumbis:**',
+      '1. Evite atirar sem necessidade, tiro chama mais zumbi e player.',
+      '2. Use ataque corpo a corpo e bloqueio.',
+      '3. Feche porta para separar zumbis.',
+      '4. Suba em lugar seguro se precisar curar.',
+      '5. Ande agachado/furtivo quando estiver sem arma.',
+      '',
+      'Se vier horda, entre em casa, feche porta e mate pela janela/porta se o servidor permitir.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Dicas para dirigir sem quebrar carro',
+    server: 'Veículos',
+    keywords: ['dirigir','pilotAR carro','andar de carro','carro bugado','carro voando','carro lag','bater carro','carro travando','desync carro'],
+    answer: [
+      '**Carro no DayZ pode bugar por lag/desync. Dirija com cuidado:**',
+      '1. Não acelere demais em cidade/ponte/floresta.',
+      '2. Evite bater em placa, pedra, cerca e zumbi.',
+      '3. Se o servidor lagar, pare e espere estabilizar.',
+      '4. Sempre confira radiador com água.',
+      '5. Estacione em local plano e seguro antes de restart.',
+      '',
+      'Se o carro voou/explodiu por bug, grave vídeo e abra ticket, mas a staff pode seguir regra própria de reembolso.'
+    ].join('\n')
+  },
+  {
+    title: 'DayZ — Tipos de sangue e transfusão',
+    server: 'Medicina',
+    keywords: ['sangue','blood','blood bag','transfusao','transfusão','tipo sanguineo','tipo sanguíneo','blood test','teste sangue','saline','soro'],
+    answer: [
+      '**Transfusão de sangue precisa cuidado:**',
+      '1. Use **Blood Test Kit** para saber seu tipo sanguíneo.',
+      '2. Só use bolsa compatível com seu tipo.',
+      '3. Bolsa incompatível pode te matar.',
+      '4. **Saline** é mais seguro para recuperar volume, mas não substitui todo sangue.',
+      '',
+      'Se estiver em dúvida, use comida/água para recuperar devagar ou peça ajuda da staff/amigo.'
+    ].join('\n')
+  }
+];
+
+
 function normalizeText(text = '') {
   return String(text)
     .toLowerCase()
@@ -1139,7 +1264,7 @@ function searchFaq(question) {
   const tokens = tokenize(question);
   const normalizedQuestion = normalizeText(question);
 
-  return [...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
+  return [...EXTRA_DAYZ_GUIDES, ...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
     const strongMatches = strongKeywordMatches(faq, question, tokens);
 
     // Se não bateu nenhuma palavra forte do guia, não usa esse guia.
@@ -1276,7 +1401,7 @@ function requestJson(url) {
 
 function buildWebQuery(question = '') {
   const clean = String(question).replace(/<@!?\d+>|<@&\d+>/g, '').trim();
-  return `DayZ PC mod ${clean} tutorial how to use Steam Workshop guide`;
+  return isClearlyDayZOrServerQuestion(clean) ? `DayZ PC ${clean} tutorial guia wiki Steam Workshop` : `${clean}`;
 }
 
 async function searchGoogleCustom(question) {
@@ -1475,15 +1600,95 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
   return embed;
 }
 
-function isMentioningAi(message) {
-  if (message.mentions?.users?.has(message.client.user.id)) return true;
-  return message.mentions?.roles?.some((role) => role.name === ROLE_NAMES.ai);
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function temporaryReply(message, payload) {
-  // Mensagem pública no canal, para TODOS os players que têm acesso ao canal verem.
-  // Não usa "reply" do Discord para evitar parecer resposta privada/fechada no app.
-  const sent = await message.channel.send({ ...payload, allowedMentions: { users: [message.author.id], roles: [] } }).catch(() => null);
+function cleanQuestionContent(message) {
+  let value = String(message.content || '');
+
+  value = value
+    .replace(new RegExp(`<@!?${message.client.user.id}>`, 'g'), ' ')
+    .replace(/<@&\d+>/g, ' ')
+    .replace(/@sobrevivente\s*ia/gi, ' ')
+    .replace(/sobrevivente\s*ia/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return value;
+}
+
+function roleNameIsAi(role) {
+  const name = normalizeText(role?.name || '');
+  return name === normalizeText(ROLE_NAMES.ai) || name.includes('sobrevivente ia');
+}
+
+async function createThinkingMessage(message, content = '') {
+  const shortQuestion = shortText(cleanQuestionContent(message) || content, 120);
+  return message.channel.send({
+    content: `🤖 ${message.author}, estou analisando sua pergunta${shortQuestion ? `: **${shortQuestion}**` : ''}...\n🔎 Vou procurar primeiro nos guias do servidor. Se não achar, uso a API de pesquisa.`,
+    allowedMentions: { users: [message.author.id], roles: [] }
+  }).catch(() => null);
+}
+
+async function updateThinkingMessage(thinkingMessage, text) {
+  if (!thinkingMessage) return;
+  await thinkingMessage.edit({ content: text, embeds: [], components: [] }).catch(() => null);
+}
+
+async function thinkBeforeAnswer(message, content = '', thinkingMessage = null) {
+  const base = 1800;
+  const byLength = Math.min(4200, String(content).length * 26);
+  const ms = Math.min(6200, base + byLength);
+
+  await message.channel.sendTyping().catch(() => null);
+  await sleep(Math.floor(ms / 2));
+
+  if (thinkingMessage) {
+    await updateThinkingMessage(
+      thinkingMessage,
+      `🧠 ${message.author}, ainda estou pensando e conferindo se existe guia/regra certa para isso...`
+    );
+  }
+
+  await message.channel.sendTyping().catch(() => null);
+  await sleep(Math.ceil(ms / 2));
+}
+
+
+function isMentioningAi(message) {
+  if (message.mentions?.users?.has(message.client.user.id)) return true;
+
+  if (message.mentions?.roles?.some((role) => roleNameIsAi(role))) return true;
+
+  const content = normalizeText(message.content || '');
+  if (content.includes('sobrevivente ia') || content.includes('sobreviventeia')) return true;
+
+  // Segurança extra: se alguém menciona qualquer cargo cujo ID esteja no texto, tenta buscar nos cargos cache.
+  const roleMentionIds = [...String(message.content || '').matchAll(/<@&(\d+)>/g)].map((match) => match[1]);
+  return roleMentionIds.some((roleId) => roleNameIsAi(message.guild?.roles?.cache?.get(roleId)));
+}
+async function temporaryReply(message, payload, thinkingMessage = null) {
+  const safePayload = {
+    ...payload,
+    allowedMentions: { users: [message.author.id], roles: [] }
+  };
+
+  let sent = null;
+
+  if (thinkingMessage) {
+    sent = await thinkingMessage.edit({
+      content: safePayload.content ?? null,
+      embeds: safePayload.embeds || [],
+      components: safePayload.components || [],
+      allowedMentions: safePayload.allowedMentions
+    }).catch(() => null);
+  }
+
+  if (!sent) {
+    sent = await message.channel.send(safePayload).catch(() => null);
+  }
 
   setTimeout(() => {
     message.delete().catch(() => null);
@@ -1492,7 +1697,6 @@ async function temporaryReply(message, payload) {
 
   return Boolean(sent);
 }
-
 async function handleRulesQuestion(message) {
   if (!message.guild || message.author.bot) return false;
 
@@ -1501,25 +1705,46 @@ async function handleRulesQuestion(message) {
 
   if (!inAiChannel && !mentionedAi) return false;
 
-  const content = message.content?.trim();
-  if (!content) return false;
+  const content = cleanQuestionContent(message);
+  const rawContent = message.content?.trim() || '';
 
-  await thinkBeforeAnswer(message, content);
+  if (!content) {
+    const thinkingMessage = await createThinkingMessage(message, rawContent);
+    return temporaryReply(message, {
+      embeds: [
+        baseEmbed()
+          .setColor(0xff3131)
+          .setTitle('🤖 Sobrevivente IA')
+          .setDescription([
+            `${message.author}, me diga sua dúvida junto com a marcação.`,
+            '',
+            'Exemplos:',
+            '• **@Sobrevivente IA como curar cólera?**',
+            '• **@Sobrevivente IA como fazer bancada no BBP?**',
+            '• **@Sobrevivente IA 2+3=?**'
+          ].join('\n'))
+      ]
+    }, thinkingMessage);
+  }
+
+  const thinkingMessage = await createThinkingMessage(message, content);
+  await thinkBeforeAnswer(message, content, thinkingMessage);
 
   if (isAdminQuestion(content)) {
-    return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] });
+    return temporaryReply(message, { embeds: [buildAdminStatusEmbed(message)] }, thinkingMessage);
   }
 
   if (isSimpleMathQuestion(content)) {
     const embed = buildMathEmbed(message, content);
-    if (embed) return temporaryReply(message, { embeds: [embed] });
+    if (embed) return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
   }
 
   const wantsExternalSearch = shouldUseWebBeforeRules(content);
 
   if (wantsExternalSearch) {
+    await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, você pediu pesquisa externa. Estou buscando na API agora...`);
     const web = await searchWebFallback(content);
-    return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
+    return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
   }
 
   const faqResults = searchFaq(content);
@@ -1527,13 +1752,12 @@ async function handleRulesQuestion(message) {
 
   if (faqResults.length || ruleResults.length) {
     const embed = buildQuestionAnswerEmbed(message, faqResults, ruleResults, content);
-    return temporaryReply(message, { embeds: [embed] });
+    return temporaryReply(message, { embeds: [embed] }, thinkingMessage);
   }
 
-  // Se não achou guia/regra forte, NÃO inventa e NÃO pega regra aleatória.
-  // Pesquisa na API configurada.
+  await updateThinkingMessage(thinkingMessage, `🌐 ${message.author}, não achei resposta forte nos meus guias internos. Vou pesquisar na API para não falar abobrinha...`);
   const web = await searchWebFallback(content);
-  return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] });
+  return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
 }
 module.exports = {
   handleRulesQuestion,
