@@ -62,3 +62,30 @@ Para registrar slash commands manualmente:
 ```bash
 npm run deploy:commands
 ```
+
+## V33 — Sobrevivente IA ensinada sobre loja/garagem/seguros
+
+Atualização adicionada:
+
+- Base interna nova em `src/data/storeGuides.js`.
+- A Sobrevivente IA agora responde sobre:
+  - SobreviventesZ Store;
+  - compra de itens e entrega no pé do player;
+  - Vanilla/BBP na loja;
+  - categorias simples sem busca;
+  - SZ Coins e saldo;
+  - compra para amigo via Steam64/SteamID;
+  - Kit Inicial com resgate único por conta;
+  - configuração admin do Kit Inicial e drop de teste;
+  - compra de veículos;
+  - skins/types do mesmo veículo;
+  - cadastro admin de skins/types;
+  - Minha Garagem;
+  - localização atual só para veículo com seguro;
+  - Seguro Normal até 250m;
+  - Seguro por Roubo sem limite de distância;
+  - quando o seguro não funciona;
+  - promoções, categorias e produtos no painel admin;
+  - resumo dos servidores Sobreviventes Z e cargos do Discord.
+
+Também foi ajustado para perguntas de loja/garagem/seguro não caírem na resposta genérica de “informação interna do servidor”. Primeiro a IA tenta responder pelos guias internos.

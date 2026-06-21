@@ -162,7 +162,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
       { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false },
-      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Canal oficial da Sobrevivente IA: dúvidas sobre regras, mods, tickets, raid, base e atendimento.', readOnly: false }
+      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Canal oficial da Sobrevivente IA: dúvidas sobre regras, mods, loja, garagem, seguros, kit inicial, tickets, raid, base e atendimento.', readOnly: false }
     ]
   },
   {

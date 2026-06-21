@@ -3,6 +3,7 @@ const { CHANNELS, ROLE_NAMES } = require('../config/constants');
 const { getRuleSet } = require('../data/rulesRepository');
 const { baseEmbed } = require('../utils/embeds');
 const { getMainStaffRole, isStaffMember, isSupportVoiceChannel } = require('../panels/supportStatus');
+const { STORE_GUIDES } = require('../data/storeGuides');
 
 const DELETE_AFTER_MS = 5 * 60 * 1000;
 const WEB_SEARCH_TIMEOUT_MS = 8000;
@@ -1253,7 +1254,8 @@ function isClearlyDayZOrServerQuestion(question = '') {
     'carne','comer','comida','fome','sede','agua','água','colera','cólera','gripe','resfriado','salmonella','kuru',
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
-    'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff'
+    'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff',
+    'loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao'
   ];
 
   return words.some((word) => text.includes(normalizeText(word)));
@@ -1264,7 +1266,7 @@ function searchFaq(question) {
   const tokens = tokenize(question);
   const normalizedQuestion = normalizeText(question);
 
-  return [...EXTRA_DAYZ_GUIDES, ...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
+  return [...STORE_GUIDES, ...EXTRA_DAYZ_GUIDES, ...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
     const strongMatches = strongKeywordMatches(faq, question, tokens);
 
     // Se não bateu nenhuma palavra forte do guia, não usa esse guia.
@@ -1721,21 +1723,37 @@ async function thinkBeforeAnswer(message, content = '', thinkingMessage = null) 
 function isServerPrivateQuestion(question = '') {
   const text = normalizeText(question);
 
+  const guideWords = [
+    'loja', 'store', 'garagem', 'seguro', 'seguros', 'seguro normal', 'seguro por roubo',
+    'kit inicial', 'resgatar', 'comprar', 'moedas', 'sz coins', 'saldo', 'skin', 'skins',
+    'steam64', 'steamid', 'veiculo', 'veículo', 'categoria', 'categorias', 'promoção', 'promocao'
+  ];
+
+  const metricWords = [
+    'quantos', 'quantas', 'lista', 'online', 'status', 'ip', 'ping', 'banidos', 'tickets',
+    'membros', 'players online', 'jogadores online', 'admin online', 'adm online', 'staff online'
+  ];
+
+  // Perguntas do tipo "como usar loja/seguro/kit" devem cair nos guias internos da IA,
+  // não na resposta genérica de dado privado do servidor.
+  if (guideWords.some((word) => text.includes(normalizeText(word))) &&
+      !metricWords.some((word) => text.includes(normalizeText(word)))) {
+    return false;
+  }
+
   const privateWords = [
-    'temos', 'nosso servidor', 'nosso serve', 'meu servidor', 'meu serve',
-    'sobreviventes z', 'sobreviventesz', 'sz',
     'quantos banidos', 'banidos temos', 'lista de banidos', 'banido temos',
     'quantos tickets', 'tickets abertos', 'ticket aberto', 'quantos membros',
     'quantos players online', 'players online', 'jogadores online',
-    'status do servidor', 'ip do servidor', 'ip do serve',
+    'status do servidor', 'ip do servidor', 'ip do serve', 'ping do servidor',
     'admin online', 'adm online', 'staff online', 'suporte online',
     'tem adm', 'tem admin', 'tem staff', 'tem suporte'
   ];
 
   if (privateWords.some((word) => text.includes(normalizeText(word)))) return true;
 
-  // Perguntas com "temos" normalmente são sobre a comunidade/servidor, não sobre a internet.
-  if (text.includes('temos')) return true;
+  // Perguntas com "temos" normalmente são sobre número/lista/status interno da comunidade.
+  if (text.includes('temos') && metricWords.some((word) => text.includes(normalizeText(word)))) return true;
 
   return false;
 }
@@ -1957,6 +1975,8 @@ async function handleRulesQuestion(message) {
               'Exemplos:',
               '• **@Sobrevivente IA como curar cólera?**',
               '• **@Sobrevivente IA como fazer bancada no BBP?**',
+              '• **@Sobrevivente IA como resgatar o kit inicial?**',
+              '• **@Sobrevivente IA como funciona seguro por roubo?**',
               '• **@Sobrevivente IA quantos banidos temos?**',
               '• **@Sobrevivente IA 2+3=?**'
             ].join('\n'))
