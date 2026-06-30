@@ -1,7 +1,6 @@
 const geral = require('./rulesGeneral');
 const vanilla = require('./rulesVanilla');
-const deathmatch = require('./rulesDeathmatch');
-const bbp = require('./rulesBbp');
+const bandeira = require('./rulesFlagRaid');
 
 const DEFAULT_RULE_IMAGE = vanilla.RULE_IMAGE || '16-regras-sobrevivente.png';
 
@@ -18,50 +17,38 @@ const RULE_SETS = {
   },
   vanilla: {
     key: 'vanilla',
-    label: 'Regras Vanilla',
-    server: 'Vanilla',
+    label: 'Regras RAID-Z Vanilla',
+    server: 'RAID-Z Vanilla',
     emoji: '🔴',
     color: 0xc0392b,
     image: vanilla.RULE_IMAGE || DEFAULT_RULE_IMAGE,
     rules: vanilla.RULES,
-    emptyMessage: 'As regras do Vanilla ainda não foram cadastradas.'
+    emptyMessage: 'As regras do RAID-Z Vanilla ainda não foram cadastradas.'
   },
-  bbp: {
-    key: 'bbp',
-    label: 'Regras BBP',
-    server: 'BBP',
-    emoji: '🔵',
-    color: 0x3498db,
-    image: bbp.RULE_IMAGE || DEFAULT_RULE_IMAGE,
-    rules: bbp.RULES,
-    emptyMessage: 'As regras do BBP ainda não foram cadastradas.'
-  },
-  deathmatch: {
-    key: 'deathmatch',
-    label: 'Regras Deathmatch',
-    server: 'Deathmatch',
-    emoji: '🌈',
-    color: 0xff00ff,
-    image: deathmatch.RULE_IMAGE || DEFAULT_RULE_IMAGE,
-    rules: deathmatch.RULES,
-    emptyMessage: 'As regras do Deathmatch ainda não foram cadastradas.'
+  bandeira: {
+    key: 'bandeira',
+    label: 'Regra de Bandeira no Raid',
+    server: 'RAID-Z Vanilla',
+    emoji: '🏳️',
+    color: 0xff3131,
+    image: bandeira.RULE_IMAGE || DEFAULT_RULE_IMAGE,
+    rules: bandeira.RULES,
+    emptyMessage: 'As regras de bandeira ainda não foram cadastradas.'
   }
 };
 
 function normalizeRuleSetKey(key = 'geral') {
   const value = String(key || '').toLowerCase();
   if (['geral', 'gerais', 'global', 'discord'].includes(value)) return 'geral';
-  if (['vanilla', 'vanila'].includes(value)) return 'vanilla';
-  if (['bbp'].includes(value)) return 'bbp';
-  if (['dm', 'deathmatch', 'death', 'death-match', 'death math'].includes(value)) return 'deathmatch';
+  if (['vanilla', 'vanila', 'raidz', 'raid-z', 'raid z'].includes(value)) return 'vanilla';
+  if (['bandeira', 'bandeira-raid', 'flag', 'whiteflag', 'bandeira branca', 'bandeira-branca'].includes(value)) return 'bandeira';
   return 'geral';
 }
 
 function inferRuleSetFromChannel(channelName = '') {
   const name = channelName.toLowerCase();
+  if (name.includes('bandeira')) return 'bandeira';
   if (name.includes('vanilla')) return 'vanilla';
-  if (name.includes('bbp')) return 'bbp';
-  if (name.includes('dm') || name.includes('death')) return 'deathmatch';
   return 'geral';
 }
 
@@ -81,11 +68,8 @@ function getCategories(key = 'geral') {
 
   for (const rule of set.rules) {
     const current = categories.find((item) => item.name === rule.category);
-    if (current) {
-      current.rules.push(rule);
-    } else {
-      categories.push({ name: rule.category, emoji: rule.emoji, rules: [rule] });
-    }
+    if (current) current.rules.push(rule);
+    else categories.push({ name: rule.category, emoji: rule.emoji, rules: [rule] });
   }
 
   return categories;

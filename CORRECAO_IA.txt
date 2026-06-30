@@ -1,19 +1,9 @@
-CORREÇÃO DA SOBRE VIVENTE IA
+RAID-Z IA atualizada para o novo servidor.
 
-Problema encontrado:
-- O arquivo src/rules/rulesAssistant.js chamava as funções preferBestFaq() e shouldShowRulesTogether(), mas essas funções não existiam.
-- Quando a IA achava uma resposta interna, ela quebrava ao montar o embed e caía no erro: "tive um erro ao montar a resposta".
-
-O que foi corrigido:
-- Adicionada a função preferBestFaq() para escolher a melhor resposta encontrada.
-- Adicionada a função shouldShowRulesTogether() para mostrar regras junto só quando fizer sentido.
-- Testado com node -c em todos os arquivos .js para garantir que não ficou erro de sintaxe.
-
-Depois de subir no Railway:
-1. Faça upload/substitua o projeto.
-2. Confira as variáveis DISCORD_TOKEN, CLIENT_ID e GUILD_ID.
-3. Reinicie o deploy.
-4. Teste no canal sobrevivente-ia:
-   - qual carne posso comer?
-   - como fazer bancada no BBP?
-   - como curar cólera?
+Agora o Discord trabalha com 1 servidor apenas: RAID-Z Vanilla.
+Perguntas principais:
+- limite de clã: 10 jogadores;
+- bandeira no raid precisa solicitar ADM;
+- com bandeira ativa o clã não pode raidar e não pode ser raidado;
+- bandeira branca pode ser solicitada 1 vez por mês;
+- tickets, suporte, denúncias e bugs continuam no painel oficial.

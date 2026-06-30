@@ -24,15 +24,15 @@ const FAQS = [
     title: 'Limite de grupo no Vanilla',
     server: 'Vanilla',
     keywords: ['vanilla','vanila','limite','clan','cla','clã','grupo','squad','solo','duo','trio','quinteto','quantos','players'],
-    answer: 'No **Vanilla**, o grupo pode ser **Solo, Duo, Trio, Squad ou Quinteto**. O limite máximo é **5 jogadores atuando juntos/online pelo mesmo grupo**.',
+    answer: 'No **Vanilla**, o grupo pode ser **clã de até 10 jogadores**. O limite máximo é **10 jogadores atuando juntos/online pelo mesmo grupo**.',
     related: [{ set: 'vanilla', rule: 68 }]
   },
   {
-    title: 'Limite de grupo no BBP',
-    server: 'BBP',
-    keywords: ['bbp','limite','clan','cla','clã','grupo','squad','quantos','players','10','dez'],
-    answer: 'No **BBP**, o limite é de **10 jogadores por grupo/clã**.',
-    related: [{ set: 'bbp', rule: 1 }]
+    title: 'Limite de grupo no RAID-Z',
+    server: 'RAID-Z',
+    keywords: ['raidz','limite','clan','cla','clã','grupo','squad','quantos','players','10','dez'],
+    answer: 'No **RAID-Z**, o limite é de **10 jogadores por grupo/clã**.',
+    related: [{ set: 'raidz', rule: 1 }]
   },
   {
     title: 'Horário oficial de raid',
@@ -91,18 +91,18 @@ const FAQS = [
     related: [{ set: 'vanilla', rule: 14 }]
   },
   {
-    title: 'Camperar spawn no Deathmatch',
-    server: 'Deathmatch',
-    keywords: ['dm','deathmatch','spawn','camperar','camper','nascimento','matar'],
-    answer: 'No **Deathmatch**, é proibido camperar spawn. Não mate jogador no ponto de nascimento nem use spawn para ganhar vantagem.',
-    related: [{ set: 'deathmatch', rule: 6 }]
+    title: 'Camperar spawn no Vanilla',
+    server: 'Vanilla',
+    keywords: ['dm','vanilla','spawn','camperar','camper','nascimento','matar'],
+    answer: 'No **Vanilla**, é proibido camperar spawn. Não mate jogador no ponto de nascimento nem use spawn para ganhar vantagem.',
+    related: [{ set: 'vanilla', rule: 6 }]
   },
   {
-    title: 'Devolução de loot no Deathmatch',
-    server: 'Deathmatch',
-    keywords: ['dm','deathmatch','devolver','loot','arma','kit','municao','munição','perdi'],
-    answer: 'No **Deathmatch**, não existe devolução de loot, arma, kit ou munição perdida em combate.',
-    related: [{ set: 'deathmatch', rule: 7 }]
+    title: 'Devolução de loot no Vanilla',
+    server: 'Vanilla',
+    keywords: ['dm','vanilla','devolver','loot','arma','kit','municao','munição','perdi'],
+    answer: 'No **Vanilla**, não existe devolução de loot, arma, kit ou munição perdida em combate.',
+    related: [{ set: 'vanilla', rule: 7 }]
   },
   {
     title: 'Como usar Code Lock / Codelock',
@@ -111,15 +111,15 @@ const FAQS = [
     answer: 'Em servidores com **Code Lock**, normalmente você coloca o cadeado no portão/porta, define uma senha e usa essa senha para abrir. Não compartilhe senha com quem não é do grupo. Se perder senha ou alguém roubar acesso, abra ticket com provas.'
   },
   {
-    title: 'Como usar BBP / BaseBuildingPlus',
+    title: 'Como usar RAID-Z / Base Vanilla',
     server: 'Mods',
-    keywords: ['bbp','basebuildingplus','base','building','plus','construir','parede','bancada','workbench','kit'],
-    answer: 'No **BBP/BaseBuildingPlus**, normalmente você precisa de kit/planta, materiais e ferramenta para montar estruturas. Coloque o kit, confirme o holograma e construa com os materiais pedidos. Regras de limite de grupo e abuso de base continuam valendo.'
+    keywords: ['raidz','base vanilla','base','building','plus','construir','parede','bancada','workbench','kit'],
+    answer: 'No **RAID-Z/Base Vanilla**, normalmente você precisa de kit/planta, materiais e ferramenta para montar estruturas. Coloque o kit, confirme o holograma e construa com os materiais pedidos. Regras de limite de grupo e abuso de base continuam valendo.'
   },
   {
     title: 'Como fazer bancada / workbench',
     server: 'Mods',
-    keywords: ['bancada','workbench','mesa','craft','craftar','fazer','bbp'],
+    keywords: ['bancada','workbench','mesa','craft','craftar','fazer','raidz'],
     answer: 'A **bancada/workbench** depende da configuração do servidor. Em geral, junte os materiais pedidos pelo mod, use o menu de craft/receita e posicione a bancada em local permitido. Se não aparecer receita, confira se está no servidor/mod correto.'
   },
   {
@@ -149,7 +149,7 @@ const MOD_GUIDES = [
     server: 'Mods',
     keywords: ['mods','modpack','lista','quais mods','mod instalado','modificacoes','modificações'],
     answer: [
-      'Os mods que a IA conhece neste projeto são: **CF**, **Dabs Framework**, **VPPAdminTools**, **AC-Mod-Pack**, **DeathMatch_SobreviventesZ**, **Advanced Weapon Scopes**, **Restart_Server**, **MMG Base Storage NoCodeLock**, **BaseBuildingPlus/BBP**, **KeyCard-Rooms**, **Airdrop-Upgraded**, **Sobreviventesz_pack**, **CBD Loot Rooms**, **SobreviventesZ 2.0**, **Plane Crash**, **MZ KOTH**, **SpawnerBubaku**, **DayZ Editor Loader** e **DayZ Expansion Navigation**.',
+      'Os mods que a IA conhece neste projeto são: **CF**, **Dabs Framework**, **VPPAdminTools**, **AC-Mod-Pack**, **Vanilla_RAID-Z**, **Advanced Weapon Scopes**, **Restart_Server**, **MMG Base Storage NoCodeLock**, **Base Vanilla/RAID-Z**, **KeyCard-Rooms**, **Airdrop-Upgraded**, **RAID-Z_pack**, **CBD Loot Rooms**, **RAID-Z 2.0**, **Plane Crash**, **MZ KOTH**, **SpawnerBubaku**, **DayZ Editor Loader** e **DayZ Expansion Navigation**.',
       'Alguns são para player usar direto; outros são apenas dependência ou server-side.'
     ].join('\n')
   },
@@ -221,32 +221,32 @@ const MOD_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'BaseBuildingPlus / BBP — básico',
-    server: 'BBP',
-    keywords: ['bbp','basebuildingplus','base building plus','basebuilding','construir','construção','construcao','base','parede','piso','foundation','gate','portao','portão','kit','holograma'],
+    title: 'Base Vanilla / RAID-Z — básico',
+    server: 'RAID-Z',
+    keywords: ['raidz','base vanilla','base building plus','basebuilding','construir','construção','construcao','base','parede','piso','foundation','gate','portao','portão','kit','holograma'],
     answer: [
-      '**BaseBuildingPlus (BBP)** é o mod de construção avançada de base.',
+      '**Base Vanilla (RAID-Z)** é o mod de construção avançada de base.',
       '**Uso básico:** tenha o kit/blueprint correto, posicione o holograma onde é permitido, rotacione/ajuste a peça, confirme a posição e construa usando os materiais/ferramentas exigidos.',
       'Normalmente o fluxo é: **pegar/craftar kit > colocar holograma > alinhar > construir frame > adicionar madeira/metal/concreto > finalizar**.',
       'Se não deixa construir, pode ser área bloqueada, peça colidindo, terreno ruim, falta de ferramenta/material ou regra de construção do servidor.'
     ].join('\n')
   },
   {
-    title: 'BBP — Workbench / Bancada',
-    server: 'BBP',
-    keywords: ['bbp','workbench','bancada','mesa','craft','craftar','crafting book','livro','blueprint','planks','prancha','5 planks','5 pranchas'],
+    title: 'RAID-Z — Workbench / Bancada',
+    server: 'RAID-Z',
+    keywords: ['raidz','workbench','bancada','mesa','craft','craftar','crafting book','livro','blueprint','planks','prancha','5 planks','5 pranchas'],
     answer: [
-      '**Resposta direta:** para fazer a **bancada/workbench do BBP**, normalmente você precisa de **5 pranchas + 1 BBP Crafting Book/Blueprint**. No seu servidor a receita pode ser alterada pela staff.',
+      '**Resposta direta:** para fazer a **bancada/workbench do RAID-Z**, normalmente você precisa de **5 pranchas + 1 RAID-Z Crafting Book/Blueprint**. No seu servidor a receita pode ser alterada pela staff.',
       '',
       '**Passo a passo para o player:**',
-      '1. Pegue/ache o **BBP Crafting Book/Blueprint**.',
+      '1. Pegue/ache o **RAID-Z Crafting Book/Blueprint**.',
       '2. Tenha **5 pranchas** no inventário/mãos.',
       '3. No inventário, combine as pranchas com o livro/blueprint ou use a ação de craft que aparecer.',
       '4. Quando criar o kit/bancada, coloque no chão em lugar plano e dentro da sua base.',
       '5. Depois de posicionar, use a tecla de interação do DayZ/mod para confirmar. A tecla pode mudar por configuração; confira em **ESC > Controles**.',
       '',
       '**Se não aparecer opção de craft:**',
-      '• confirme se o item é o **BBP Crafting Book/Blueprint** correto;',
+      '• confirme se o item é o **RAID-Z Crafting Book/Blueprint** correto;',
       '• confira se as pranchas estão empilhadas/quantidade certa;',
       '• teste com o item na mão e depois no inventário;',
       '• o servidor pode ter mudado a receita ou bloqueado a bancada;',
@@ -254,11 +254,11 @@ const MOD_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'BBP — materiais e evolução de parede/portão',
-    server: 'BBP',
-    keywords: ['bbp','material','materiais','nails','pregos','planks','pranchas','sheet metal','metal','concreto','concrete','t1','t2','t3','frame','estrutura','parede','portao','gate'],
+    title: 'RAID-Z — materiais e evolução de parede/portão',
+    server: 'RAID-Z',
+    keywords: ['raidz','material','materiais','nails','pregos','planks','pranchas','sheet metal','metal','concreto','concrete','t1','t2','t3','frame','estrutura','parede','portao','gate'],
     answer: [
-      'No BBP, muitas peças seguem evolução por tiers:',
+      'No RAID-Z, muitas peças seguem evolução por tiers:',
       '• **Frame/estrutura:** base inicial da peça.',
       '• **T1 madeira:** usa pranchas/pregos.',
       '• **T2 metal:** melhora usando metal/sheet metal e pregos.',
@@ -267,11 +267,11 @@ const MOD_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'BBP — desmontar/remover construção',
-    server: 'BBP',
-    keywords: ['bbp','desmontar','remover','dismantle','demolir','quebrar','destruir','construção','base'],
+    title: 'RAID-Z — desmontar/remover construção',
+    server: 'RAID-Z',
+    keywords: ['raidz','desmontar','remover','dismantle','demolir','quebrar','destruir','construção','base'],
     answer: [
-      'Para desmontar no BBP, normalmente você precisa estar autorizado na base/território, usar a ferramenta correta e interagir pelo ponto da peça.',
+      'Para desmontar no RAID-Z, normalmente você precisa estar autorizado na base/território, usar a ferramenta correta e interagir pelo ponto da peça.',
       'Se não aparece opção, pode ser porque você não é dono/autorizado, a peça está bloqueada, não é horário/condição permitida ou o servidor desativou desmontagem.',
       'Nunca use bug/glitch para remover peça; abra ticket se uma estrutura travou.'
     ].join('\n')
@@ -388,22 +388,22 @@ const MOD_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'DeathMatch_SobreviventesZ',
-    server: 'Deathmatch',
-    keywords: ['deathmatch_sobreviventesz','deathmatch sobreviventesz','deathmatch','dm','arena','pvp','spawn dm','kit dm','death math'],
+    title: 'Vanilla_RAID-Z',
+    server: 'Vanilla',
+    keywords: ['vanilla_sobreviventesz','vanilla sobreviventesz','vanilla','dm','arena','pvp','spawn dm','kit dm','vanilla'],
     answer: [
-      '**DeathMatch_SobreviventesZ** é pacote/configuração do servidor para modo DM/PvP.',
-      'Use para jogar rápido, treinar mira e PvP. Respeite regras do DM: sem cheat, sem bug, sem camperar spawn e sem kill farm.',
-      'Se spawn, kit ou arma bugou no DM, mande print/vídeo no ticket de bug.'
+      '**Vanilla_RAID-Z** é pacote/configuração do servidor para modo Vanilla/PvP.',
+      'Use para jogar rápido, treinar mira e PvP. Respeite regras do Vanilla: sem cheat, sem bug, sem camperar spawn e sem kill farm.',
+      'Se spawn, kit ou arma bugou no Vanilla, mande print/vídeo no ticket de bug.'
     ].join('\n'),
-    related: [{ set: 'deathmatch', rule: 1 }, { set: 'deathmatch', rule: 6 }, { set: 'deathmatch', rule: 8 }]
+    related: [{ set: 'vanilla', rule: 1 }, { set: 'vanilla', rule: 6 }, { set: 'vanilla', rule: 8 }]
   },
   {
-    title: 'Sobreviventesz_pack / SobreviventesZ 2.0',
+    title: 'RAID-Z_pack / RAID-Z 2.0',
     server: 'Pack do servidor',
     keywords: ['sobreviventesz_pack','sobreviventesz pack','sobreviventesz 2.0','sobreviventesz2','pack sobreviventes','pack do servidor','mod proprio','mod próprio','item sobreviventes','roupa sobreviventes'],
     answer: [
-      '**Sobreviventesz_pack / SobreviventesZ 2.0** é pacote próprio/custom do servidor.',
+      '**RAID-Z_pack / RAID-Z 2.0** é pacote próprio/custom do servidor.',
       'Ele pode conter itens, roupas, ajustes, classes, objetos ou configurações exclusivas da comunidade.',
       'Como é pack próprio, a função exata de cada item depende do que a staff colocou. Pergunte o nome do item ou mande print para a IA tentar ajudar; se for algo específico/bug, abra ticket.'
     ].join('\n')
@@ -414,22 +414,22 @@ const MOD_GUIDES = [
 
 const DEEP_GUIDES = [
   {
-    title: 'BBP — Bancada / Workbench passo a passo completo',
-    server: 'BBP',
-    keywords: ['bbp','basebuildingplus','base building plus','bancada','workbench','mesa','crafting book','blueprint','livro','prancha','pranchas','planks','como fazer bancada','fazer bancada','criar bancada','craftar bancada'],
+    title: 'RAID-Z — Bancada / Workbench passo a passo completo',
+    server: 'RAID-Z',
+    keywords: ['raidz','base vanilla','base building plus','bancada','workbench','mesa','crafting book','blueprint','livro','prancha','pranchas','planks','como fazer bancada','fazer bancada','criar bancada','craftar bancada'],
     answer: [
-      '**Resposta direta:** para fazer a **bancada/workbench do BBP**, normalmente é **5 pranchas + 1 BBP Crafting Book/Blueprint**. Mas servidor pode alterar receita.',
+      '**Resposta direta:** para fazer a **bancada/workbench do RAID-Z**, normalmente é **5 pranchas + 1 RAID-Z Crafting Book/Blueprint**. Mas servidor pode alterar receita.',
       '',
       '**Passo a passo para o player:**',
       '1. Pegue **5 pranchas**.',
-      '2. Pegue o item **BBP Crafting Book/Blueprint**.',
+      '2. Pegue o item **RAID-Z Crafting Book/Blueprint**.',
       '3. Abra o inventário e tente combinar o livro com as pranchas. Em alguns servidores precisa segurar o livro na mão; em outros, deixar tudo no inventário e usar o menu de craft.',
       '4. Criou o kit/bancada? Coloque no chão em área plana, de preferência dentro da sua base.',
       '5. Confirme o posicionamento pelo menu de interação do DayZ/mod.',
-      '6. Depois use a bancada para criar kits/peças de construção do BBP, conforme a configuração do servidor.',
+      '6. Depois use a bancada para criar kits/peças de construção do RAID-Z, conforme a configuração do servidor.',
       '',
       '**Se não aparecer opção:**',
-      '• veja se é o **livro/blueprint correto do BBP**;',
+      '• veja se é o **livro/blueprint correto do RAID-Z**;',
       '• separe e junte as pranchas novamente;',
       '• teste livro na mão e pranchas no inventário;',
       '• confira se a bancada está liberada no servidor;',
@@ -437,11 +437,11 @@ const DEEP_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'BBP — Como construir parede, piso, teto, porta e portão',
-    server: 'BBP',
-    keywords: ['bbp','construir','construção','construcao','parede','piso','teto','roof','floor','wall','door','gate','portao','portão','foundation','base','holograma','kit bbp'],
+    title: 'RAID-Z — Como construir parede, piso, teto, porta e portão',
+    server: 'RAID-Z',
+    keywords: ['raidz','construir','construção','construcao','parede','piso','teto','roof','floor','wall','door','gate','portao','portão','foundation','base','holograma','kit raidz'],
     answer: [
-      '**Como construir no BBP:**',
+      '**Como construir no RAID-Z:**',
       '1. Faça ou pegue o **kit** da peça que quer colocar: foundation, floor, wall, door, gate, roof etc.',
       '2. Coloque o kit no chão e ajuste o **holograma** da peça.',
       '3. Gire/alinha até ficar correto. Se estiver vermelho ou não deixa colocar, tem colisão, terreno ruim ou área bloqueada.',
@@ -457,11 +457,11 @@ const DEEP_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'BBP — Materiais, tiers e evolução de construção',
-    server: 'BBP',
-    keywords: ['bbp','materiais','material','tier','t1','t2','t3','madeira','metal','concreto','pregos','nails','sheet metal','concrete','frame','estrutura','upgrade'],
+    title: 'RAID-Z — Materiais, tiers e evolução de construção',
+    server: 'RAID-Z',
+    keywords: ['raidz','materiais','material','tier','t1','t2','t3','madeira','metal','concreto','pregos','nails','sheet metal','concrete','frame','estrutura','upgrade'],
     answer: [
-      'No BBP, as peças podem ter estágios/tiers. O servidor pode mudar valores, mas a lógica comum é:',
+      'No RAID-Z, as peças podem ter estágios/tiers. O servidor pode mudar valores, mas a lógica comum é:',
       '',
       '• **Frame/estrutura:** primeira etapa da peça.',
       '• **T1 madeira:** usa pranchas/pregos.',
@@ -1151,11 +1151,10 @@ function scoreText(haystack, tokens) {
 
 function wantedRuleSets(question = '') {
   const text = normalizeText(question);
-  if (text.includes('vanilla') || text.includes('vanila')) return ['vanilla'];
-  if (text.includes('bbp')) return ['bbp'];
-  if (text.includes('deathmatch') || text.includes('death math') || text.includes(' dm ') || text === 'dm') return ['deathmatch'];
+  if (text.includes('bandeira') || text.includes('white flag') || text.includes('flag')) return ['bandeira'];
+  if (text.includes('vanilla') || text.includes('vanila') || text.includes('raidz') || text.includes('raid z')) return ['vanilla'];
   if (text.includes('discord') || text.includes('geral') || text.includes('comunidade')) return ['geral'];
-  return ['geral', 'vanilla', 'bbp', 'deathmatch'];
+  return ['geral', 'vanilla', 'bandeira'];
 }
 
 
@@ -1232,14 +1231,14 @@ function buildMathEmbed(message, question = '') {
 
   return baseEmbed()
     .setColor(0x2ecc71)
-    .setTitle('🧮 Sobrevivente IA calculou')
+    .setTitle('🧮 RAID-Z IA calculou')
     .setDescription(`${message.author}, **${match[1]} ${op} ${match[3]} = ${Number.isInteger(result) ? result : result.toFixed(2)}**.`);
 }
 
 function shouldSearchServerRules(question = '') {
   const text = normalizeText(question);
 
-  const ruleWords = ['regra','limite','raid','ban','banimento','punição','punicao','proibido','permitido','clan','cla','clã','grupo','base','portao','portão','codelock','dm','deathmatch','vanilla','vanila','bbp'];
+  const ruleWords = ['regra','limite','raid','ban','banimento','punição','punicao','proibido','permitido','clan','cla','clã','grupo','base','portao','portão','codelock','dm','vanilla','vanilla','vanila','raidz'];
   const hasRuleWord = ruleWords.some((word) => text.includes(normalizeText(word)));
 
   // Evita cair em regra só porque o player falou "quantos".
@@ -1250,7 +1249,7 @@ function isClearlyDayZOrServerQuestion(question = '') {
   const text = normalizeText(question);
 
   const words = [
-    'dayz','vanilla','vanila','bbp','deathmatch','dm','raid','base','clan','clã','cla','zumbi','infectado',
+    'dayz','vanilla','vanila','raidz','vanilla','dm','raid','base','clan','clã','cla','zumbi','infectado',
     'carne','comer','comida','fome','sede','agua','água','colera','cólera','gripe','resfriado','salmonella','kuru',
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
@@ -1376,7 +1375,7 @@ function buildAdminStatusEmbed(message) {
 
 function requestJson(url) {
   return new Promise((resolve) => {
-    const request = https.get(url, { timeout: WEB_SEARCH_TIMEOUT_MS, headers: { 'User-Agent': 'SobreviventeZ-IA/1.0' } }, (response) => {
+    const request = https.get(url, { timeout: WEB_SEARCH_TIMEOUT_MS, headers: { 'User-Agent': 'RAIDZ-IA/1.0' } }, (response) => {
       let body = '';
 
       response.on('data', (chunk) => {
@@ -1471,7 +1470,7 @@ function buildWebFallbackEmbed(message, web) {
 
     return baseEmbed()
       .setColor(0xe67e22)
-      .setTitle('🤖 Sobrevivente IA')
+      .setTitle('🤖 RAID-Z IA')
       .setDescription([
         `${message.author}, eu não achei resposta confiável na minha base interna.`,
         '',
@@ -1485,7 +1484,7 @@ function buildWebFallbackEmbed(message, web) {
 
   const embed = baseEmbed()
     .setColor(0x00b894)
-    .setTitle('🌐 Sobrevivente IA pesquisou fora')
+    .setTitle('🌐 RAID-Z IA pesquisou fora')
     .setDescription([
       `${message.author}, não achei uma resposta exata na minha base interna, então usei a API de busca.`,
       '',
@@ -1529,9 +1528,9 @@ function preferBestFaq(question = '', faqResults = []) {
     let bonus = 0;
 
     // Dá prioridade para guia do servidor/mod citado na pergunta.
-    if (normalizedQuestion.includes('bbp') && server.includes('bbp')) bonus += 30;
+    if (normalizedQuestion.includes('raidz') && server.includes('raidz')) bonus += 30;
     if ((normalizedQuestion.includes('vanilla') || normalizedQuestion.includes('vanila')) && server.includes('vanilla')) bonus += 30;
-    if ((normalizedQuestion.includes('deathmatch') || normalizedQuestion.includes('death math') || normalizedQuestion.includes('dm')) && server.includes('deathmatch')) bonus += 30;
+    if ((normalizedQuestion.includes('vanilla') || normalizedQuestion.includes('vanilla') || normalizedQuestion.includes('dm')) && server.includes('vanilla')) bonus += 30;
 
     // Dá prioridade para frase exata: "qual carne posso comer", "como fazer bancada", etc.
     for (const keyword of (faq.keywords || [])) {
@@ -1581,12 +1580,12 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
   if (!faqResults.length && !ruleResults.length) {
     return baseEmbed()
       .setColor(0xe67e22)
-      .setTitle('🤖 Sobrevivente IA')
+      .setTitle('🤖 RAID-Z IA')
       .setDescription([
         `${message.author}, não achei uma resposta exata para essa pergunta.`,
         '',
         'Tente perguntar mais direto, por exemplo:',
-        '• como fazer bancada no BBP?',
+        '• como funciona bandeira no raid?',
         '• qual carne posso comer no DayZ?',
         '• como curar cólera?',
         '• como consertar carro?',
@@ -1600,7 +1599,7 @@ function buildQuestionAnswerEmbed(message, faqResults, ruleResults, question = '
 
   const embed = baseEmbed()
     .setColor(0xff3131)
-    .setTitle('🤖 Sobrevivente IA respondeu')
+    .setTitle('🤖 RAID-Z IA respondeu')
     .setDescription([
       `${message.author}, vou responder direto o que você perguntou:`,
       '',
@@ -1761,7 +1760,7 @@ function isServerPrivateQuestion(question = '') {
 function countOpenTickets(guild) {
   return guild.channels.cache.filter((channel) =>
     channel.isTextBased?.() &&
-    (channel.topic || '').includes('SZ_TICKET') &&
+    (channel.topic || '').includes('RAIDZ_TICKET') &&
     !(channel.topic || '').includes('STATUS:CLOSED')
   ).size;
 }
@@ -1769,7 +1768,7 @@ function countOpenTickets(guild) {
 function countTicketChannels(guild) {
   return guild.channels.cache.filter((channel) =>
     channel.isTextBased?.() &&
-    ((channel.topic || '').includes('SZ_TICKET') || (channel.name || '').includes('ticket-'))
+    ((channel.topic || '').includes('RAIDZ_TICKET') || (channel.name || '').includes('ticket-'))
   ).size;
 }
 
@@ -1788,7 +1787,7 @@ async function buildServerPrivateEmbed(message, question = '') {
 
   const embed = baseEmbed()
     .setColor(0xff3131)
-    .setTitle('🤖 Sobrevivente IA — Informação do servidor')
+    .setTitle('🤖 RAID-Z IA — Informação do servidor')
     .setDescription([
       `${message.author}, essa pergunta é sobre o **nosso servidor/comunidade**, então eu **não vou pesquisar na web**, porque o Google não sabe os dados internos daqui.`,
       '',
@@ -1968,17 +1967,17 @@ async function handleRulesQuestion(message) {
         embeds: [
           baseEmbed()
             .setColor(0xff3131)
-            .setTitle('🤖 Sobrevivente IA')
+            .setTitle('🤖 RAID-Z IA')
             .setDescription([
               `${message.author}, me diga sua dúvida junto com a marcação.`,
               '',
               'Exemplos:',
-              '• **@Sobrevivente IA como curar cólera?**',
-              '• **@Sobrevivente IA como fazer bancada no BBP?**',
-              '• **@Sobrevivente IA como resgatar o kit inicial?**',
-              '• **@Sobrevivente IA como funciona seguro por roubo?**',
-              '• **@Sobrevivente IA quantos banidos temos?**',
-              '• **@Sobrevivente IA 2+3=?**'
+              '• **@RAID-Z IA como curar cólera?**',
+              '• **@RAID-Z IA como funciona bandeira no raid?**',
+              '• **@RAID-Z IA como resgatar o kit inicial?**',
+              '• **@RAID-Z IA como funciona seguro por roubo?**',
+              '• **@RAID-Z IA quantos banidos temos?**',
+              '• **@RAID-Z IA 2+3=?**'
             ].join('\n'))
         ]
       }, thinkingMessage);
@@ -2024,11 +2023,11 @@ async function handleRulesQuestion(message) {
     const web = await searchWebFallback(content);
     return temporaryReply(message, { embeds: [buildWebFallbackEmbed(message, web)] }, thinkingMessage);
   } catch (error) {
-    console.error('Erro na Sobrevivente IA:', error);
+    console.error('Erro na RAID-Z IA:', error);
 
     const embed = baseEmbed()
       .setColor(0xe74c3c)
-      .setTitle('🤖 Sobrevivente IA')
+      .setTitle('🤖 RAID-Z IA')
       .setDescription([
         `${message.author}, tive um erro ao montar a resposta e por isso não vou inventar nada.`,
         '',

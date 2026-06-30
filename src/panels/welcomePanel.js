@@ -1,6 +1,6 @@
 const path = require('path');
-const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { SERVER_SELECTIONS } = require('../config/constants');
+const { AttachmentBuilder } = require('discord.js');
+const { PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 
 function panelImage(fileName) {
@@ -8,36 +8,25 @@ function panelImage(fileName) {
 }
 
 function buildWelcomePanel() {
-  const imageName = '01-escolha-servidor.png';
+  const imageName = PANEL_IMAGES.welcome;
   const embed = baseEmbed()
-    .setColor(0xe74c3c)
-    .setTitle('🧟 Bem-vindo à Sobreviventes Z')
+    .setColor(0xff3131)
+    .setTitle('🔴 Bem-vindo ao RAID-Z')
     .setDescription([
-      'Escolha abaixo o servidor que você joga para liberar os canais corretos.',
+      'O Discord foi reconstruído para **1 servidor apenas: RAID-Z Vanilla**.',
       '',
-      '🔴 **Vanilla** - experiência DayZ clássica, pura e realista.',
-      '🔵 **BBP** - construção, bases, clãs e progressão.',
-      '🌈 **DeathMatch** - PvP rápido, intenso e sem parar.',
+      'Não existe mais escolha de servidor. Tudo agora é focado no Vanilla.',
       '',
-      'Você pode ter apenas **um cargo de servidor por vez**. Ao trocar, o cargo anterior será removido automaticamente.'
+      '⚔️ **Clã:** máximo de **10 jogadores**.',
+      '🏳️ **Bandeira no raid:** precisa solicitar para a administração.',
+      '🤍 **Bandeira branca:** pode ser solicitada **1 vez por mês**.',
+      '',
+      'Leia as regras, abra ticket quando precisar e boa sobrevivência.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
-    .addFields({
-      name: 'Próximo passo',
-      value: 'Clique em um botão para entrar na área do seu servidor.'
-    });
+    .addFields({ name: 'RAID-Z', value: 'Sobreviva, construa, defenda e respeite as regras do servidor.' });
 
-  const row = new ActionRowBuilder().addComponents(
-    Object.values(SERVER_SELECTIONS).map((selection) =>
-      new ButtonBuilder()
-        .setCustomId(selection.customId)
-        .setLabel(selection.label)
-        .setEmoji(selection.emoji)
-        .setStyle(ButtonStyle.Secondary)
-    )
-  );
-
-  return { embeds: [embed], components: [row], files: [panelImage(imageName)] };
+  return { embeds: [embed], files: [panelImage(imageName)] };
 }
 
 module.exports = { buildWelcomePanel };

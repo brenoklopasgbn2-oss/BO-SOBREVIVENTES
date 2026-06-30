@@ -38,7 +38,7 @@ function buildTicketPanel(guild) {
 
   const embed = baseEmbed()
     .setColor(supportStatus.emoji === '🟢' ? 0x2ecc71 : supportStatus.emoji === '🟡' ? 0xf1c40f : 0xe74c3c)
-    .setTitle('🎫 Central de Atendimento Sobreviventes Z')
+    .setTitle('🎫 Central de Atendimento RAID-Z')
     .setDescription([
       `${supportStatus.emoji} **${supportStatus.label}** — ${supportStatus.description}`,
       '',

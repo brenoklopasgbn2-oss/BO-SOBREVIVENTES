@@ -26,12 +26,11 @@ function panelImage(fileName) {
 
 function getMemberServerInfo(member) {
   const servers = [
-    { roleName: ROLE_NAMES.vanilla, emoji: '🔴', prefix: '🔴', label: 'Vanilla' },
-    { roleName: ROLE_NAMES.bbp, emoji: '🔵', prefix: '🔵', label: 'BBP' },
-    { roleName: ROLE_NAMES.deathmatch, emoji: '🌈', prefix: '🌈', label: 'Deathmatch' }
+    { roleName: ROLE_NAMES.vanillaPlus, emoji: '🔴', prefix: '🔴', label: 'Vanilla+' },
+    { roleName: ROLE_NAMES.vanilla, emoji: '🔴', prefix: '🔴', label: 'Vanilla' }
   ];
 
-  return servers.find((server) => member.roles.cache.some((role) => role.name === server.roleName)) || { roleName: null, emoji: '⚪', prefix: '⚪', label: 'Sem servidor escolhido' };
+  return servers.find((server) => member.roles.cache.some((role) => role.name === server.roleName)) || { roleName: null, emoji: '🔴', prefix: '🔴', label: 'RAID-Z Vanilla' };
 }
 
 function parseTicketTopic(topic = '') {
@@ -72,7 +71,7 @@ async function openTicket(interaction, typeKey) {
     name: `${serverInfo.prefix}-ticket-${ticketType.name}-${safeName}`,
     type: ChannelType.GuildText,
     parent: category?.id,
-    topic: `SZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|STATUS:OPEN`,
+    topic: `RAIDZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|STATUS:OPEN`,
     permissionOverwrites: [
       { id: interaction.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
       {

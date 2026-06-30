@@ -1,16 +1,16 @@
 const STORE_GUIDES = [
   {
-    title: 'SobreviventesZ Store — como funciona a loja',
+    title: 'RAID-Z Store — como funciona a loja',
     server: 'Loja',
     keywords: ['loja','store','sobreviventesz store','sobreviventes z store','como funciona loja','comprar item','comprar itens','item cair no pé','drop no pé','entrega item','compra site','loja ingame','loja in game','f6'],
     answer: [
-      '**SobreviventesZ Store** é a loja do servidor para comprar itens com **SZ Coins**.',
+      '**RAID-Z Store** é a loja do servidor para comprar itens com **RZ Coins**.',
       'Ela funciona no **site** e também no **in-game**. No jogo, o painel abre pela tecla configurada do mod, normalmente **F6**.',
       '',
       '**Como comprar:**',
-      '1. Entre no servidor correto: **Vanilla** ou **BBP**.',
+      '1. Entre no servidor correto: **Vanilla** ou **RAID-Z**.',
       '2. Abra a loja pelo site ou pelo painel in-game.',
-      '3. Confira seu saldo em **SZ Coins**.',
+      '3. Confira seu saldo em **RZ Coins**.',
       '4. Escolha a categoria pelos botões simples da loja.',
       '5. Clique no produto e depois em **Comprar**.',
       '6. Confirme a compra e espere a entrega.',
@@ -21,17 +21,17 @@ const STORE_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'Servidores da loja — Vanilla e BBP',
+    title: 'Servidores da loja — Vanilla e RAID-Z',
     server: 'Loja',
-    keywords: ['servidor da loja','servidores da loja','vanilla bbp loja','deathmatch loja','death match loja','dm loja','qual servidor comprar','comprar no servidor certo','servidor ativo'],
+    keywords: ['servidor da loja','servidores da loja','vanilla raidz loja','vanilla loja','death match loja','dm loja','qual servidor comprar','comprar no servidor certo','servidor ativo'],
     answer: [
-      'A loja trabalha com os servidores **Vanilla** e **BBP**.',
-      'O **Death Match/DM** é separado e não entra na loja principal de compras de itens/veículos.',
+      'A loja trabalha com os servidores **Vanilla** e **RAID-Z**.',
+      'O **Death Match/Vanilla** é separado e não entra na loja principal de compras de itens/veículos.',
       '',
-      '**No site:** você pode ver produtos do Vanilla ou do BBP usando o seletor antigo de servidor.',
+      '**No site:** você pode ver produtos do Vanilla ou do RAID-Z usando o seletor antigo de servidor.',
       '**No in-game:** a loja deve mostrar apenas os itens do servidor em que você está jogando.',
       '',
-      'Sempre confira o selo do servidor no produto: **Vanilla** ou **BBP**. Comprar no servidor errado pode fazer o item ir para o lugar errado ou não aparecer como você esperava.'
+      'Sempre confira o selo do servidor no produto: **Vanilla** ou **RAID-Z**. Comprar no servidor errado pode fazer o item ir para o lugar errado ou não aparecer como você esperava.'
     ].join('\n')
   },
   {
@@ -44,19 +44,19 @@ const STORE_GUIDES = [
       '**Como usar:** escolha o servidor no seletor antigo, depois clique na categoria desejada.',
       'Categorias comuns: **Todas**, **Caixas**, **Construção**, **Equipamento**, **Geral**, **Kit**, **Kits**, **Suprimentos**, **VIP**, **Veículos** e **Utilitários**.',
       '',
-      'Se não achou um item, confira se você está no servidor certo: alguns itens podem existir só no **Vanilla** ou só no **BBP**.'
+      'Se não achou um item, confira se você está no servidor certo: alguns itens podem existir só no **Vanilla** ou só no **RAID-Z**.'
     ].join('\n')
   },
   {
-    title: 'Como comprar moedas / SZ Coins',
+    title: 'Como comprar moedas / RZ Coins',
     server: 'Moedas',
     keywords: ['moeda','moedas','sz coins','saldo','comprar moedas','comprar coin','comprar coins','recarregar saldo','saldo zerado','quanto vale sz','1000 sz'],
     answer: [
-      '**SZ Coins** é o saldo usado na SobreviventesZ Store.',
+      '**RZ Coins** é o saldo usado na RAID-Z Store.',
       'No site, o saldo aparece no topo e também em algumas áreas como **Minha Garagem**.',
       '',
       '**Como usar:** compre/adquira moedas na aba **Moedas**, espere o saldo atualizar e depois volte para a loja para comprar itens.',
-      'A conversão configurada no projeto da loja é **US$ 1 = 1000 SZ Coins**.',
+      'A conversão configurada no projeto da loja é **US$ 1 = 1000 RZ Coins**.',
       '',
       'Se pagou e o saldo não entrou, abra ticket com comprovante, Steam64/SteamID e print da tela de saldo.'
     ].join('\n')
@@ -84,7 +84,7 @@ const STORE_GUIDES = [
       '',
       '**Como resgatar:**',
       '1. Entre na loja com sua conta/Steam64 correta.',
-      '2. Escolha o servidor certo, normalmente **Vanilla** ou **BBP**.',
+      '2. Escolha o servidor certo, normalmente **Vanilla** ou **RAID-Z**.',
       '3. Procure o card colorido **Kit Inicial**.',
       '4. Clique em **Resgatar**.',
       '5. Fique logado no DayZ e aguarde os itens droparem no seu pé.',
@@ -128,7 +128,7 @@ const STORE_GUIDES = [
       '5. Escolha as opções disponíveis, como **skin/type**, plano/tempo e seguro quando existir.',
       '6. Confirme a compra.',
       '',
-      'Depois da confirmação, o veículo é preparado para entrega no servidor correto. Confira sempre se está comprando no **Vanilla** ou no **BBP**.'
+      'Depois da confirmação, o veículo é preparado para entrega no servidor correto. Confira sempre se está comprando no **Vanilla** ou no **RAID-Z**.'
     ].join('\n')
   },
   {
@@ -176,16 +176,16 @@ const STORE_GUIDES = [
       '**Minha Garagem** é onde o player gerencia os veículos comprados/registrados.',
       '',
       'Ela mostra:',
-      '• saldo em **SZ Coins**;',
+      '• saldo em **RZ Coins**;',
       '• veículos ativos;',
       '• seguros disponíveis;',
-      '• servidor de cada veículo: **Vanilla** ou **BBP**;',
+      '• servidor de cada veículo: **Vanilla** ou **RAID-Z**;',
       '• status do veículo: parado, em movimento, com player dentro ou sem player dentro;',
       '• último sinal recebido do veículo;',
       '• plano e usos restantes;',
       '• botões de **Detalhes**, **Rastrear**, **Acionar Seguro** e **Acionar Seguro por Roubo**.',
       '',
-      'Use os filtros pequenos **Todos / Vanilla / BBP** para ver os veículos por servidor.'
+      'Use os filtros pequenos **Todos / Vanilla / RAID-Z** para ver os veículos por servidor.'
     ].join('\n')
   },
   {
@@ -282,7 +282,7 @@ const STORE_GUIDES = [
       '**O admin pode:**',
       '• criar/editar/remover produtos;',
       '• criar/apagar categorias;',
-      '• definir servidor do produto: **Vanilla** ou **BBP**;',
+      '• definir servidor do produto: **Vanilla** ou **RAID-Z**;',
       '• colocar preço, imagem, descrição e classname;',
       '• configurar veículo com múltiplas skins/types;',
       '• ativar promoção em todos os produtos ou só em um produto específico;',
@@ -292,14 +292,14 @@ const STORE_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'Sobreviventes Z — resumo dos servidores e Discord',
+    title: 'RAID-Z — resumo dos servidores e Discord',
     server: 'Comunidade',
-    keywords: ['sobreviventes z','sobreviventesz','servidores sobreviventes','vanilla bbp deathmatch','death math','discord sobreviventes','escolher servidor discord','cargo vanilla','cargo bbp','cargo deathmatch'],
+    keywords: ['sobreviventes z','sobreviventesz','servidores sobreviventes','vanilla raidz vanilla','vanilla','discord sobreviventes','escolher servidor discord','cargo vanilla','cargo raidz','cargo vanilla'],
     answer: [
-      '**Sobreviventes Z** tem áreas por servidor no Discord:',
-      '• **Sobreviventes Z Vanilla** — identidade vermelha;',
-      '• **Sobreviventes Z BBP** — identidade azul;',
-      '• **Sobreviventes Z Death Match/DM** — identidade colorida.',
+      '**RAID-Z** tem áreas por servidor no Discord:',
+      '• **RAID-Z Vanilla** — identidade vermelha;',
+      '• **RAID-Z RAID-Z** — identidade azul;',
+      '• **RAID-Z Death Match/Vanilla** — identidade colorida.',
       '',
       'Ao entrar no Discord, o player escolhe qual servidor quer ver no painel de boas-vindas. O bot entrega o cargo do servidor escolhido.',
       '',

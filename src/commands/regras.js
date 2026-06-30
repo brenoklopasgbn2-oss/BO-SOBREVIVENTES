@@ -4,14 +4,13 @@ const { inferRuleSetFromChannel } = require('../data/rulesRepository');
 
 function addServerOption(option) {
   return option
-    .setName('servidor')
+    .setName('lista')
     .setDescription('Qual lista de regras deseja ver?')
     .setRequired(false)
     .addChoices(
       { name: 'Gerais / Discord', value: 'geral' },
-      { name: 'Vanilla', value: 'vanilla' },
-      { name: 'BBP', value: 'bbp' },
-      { name: 'Deathmatch', value: 'deathmatch' }
+      { name: 'RAID-Z Vanilla', value: 'vanilla' },
+      { name: 'Bandeira no Raid', value: 'bandeira' }
     );
 }
 
@@ -22,13 +21,9 @@ module.exports = {
     .addStringOption(addServerOption),
 
   async execute(interaction) {
-    const selected = interaction.options.getString('servidor') || inferRuleSetFromChannel(interaction.channel?.name || '');
+    const selected = interaction.options.getString('lista') || inferRuleSetFromChannel(interaction.channel?.name || '');
     const payloads = buildRulesMessages(selected);
-
     await interaction.reply(payloads[0]);
-
-    for (const payload of payloads.slice(1)) {
-      await interaction.followUp(payload);
-    }
+    for (const payload of payloads.slice(1)) await interaction.followUp(payload);
   }
 };

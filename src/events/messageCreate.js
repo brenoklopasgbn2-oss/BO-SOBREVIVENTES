@@ -18,7 +18,7 @@ function channelMode(channelName) {
       color: 0xf39c12,
       title: '📣 Comunicado Oficial',
       fallbackImage: PANEL_IMAGES.announcement,
-      footer: 'Sobreviventes Z • Aviso da Administração'
+      footer: 'RAID-Z • Aviso da Administração'
     };
   }
 
@@ -27,7 +27,7 @@ function channelMode(channelName) {
       color: 0xc0392b,
       title: '🚫 Registro de Banimento / Punição',
       fallbackImage: PANEL_IMAGES.banApplied,
-      footer: 'Sobreviventes Z • Banimentos e Punições'
+      footer: 'RAID-Z • Banimentos e Punições'
     };
   }
 
@@ -36,7 +36,7 @@ function channelMode(channelName) {
       color: 0x3498db,
       title: '📘 Informação Importante',
       fallbackImage: PANEL_IMAGES.announcement,
-      footer: 'Sobreviventes Z • Central de Informações'
+      footer: 'RAID-Z • Central de Informações'
     };
   }
 
@@ -48,7 +48,7 @@ function parseClaimedBy(topic = '') {
 }
 
 function isTicketChannel(channel) {
-  return Boolean(channel?.topic?.includes('SZ_TICKET') || channel?.name?.includes('ticket-'));
+  return Boolean(channel?.topic?.includes('RAIDZ_TICKET') || channel?.name?.includes('ticket-'));
 }
 
 async function autoClaimTicket(message) {

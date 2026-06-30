@@ -49,7 +49,7 @@ module.exports = {
   once: true,
   async execute(client) {
     client.user.setPresence({
-      activities: [{ name: 'Sobreviventes Z', type: ActivityType.Watching }],
+      activities: [{ name: 'RAID-Z', type: ActivityType.Watching }],
       status: 'online'
     });
 

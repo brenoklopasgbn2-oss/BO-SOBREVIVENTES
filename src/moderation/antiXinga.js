@@ -1,7 +1,7 @@
 const { STAFF_ROLES } = require('../config/constants');
 
 /*
-  Anti-xingamento Sobreviventes Z
+  Anti-xingamento RAID-Z
 
   Ele não depende só da lista abaixo.
   O filtro também:

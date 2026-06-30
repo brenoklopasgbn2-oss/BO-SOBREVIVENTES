@@ -5,13 +5,18 @@ const ROLE_NAMES = {
   support: 'Suporte',
   developer: 'Desenvolvedor',
   vip: 'Impulsionador',
-  vanilla: 'Sobrevivente Vanilla',
-  bbp: 'Sobrevivente BBP',
-  deathmatch: 'Sobrevivente Deathmatch',
-  ai: 'Sobrevivente IA'
+  vanilla: 'Vanilla',
+  vanillaPlus: 'Vanilla+',
+  ai: 'RAID-Z IA'
 };
 
-const SERVER_ROLES = [ROLE_NAMES.vanilla, ROLE_NAMES.bbp, ROLE_NAMES.deathmatch];
+const LEGACY_ROLE_NAMES = {
+  vanilla: ['Sobrevivente Vanilla', 'Sobreviventes Vanilla'],
+  bbp: ['Sobrevivente BBP', 'Sobreviventes BBP', 'BBP'],
+  deathmatch: ['Sobrevivente Deathmatch', 'Sobreviventes Deathmatch', 'Deathmatch', 'DM']
+};
+
+const SERVER_ROLES = [ROLE_NAMES.vanilla, ROLE_NAMES.vanillaPlus];
 const STAFF_ROLES = [ROLE_NAMES.founder, ROLE_NAMES.admin, ROLE_NAMES.moderator, ROLE_NAMES.support, ROLE_NAMES.developer];
 
 const ROLE_DEFINITIONS = [
@@ -22,17 +27,14 @@ const ROLE_DEFINITIONS = [
   { name: ROLE_NAMES.developer, color: 0x9b59b6, hoist: true },
   { name: ROLE_NAMES.vip, color: 0xff7ee2, hoist: true },
   { name: ROLE_NAMES.vanilla, color: 0xe74c3c, hoist: false },
-  { name: ROLE_NAMES.bbp, color: 0x3498db, hoist: false },
-  { name: ROLE_NAMES.deathmatch, color: 0xff00ff, hoist: false },
+  { name: ROLE_NAMES.vanillaPlus, color: 0xff3131, hoist: false },
   { name: ROLE_NAMES.ai, color: 0xff3131, hoist: true }
 ];
 
 const CATEGORY_NAMES = {
-  entry: '🚪・ENTRADA',
-  central: '📢・CENTRAL',
-  vanilla: '🔴・VANILLA',
-  bbp: '🔵・BBP',
-  deathmatch: '🌈・DEATHMATCH',
+  entry: '🚪・ENTRADA RAID-Z',
+  central: '📢・CENTRAL RAID-Z',
+  vanilla: '🔴・RAID-Z VANILLA',
   community: '🤝・COMUNIDADE',
   support: '🟡・SUPORTE',
   ticketsOpen: '📂・TICKETS-ABERTOS',
@@ -42,12 +44,10 @@ const CATEGORY_NAMES = {
 };
 
 const CATEGORY_ALIASES = {
-  [CATEGORY_NAMES.entry]: ['🚪 ENTRADA'],
-  [CATEGORY_NAMES.central]: ['📢 CENTRAL'],
-  [CATEGORY_NAMES.vanilla]: ['🧟 VANILLA'],
-  [CATEGORY_NAMES.bbp]: ['🏗️ BBP'],
-  [CATEGORY_NAMES.deathmatch]: ['⚔️ DEATHMATCH'],
-  [CATEGORY_NAMES.community]: ['🤝 COMUNIDADE'],
+  [CATEGORY_NAMES.entry]: ['🚪・ENTRADA', '🚪 ENTRADA', 'ENTRADA'],
+  [CATEGORY_NAMES.central]: ['📢・CENTRAL', '📢 CENTRAL', 'CENTRAL'],
+  [CATEGORY_NAMES.vanilla]: ['🔴・VANILLA', '🧟 VANILLA', 'VANILLA', '🔴・SOBREVIVENTES Z VANILLA'],
+  [CATEGORY_NAMES.community]: ['🤝・COMUNIDADE', '🤝 COMUNIDADE'],
   [CATEGORY_NAMES.support]: ['🎫・SUPORTE', '🎫 SUPORTE', '🟢・SUPORTE', '🟡・SUPORTE', '🔴・SUPORTE'],
   [CATEGORY_NAMES.ticketsOpen]: ['📂 TICKETS ABERTOS'],
   [CATEGORY_NAMES.vip]: ['💎 VIP', '🚀 IMPULSIONADORES'],
@@ -56,18 +56,17 @@ const CATEGORY_ALIASES = {
 };
 
 const CHANNELS = {
-  welcome: '🎯・escolha-seu-servidor',
+  welcome: '🚪・entrada-raid-z',
   memberWelcome: '👋・boas-vindas',
   memberLeave: '📤・saidas',
   announcements: '📣・avisos',
   rules: '📜・regras-gerais',
   rulesVanilla: '📜・regras-vanilla',
-  rulesBbp: '📜・regras-bbp',
-  rulesDeathmatch: '📜・regras-dm',
+  rulesFlagRaid: '🏳️・regra-bandeira-raid',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
-  rulesAsk: '🤖・sobrevivente-ia',
+  rulesAsk: '🤖・raid-z-ia',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   openTicket: '🎫・abrir-ticket',
@@ -78,24 +77,23 @@ const CHANNELS = {
   supportRoom2: '🎧・atendimento-2',
   generalVoice1: '🔊・geral-1',
   generalVoice2: '🔊・geral-2',
-  squadVoice1: '🎯・squad-1',
-  squadVoice2: '🎯・squad-2',
+  squadVoice1: '🎯・cla-1',
+  squadVoice2: '🎯・cla-2',
   staffVoice: '🛡️・staff-voz'
 };
 
 const CHANNEL_ALIASES = {
-  [CHANNELS.welcome]: ['escolha-seu-servidor'],
+  [CHANNELS.welcome]: ['🎯・escolha-seu-servidor', 'escolha-seu-servidor', 'entrada-raid-z'],
   [CHANNELS.memberWelcome]: ['boas-vindas'],
   [CHANNELS.memberLeave]: ['saidas'],
   [CHANNELS.announcements]: ['avisos'],
   [CHANNELS.rules]: ['regras', 'regras-gerais'],
   [CHANNELS.rulesVanilla]: ['regras-vanilla', 'vanilla-regras'],
-  [CHANNELS.rulesBbp]: ['regras-bbp', 'bbp-regras'],
-  [CHANNELS.rulesDeathmatch]: ['regras-dm', 'dm-regras', 'regras-deathmatch'],
+  [CHANNELS.rulesFlagRaid]: ['regra-bandeira-raid', 'regras-bandeira', 'bandeira-raid'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
-  [CHANNELS.rulesAsk]: ['sobrevivente-ia', 'pergunte-as-regras', 'duvidas-regras', 'perguntas-regras'],
+  [CHANNELS.rulesAsk]: ['sobrevivente-ia', 'raid-z-ia', 'pergunte-as-regras', 'duvidas-regras', 'perguntas-regras'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
@@ -106,8 +104,8 @@ const CHANNEL_ALIASES = {
   [CHANNELS.supportRoom2]: ['atendimento-2'],
   [CHANNELS.generalVoice1]: [],
   [CHANNELS.generalVoice2]: [],
-  [CHANNELS.squadVoice1]: [],
-  [CHANNELS.squadVoice2]: [],
+  [CHANNELS.squadVoice1]: ['squad-1'],
+  [CHANNELS.squadVoice2]: ['squad-2'],
   [CHANNELS.staffVoice]: []
 };
 
@@ -115,9 +113,7 @@ const SUPPORT_VOICE_CHANNELS = [CHANNELS.supportRoom1, CHANNELS.supportRoom2];
 const PLAYER_VOICE_CHANNELS = [CHANNELS.generalVoice1, CHANNELS.generalVoice2, CHANNELS.squadVoice1, CHANNELS.squadVoice2];
 
 const SERVER_SELECTIONS = {
-  vanilla: { customId: 'server_select:vanilla', label: 'Vanilla', emoji: '🔴', roleName: ROLE_NAMES.vanilla, removeRoles: [ROLE_NAMES.bbp, ROLE_NAMES.deathmatch], color: 0xe74c3c },
-  bbp: { customId: 'server_select:bbp', label: 'BBP', emoji: '🔵', roleName: ROLE_NAMES.bbp, removeRoles: [ROLE_NAMES.vanilla, ROLE_NAMES.deathmatch], color: 0x3498db },
-  deathmatch: { customId: 'server_select:deathmatch', label: 'Deathmatch', emoji: '🌈', roleName: ROLE_NAMES.deathmatch, removeRoles: [ROLE_NAMES.vanilla, ROLE_NAMES.bbp], color: 0xff00ff }
+  vanilla: { customId: 'server_select:vanilla', label: 'Entrar no RAID-Z', emoji: '🔴', roleName: ROLE_NAMES.vanilla, removeRoles: [], color: 0xe74c3c }
 };
 
 const TICKET_TYPES = {
@@ -130,7 +126,7 @@ const TICKET_TYPES = {
 };
 
 const PANEL_IMAGES = {
-  welcome: '01-escolha-servidor.png',
+  welcome: '01-entrada-raid-z.png',
   ticket: '04-suporte-geral.png',
   report: '08-denuncias.png',
   bug: '09-bug.png',
@@ -147,7 +143,7 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.entry],
     visibleToEveryone: true,
     channels: [
-      { type: 'text', name: CHANNELS.welcome, aliases: CHANNEL_ALIASES[CHANNELS.welcome], topic: 'Escolha seu servidor para liberar os canais da comunidade.', readOnly: true },
+      { type: 'text', name: CHANNELS.welcome, aliases: CHANNEL_ALIASES[CHANNELS.welcome], topic: 'Entrada oficial do RAID-Z. Estrutura de um servidor único Vanilla.', readOnly: true },
       { type: 'text', name: CHANNELS.memberWelcome, aliases: CHANNEL_ALIASES[CHANNELS.memberWelcome], topic: 'Mensagens automáticas de entrada dos jogadores.', readOnly: true },
       { type: 'text', name: CHANNELS.memberLeave, aliases: CHANNEL_ALIASES[CHANNELS.memberLeave], topic: 'Mensagens automáticas de saída dos jogadores.', readOnly: true }
     ]
@@ -157,45 +153,25 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.central],
     visibleToServerMembers: true,
     channels: [
-      { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais da comunidade Sobreviventes Z.', readOnly: true },
+      { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais do RAID-Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais da comunidade, Discord e conduta dos jogadores.', readOnly: true },
+      { type: 'text', name: CHANNELS.rulesVanilla, aliases: CHANNEL_ALIASES[CHANNELS.rulesVanilla], topic: 'Regras oficiais do RAID-Z Vanilla.', readOnly: true },
+      { type: 'text', name: CHANNELS.rulesFlagRaid, aliases: CHANNEL_ALIASES[CHANNELS.rulesFlagRaid], topic: 'Regras de bandeira no raid e bandeira branca mensal.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
-      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar os servidores.', readOnly: false },
-      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Canal oficial da Sobrevivente IA: dúvidas sobre regras, mods, loja, garagem, seguros, kit inicial, tickets, raid, base e atendimento.', readOnly: false }
+      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar o RAID-Z.', readOnly: false },
+      { type: 'text', name: CHANNELS.rulesAsk, aliases: CHANNEL_ALIASES[CHANNELS.rulesAsk], topic: 'Canal oficial da RAID-Z IA: dúvidas sobre regras, raid, base, clã, bandeira, loja e atendimento.', readOnly: false }
     ]
   },
   {
     name: CATEGORY_NAMES.vanilla,
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.vanilla],
-    allowedRoles: [ROLE_NAMES.vanilla],
+    allowedRoles: [ROLE_NAMES.vanilla, ROLE_NAMES.vanillaPlus],
     channels: [
-      { type: 'text', name: CHANNELS.rulesVanilla, aliases: CHANNEL_ALIASES[CHANNELS.rulesVanilla], topic: 'Regras específicas do servidor Sobreviventes Z Vanilla.', readOnly: true },
-      { type: 'text', name: '📌・vanilla-info', aliases: ['vanilla-info'], topic: 'Informações do servidor Sobreviventes Z Vanilla.', readOnly: true },
-      { type: 'text', name: '💬・vanilla-chat', aliases: ['vanilla-chat'], topic: 'Chat do servidor Vanilla.' },
-      { type: 'text', name: '🎬・vanilla-clips', aliases: ['vanilla-clips'], topic: 'Clipes e momentos do Vanilla.' }
-    ]
-  },
-  {
-    name: CATEGORY_NAMES.bbp,
-    aliases: CATEGORY_ALIASES[CATEGORY_NAMES.bbp],
-    allowedRoles: [ROLE_NAMES.bbp],
-    channels: [
-      { type: 'text', name: CHANNELS.rulesBbp, aliases: CHANNEL_ALIASES[CHANNELS.rulesBbp], topic: 'Regras específicas do servidor Sobreviventes Z BBP.', readOnly: true },
-      { type: 'text', name: '📌・bbp-info', aliases: ['bbp-info'], topic: 'Informações do servidor Sobreviventes Z BBP.', readOnly: true },
-      { type: 'text', name: '💬・bbp-chat', aliases: ['bbp-chat'], topic: 'Chat do servidor BBP.' },
-      { type: 'text', name: '🎬・bbp-clips', aliases: ['bbp-clips'], topic: 'Clipes e bases do BBP.' }
-    ]
-  },
-  {
-    name: CATEGORY_NAMES.deathmatch,
-    aliases: CATEGORY_ALIASES[CATEGORY_NAMES.deathmatch],
-    allowedRoles: [ROLE_NAMES.deathmatch],
-    channels: [
-      { type: 'text', name: CHANNELS.rulesDeathmatch, aliases: CHANNEL_ALIASES[CHANNELS.rulesDeathmatch], topic: 'Regras específicas do servidor Sobreviventes Z Deathmatch.', readOnly: true },
-      { type: 'text', name: '📌・dm-info', aliases: ['dm-info'], topic: 'Informações do servidor Sobreviventes Z Deathmatch.', readOnly: true },
-      { type: 'text', name: '💬・dm-chat', aliases: ['dm-chat'], topic: 'Chat do servidor Deathmatch.' },
-      { type: 'text', name: '🎬・dm-clips', aliases: ['dm-clips'], topic: 'Clipes e highlights do Deathmatch.' }
+      { type: 'text', name: '📌・vanilla-info', aliases: ['vanilla-info'], topic: 'Informações do servidor RAID-Z Vanilla.', readOnly: true },
+      { type: 'text', name: '💬・vanilla-chat', aliases: ['vanilla-chat'], topic: 'Chat do servidor RAID-Z Vanilla.' },
+      { type: 'text', name: '🎬・vanilla-clips', aliases: ['vanilla-clips'], topic: 'Clipes e momentos do RAID-Z Vanilla.' },
+      { type: 'text', name: '🏳️・solicitar-bandeira', aliases: ['solicitar-bandeira'], topic: 'Solicitações de bandeira no raid e bandeira branca mensal.' }
     ]
   },
   {
@@ -203,13 +179,13 @@ const CATEGORY_DEFINITIONS = [
     aliases: CATEGORY_ALIASES[CATEGORY_NAMES.community],
     visibleToServerMembers: true,
     channels: [
-      { type: 'text', name: '💬・chat-geral', aliases: ['chat-geral'], topic: 'Conversa geral da comunidade.' },
+      { type: 'text', name: '💬・chat-geral', aliases: ['chat-geral'], topic: 'Conversa geral da comunidade RAID-Z.' },
       { type: 'text', name: '😂・memes', aliases: ['memes'], topic: 'Memes e descontração.' },
-      { type: 'text', name: '🤝・procurar-grupo', aliases: ['procurar-grupo'], topic: 'Encontre squad para jogar.' },
+      { type: 'text', name: '🤝・procurar-grupo', aliases: ['procurar-grupo'], topic: 'Encontre clã para jogar. Limite máximo: 10 players por clã.' },
       { type: 'voice', name: CHANNELS.generalVoice1, aliases: CHANNEL_ALIASES[CHANNELS.generalVoice1], topic: 'Canal geral de voz para jogadores.', userLimit: 0 },
       { type: 'voice', name: CHANNELS.generalVoice2, aliases: CHANNEL_ALIASES[CHANNELS.generalVoice2], topic: 'Canal geral de voz para jogadores.', userLimit: 0 },
-      { type: 'voice', name: CHANNELS.squadVoice1, aliases: CHANNEL_ALIASES[CHANNELS.squadVoice1], topic: 'Canal de squad.', userLimit: 0 },
-      { type: 'voice', name: CHANNELS.squadVoice2, aliases: CHANNEL_ALIASES[CHANNELS.squadVoice2], topic: 'Canal de squad.', userLimit: 0 }
+      { type: 'voice', name: CHANNELS.squadVoice1, aliases: CHANNEL_ALIASES[CHANNELS.squadVoice1], topic: 'Canal de clã.', userLimit: 10 },
+      { type: 'voice', name: CHANNELS.squadVoice2, aliases: CHANNEL_ALIASES[CHANNELS.squadVoice2], topic: 'Canal de clã.', userLimit: 10 }
     ]
   },
   {
@@ -258,13 +234,14 @@ const CATEGORY_DEFINITIONS = [
     visibleToServerMembers: true,
     channels: [
       { type: 'text', name: '🤖・comandos', aliases: ['comandos'], topic: 'Canal para comandos do bot.' },
-      { type: 'text', name: '📡・status-servidores', aliases: ['status-servidores'], topic: 'Status dos servidores DayZ.', readOnly: true }
+      { type: 'text', name: '📡・status-servidor', aliases: ['status-servidores', 'status-servidor'], topic: 'Status do servidor DayZ RAID-Z Vanilla.', readOnly: true }
     ]
   }
 ];
 
 module.exports = {
   ROLE_NAMES,
+  LEGACY_ROLE_NAMES,
   SERVER_ROLES,
   STAFF_ROLES,
   ROLE_DEFINITIONS,

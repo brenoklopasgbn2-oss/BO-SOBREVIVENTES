@@ -44,7 +44,7 @@ async function movePlayerToStaffChannel(player, targetChannel, waitingChannel) {
   const permissions = targetChannel.permissionsFor(player);
   if (!permissions?.has(PermissionFlagsBits.Connect)) return false;
 
-  await player.voice.setChannel(targetChannel, 'Atendimento automático Sobreviventes Z').catch(() => null);
+  await player.voice.setChannel(targetChannel, 'Atendimento automático RAID-Z').catch(() => null);
 
   if (player.voice.channelId === targetChannel.id) {
     const staffList = getStaff(targetChannel).map((member) => `${member.user}`).join(', ') || 'Staff';

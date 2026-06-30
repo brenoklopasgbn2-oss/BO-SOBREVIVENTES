@@ -95,7 +95,7 @@ const RULES = [
     "category": "Conduta e Segurança",
     "emoji": "📜",
     "title": "Conteúdo da Comunidade",
-    "description": "Os canais de clipes, fotos e streams devem conter apenas conteúdos relacionados ao Sobreviventes Z."
+    "description": "Os canais de clipes, fotos e streams devem conter apenas conteúdos relacionados ao RAID-Z."
   },
   {
     "number": 13,
@@ -543,7 +543,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Limite de Jogadores no Vanilla",
-    "description": "No servidor Vanilla, os grupos são permitidos apenas nos formatos: Solo, Duo, Trio, Squad ou Quinteto. O limite máximo é de 5 jogadores atuando juntos/online pelo mesmo grupo. Qualquer formação acima disso será considerada irregular e poderá gerar punição."
+    "description": "No servidor Vanilla, os grupos são permitidos apenas nos formatos: grupo/clã com no máximo 10 jogadores. O limite máximo é de 10 jogadores atuando juntos/online pelo mesmo clã. Qualquer formação acima disso será considerada irregular e poderá gerar punição."
   },
   {
     "number": 69,
@@ -583,7 +583,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Limite Durante Defesa de Raid",
-    "description": "Caso o clã esteja sofrendo raid, o limite de 5 jogadores online deverá permanecer fixo. Descumprimento poderá gerar punição, invalidação de defesa ou ação administrativa definida pela staff."
+    "description": "Caso o clã esteja sofrendo raid, o limite de 10 jogadores online deverá permanecer fixo. Descumprimento poderá gerar punição, invalidação de defesa ou ação administrativa definida pela staff."
   },
   {
     "number": 74,
@@ -591,7 +591,7 @@ const RULES = [
     "category": "Clãs e Identificação",
     "emoji": "👥",
     "title": "Jogadores Sem Registro",
-    "description": "Jogadores pertencentes a clãs não poderão logar sem tag, utilizar nick oculto ou ficar sem identificação. Caso o clã já possua 5 jogadores online, outro integrante não poderá entrar para participar da ação."
+    "description": "Jogadores pertencentes a clãs não poderão logar sem tag, utilizar nick oculto ou ficar sem identificação. Caso o clã já possua 10 jogadores online, outro integrante não poderá entrar para participar da ação."
   },
   {
     "number": 75,

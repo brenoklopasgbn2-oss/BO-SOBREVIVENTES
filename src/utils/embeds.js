@@ -5,7 +5,7 @@ const BRAND_COLOR = 0x19c37d;
 function baseEmbed() {
   return new EmbedBuilder()
     .setColor(BRAND_COLOR)
-    .setFooter({ text: 'Sobreviventes Z • DayZ Brasil' })
+    .setFooter({ text: 'RAID-Z • DayZ Brasil' })
     .setTimestamp();
 }
 

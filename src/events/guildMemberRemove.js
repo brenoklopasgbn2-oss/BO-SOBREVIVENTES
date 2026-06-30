@@ -21,10 +21,10 @@ module.exports = {
       const imageName = PANEL_IMAGES.leaveMember;
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
-        .setAuthor({ name: `Sobrevivente saiu: ${user.tag}`, iconURL: user.displayAvatarURL({ size: 128 }) })
+        .setAuthor({ name: `RAID-Z saiu: ${user.tag}`, iconURL: user.displayAvatarURL({ size: 128 }) })
         .setTitle('📤 Um sobrevivente deixou a comunidade')
         .setDescription([
-          `**${user.tag}** saiu da **Sobreviventes Z**.`,
+          `**${user.tag}** saiu da **RAID-Z**.`,
           '',
           'Foi embora... mas a gente sabe que uma hora volta 😏'
         ].join('\n'))
@@ -35,7 +35,7 @@ module.exports = {
           { name: '🆔 ID', value: member.id, inline: true },
           { name: '🌎 Membros agora', value: `${member.guild.memberCount}`, inline: true }
         )
-        .setFooter({ text: 'Sobreviventes Z • Registro de saída' })
+        .setFooter({ text: 'RAID-Z • Registro de saída' })
         .setTimestamp();
 
       await leaveChannel.send({ embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);

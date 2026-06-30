@@ -1,6 +1,6 @@
 const path = require('path');
 const { AttachmentBuilder, EmbedBuilder, Events } = require('discord.js');
-const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
+const { CHANNELS, PANEL_IMAGES, ROLE_NAMES } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
 
 function findTextChannel(guild, name) {
@@ -14,26 +14,27 @@ function panelImage(fileName) {
 module.exports = {
   name: Events.GuildMemberAdd,
   async execute(member) {
+    const vanillaRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.vanilla);
+    if (vanillaRole) await member.roles.add(vanillaRole, 'Entrada automática RAID-Z Vanilla').catch(() => null);
+
     const welcomeChannel = findTextChannel(member.guild, CHANNELS.memberWelcome);
-    const selectionChannel = findTextChannel(member.guild, CHANNELS.welcome);
 
     if (welcomeChannel) {
       const accountCreated = Math.floor(member.user.createdTimestamp / 1000);
       const imageName = PANEL_IMAGES.welcomeMember;
       const embed = new EmbedBuilder()
-        .setColor(0xe74c3c)
-        .setAuthor({ name: `Novo sobrevivente: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
-        .setTitle('🧟 Bem-vindo à Sobreviventes Z!')
+        .setColor(0xff3131)
+        .setAuthor({ name: `Novo raider: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
+        .setTitle('🔴 Bem-vindo ao RAID-Z!')
         .setDescription([
           `${member}, você acabou de entrar na nossa comunidade DayZ PC.`,
           '',
-          '🔴 **Vanilla** — sobrevivência pura e realista.',
-          '🔵 **BBP** — construção, bases e progressão.',
-          '🌈 **DeathMatch** — PvP intenso sem parar.',
+          'Agora temos **1 servidor apenas: RAID-Z Vanilla**.',
+          'Seu acesso ao Vanilla é liberado automaticamente.',
           '',
-          selectionChannel
-            ? `➡️ Vá em ${selectionChannel} e escolha o servidor que deseja acessar.`
-            : '➡️ Escolha seu servidor no painel de entrada para liberar os canais.',
+          '⚔️ Clã com máximo de **10 jogadores**.',
+          '🏳️ Bandeira no raid precisa de solicitação para ADM.',
+          '🤍 Bandeira branca pode ser solicitada **1 vez por mês**.',
           '',
           'Leia as regras, respeite a comunidade e boa sobrevivência!'
         ].join('\n'))
@@ -45,7 +46,7 @@ module.exports = {
           { name: '📅 Conta criada', value: `<t:${accountCreated}:R>`, inline: true },
           { name: '🌎 Membro número', value: `${member.guild.memberCount}`, inline: true }
         )
-        .setFooter({ text: 'Sobreviventes Z • Seja bem-vindo ao apocalipse' })
+        .setFooter({ text: 'RAID-Z • Seja bem-vindo ao apocalipse' })
         .setTimestamp();
 
       await welcomeChannel.send({ content: `👋 Bem-vindo, ${member}!`, embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);

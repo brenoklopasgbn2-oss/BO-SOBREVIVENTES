@@ -1,7 +1,7 @@
 {
-  "name": "bot-sobreviventes-z",
+  "name": "bot-raid-z",
   "version": "1.0.1",
-  "description": "Bot Discord simples para criar e organizar a comunidade DayZ Sobreviventes Z.",
+  "description": "Bot Discord para recriar e organizar a comunidade DayZ RAID-Z Vanilla.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
