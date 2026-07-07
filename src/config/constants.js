@@ -1,3 +1,5 @@
+const OWNER_IDS = ['470741321112485899'];
+
 const ROLE_NAMES = {
   founder: 'Fundador',
   admin: 'Administrador',
@@ -63,6 +65,10 @@ const CHANNELS = {
   rules: '📜・regras-gerais',
   rulesVanilla: '📜・regras-vanilla',
   rulesFlagRaid: '🏳️・regra-bandeira-raid',
+  bunkerSubterraneo: '⛏️・bunker-subterraneo',
+  construcoesVanillaPro: '🏗️・construcoes-vanilla-pro',
+  carroBlindado: '🚙・carro-blindado',
+  sacoDeDormir: '🛏️・saco-de-dormir',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
   suggestions: '💡・sugestoes',
@@ -90,6 +96,10 @@ const CHANNEL_ALIASES = {
   [CHANNELS.rules]: ['regras', 'regras-gerais'],
   [CHANNELS.rulesVanilla]: ['regras-vanilla', 'vanilla-regras'],
   [CHANNELS.rulesFlagRaid]: ['regra-bandeira-raid', 'regras-bandeira', 'bandeira-raid'],
+  [CHANNELS.bunkerSubterraneo]: ['bunker-subterraneo', 'banker-subterraneo', 'banker', 'bunker'],
+  [CHANNELS.construcoesVanillaPro]: ['construcoes-vanilla-pro', 'construções-vanilla-pro', 'construcao-vanilla-pro', 'construção-vanilla-pro', 'vanilla-pro', 'vanilla-plus-construcoes', 'construcoes'],
+  [CHANNELS.carroBlindado]: ['carro-blindado', 'carros-blindados', 'blindado', 'veiculo-blindado', 'veículo-blindado'],
+  [CHANNELS.sacoDeDormir]: ['saco-de-dormir', 'saco dormir', 'sleeping-bag', 'sleepingbag', 'respawn'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
   [CHANNELS.suggestions]: ['sugestões', 'sugestoes'],
@@ -157,6 +167,10 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras gerais da comunidade, Discord e conduta dos jogadores.', readOnly: true },
       { type: 'text', name: CHANNELS.rulesVanilla, aliases: CHANNEL_ALIASES[CHANNELS.rulesVanilla], topic: 'Regras oficiais do RAID-Z Vanilla.', readOnly: true },
       { type: 'text', name: CHANNELS.rulesFlagRaid, aliases: CHANNEL_ALIASES[CHANNELS.rulesFlagRaid], topic: 'Regras de bandeira no raid e bandeira branca mensal.', readOnly: true },
+      { type: 'text', name: CHANNELS.bunkerSubterraneo, aliases: CHANNEL_ALIASES[CHANNELS.bunkerSubterraneo], topic: 'Tutorial oficial de bunker subterrâneo: níveis, materiais e upgrades.', readOnly: true },
+      { type: 'text', name: CHANNELS.construcoesVanillaPro, aliases: CHANNEL_ALIASES[CHANNELS.construcoesVanillaPro], topic: 'Guia oficial de construções Vanilla Pro / Vanilla+: janelas, portas, garagem, teto, Hesco e barreira militar.', readOnly: true },
+      { type: 'text', name: CHANNELS.carroBlindado, aliases: CHANNEL_ALIASES[CHANNELS.carroBlindado], topic: 'Guia oficial do carro blindado: craft da chapa, porta do Gunter, serra, chapa e parafusos.', readOnly: true },
+      { type: 'text', name: CHANNELS.sacoDeDormir, aliases: CHANNEL_ALIASES[CHANNELS.sacoDeDormir], topic: 'Regra oficial do saco de dormir: permitido em FOB ou fora da base principal; proibido dentro da base principal.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
       { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar o RAID-Z.', readOnly: false },
@@ -240,6 +254,7 @@ const CATEGORY_DEFINITIONS = [
 ];
 
 module.exports = {
+  OWNER_IDS,
   ROLE_NAMES,
   LEGACY_ROLE_NAMES,
   SERVER_ROLES,

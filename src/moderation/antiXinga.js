@@ -363,6 +363,11 @@ const BAD_WORDS = [
 // Isso evita falso positivo com palavras normais que contêm "cu", "boi", etc.
 const SHORT_EXACT_WORDS = ['cu', 'boi'];
 
+// Nestes canais/conteúdos o bot não remove palavrão automaticamente.
+// Pedido do dono: TikTok/clipes podem ter fala/legenda ofensiva do vídeo; o filtro continua ativo nos outros chats.
+const ANTI_XINGA_EXEMPT_CHANNEL_KEYWORDS = ['tiktok', 'tik-tok', 'tik_tok', 'clips', 'clipes'];
+const ANTI_XINGA_EXEMPT_CONTENT_KEYWORDS = ['tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com'];
+
 const ROAST_MESSAGES = [
   '😂 {user}, sua mensagem foi removida por excesso de QI negativo.',
   '🧼 {user}, o bot leu isso e foi escovar os olhos com cândida.',
@@ -450,6 +455,16 @@ function isStaffMember(member) {
   return member.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
 }
 
+function isAntiXingaExempt(message) {
+  const channelName = normalizeText(message.channel?.name || '');
+  const content = String(message.content || '').toLowerCase();
+
+  const channelExempt = ANTI_XINGA_EXEMPT_CHANNEL_KEYWORDS.some((keyword) => channelName.includes(normalizeText(keyword)));
+  const contentExempt = ANTI_XINGA_EXEMPT_CONTENT_KEYWORDS.some((keyword) => content.includes(keyword));
+
+  return channelExempt || contentExempt;
+}
+
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -488,6 +503,7 @@ function pickRoast(userMention) {
 async function handleAntiXinga(message) {
   if (!message.guild || message.author.bot || !message.content) return false;
   if (isStaffMember(message.member)) return false;
+  if (isAntiXingaExempt(message)) return false;
   if (!hasBadWord(message.content)) return false;
 
   const response = pickRoast(`${message.author}`);
@@ -502,5 +518,6 @@ module.exports = {
   BAD_WORDS,
   ROAST_MESSAGES,
   handleAntiXinga,
-  hasBadWord
+  hasBadWord,
+  isAntiXingaExempt
 };

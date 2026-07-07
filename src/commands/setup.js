@@ -1,5 +1,5 @@
 const { ChannelType, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const { CATEGORY_DEFINITIONS, CHANNELS, ROLE_DEFINITIONS, ROLE_NAMES, LEGACY_ROLE_NAMES, SERVER_ROLES, STAFF_ROLES } = require('../config/constants');
+const { CATEGORY_DEFINITIONS, CHANNELS, ROLE_DEFINITIONS, ROLE_NAMES, LEGACY_ROLE_NAMES, SERVER_ROLES, STAFF_ROLES, OWNER_IDS } = require('../config/constants');
 const { buildWelcomePanel } = require('../panels/welcomePanel');
 const { buildTicketPanel } = require('../panels/ticketPanel');
 const { buildReportPanel } = require('../panels/reportPanel');
@@ -7,6 +7,10 @@ const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
 const { buildAiPanel } = require('../panels/aiPanel');
+const { buildBunkerPanel } = require('../panels/bunkerPanel');
+const { buildVanillaProPanel } = require('../panels/vanillaProPanel');
+const { buildArmoredCarPanel } = require('../panels/armoredCarPanel');
+const { buildSleepingBagPanel } = require('../panels/sleepingBagPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
@@ -39,8 +43,7 @@ function matchNames(name, aliases = []) {
 
 function canUseSetup(member) {
   if (!member) return false;
-  if (member.permissions?.has(PermissionFlagsBits.Administrator)) return true;
-  return member.roles?.cache?.some((role) => STAFF_ROLES.includes(role.name));
+  return OWNER_IDS.includes(member.id);
 }
 
 async function ensureRole(guild, roleDefinition) {
@@ -78,40 +81,17 @@ async function migrateLegacyRoles(guild) {
       vanillaMoved += 1;
     }
 
-    const legacyToRemove = [...oldVanillaRoles, ...oldBbpRoles, ...oldDmRoles];
-    if (legacyToRemove.length) await member.roles.remove(legacyToRemove, 'Removendo cargos antigos Sobreviventes Z/BBP/DM').catch(() => null);
+    // Atualização segura: não remove cargos antigos dos jogadores.
   }
 
-  for (const role of [...oldBbpRoles, ...oldDmRoles, ...oldVanillaRoles]) {
-    if (role && role.editable && !STAFF_ROLES.includes(role.name)) {
-      await role.delete('Cargo antigo removido após migração RAID-Z').catch(() => null);
-    }
-  }
-
+  // Atualização segura: não apaga cargos antigos do servidor.
   return { vanillaPlusMoved, vanillaMoved };
 }
 
-async function wipeDiscordChannels(guild) {
-  const channels = [...guild.channels.cache.values()];
-  const nonCategories = channels.filter((channel) => channel.type !== ChannelType.GuildCategory);
-  const categories = channels.filter((channel) => channel.type === ChannelType.GuildCategory);
-  let deleted = 0;
-
-  for (const channel of nonCategories) {
-    if (channel.deletable) {
-      await channel.delete('Reset RAID-Z: apagando canais antigos').then(() => { deleted += 1; }).catch(() => null);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-    }
-  }
-
-  for (const channel of categories) {
-    if (channel.deletable) {
-      await channel.delete('Reset RAID-Z: apagando categorias antigas').then(() => { deleted += 1; }).catch(() => null);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-    }
-  }
-
-  return deleted;
+async function preserveDiscordChannels() {
+  // Atualização segura: não apaga canais, categorias nem mensagens manuais.
+  // O setup apenas cria o que estiver faltando e atualiza painéis do próprio bot.
+  return 0;
 }
 
 async function ensureCategory(guild, definition, position) {
@@ -151,53 +131,63 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
   return guild.channels.create({ type: ChannelType.GuildVoice, ...options, reason: 'Setup automático RAID-Z' });
 }
 
-async function cleanupLegacyAiChannels(guild, officialAiChannel) {
-  if (!officialAiChannel?.id) return;
-  const legacyNames = new Set(['❓・pergunte-as-regras', 'pergunte-as-regras', 'duvidas-regras', 'perguntas-regras', 'sobrevivente-ia']);
-  const legacyChannels = guild.channels.cache.filter((channel) => channel.type === ChannelType.GuildText && channel.id !== officialAiChannel.id && legacyNames.has(channel.name));
-  for (const channel of legacyChannels.values()) await channel.delete('Canal antigo de IA/regras removido.').catch(() => null);
+async function cleanupLegacyAiChannels() {
+  // Mantido por compatibilidade, mas não apaga mais nenhum canal.
+  // Canais manuais ou antigos ficam preservados.
+}
+
+function payloadTitle(payload) {
+  const embed = payload?.embeds?.[0];
+  return embed?.data?.title || embed?.title || null;
 }
 
 async function clearAndSendPanel(channel, panelBuilder) {
   if (!channel?.isTextBased()) return;
+
   const ownBotId = channel.client.user.id;
   const payloads = panelBuilder();
   const list = Array.isArray(payloads) ? payloads : [payloads];
-  const sentMessages = [];
+  const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+  const botMessages = messages ? [...messages.values()].filter((message) => message.author.id === ownBotId) : [];
+  const usedMessageIds = new Set();
+
   for (const payload of list) {
-    const sent = await channel.send(payload).catch((error) => {
+    const title = payloadTitle(payload);
+    const existing = title
+      ? botMessages.find((message) => !usedMessageIds.has(message.id) && message.embeds?.[0]?.title === title)
+      : null;
+
+    if (existing) {
+      usedMessageIds.add(existing.id);
+      const edited = await existing.edit(payload).catch((error) => {
+        console.error(`Erro ao editar painel no canal ${channel.name}:`, error);
+        return null;
+      });
+      if (edited) continue;
+    }
+
+    await channel.send(payload).catch((error) => {
       console.error(`Erro ao enviar painel no canal ${channel.name}:`, error);
       return null;
     });
-    if (sent) sentMessages.push(sent);
-  }
-  if (sentMessages.length === 0) return;
-  const keepIds = new Set(sentMessages.map((message) => message.id));
-  for (let i = 0; i < 10; i += 1) {
-    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    if (!messages?.size) break;
-    const oldBotMessages = messages.filter((message) => message.author.id === ownBotId && !keepIds.has(message.id));
-    if (!oldBotMessages.size) break;
-    await Promise.all(oldBotMessages.map((message) => message.delete().catch(() => null)));
-    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setup')
-    .setDescription('APAGA os canais antigos e recria o Discord oficial RAID-Z Vanilla.'),
+    .setDescription('Atualiza/cria os canais oficiais RAID-Z sem apagar canais ou mensagens.'),
 
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
     if (!canUseSetup(interaction.member)) {
-      return interaction.editReply('❌ Apenas Fundador, Administrador, Moderador, Suporte, Desenvolvedor ou alguém com permissão Administrador pode usar este comando.');
+      return interaction.editReply('❌ Apenas o dono do bot pode usar este comando.');
     }
 
     const botMember = await interaction.guild.members.fetchMe();
     if (!botMember.permissions.has(PermissionFlagsBits.Administrator)) {
-      return interaction.editReply('Preciso da permissão Administrador para apagar e montar o servidor automaticamente.');
+      return interaction.editReply('Preciso da permissão Administrador para criar/atualizar canais, cargos e permissões automaticamente.');
     }
 
     for (const roleDefinition of ROLE_DEFINITIONS) await ensureRole(interaction.guild, roleDefinition);
@@ -206,7 +196,7 @@ module.exports = {
     const aiRole = interaction.guild.roles.cache.find((role) => role.name === ROLE_NAMES.ai);
     if (aiRole && !botMember.roles.cache.has(aiRole.id)) await botMember.roles.add(aiRole).catch(() => null);
 
-    const deletedChannels = await wipeDiscordChannels(interaction.guild);
+    const deletedChannels = await preserveDiscordChannels(interaction.guild);
 
     const categories = [];
     const ensuredChannels = new Map();
@@ -227,6 +217,10 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.rules), () => buildRulesPanel('geral'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesVanilla), () => buildRulesPanel('vanilla'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesFlagRaid), () => buildRulesPanel('bandeira'));
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerSubterraneo), buildBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.construcoesVanillaPro), buildVanillaProPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.carroBlindado), buildArmoredCarPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.sacoDeDormir), buildSleepingBagPanel);
     const aiChannel = findChannel(CHANNELS.rulesAsk);
     await clearAndSendPanel(aiChannel, () => buildAiPanel(interaction.guild));
     await cleanupLegacyAiChannels(interaction.guild, aiChannel);
@@ -237,14 +231,14 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.bans), buildBanPanel);
     await refreshTicketPanel(interaction.guild);
 
-    await logEvent(interaction.guild, 'setup_completed', '✅ Setup RAID-Z executado', `${interaction.user} apagou os canais antigos e recriou o Discord RAID-Z Vanilla.`, [
-      { name: 'Canais apagados', value: String(deletedChannels), inline: true },
+    await logEvent(interaction.guild, 'setup_completed', '✅ Setup RAID-Z executado', `${interaction.user} atualizou os canais oficiais RAID-Z sem apagar canais ou mensagens.`, [
+      { name: 'Canais apagados', value: '0 (atualização segura)', inline: true },
       { name: 'Categorias novas', value: String(categories.length), inline: true },
       { name: 'BBP → Vanilla+', value: String(migration.vanillaPlusMoved), inline: true },
       { name: 'Antigos → Vanilla', value: String(migration.vanillaMoved), inline: true },
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z pronto. Apaguei **${deletedChannels}** canais/categorias antigos, recriei tudo para **1 servidor Vanilla**, migrei BBP para **Vanilla+** e criei o canal de **bandeira no raid**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
   }
 };

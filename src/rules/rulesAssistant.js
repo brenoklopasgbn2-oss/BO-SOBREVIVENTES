@@ -19,6 +19,71 @@ const STOP_WORDS = new Set([
   'player','jogador','jogadores','usar','uso','usa','faz','fazer','preciso','precisa','ai','ia','dayz','jogo','game','mod','mods'
 ]);
 
+
+const BUNKER_GUIDES = [
+  {
+    title: 'Bunker subterrâneo / Base subterrânea',
+    server: 'RAID-Z',
+    keywords: ['bunker','banker','subterraneo','subterrâneo','base subterranea','base subterrânea','alcapao','alçapão','upgrade base','melhorar base','pá','pa','machadinha','tora','tronco','prego','tabua','tábua','chapa','metal','concreto'],
+    answer: [
+      '**Bunker subterrâneo RAID-Z:** escolha um local plano e escondido para a entrada, use a **pá** para cavar e depois construa/melhore com a ferramenta certa.',
+      '',
+      '**Nível 1:** 6 troncos de madeira, 99 pregos e 40 tábuas. Depois coloque a **machadinha** nas mãos e construa o alçapão subterrâneo de nível 1.',
+      '',
+      '**Nível 2:** dentro da base, coloque a **pá** nas mãos, olhe para o chão ou parede e selecione **Upgrade Base / Melhorar Base**. Adicione 6 toras de madeira, 99 pregos, 20 chapas de metal e 40 tábuas. Depois use a **machadinha** e selecione **Upgrade Base** para o nível 2.',
+      '',
+      '**Nível 3:** dentro da base, coloque a **pá** nas mãos, olhe para o chão ou parede e selecione **Upgrade Base / Melhorar Base**. Adicione 6 toras de madeira, 99 pregos, 20 chapas de metal e 5 blocos de concreto. Depois use a **machadinha** e selecione **Upgrade Base** para o nível 3.',
+      '',
+      'O tutorial com imagens fica no canal **⛏️・bunker-subterraneo**.'
+    ].join('\n')
+  }
+
+  ,{
+    title: 'Construções Vanilla Pro',
+    server: 'RAID-Z',
+    keywords: ['construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','janela','porta de giro','porta giro','porta de garagem','garagem','teto','hesco box','hasco box','barragem de barro','barreira militar','barreira de ferro','hesco militar'],
+    answer: [
+      '**Construções Vanilla Pro disponíveis no RAID-Z:** janela, porta de giro modelo 1, porta de giro modelo 2, porta de garagem, teto, Hesco Box/barragem de barro e barreira de ferro militar/Hesco militar.',
+      '',
+      '**Regra importante:** a base pode ter no máximo **10 portões com CodeLock**. Todo portão com CodeLock entra nesse limite.',
+      '',
+      'Não bloqueie loot, passagem pública, área militar, bunker, evento ou local proibido. Se tiver dúvida de construção, abra ticket antes de montar.',
+      '',
+      'O guia com imagens fica no canal **🏗️・construcoes-vanilla-pro**.'
+    ].join('\n')
+  },
+  {
+    title: 'Carro blindado RAID-Z',
+    server: 'RAID-Z',
+    keywords: ['carro blindado','carros blindados','blindado','veiculo blindado','veículo blindado','gunter','porta do gunter','serra','chapa blindada','parafuso','parafusos','craft blindado','craft carro','tiktok carro blindado'],
+    answer: [
+      '**Carro blindado RAID-Z:** para fazer a chapa/peça blindada, pegue uma **porta do Gunter** e use a **serra** para cortar.',
+      '',
+      'Você também precisa ter **chapa** dentro do inventário e **parafusos** dentro do inventário para aparecer/fazer o craft das partes blindadas.',
+      '',
+      'Materiais principais: **porta do Gunter**, **serra**, **chapa** e **parafusos**.',
+      '',
+      'Canal do guia: **🚙・carro-blindado**.',
+      'Vídeo demonstrativo: https://www.tiktok.com/@sobreviventez25?_r=1&_t=ZS-97p46uKyOBN'
+    ].join('\n')
+  },
+  {
+    title: 'Saco de dormir RAID-Z',
+    server: 'RAID-Z',
+    keywords: ['saco de dormir','saco dormir','sleeping bag','sleepingbag','respawn','spawn','fob','base principal','ban 1 dia','ban permanente'],
+    answer: [
+      '**Regra do saco de dormir:** só pode colocar em **FOB** ou **fora da base principal**.',
+      '',
+      'É **proibido** colocar saco de dormir dentro da base principal.',
+      '',
+      '**Punição:** colocou dentro da base principal = **ban de 1 dia**. Se continuar repetindo = **ban permanente**.',
+      '',
+      'O guia com imagem fica no canal **🛏️・saco-de-dormir**.'
+    ].join('\n')
+  }
+
+];
+
 const FAQS = [
   {
     title: 'Limite de grupo no Vanilla',
@@ -59,7 +124,7 @@ const FAQS = [
     title: 'Limite de portões na base',
     server: 'Vanilla',
     keywords: ['base','portao','portão','portoes','portões','codelock','cadeado','limite','quantos'],
-    answer: 'Cada base pode ter no máximo **10 portões com codelock**. Cadeados comuns também entram nessa contagem.',
+    answer: 'Cada base pode ter no máximo **10 portões com CodeLock**. Todo portão que usa CodeLock conta para esse limite.',
     related: [{ set: 'vanilla', rule: 17 }]
   },
   {
@@ -1254,7 +1319,7 @@ function isClearlyDayZOrServerQuestion(question = '') {
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
     'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff',
-    'loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao'
+    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal'
   ];
 
   return words.some((word) => text.includes(normalizeText(word)));
@@ -1265,7 +1330,7 @@ function searchFaq(question) {
   const tokens = tokenize(question);
   const normalizedQuestion = normalizeText(question);
 
-  return [...STORE_GUIDES, ...EXTRA_DAYZ_GUIDES, ...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
+  return [...BUNKER_GUIDES, ...STORE_GUIDES, ...EXTRA_DAYZ_GUIDES, ...GENERAL_DAYZ_GUIDES, ...DEEP_GUIDES, ...MOD_GUIDES, ...FAQS].map((faq) => {
     const strongMatches = strongKeywordMatches(faq, question, tokens);
 
     // Se não bateu nenhuma palavra forte do guia, não usa esse guia.

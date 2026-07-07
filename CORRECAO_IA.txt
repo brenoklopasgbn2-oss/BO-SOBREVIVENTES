@@ -1,9 +1,26 @@
 RAID-Z IA atualizada para o novo servidor.
 
 Agora o Discord trabalha com 1 servidor apenas: RAID-Z Vanilla.
-Perguntas principais:
+
+Perguntas principais que a IA responde:
 - limite de clã: 10 jogadores;
+- limite de portões: máximo de 10 portões com CodeLock por base;
+- raid: somente sábado, das 18:00 às 23:00, horário de Brasília;
 - bandeira no raid precisa solicitar ADM;
 - com bandeira ativa o clã não pode raidar e não pode ser raidado;
 - bandeira branca pode ser solicitada 1 vez por mês;
+- bunker subterrâneo: níveis 1, 2 e 3 com materiais e upgrades;
+- construções Vanilla Pro: janela, porta de giro modelo 1 e 2, porta de garagem, teto, Hesco Box/barragem de barro e barreira militar de ferro/Hesco militar;
+- carro blindado: craft da chapa usando porta do Gunter + serra, com chapa e parafusos no inventário;
+- vídeo demonstrativo do carro blindado: https://www.tiktok.com/@sobreviventez25?_r=1&_t=ZS-97p46uKyOBN;
+- saco de dormir: permitido em FOB ou fora da base principal; proibido dentro da base principal; ban de 1 dia e, se continuar, permanente;
 - tickets, suporte, denúncias e bugs continuam no painel oficial.
+
+Atualização segura:
+- /setup e /atualizarcanais agora não apagam canais, categorias ou mensagens antigas;
+- os canais manuais e mensagens manuais ficam preservados;
+- o bot tenta editar painéis antigos do próprio bot ou cria novos se não existirem.
+
+Anti-xingamento:
+- continua ativo nos chats normais;
+- não remove automaticamente mensagens em canais de TikTok/clipes ou mensagens com link do TikTok.

@@ -19,7 +19,7 @@ function buildAiPanel(guild) {
     .setDescription([
       'Olá, eu sou a **RAID-Z IA**.',
       '',
-      'Pergunte aqui sobre **regras, raid, base, clã, bandeira, tickets, atendimento, loja, garagem, seguros, kit inicial e compras**.',
+      'Pergunte aqui sobre **regras, raid, base, clã, bandeira, construções Vanilla Pro, bunker subterrâneo, carro blindado, saco de dormir, tickets, loja e garagem**.',
       'O Discord agora trabalha com **1 servidor apenas: RAID-Z Vanilla**.',
       '',
       '**Exemplos:**',
@@ -27,6 +27,9 @@ function buildAiPanel(guild) {
       '• como funciona bandeira no raid?',
       '• posso solicitar bandeira branca?',
       '• qual horário de raid?',
+      '• como faz o carro blindado?',
+      '• onde posso colocar o saco de dormir?',
+      '• quais construções tem no Vanilla Pro?',
       '• como abrir ticket?',
       '',
       `Você também pode me marcar em outros canais usando ${mention}.`,

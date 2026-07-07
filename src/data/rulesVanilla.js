@@ -135,7 +135,7 @@ const RULES = [
     "category": "Base e Construção",
     "emoji": "🏰",
     "title": "Limite de Portões",
-    "description": "Cada base poderá possuir no máximo 10 portões com codelock. Cadeados comuns também entram nessa contagem."
+    "description": "Cada base poderá possuir no máximo **10 portões com CodeLock**. Todo portão que usa CodeLock conta para esse limite."
   },
   {
     "number": 18,
@@ -271,7 +271,7 @@ const RULES = [
     "category": "Raid Oficial",
     "emoji": "💥",
     "title": "Horário Oficial de Raid",
-    "description": "Raid oficial acontece aos sábados, das 18:00 às 23:00, horário de Brasília."
+    "description": "Raid oficial é permitido somente aos sábados, das 18:00 às 23:00, horário de Brasília. Fora desse horário é proibido iniciar raid ou causar dano à base de outro jogador."
   },
   {
     "number": 35,
@@ -736,6 +736,14 @@ const RULES = [
     "emoji": "✨",
     "title": "Suspensão Temporária de Regras Especiais",
     "description": "A staff poderá suspender temporariamente raid por falha, raid em FOBs ou outras regras especiais através de aviso oficial no Discord. Quando houver suspensão ativa, o descumprimento poderá gerar punição sem exceções."
+  }
+  ,{
+    "number": 93,
+    "server": "Vanilla",
+    "category": "Base e Construção",
+    "emoji": "🛏️",
+    "title": "Saco de Dormir",
+    "description": "O saco de dormir só pode ser colocado em FOB ou fora da base principal. É proibido colocar saco de dormir dentro da base principal. Colocar dentro da base principal gera ban de 1 dia; se continuar repetindo, poderá gerar ban permanente."
   }
 ];
 
