@@ -1,0 +1,11 @@
+ATUALIZAÇÃO RAID-Z — BUNKERS
+
+- Criados canais oficiais separados para:
+  • Gorka — Chave Bronze
+  • Tisy — Chave Dourada
+  • Pavlovo — Chave Azul
+  • Solnechny — Cartão Perfurado + Chave Vermelha; depois marreta para o loot principal
+- Imagens dos locais e dos itens adicionadas aos painéis.
+- RAID-Z IA ensinada a responder sobre os quatro bunkers.
+- Filtro de palavrões completamente desativado dentro de tickets.
+- /setup e botão de atualizar continuam sem apagar canais, categorias ou mensagens existentes.

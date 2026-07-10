@@ -459,10 +459,13 @@ function isAntiXingaExempt(message) {
   const channelName = normalizeText(message.channel?.name || '');
   const content = String(message.content || '').toLowerCase();
 
+  const topic = String(message.channel?.topic || '');
+  const parentName = normalizeText(message.channel?.parent?.name || '');
+  const isTicket = topic.includes('RAIDZ_TICKET') || channelName.includes('ticket-') || parentName.includes('tickets abertos');
   const channelExempt = ANTI_XINGA_EXEMPT_CHANNEL_KEYWORDS.some((keyword) => channelName.includes(normalizeText(keyword)));
   const contentExempt = ANTI_XINGA_EXEMPT_CONTENT_KEYWORDS.some((keyword) => content.includes(keyword));
 
-  return channelExempt || contentExempt;
+  return isTicket || channelExempt || contentExempt;
 }
 
 function escapeRegExp(text) {

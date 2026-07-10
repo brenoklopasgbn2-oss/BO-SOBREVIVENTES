@@ -8,6 +8,7 @@ const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
 const { buildAiPanel } = require('../panels/aiPanel');
 const { buildBunkerPanel } = require('../panels/bunkerPanel');
+const { buildGorkaBunkerPanel, buildTisyBunkerPanel, buildPavlovoBunkerPanel, buildSolnechnyBunkerPanel } = require('../panels/bunkerLocationsPanel');
 const { buildVanillaProPanel } = require('../panels/vanillaProPanel');
 const { buildArmoredCarPanel } = require('../panels/armoredCarPanel');
 const { buildSleepingBagPanel } = require('../panels/sleepingBagPanel');
@@ -218,6 +219,10 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.rulesVanilla), () => buildRulesPanel('vanilla'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesFlagRaid), () => buildRulesPanel('bandeira'));
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSubterraneo), buildBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerGorka), buildGorkaBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerTisy), buildTisyBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerPavlovo), buildPavlovoBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerSolnechny), buildSolnechnyBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.construcoesVanillaPro), buildVanillaProPanel);
     await clearAndSendPanel(findChannel(CHANNELS.carroBlindado), buildArmoredCarPanel);
     await clearAndSendPanel(findChannel(CHANNELS.sacoDeDormir), buildSleepingBagPanel);
@@ -239,6 +244,6 @@ module.exports = {
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo os canais de **Gorka, Tisy, Pavlovo e Solnechny**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
   }
 };

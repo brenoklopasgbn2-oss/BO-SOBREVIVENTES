@@ -39,6 +39,46 @@ const BUNKER_GUIDES = [
   }
 
   ,{
+    title: 'Bunker de Gorka — Chave Bronze',
+    server: 'RAID-Z',
+    keywords: ['gorka','bunker gorka','banker gorka','chave bronze','bronze'],
+    answer: [
+      '**Bunker de Gorka:** para abrir, você precisa da **Chave Bronze**.',
+      'Leve a chave até a entrada mostrada no canal **🟤・bunker-gorka**.'
+    ].join('\n')
+  },
+  {
+    title: 'Bunker de Tisy — Chave Dourada',
+    server: 'RAID-Z',
+    keywords: ['tisy','bunker tisy','banker tisy','chave dourada','chave ouro','dourada'],
+    answer: [
+      '**Bunker de Tisy:** para abrir, você precisa da **Chave Dourada**.',
+      'A entrada e a imagem da chave ficam no canal **🟡・bunker-tisy**.'
+    ].join('\n')
+  },
+  {
+    title: 'Bunker de Pavlovo — Chave Azul',
+    server: 'RAID-Z',
+    keywords: ['pavlovo','bunker pavlovo','banker pavlovo','chave azul','azul'],
+    answer: [
+      '**Bunker de Pavlovo:** para abrir, você precisa da **Chave Azul**.',
+      'A entrada e a imagem da chave ficam no canal **🔵・bunker-pavlovo**.'
+    ].join('\n')
+  },
+  {
+    title: 'Bunker de Solnechny — Cartão Perfurado e Chave Vermelha',
+    server: 'RAID-Z',
+    keywords: ['solnechny','solnichniy','bunker solnechny','banker solnechny','cartao perfurado','cartão perfurado','chave vermelha','marreta','loot principal'],
+    answer: [
+      '**Bunker de Solnechny:** a primeira entrada exige o **Cartão Perfurado** e a **Chave Vermelha**.',
+      '',
+      'Depois dessa etapa, uma **marreta será spawnada**. Pegue a marreta e use no segundo local para abrir o acesso onde está o **loot principal**.',
+      '',
+      'O passo a passo com todas as imagens fica no canal **🔴・bunker-solnechny**.'
+    ].join('\n')
+  },
+
+  {
     title: 'Construções Vanilla Pro',
     server: 'RAID-Z',
     keywords: ['construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','janela','porta de giro','porta giro','porta de garagem','garagem','teto','hesco box','hasco box','barragem de barro','barreira militar','barreira de ferro','hesco militar'],
@@ -1319,7 +1359,7 @@ function isClearlyDayZOrServerQuestion(question = '') {
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
     'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff',
-    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal'
+    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal','gorka','tisy','pavlovo','solnechny','chave bronze','chave dourada','chave azul','chave vermelha','cartao perfurado','cartão perfurado','marreta'
   ];
 
   return words.some((word) => text.includes(normalizeText(word)));
