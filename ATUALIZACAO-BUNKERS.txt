@@ -1,11 +1,17 @@
-ATUALIZAÇÃO RAID-Z — BUNKERS
+ATUALIZAÇÃO RAID-Z — BUNKERS E REGRAS
 
-- Criados canais oficiais separados para:
-  • Gorka — Chave Bronze
-  • Tisy — Chave Dourada
-  • Pavlovo — Chave Azul
-  • Solnechny — Cartão Perfurado + Chave Vermelha; depois marreta para o loot principal
-- Imagens dos locais e dos itens adicionadas aos painéis.
-- RAID-Z IA ensinada a responder sobre os quatro bunkers.
-- Filtro de palavrões completamente desativado dentro de tickets.
-- /setup e botão de atualizar continuam sem apagar canais, categorias ou mensagens existentes.
+- Nova rota adicionada:
+  • Chave Verde dropa em áreas contaminadas.
+  • Chave Verde abre o container localizado no barco.
+  • O container entrega a Chave Amarela.
+  • A Chave Amarela libera o Bunker de Troitskoe Military / Tisy.
+  • Dentro do bunker dropam armas e a Chave Vermelha.
+- Imagens do barco, Chave Verde, Troitskoe Military e Chave Amarela adicionadas.
+- Canal novo: 🚢・container-barco.
+- Canal 🟡・bunker-tisy atualizado sem apagar mensagens manuais.
+- Regra do saco de dormir corrigida:
+  • No Raid: saco somente na base principal e sem FOB.
+  • Quem participa de raid: saco em FOB ou fora da base principal.
+- No canal 📣・avisos, mensagens com imagem não são mais apagadas nem remandadas pelo bot.
+- /setup e o botão de atualizar não apagam, renomeiam, movem ou reconfiguram canais/categorias já existentes.
+- Mensagens manuais continuam preservadas; o bot apenas edita seus próprios painéis quando encontra o painel correspondente.

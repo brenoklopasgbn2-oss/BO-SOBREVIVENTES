@@ -9,6 +9,7 @@ const { buildRulesPanel } = require('../panels/rulesPanel');
 const { buildAiPanel } = require('../panels/aiPanel');
 const { buildBunkerPanel } = require('../panels/bunkerPanel');
 const { buildGorkaBunkerPanel, buildTisyBunkerPanel, buildPavlovoBunkerPanel, buildSolnechnyBunkerPanel } = require('../panels/bunkerLocationsPanel');
+const { buildBoatContainerPanel } = require('../panels/boatContainerPanel');
 const { buildVanillaProPanel } = require('../panels/vanillaProPanel');
 const { buildArmoredCarPanel } = require('../panels/armoredCarPanel');
 const { buildSleepingBagPanel } = require('../panels/sleepingBagPanel');
@@ -101,7 +102,7 @@ async function ensureCategory(guild, definition, position) {
   const overwrites = getCategoryOverwrites(guild, definition);
 
   if (existing) {
-    await existing.edit({ name: definition.name, position, permissionOverwrites: overwrites }).catch(() => null);
+    // Não renomeia, não move e não altera permissões de categorias que já existem.
     return existing;
   }
 
@@ -110,11 +111,11 @@ async function ensureCategory(guild, definition, position) {
 
 async function ensureTextChannel(guild, category, channelDefinition, categoryDefinition) {
   const acceptableNames = matchNames(channelDefinition.name, channelDefinition.aliases);
-  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && acceptableNames.includes(channel.name) && channel.parentId === category.id);
+  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && acceptableNames.includes(channel.name));
   const permissionOverwrites = channelDefinition.readOnly ? readOnlyChannelOverwrites(guild, categoryDefinition) : cloneCategoryOverwrites(category);
   const options = { name: channelDefinition.name, topic: channelDefinition.topic, parent: category.id, permissionOverwrites };
   if (existing) {
-    await existing.edit(options).catch(() => null);
+    // Canal pronto fica exatamente onde está, com nome, tópico e permissões preservados.
     return existing;
   }
   return guild.channels.create({ type: ChannelType.GuildText, ...options, reason: 'Setup automático RAID-Z' });
@@ -122,11 +123,11 @@ async function ensureTextChannel(guild, category, channelDefinition, categoryDef
 
 async function ensureVoiceChannel(guild, category, channelDefinition) {
   const acceptableNames = matchNames(channelDefinition.name, channelDefinition.aliases);
-  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildVoice && acceptableNames.includes(channel.name) && channel.parentId === category.id);
+  const existing = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildVoice && acceptableNames.includes(channel.name));
   const permissionOverwrites = enrichVoiceOverwrites(cloneCategoryOverwrites(category), guild);
   const options = { name: channelDefinition.name, parent: category.id, userLimit: channelDefinition.userLimit || 0, bitrate: 64000, permissionOverwrites };
   if (existing) {
-    await existing.edit(options).catch(() => null);
+    // Canal de voz pronto também não é movido, renomeado ou reconfigurado.
     return existing;
   }
   return guild.channels.create({ type: ChannelType.GuildVoice, ...options, reason: 'Setup automático RAID-Z' });
@@ -153,21 +154,23 @@ async function clearAndSendPanel(channel, panelBuilder) {
   const usedMessageIds = new Set();
 
   for (const payload of list) {
-    const title = payloadTitle(payload);
-    const existing = title
-      ? botMessages.find((message) => !usedMessageIds.has(message.id) && message.embeds?.[0]?.title === title)
+    const { legacyTitles = [], ...sendPayload } = payload;
+    const title = payloadTitle(sendPayload);
+    const acceptedTitles = [title, ...legacyTitles].filter(Boolean);
+    const existing = acceptedTitles.length
+      ? botMessages.find((message) => !usedMessageIds.has(message.id) && acceptedTitles.includes(message.embeds?.[0]?.title))
       : null;
 
     if (existing) {
       usedMessageIds.add(existing.id);
-      const edited = await existing.edit(payload).catch((error) => {
+      const edited = await existing.edit(sendPayload).catch((error) => {
         console.error(`Erro ao editar painel no canal ${channel.name}:`, error);
         return null;
       });
       if (edited) continue;
     }
 
-    await channel.send(payload).catch((error) => {
+    await channel.send(sendPayload).catch((error) => {
       console.error(`Erro ao enviar painel no canal ${channel.name}:`, error);
       return null;
     });
@@ -220,6 +223,7 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.rulesFlagRaid), () => buildRulesPanel('bandeira'));
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSubterraneo), buildBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerGorka), buildGorkaBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.containerBarco), buildBoatContainerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerTisy), buildTisyBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerPavlovo), buildPavlovoBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSolnechny), buildSolnechnyBunkerPanel);
@@ -244,6 +248,6 @@ module.exports = {
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo os canais de **Gorka, Tisy, Pavlovo e Solnechny**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo e Solnechny**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
   }
 };

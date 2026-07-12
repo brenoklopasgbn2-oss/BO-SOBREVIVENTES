@@ -108,7 +108,15 @@ module.exports = {
     if (!mode) return;
     if (!isStaffMember(message.member)) return;
 
-    const attachment = message.attachments.find((file) => file.contentType?.startsWith('image/')) || null;
+    const attachment = message.attachments.find((file) => {
+      if (file.contentType?.startsWith('image/')) return true;
+      return /\.(png|jpe?g|gif|webp)$/i.test(file.name || '');
+    }) || null;
+
+    // No canal de avisos, mensagens com imagem ficam originais.
+    // O bot não apaga e não remanda, evitando perder a imagem ou criar duplicata.
+    if (message.channel.name === CHANNELS.announcements && attachment) return;
+
     const roleName = getMainStaffRole(message.member);
     const embed = baseEmbed()
       .setColor(mode.color)

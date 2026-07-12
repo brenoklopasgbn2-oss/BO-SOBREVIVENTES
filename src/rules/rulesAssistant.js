@@ -48,12 +48,23 @@ const BUNKER_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'Bunker de Tisy — Chave Dourada',
+    title: 'Container do barco — Chave Verde e Chave Amarela',
     server: 'RAID-Z',
-    keywords: ['tisy','bunker tisy','banker tisy','chave dourada','chave ouro','dourada'],
+    keywords: ['container barco','container do barco','barco','navio','chave verde','area contaminada','área contaminada','chave amarela','troitskoe'],
     answer: [
-      '**Bunker de Tisy:** para abrir, você precisa da **Chave Dourada**.',
-      'A entrada e a imagem da chave ficam no canal **🟡・bunker-tisy**.'
+      '**Rota do container do barco:** a **Chave Verde** dropa nas **áreas contaminadas**.',
+      'Use a Chave Verde no container localizado no barco. Dentro dele você consegue a **Chave Amarela**, que libera o acesso ao **Bunker de Troitskoe Military / Tisy**.',
+      'O guia com imagens fica no canal **🚢・container-barco**.'
+    ].join('\n')
+  },
+  {
+    title: 'Bunker de Tisy / Troitskoe Military — Chave Amarela',
+    server: 'RAID-Z',
+    keywords: ['tisy','bunker tisy','banker tisy','troitskoe','troitskoe military','chave amarela','chave dourada','armas','chave vermelha'],
+    answer: [
+      '**Bunker de Tisy / Troitskoe Military:** o acesso é feito com a **Chave Amarela** encontrada no container do barco.',
+      'Dentro do bunker podem dropar **armas** e a **Chave Vermelha**.',
+      'A entrada e as imagens ficam no canal **🟡・bunker-tisy**.'
     ].join('\n')
   },
   {
@@ -110,13 +121,13 @@ const BUNKER_GUIDES = [
   {
     title: 'Saco de dormir RAID-Z',
     server: 'RAID-Z',
-    keywords: ['saco de dormir','saco dormir','sleeping bag','sleepingbag','respawn','spawn','fob','base principal','ban 1 dia','ban permanente'],
+    keywords: ['saco de dormir','saco dormir','sleeping bag','sleepingbag','respawn','spawn','fob','base principal','no raid','nor aid','ban 1 dia','ban permanente'],
     answer: [
-      '**Regra do saco de dormir:** só pode colocar em **FOB** ou **fora da base principal**.',
+      '**Quem é No Raid:** pode ter saco de dormir **somente na base principal** e **não pode ter FOB**.',
       '',
-      'É **proibido** colocar saco de dormir dentro da base principal.',
+      '**Quem participa de raid:** pode usar em **FOB** ou **fora da base principal**, mas não dentro da base principal.',
       '',
-      '**Punição:** colocou dentro da base principal = **ban de 1 dia**. Se continuar repetindo = **ban permanente**.',
+      'A exceção de usar dentro da base principal vale apenas para quem está oficialmente como **No Raid**. Uso irregular pode gerar **ban de 1 dia** e, em reincidência, **ban permanente**.',
       '',
       'O guia com imagem fica no canal **🛏️・saco-de-dormir**.'
     ].join('\n')
@@ -1359,7 +1370,7 @@ function isClearlyDayZOrServerQuestion(question = '') {
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
     'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff',
-    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal','gorka','tisy','pavlovo','solnechny','chave bronze','chave dourada','chave azul','chave vermelha','cartao perfurado','cartão perfurado','marreta'
+    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal','gorka','tisy','troitskoe','troitskoe military','pavlovo','solnechny','container barco','barco','navio','area contaminada','área contaminada','chave verde','chave amarela','chave bronze','chave dourada','chave azul','chave vermelha','cartao perfurado','cartão perfurado','marreta'
   ];
 
   return words.some((word) => text.includes(normalizeText(word)));

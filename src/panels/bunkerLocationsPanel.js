@@ -35,12 +35,24 @@ function buildGorkaBunkerPanel() {
 }
 
 function buildTisyBunkerPanel() {
-  return panel({
-    title: '🔑 Bunker de Tisy',
-    description: 'Para abrir o bunker de **Tisy**, você precisa encontrar e usar a **Chave Dourada**.',
-    locationImage: 'bunker-tisy.jpg',
-    itemImages: [{ title: '🟡 Item necessário: Chave Dourada', description: 'Leve a **Chave Dourada** até a entrada do bunker de Tisy.', file: 'chave-dourada.jpg', color: 0xffd700 }]
+  const payloads = panel({
+    title: '🔑 Bunker de Tisy / Troitskoe Military',
+    description: [
+      'O acesso ao bunker de **Troitskoe Military / Tisy** é liberado com a **Chave Amarela** encontrada no container do barco.',
+      '',
+      'Dentro do bunker podem dropar **armas** e a **Chave Vermelha**.',
+      'A Chave Vermelha é usada na sequência dos bunkers do servidor.'
+    ].join('\n'),
+    locationImage: 'bunker-troitskoe-military.jpg',
+    itemImages: [
+      { title: '🟡 Item necessário: Chave Amarela', description: 'Pegue a **Chave Amarela** no container do barco e leve até o bunker de Troitskoe Military / Tisy.', file: 'chave-amarela.jpg', color: 0xffeb00 },
+      { title: '🔴 Drop do bunker: Chave Vermelha', description: 'Além de armas, o bunker pode dropar a **Chave Vermelha**.', file: 'chave-vermelha.jpg', color: 0xff2020 }
+    ]
   });
+
+  payloads[0].legacyTitles = ['🔑 Bunker de Tisy'];
+  payloads[1].legacyTitles = ['🟡 Item necessário: Chave Dourada'];
+  return payloads;
 }
 
 function buildPavlovoBunkerPanel() {
