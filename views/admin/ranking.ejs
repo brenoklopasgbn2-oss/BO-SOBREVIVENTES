@@ -1,0 +1,219 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container admin-ranking-v34">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+
+  <section class="shop-header ranking-admin-hero-v34">
+    <div>
+      <p class="eyebrow">Sistema competitivo</p>
+      <h1>Ranking, Kills, Clãs e Temporadas</h1>
+      <p class="muted">Aqui você cadastra clãs, aprova solicitações, lança troféus de eventos e finaliza temporadas com campeão salvo para todos verem.</p>
+    </div>
+    <div class="admin-actions"><a class="btn" href="/ranking">Ver ranking público</a></div>
+  </section>
+
+  <section class="stats-grid">
+    <div class="stat"><span>Kills no filtro</span><strong><%= coins(rankingData.totals.kills) %></strong></div>
+    <div class="stat"><span>Players no ranking</span><strong><%= coins(rankingData.totals.players) %></strong></div>
+    <div class="stat"><span>Clãs ativos</span><strong><%= coins(clans.filter(c => c.status === 'ACTIVE').length) %></strong></div>
+    <div class="stat"><span>Solicitações pendentes</span><strong><%= coins(requests.filter(r => r.status === 'PENDING').length) %></strong></div>
+  </section>
+
+
+  <section class="card wide-card ranking-discord-v42">
+    <div class="ranking-discord-head-v42">
+      <div>
+        <p class="eyebrow">Discord automático</p>
+        <h2>Enviar ranking bonito no Discord</h2>
+        <p class="muted">Use os botões abaixo para mandar ranking completo no webhook configurado no Railway. Ele separa players/clãs e Vanilla/Vanilla+/Geral.</p>
+      </div>
+      <span class="pill approved">Webhooks por .env</span>
+    </div>
+    <div class="ranking-send-grid-v42">
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="vanilla"><input type="hidden" name="kind" value="players"><input type="hidden" name="period" value="all"><button class="btn primary">🏆 Players Vanilla</button></form>
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="vanilla"><input type="hidden" name="kind" value="clans"><input type="hidden" name="period" value="all"><button class="btn primary">🏰 Clãs Vanilla</button></form>
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="bbp"><input type="hidden" name="kind" value="players"><input type="hidden" name="period" value="all"><button class="btn">🔵 Players Vanilla+</button></form>
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="bbp"><input type="hidden" name="kind" value="clans"><input type="hidden" name="period" value="all"><button class="btn">🔷 Clãs Vanilla+</button></form>
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="global"><input type="hidden" name="kind" value="players"><input type="hidden" name="period" value="all"><button class="btn">🌎 Geral Players</button></form>
+      <form method="POST" action="/admin/ranking/send-discord"><input type="hidden" name="serverType" value="global"><input type="hidden" name="kind" value="clans"><input type="hidden" name="period" value="all"><button class="btn">🌎 Geral Clãs</button></form>
+    </div>
+  </section>
+
+  <section class="split">
+    <div class="card wide-card">
+      <h2>Solicitações de clã</h2>
+      <table><thead><tr><th>Data</th><th>Clã</th><th>Player</th><th>Servidor</th><th>Status</th><th>Ação</th></tr></thead><tbody>
+        <% requests.forEach(r => { %>
+          <tr>
+            <td><%= dateTime(r.createdAt) %></td>
+            <td><strong>[<%= r.clanTag %>] <%= r.clanName %></strong><br><small><%= r.description || '-' %></small></td>
+            <td><%= r.requesterName || 'Player' %><br><code><%= r.requesterSteam64 %></code></td>
+            <td><%= r.serverType.toUpperCase() %></td>
+            <td><span class="status <%= r.status === 'APPROVED' ? 'approved' : r.status === 'REJECTED' ? 'rejected' : 'pending' %>"><%= r.status %></span></td>
+            <td>
+              <% if (r.status === 'PENDING') { %>
+                <div class="admin-actions compact-actions-v34">
+                  <form method="POST" action="/admin/clans/from-request/<%= r.id %>/approve"><button class="btn small primary">Aprovar</button></form>
+                  <form method="POST" action="/admin/clans/from-request/<%= r.id %>/reject"><button class="btn small">Recusar</button></form>
+                </div>
+              <% } else { %>-<% } %>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!requests.length) { %><tr><td colspan="6" class="muted">Nenhuma solicitação.</td></tr><% } %>
+      </tbody></table>
+    </div>
+
+    <div class="card wide-card">
+      <h2>Criar clã manual</h2>
+      <form method="POST" action="/admin/clans" class="form-grid">
+        <label>Nome do clã<input name="name" placeholder="Players Elite" required></label>
+        <label>TAG<input name="tag" placeholder="SZE" maxlength="8" required></label>
+        <label>Servidor<select name="serverType"><option value="all">Global</option><option value="vanilla">Vanilla</option><option value="bbp">Vanilla+</option><option value="deathmatch">Death Match</option></select></label>
+        <label>Steam64 do dono<input name="ownerSteam64" maxlength="17" placeholder="7656119..." required></label>
+        <label>Nome do dono<input name="ownerName" placeholder="Nick do dono"></label>
+        <label>Bandeira URL<input name="flagUrl" placeholder="https://..."></label>
+        <label>Descrição<textarea name="description" placeholder="Descrição do clã"></textarea></label>
+        <button class="btn primary">Criar e liberar dono</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="card wide-card">
+    <h2>Clãs cadastrados</h2>
+    <table><thead><tr><th>Clã</th><th>Dono</th><th>Membros</th><th>Eventos</th><th>Status</th><th>Editar / Premiar</th></tr></thead><tbody>
+      <% clans.forEach(c => { %>
+        <tr>
+          <td><strong>[<%= c.tag %>] <%= c.name %></strong><br><small><%= c.serverType.toUpperCase() %> • <%= c.description || '-' %></small></td>
+          <td><%= c.ownerPlayer?.nickname || '-' %><br><code><%= c.ownerPlayer?.steam64 || '-' %></code></td>
+          <td><%= c.members.length %></td>
+          <td><%= c.eventWins %></td>
+          <td><span class="status <%= c.status === 'ACTIVE' ? 'approved' : 'pending' %>"><%= c.status %></span></td>
+          <td>
+            <details class="admin-details-v34"><summary>Editar</summary>
+              <form method="POST" action="/admin/clans/<%= c.id %>/update" class="inline-grid admin-inline-stack-v34">
+                <input name="name" value="<%= c.name %>"><input name="tag" value="<%= c.tag %>" maxlength="8">
+                <select name="serverType"><option value="all" <%= c.serverType==='all'?'selected':'' %>>Global</option><option value="vanilla" <%= c.serverType==='vanilla'?'selected':'' %>>Vanilla</option><option value="bbp" <%= c.serverType==='bbp'?'selected':'' %>>Vanilla+</option><option value="deathmatch" <%= c.serverType==='deathmatch'?'selected':'' %>>Death Match</option></select>
+                <select name="status"><option value="ACTIVE" <%= c.status==='ACTIVE'?'selected':'' %>>Ativo</option><option value="HIDDEN" <%= c.status==='HIDDEN'?'selected':'' %>>Oculto</option></select>
+                <input name="eventWins" type="number" value="<%= c.eventWins %>" placeholder="Eventos ganhos">
+                <input name="pointsBonus" type="number" value="<%= c.pointsBonus %>" placeholder="Pontos bônus">
+                <input name="flagUrl" value="<%= c.flagUrl || '' %>" placeholder="Bandeira URL">
+                <textarea name="description"><%= c.description || '' %></textarea>
+                <button class="btn small">Salvar</button>
+              </form>
+            </details>
+            <details class="admin-details-v34"><summary>Dar troféu</summary>
+              <form method="POST" action="/admin/clans/<%= c.id %>/award" class="inline-grid admin-inline-stack-v34">
+                <input name="title" placeholder="Campeão Dominação" required>
+                <input name="eventName" placeholder="Evento / temporada">
+                <select name="seasonId"><option value="">Sem temporada</option><% seasons.forEach(s => { %><option value="<%= s.id %>"><%= s.name %></option><% }) %></select>
+                <input name="imageUrl" placeholder="Link PNG do troféu https://...">
+                <input name="icon" value="🏆" placeholder="Ícone reserva">
+                <input name="color" value="#f7bd44" placeholder="#f7bd44">
+                <input name="points" type="number" min="0" value="0" placeholder="Pontos do troféu">
+                <textarea name="description" placeholder="Descrição do troféu"></textarea>
+                <label class="check"><input type="checkbox" name="awardPlayers" checked> Dar esse troféu também para todos os membros do clã</label>
+                <button class="btn small primary">Adicionar troféu</button>
+              </form>
+            </details>
+            <details class="admin-details-v34 danger-details-v35"><summary>Apagar clã</summary>
+              <form method="POST" action="/admin/clans/<%= c.id %>/delete" class="inline-grid admin-inline-stack-v34">
+                <p class="muted">Apaga o clã, membros e troféus dele. Precisa da mesma senha do painel admin.</p>
+                <input name="adminPassword" type="password" placeholder="Senha admin" required>
+                <button class="btn small danger">Apagar clã</button>
+              </form>
+            </details>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody></table>
+  </section>
+
+  <section class="split">
+    <div class="card wide-card">
+      <h2>Temporadas</h2>
+      <form method="POST" action="/admin/seasons" class="inline-grid">
+        <input name="name" placeholder="Temporada 1 - RAID-Z" required>
+        <input name="startsAt" type="datetime-local">
+        <input name="note" placeholder="Observação">
+        <button class="btn primary">Criar temporada</button>
+      </form>
+      <table><thead><tr><th>Temporada</th><th>Status</th><th>Campeão</th><th>Finalizar</th></tr></thead><tbody>
+        <% seasons.forEach(s => { %>
+          <tr><td><strong><%= s.name %></strong><br><small><%= dateTime(s.startsAt) %></small></td><td><span class="status <%= s.status==='ACTIVE'?'approved':'pending' %>"><%= s.status %></span></td><td><%= s.championTitle || '-' %></td><td>
+            <% if (s.status === 'ACTIVE') { %>
+              <details class="admin-details-v34"><summary>Finalizar</summary>
+                <form method="POST" action="/admin/seasons/<%= s.id %>/close" class="form-grid">
+                  <label>Clã campeão<select name="championClanId"><option value="">Nenhum</option><% clans.forEach(c => { %><option value="<%= c.id %>">[<%= c.tag %>] <%= c.name %></option><% }) %></select></label>
+                  <label>Steam64 player campeão<input name="championPlayerSteam64" maxlength="17" placeholder="Opcional"></label>
+                  <label>Título<input name="championTitle" value="Campeão da Temporada"></label>
+                  <label>Imagem PNG do troféu<input name="imageUrl" placeholder="https://.../trofeu.png"></label>
+                  <label>Ícone reserva<input name="icon" value="👑"></label>
+                  <label>Cor<input name="color" value="#f7bd44"></label>
+                  <label>Pontos do campeão<input name="points" type="number" min="0" value="0"></label>
+                  <label>Mensagem<textarea name="note"></textarea></label>
+                  <label>Senha admin<input name="adminPassword" type="password" placeholder="Mesma senha que entra no site" required></label>
+                  <button class="btn small primary">Salvar campeão</button>
+                </form>
+              </details>
+            <% } else { %>-<% } %>
+          </td></tr>
+        <% }) %>
+      </tbody></table>
+    </div>
+
+    <div class="card wide-card">
+      <h2>Badge para player</h2>
+      <form method="POST" action="/admin/player-badges" class="form-grid">
+        <label>Steam64<input name="steam64" maxlength="17" required></label>
+        <label>Nome do player<input name="playerName"></label>
+        <label>Título<input name="title" placeholder="MVP da Temporada" required></label>
+        <label>Temporada<select name="seasonId"><option value="">Sem temporada</option><% seasons.forEach(s => { %><option value="<%= s.id %>"><%= s.name %></option><% }) %></select></label>
+        <label>Imagem PNG do troféu<input name="imageUrl" placeholder="https://.../trofeu.png"></label>
+        <label>Ícone reserva<input name="icon" value="⭐"></label>
+        <label>Cor<input name="color" value="#38bdf8"></label>
+        <label>Pontos<input name="points" type="number" min="0" value="0"></label>
+        <label>Descrição<textarea name="description"></textarea></label>
+        <button class="btn primary">Dar badge/troféu</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="card wide-card danger-zone-v35">
+    <h2>Wipe do ranking com senha</h2>
+    <p class="muted">Limpa as kills do ranking para começar nova fase/temporada. Clãs, bandeiras, troféus e campeões ficam salvos.</p>
+    <form method="POST" action="/admin/ranking/wipe" class="inline-grid">
+      <select name="serverType"><option value="all">Global / todos os servidores</option><option value="vanilla">Só Vanilla</option><option value="bbp">Só Vanilla+</option><option value="deathmatch">Só Death Match</option></select>
+      <input name="confirm" placeholder="Digite WIPE" required>
+      <input name="adminPassword" type="password" placeholder="Senha admin" required>
+      <button class="btn danger">Dar wipe no ranking</button>
+    </form>
+  </section>
+
+  <section class="split">
+    <div class="card wide-card">
+      <h2>Cadastrar kill de teste</h2>
+      <p class="muted">Serve para testar o ranking no site antes de criar a parte do mod.</p>
+      <form method="POST" action="/admin/ranking/kills/test" class="form-grid">
+        <label>Servidor<select name="serverType"><option value="vanilla">Vanilla</option><option value="bbp">Vanilla+</option><option value="deathmatch">Death Match</option></select></label>
+        <label>Steam64 killer<input name="killerSteam64" maxlength="17" required></label>
+        <label>Nome killer<input name="killerName"></label>
+        <label>Steam64 vítima<input name="victimSteam64" maxlength="17" required></label>
+        <label>Nome vítima<input name="victimName"></label>
+        <label>Arma<input name="weapon" placeholder="M4A1"></label>
+        <label>Distância<input name="distanceMeters" type="number" step="0.1"></label>
+        <label>Local<input name="place" placeholder="NWAF"></label>
+        <label class="check"><input type="checkbox" name="headshot" value="true"> Headshot</label>
+        <button class="btn primary">Criar kill teste</button>
+      </form>
+    </div>
+    <div class="card wide-card">
+      <h2>Últimas kills</h2>
+      <table><thead><tr><th>Data</th><th>Servidor</th><th>Killer</th><th>Vítima</th><th>Arma</th></tr></thead><tbody>
+        <% recentKills.forEach(k => { %><tr><td><%= dateTime(k.occurredAt) %></td><td><%= k.serverType.toUpperCase() %></td><td><%= k.killerName || k.killerSteam64 %></td><td><%= k.victimName || k.victimSteam64 %></td><td><%= k.weapon || '-' %></td></tr><% }) %>
+      </tbody></table>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>

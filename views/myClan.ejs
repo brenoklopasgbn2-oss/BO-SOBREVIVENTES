@@ -1,0 +1,72 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container my-clan-page-v34">
+  <%- include('partials/alerts') %>
+  <% if (!membership) { %>
+    <section class="clan-request-panel-v34 clan-ticket-only-v45 sz-hover-card">
+      <div><p class="v9-kicker">Meu clã</p><h1>Você ainda não está em um clã</h1><p>Abra um ticket no Discord e peça para o ADM liberar você como dono do clã pelo Steam64. Depois de liberado, o painel “Meu Clã” aparece aqui para gerenciar membros, sub dono e descrição.</p></div>
+      <a class="btn primary" href="/ranking#solicitar-cla">Ver instruções</a>
+    </section>
+  <% } else { const clan = membership.clan; const canManage = ['OWNER','SUB_OWNER'].includes(membership.role); %>
+    <section class="my-clan-hero-v34 sz-hover-card">
+      <div class="clan-flag-big-v34"><% if (clan.flagUrl) { %><img src="<%= clan.flagUrl %>" alt="Bandeira"><% } else { %><span><%= clan.tag %></span><% } %></div>
+      <div>
+        <p class="v9-kicker">Meu clã • <%= membership.role === 'OWNER' ? 'Dono' : membership.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro' %></p>
+        <h1>[<%= clan.tag %>] <%= clan.name %></h1>
+        <p><%= clan.description || 'Sem descrição cadastrada.' %></p>
+        <div class="ranking-mode-pills-v34"><a href="/ranking#clas">Ver ranking do clã</a><a href="#membros">Membros</a><a href="#trofeus">Troféus</a></div>
+      </div>
+    </section>
+
+    <section class="split">
+      <div class="card wide-card" id="membros">
+        <h2>Membros do clã</h2>
+        <table><thead><tr><th>Player</th><th>Steam64</th><th>Cargo</th><th>Entrou</th><th></th></tr></thead><tbody>
+          <% clan.members.forEach(m => { %>
+            <tr>
+              <td><%= m.player.nickname || 'Player' %></td><td><code><%= m.steam64 %></code></td><td><span class="status approved"><%= m.role %></span></td><td><%= dateTime(m.joinedAt) %></td>
+              <td>
+                <% if (canManage && m.role !== 'OWNER') { %>
+                  <div class="admin-actions compact-actions-v34">
+                    <% if (membership.role === 'OWNER') { %><form method="POST" action="/my-clan/members/<%= m.id %>/sub-owner"><button class="btn small">Sub dono</button></form><% } %>
+                    <form method="POST" action="/my-clan/members/<%= m.id %>/remove"><button class="btn small">Remover</button></form>
+                  </div>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody></table>
+      </div>
+      <div class="card wide-card" id="trofeus">
+        <h2>Troféus do clã</h2>
+        <% clan.awards.forEach(a => { %><div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= a.color %>"><span><% if (a.imageUrl) { %><img src="<%= a.imageUrl %>" alt="Troféu"><% } else { %><%= a.icon %><% } %></span><strong><%= a.title %> <% if (a.points) { %><em>+<%= a.points %> pts</em><% } %></strong><small><%= a.eventName || 'Evento' %> • <%= a.description || 'Conquista do clã' %></small></div><% }) %>
+        <% if (!clan.awards.length) { %><p class="muted">O clã ainda não ganhou eventos registrados.</p><% } %>
+        <h2>Minhas badges</h2>
+        <% badges.forEach(b => { %><div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= b.color %>"><span><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><strong><%= b.title %> <% if (b.points) { %><em>+<%= b.points %> pts</em><% } %></strong><small><%= b.description || 'Conquista do player' %></small></div><% }) %>
+        <% if (!badges.length) { %><p class="muted">Você ainda não tem badge de campeão.</p><% } %>
+      </div>
+    </section>
+
+    <% if (canManage) { %>
+      <section class="split">
+        <div class="card wide-card">
+          <h2>Configurar clã</h2>
+          <form method="POST" action="/my-clan/update" class="form-grid">
+            <p class="muted">A bandeira do clã só pode ser trocada pelo admin. O dono/sub dono pode editar a descrição e gerenciar membros.</p>
+            <label>Descrição<textarea name="description"><%= clan.description || '' %></textarea></label>
+            <button class="btn primary">Salvar descrição</button>
+          </form>
+        </div>
+        <div class="card wide-card">
+          <h2>Adicionar player</h2>
+          <form method="POST" action="/my-clan/members/add" class="form-grid">
+            <label>Steam64 do player<input name="steam64" maxlength="17" placeholder="7656119..." required></label>
+            <label>Nome no jogo<input name="nickname" placeholder="Nick opcional"></label>
+            <button class="btn primary">Adicionar no clã</button>
+          </form>
+        </div>
+      </section>
+    <% } %>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,424 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<%
+  const categories = storeCategories || [];
+  const parents = (categoryTree || []);
+  const selected = selectedCategory || categories[0] || { name: 'Geral', serverType: 'all', icon: '🏠', color: '#ef4444', order: 10, active: true, parentName: null, description: '' };
+  const selectedParent = selected.parentName ? (parents.find(p => p.name.toLowerCase() === selected.parentName.toLowerCase()) || selected) : selected;
+  const sideChildren = categories.filter(c => c.parentName && selectedParent && c.parentName.toLowerCase() === selectedParent.name.toLowerCase());
+  const categoryNamesForFilter = new Set([selected.name, ...(selected.parentName ? [] : sideChildren.map(c => c.name))]);
+  const showAllProducts = currentCategoryQuery === 'all';
+  const visibleProducts = showAllProducts ? products : products.filter(p => categoryNamesForFilter.has(p.category));
+  const productItemsRows = product?.items?.length ? product.items : (product?.classname ? [{ classname: product.classname, quantity: product.quantity || 1, label: product.name || '' }] : [{ classname: '', quantity: 1, label: '' }]);
+  const productItemsText = product?.items?.length ? product.items.map(i => `${i.classname}|${i.quantity}${i.label ? '|' + i.label : ''}`).join('\n') : (product?.classname ? `${product.classname}|${product.quantity || 1}` : '');
+  const actionTab = activeTab || 'products';
+  const catalog = dayzCatalog || [];
+%>
+<datalist id="storeCategoryList">
+  <% categories.forEach(cat => { %><option value="<%= cat.name %>"></option><% }) %>
+</datalist>
+<datalist id="dropBoxTypesList">
+  <% (dropBoxTypes || []).forEach(type => { %><option value="<%= type %>"></option><% }) %>
+</datalist>
+
+
+<style id="admin-products-v48-hotfix">
+  /* V48 hotfix: estilo inline para não depender de cache do style.css no navegador */
+  body{overflow-x:hidden!important;}
+  body:has(.admin-products-v47){background:#02060d!important;}
+  .admin-products-v47,.admin-products-v47 *{box-sizing:border-box;}
+  .admin-products-v47{width:min(1880px,100%);margin:0 auto;padding:24px 32px 56px;overflow-x:hidden;color:#f8fafc;}
+  .admin-products-v47 a{text-decoration:none;color:inherit;}
+  .admin-v47-head{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;align-items:center;margin:0 0 16px;}
+  .admin-v47-head h1{margin:0 0 6px;font-size:clamp(2.2rem,4vw,4.6rem);line-height:.92;letter-spacing:-.04em;background:linear-gradient(90deg,#fff,#fed7d7,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .admin-v47-head .muted{max-width:900px;}
+  .admin-v47-back{height:46px;border-radius:15px;background:rgba(8,14,24,.82)!important;border:1px solid rgba(148,163,184,.22)!important;box-shadow:0 16px 40px rgba(0,0,0,.28);}
+  .admin-action-tabs-v47{position:sticky;top:82px;z-index:90;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:14px 0 18px;padding:10px;border:1px solid rgba(148,163,184,.16);border-radius:24px;background:rgba(3,8,18,.84);backdrop-filter:blur(18px);box-shadow:0 20px 70px rgba(0,0,0,.35);}
+  .admin-action-tabs-v47 a{min-width:0;display:grid!important;grid-template-columns:40px minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:12px 14px;border-radius:17px;border:1px solid rgba(148,163,184,.13);background:linear-gradient(180deg,rgba(15,23,42,.72),rgba(5,10,20,.68));transition:.18s;overflow:hidden;}
+  .admin-action-tabs-v47 a:hover{transform:translateY(-2px);border-color:rgba(251,146,60,.45);}
+  .admin-action-tabs-v47 a.active{border-color:rgba(251,146,60,.85);background:linear-gradient(135deg,rgba(239,68,68,.34),rgba(251,146,60,.18));box-shadow:0 0 34px rgba(249,115,22,.16),inset 0 1px rgba(255,255,255,.08);}
+  .admin-action-tabs-v47 span{grid-row:1/3;width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.08);font-size:1.12rem;}
+  .admin-action-tabs-v47 b{font-size:.96rem;line-height:1.02;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .admin-action-tabs-v47 small{display:block;margin-top:3px;color:#9aa8bc;font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .admin-v47-workspace{display:grid!important;grid-template-columns:184px minmax(0,1fr);gap:14px;align-items:start;width:100%;min-width:0;}
+  .mini-subcats-v47{position:sticky;top:184px;display:flex!important;flex-direction:column;gap:7px;max-height:calc(100vh - 205px);overflow:auto;padding:10px;border:1px solid rgba(148,163,184,.16);border-radius:22px;background:linear-gradient(180deg,rgba(9,16,30,.88),rgba(4,8,16,.94));box-shadow:0 22px 70px rgba(0,0,0,.34);}
+  .mini-subcats-head-v47{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 8px;margin-bottom:2px;border-bottom:1px solid rgba(148,163,184,.14);}
+  .mini-subcats-head-v47 b{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:#fecaca;}
+  .mini-subcats-head-v47 a{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.07);}
+  .mini-cat-v47{display:grid!important;grid-template-columns:30px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:38px;padding:6px 7px;border-radius:13px;border:1px solid rgba(148,163,184,.11);background:rgba(15,23,42,.55);transition:.16s;}
+  .mini-cat-v47:hover{transform:translateX(2px);border-color:rgba(251,146,60,.36);background:rgba(30,41,59,.72);}
+  .mini-cat-v47.active{border-color:rgba(251,146,60,.76);background:linear-gradient(135deg,rgba(239,68,68,.30),rgba(251,146,60,.12));box-shadow:0 0 28px rgba(249,115,22,.12);}
+  .mini-cat-v47 span{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.07);font-size:.94rem;}
+  .mini-cat-v47 b{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mini-cat-v47 small{min-width:24px;text-align:center;border-radius:999px;background:rgba(255,255,255,.07);padding:3px 6px;color:#e2e8f0;font-size:.7rem;font-weight:950;}
+  .mini-child-list-v47{display:flex!important;flex-direction:column;gap:5px;margin:0 0 4px 6px;padding-left:7px;border-left:1px dashed rgba(148,163,184,.22);}
+  .mini-cat-v47.child{grid-template-columns:24px minmax(0,1fr) auto;min-height:34px;padding:5px 6px;}
+  .mini-cat-v47.child span{width:22px;height:22px;font-size:.74rem;}
+  .mini-new-cat-v47{display:block;text-align:center;margin-top:4px;padding:10px;border:1px dashed rgba(251,146,60,.55);border-radius:14px;color:#fed7aa;font-weight:950;background:rgba(249,115,22,.08);}
+  .admin-v47-panel{min-width:0;width:100%;border:1px solid rgba(148,163,184,.15);border-radius:28px;background:linear-gradient(180deg,rgba(9,15,29,.82),rgba(4,8,16,.92));padding:20px;box-shadow:0 30px 90px rgba(0,0,0,.36);overflow:hidden;}
+  .admin-v47-panel-head{display:flex!important;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px;}
+  .admin-v47-panel-head h2{font-size:clamp(1.7rem,2.8vw,2.9rem);margin:0 0 6px;line-height:1;}
+  .admin-v47-tools{display:flex!important;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .admin-v47-tools input,.catalog-search-v47,.catalog-full-v47>input{height:46px;min-width:300px;border-radius:14px;background:#050b16;border:1px solid rgba(148,163,184,.2);color:#fff;padding:0 14px;font:inherit;outline:none;}
+  .admin-product-grid-v47{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;width:100%;}
+  .product-admin-card-v47{display:grid!important;grid-template-columns:98px minmax(0,1fr);gap:12px;min-width:0;padding:12px;border:1px solid rgba(148,163,184,.14);border-radius:21px;background:linear-gradient(135deg,rgba(16,24,40,.74),rgba(3,8,18,.82));box-shadow:0 18px 55px rgba(0,0,0,.24);transition:.16s;}
+  .product-admin-card-v47:hover{transform:translateY(-2px);border-color:rgba(251,146,60,.48);box-shadow:0 22px 70px rgba(0,0,0,.34);}
+  .product-admin-card-v47.is-hidden{display:none!important;}
+  .product-admin-img-v47{position:relative;width:98px;height:98px;border-radius:17px;overflow:hidden;background:radial-gradient(circle at 50% 15%,rgba(239,68,68,.20),rgba(2,6,15,.95));border:1px solid rgba(255,255,255,.08);}
+  .product-admin-img-v47 img{width:100%;height:100%;object-fit:contain;padding:8px;}
+  .product-admin-img-v47 .status{position:absolute;left:6px;bottom:6px;font-size:.66rem;padding:4px 7px;border-radius:999px;background:#166534;color:#dcfce7;font-weight:950;}
+  .product-admin-info-v47{min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .product-admin-title-v47{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;}
+  .product-admin-title-v47 strong{line-height:1.05;font-size:1.04rem;overflow-wrap:anywhere;}
+  .product-admin-title-v47 b{white-space:nowrap;color:#fed7aa;}
+  .product-admin-meta-v47,.product-admin-items-v47{display:flex;gap:6px;flex-wrap:wrap;}
+  .product-admin-meta-v47 span{font-size:.74rem;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:#cbd5e1;border:1px solid rgba(255,255,255,.07);}
+  .product-admin-items-v47 code{font-size:.72rem;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(2,6,15,.65);border:1px solid rgba(148,163,184,.12);border-radius:8px;padding:4px 6px;color:#c4d3e6;}
+  .product-admin-actions-v47{display:grid!important;grid-template-columns:86px 92px minmax(0,1fr);gap:8px;align-items:center;margin-top:auto;}
+  .product-delete-inline-v50{margin:0!important;min-width:0;}
+  .product-delete-inline-v50 .btn{width:100%;height:34px;padding:0 8px!important;border-color:rgba(239,68,68,.48)!important;background:linear-gradient(135deg,rgba(127,29,29,.76),rgba(69,10,10,.55))!important;color:#fecaca!important;}
+  .product-delete-editor-v50{margin-top:12px;padding:14px;border:1px solid rgba(239,68,68,.38);border-radius:18px;background:linear-gradient(135deg,rgba(127,29,29,.16),rgba(2,6,15,.70));}
+  .product-delete-editor-v50 p{margin:0 0 10px;color:#fecaca;font-weight:850;}
+  .product-test-inline-v47{display:grid!important;grid-template-columns:minmax(0,1fr) 72px;gap:6px;margin:0;min-width:0;}
+  .product-test-inline-v47 input{min-width:0;height:34px;border-radius:10px;background:#050b16;border:1px solid rgba(148,163,184,.18);color:#fff;padding:0 8px;}
+  .empty-admin-v47{padding:34px;border-radius:22px;text-align:center;border:1px dashed rgba(148,163,184,.24);background:rgba(255,255,255,.035);color:#cbd5e1;}
+  .product-create-layout-v47{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(360px,430px);gap:16px;align-items:start;}
+  .product-form-v47,.catalog-picker-v47,.category-edit-card-v47,.category-preview-v47,.promo-form-v47,.boxes-manager-v47,.catalog-full-v47{background:linear-gradient(180deg,rgba(12,20,34,.78),rgba(5,9,17,.88));border:1px solid rgba(148,163,184,.14);border-radius:24px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.28);}
+  .form-block-title-v47{display:flex;gap:12px;align-items:center;margin:6px 0 16px;}.form-block-title-v47>span{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#ef4444,#fb923c);font-weight:950;}.form-block-title-v47 h3{margin:0}.form-block-title-v47 p{margin:3px 0 0;color:#94a3b8;}
+  .inline-grid.product-inline-grid.two-cols{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.product-form-v47 label,.category-edit-card-v47 label,.promo-form-v47 label{display:grid;gap:7px;color:#dbeafe;font-weight:850;}.product-form-v47 input,.product-form-v47 select,.product-form-v47 textarea,.category-edit-card-v47 input,.category-edit-card-v47 select,.category-edit-card-v47 textarea,.promo-form-v47 input,.promo-form-v47 select,.promo-form-v47 textarea,.boxes-manager-v47 input{width:100%;border-radius:14px;background:#050b16;border:1px solid rgba(148,163,184,.2);color:#fff;padding:12px 13px;font:inherit;outline:none;}.product-form-v47 textarea,.category-edit-card-v47 textarea{min-height:92px;}
+  .item-builder-card-v47{display:grid;gap:8px;padding:14px;border:1px solid rgba(148,163,184,.13);border-radius:20px;background:rgba(2,6,15,.38);}.item-builder-head-v47,.item-row-v47{display:grid!important;grid-template-columns:minmax(0,1.35fr) 78px minmax(0,1fr) 42px;gap:8px;align-items:center;}.item-builder-head-v47{font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em}.item-row-v47 input{height:42px;padding:0 10px;}
+  .product-visual-grid-v47{display:grid!important;grid-template-columns:1fr 1fr;gap:12px;}.save-product-v47{width:100%;height:54px;margin-top:10px;}
+  .catalog-picker-v47{position:sticky;top:190px;max-height:calc(100vh - 210px);display:flex!important;flex-direction:column;gap:10px;overflow:hidden;}.catalog-picker-head-v47{display:flex;justify-content:space-between;gap:10px;}.catalog-picker-head-v47 h3{margin:0}.catalog-chip-row-v47{display:flex;gap:6px;overflow:auto;padding-bottom:4px;}.catalog-chip-row-v47 button{white-space:nowrap;border:1px solid rgba(148,163,184,.16);border-radius:999px;background:rgba(15,23,42,.8);color:#dbeafe;padding:7px 10px;cursor:pointer;}.catalog-list-v47{overflow:auto;display:flex!important;flex-direction:column;gap:8px;padding-right:4px;}.catalog-item-v47{display:grid!important;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px;border-radius:16px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.58);}.catalog-item-v47 img{width:58px;height:58px;object-fit:contain;background:rgba(255,255,255,.04);border-radius:12px;padding:4px;}.catalog-item-v47 strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.catalog-item-v47 code{display:inline-block;margin:3px 0;font-size:.76rem;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.catalog-item-v47 small{display:block;color:#94a3b8;}
+  .catalog-full-v47{display:grid!important;gap:14px;}.catalog-grid-full-v47{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}.catalog-grid-full-v47 .catalog-item-v47{grid-template-columns:70px minmax(0,1fr);}.catalog-grid-full-v47 .catalog-item-v47 button{grid-column:1/-1;}.catalog-grid-full-v47 .catalog-item-v47 img{width:70px;height:70px;}
+  .category-editor-v47{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.85fr) 310px;gap:14px;}.category-preview-v47{text-align:center;}.preview-icon-v47{width:86px;height:86px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;font-size:2.4rem;background:rgba(239,68,68,.18);box-shadow:0 0 30px rgba(239,68,68,.16);}.action-row-v47,.dropbox-chip-list-v47{display:flex;gap:10px;flex-wrap:wrap;}.dropbox-add-form-v47{display:flex;gap:10px;}.dropbox-chip-v47{display:flex;gap:6px;align-items:center;border:1px solid rgba(148,163,184,.16);border-radius:999px;background:rgba(15,23,42,.68);padding:5px 5px 5px 9px;}.dropbox-chip-v47 button{width:24px;height:24px;border:0;border-radius:50%;background:rgba(239,68,68,.18);color:#fecaca;cursor:pointer;}
+  .admin-products-v47 .btn.primary{background:linear-gradient(135deg,#ef4444,#fb923c)!important;border-color:rgba(251,146,60,.45)!important;color:#fff!important;}.admin-products-v47 .btn.small{padding:8px 10px;border-radius:10px;font-size:.82rem;}.admin-products-v47 .btn.danger{border-color:rgba(239,68,68,.35)!important;background:rgba(239,68,68,.12)!important;color:#fecaca!important;}.admin-products-v47 .muted{color:#94a3b8;}.admin-products-v47 .eyebrow{margin:0 0 8px;color:#ffa6b5;text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;font-weight:1000;}
+  @media(max-width:1320px){.admin-action-tabs-v47{grid-template-columns:repeat(3,minmax(0,1fr));}.admin-v47-workspace{grid-template-columns:160px minmax(0,1fr);}.product-create-layout-v47,.category-editor-v47{grid-template-columns:1fr;}.catalog-picker-v47{position:relative;top:auto;max-height:560px;}.mini-subcats-v47{top:178px;}}
+  @media(max-width:880px){.admin-products-v47{padding:16px;}.admin-v47-head{grid-template-columns:1fr;}.admin-action-tabs-v47{position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr));}.admin-v47-workspace{grid-template-columns:1fr;}.mini-subcats-v47{position:relative;top:auto;max-height:none;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}.mini-child-list-v47{display:contents!important;}.admin-v47-panel-head{flex-direction:column;}.inline-grid.product-inline-grid.two-cols,.product-visual-grid-v47{grid-template-columns:1fr!important;}.admin-product-grid-v47{grid-template-columns:1fr;}.product-admin-card-v47{grid-template-columns:84px minmax(0,1fr);}.product-admin-img-v47{width:84px;height:84px;}.item-builder-head-v47{display:none!important;}.item-row-v47{grid-template-columns:1fr!important;}.dropbox-add-form-v47{flex-direction:column;}}
+</style>
+
+<main class="admin-products-v47">
+  <section class="admin-v47-head">
+    <a class="btn admin-v47-back" href="/admin">← Voltar ao painel</a>
+    <div>
+      <p class="eyebrow">Painel ADM organizado</p>
+      <h1>Controle da loja</h1>
+      <p class="muted">Escolha o que fazer em cima, use as subcategorias pequenas do lado e edite tudo sem barra horizontal.</p>
+    </div>
+  </section>
+
+  <%- include('../partials/alerts') %>
+
+  <nav class="admin-action-tabs-v47" aria-label="Escolha o que fazer">
+    <a class="<%= actionTab === 'products' ? 'active' : '' %>" href="/admin/products?tab=products&category=<%= encodeURIComponent(selected.name) %>"><span>📦</span><b>Produtos</b><small>editar loja</small></a>
+    <a class="<%= actionTab === 'create' ? 'active' : '' %>" href="/admin/products?tab=create&category=<%= encodeURIComponent(selected.name) %>#productEditor"><span>➕</span><b>Novo produto</b><small>criar item</small></a>
+    <a class="<%= actionTab === 'categories' ? 'active' : '' %>" href="/admin/products?tab=categories&category=<%= encodeURIComponent(selected.name) %>"><span>🧩</span><b>Categorias</b><small>organizar</small></a>
+    <a class="<%= actionTab === 'catalog' ? 'active' : '' %>" href="/admin/products?tab=catalog&category=<%= encodeURIComponent(selected.name) %>"><span>🖼️</span><b>Catálogo DayZ</b><small>imagem + type</small></a>
+    <a class="<%= actionTab === 'promo' ? 'active' : '' %>" href="/admin/products?tab=promo&category=<%= encodeURIComponent(selected.name) %>"><span>🔥</span><b>Promoções</b><small>descontos</small></a>
+    <a class="<%= actionTab === 'boxes' ? 'active' : '' %>" href="/admin/products?tab=boxes&category=<%= encodeURIComponent(selected.name) %>"><span>📥</span><b>Caixas</b><small>drop</small></a>
+  </nav>
+
+  <section class="admin-v47-workspace">
+    <aside class="mini-subcats-v47">
+      <div class="mini-subcats-head-v47">
+        <b>Subcategorias</b>
+        <a href="/admin/products?tab=categories&category=<%= encodeURIComponent(selectedParent.name || selected.name) %>" title="Editar categorias">⚙</a>
+      </div>
+      <a class="mini-cat-v47 <%= showAllProducts ? 'active' : '' %>" href="/admin/products?tab=<%= actionTab %>&category=all">
+        <span>🌐</span><b>Todos</b><small><%= products.length %></small>
+      </a>
+      <% parents.forEach(parent => { %>
+        <a class="mini-cat-v47 parent <%= parent.name === selectedParent.name && !selected.parentName && !showAllProducts ? 'active' : '' %>" href="/admin/products?tab=<%= actionTab %>&category=<%= encodeURIComponent(parent.name) %>" style="--cat:<%= parent.color || '#ef4444' %>">
+          <span><%= parent.icon || '📦' %></span><b><%= parent.name %></b><small><%= parent.productCount || 0 %></small>
+        </a>
+        <% if (parent.name === selectedParent.name && sideChildren.length) { %>
+          <div class="mini-child-list-v47">
+            <% sideChildren.forEach(child => { %>
+              <a class="mini-cat-v47 child <%= child.name === selected.name && !showAllProducts ? 'active' : '' %>" href="/admin/products?tab=<%= actionTab %>&category=<%= encodeURIComponent(child.name) %>" style="--cat:<%= child.color || parent.color || '#ef4444' %>">
+                <span><%= child.icon || '•' %></span><b><%= child.name %></b><small><%= child.productCount || 0 %></small>
+              </a>
+            <% }) %>
+          </div>
+        <% } %>
+      <% }) %>
+      <a class="mini-new-cat-v47" href="/admin/products?tab=categories&category=<%= encodeURIComponent(selected.name) %>#newCategoryQuick">+ Categoria</a>
+    </aside>
+
+    <section class="admin-v47-panel">
+      <% if (actionTab === 'products') { %>
+        <div class="admin-v47-panel-head">
+          <div>
+            <p class="eyebrow">Produtos cadastrados</p>
+            <h2><%= showAllProducts ? 'Todos os produtos' : selected.name %></h2>
+            <p class="muted">Cards compactos com imagem, preço, categoria, entrega, types e ações rápidas.</p>
+          </div>
+          <div class="admin-v47-tools">
+            <input id="adminProductSearchV47" placeholder="Buscar nome, type, categoria...">
+            <a class="btn primary" href="/admin/products?tab=create&category=<%= encodeURIComponent(selected.name) %>#productEditor">+ Novo produto</a>
+          </div>
+        </div>
+
+        <div class="admin-product-grid-v47" id="adminProductsGridV47">
+          <% visibleProducts.forEach(p => { %>
+            <% const pItems = p.items?.length ? p.items : [{ classname: p.classname, quantity: p.quantity, label: null }]; %>
+            <% const searchText = [p.name, p.category, p.serverType, p.deliveryType, p.status, ...pItems.map(i => `${i.classname} ${i.label || ''}`)].join(' ').toLowerCase(); %>
+            <article class="product-admin-card-v47" data-product-card data-search="<%= searchText.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>" style="--accent:<%= p.highlightColor || '#ef4444' %>">
+              <div class="product-admin-img-v47"><img loading="lazy" decoding="async" src="<%= p.imageData ? ('/product-image/' + p.id + '?v=' + (p.updatedAt ? new Date(p.updatedAt).getTime() : Date.now())) : ((p.imageUrl || '/images/no-real-image.svg') + ((p.imageUrl || '').includes('?') ? '&' : '?') + 'v=' + (p.updatedAt ? new Date(p.updatedAt).getTime() : Date.now())) %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= p.name %>"><span class="status <%= String(p.status || '').toLowerCase() %>"><%= p.status %></span></div>
+              <div class="product-admin-info-v47">
+                <div class="product-admin-title-v47"><strong><%= p.name %></strong><b><%= coins(p.priceCoins) %></b></div>
+                <div class="product-admin-meta-v47"><span><%= p.category %></span><span><%= p.serverType %></span><span><%= p.deliveryType === 'drop_box' ? 'Caixa' : (p.deliveryType === 'drop_at_feet' ? 'Chão' : 'Virtual') %></span></div>
+                <div class="product-admin-items-v47">
+                  <% pItems.slice(0, 3).forEach(item => { %><code><%= item.quantity %>x <%= item.classname %></code><% }) %>
+                  <% if (pItems.length > 3) { %><small>+<%= pItems.length - 3 %> type(s)</small><% } %>
+                </div>
+                <div class="product-admin-actions-v47">
+                  <a class="btn small primary" href="/admin/products/<%= p.id %>/edit?tab=create&category=<%= encodeURIComponent(p.category || selected.name) %>#productEditor">Editar</a>
+                  <form method="POST" action="/admin/products/<%= p.id %>/delete" class="product-delete-inline-v50" onsubmit="return confirm('Confirmar exclusão deste produto? Se ele já tiver vendas, será desativado da loja para manter histórico.');"><button class="btn small danger" type="submit">Excluir</button></form>
+                  <form method="POST" action="/admin/products/<%= p.id %>/test-drop" class="product-test-inline-v47"><input name="steam64" maxlength="17" placeholder="Steam64 teste" required><button class="btn small" type="submit">Testar</button></form>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+        <% if (!visibleProducts.length) { %><div class="empty-admin-v47">Nenhum produto nessa categoria. Clique em <b>Novo produto</b> para criar.</div><% } %>
+      <% } %>
+
+      <% if (actionTab === 'create') { %>
+        <div class="admin-v47-panel-head" id="productEditor">
+          <div>
+            <p class="eyebrow"><%= product ? 'Editar produto' : 'Novo produto' %></p>
+            <h2><%= product ? product.name : 'Criar produto da loja' %></h2>
+            <p class="muted">Escolha a categoria, clique em itens do catálogo DayZ para preencher imagem/type, ou cadastre manualmente.</p>
+          </div>
+          <% if (product) { %><a class="btn" href="/admin/products?tab=create&category=<%= encodeURIComponent(product.category || selected.name) %>#productEditor">Limpar / novo</a><% } %>
+        </div>
+
+        <div class="product-create-layout-v47">
+          <form method="POST" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" enctype="multipart/form-data" class="product-form-v47 card">
+            <div class="form-block-title-v47"><span>1</span><div><h3>Dados do produto</h3><p>Nome, categoria, preço e como vai aparecer na loja.</p></div></div>
+            <div class="inline-grid product-inline-grid two-cols">
+              <label>Nome do produto<input id="productNameInputV47" name="name" value="<%= product?.name || '' %>" placeholder="Kit Construção Premium" required></label>
+              <label>Categoria
+                <select id="productCategorySelectV47" name="category" required>
+                  <% categories.filter(c => c.active !== false).forEach(cat => { %><option value="<%= cat.name %>" <%= (product?.category || selected.name || 'Geral') === cat.name ? 'selected' : '' %>><%= cat.parentName ? cat.parentName + ' › ' : '' %><%= cat.name %></option><% }) %>
+                </select>
+              </label>
+              <label>Servidor<select name="serverType"><% ['all','vanilla','bbp'].forEach(s => { %><option value="<%= s %>" <%= (product?.serverType || 'vanilla') === s ? 'selected' : '' %>><%= s === 'all' ? 'Todos' : s.toUpperCase() %></option><% }) %></select></label>
+              <label>Preço em moedas<input name="priceCoins" type="number" min="0" value="<%= product?.priceCoins || 0 %>" required></label>
+            </div>
+            <label>Descrição para o player<textarea id="productDescriptionInputV47" name="description" placeholder="Explique o que vem nesse produto."><%= product?.description || '' %></textarea></label>
+
+            <div class="form-block-title-v47"><span>2</span><div><h3>Entrega no jogo</h3><p>Caixa, chão ou virtual. O type da caixa fica salvo.</p></div></div>
+            <div class="inline-grid product-inline-grid two-cols">
+              <label>Tipo de entrega<select name="deliveryType"><option value="drop_box" <%= (!product || product?.deliveryType === 'drop_box') ? 'selected' : '' %>>📦 Dentro de caixa</option><option value="drop_at_feet" <%= product?.deliveryType === 'drop_at_feet' ? 'selected' : '' %>>⬇️ Direto no chão</option><option value="account_unlock" <%= product?.deliveryType === 'account_unlock' ? 'selected' : '' %>>🔐 Virtual / VIP</option></select></label>
+              <label>Type da caixa<input name="dropBoxClassname" list="dropBoxTypesList" value="<%= product?.dropBoxClassname || 'WoodenCrate' %>" placeholder="WoodenCrate"></label>
+              <label>Estoque vazio = infinito<input name="stock" type="number" min="0" value="<%= product?.stock ?? '' %>"></label>
+              <label>Status<select name="status"><option value="ACTIVE" <%= product?.status === 'ACTIVE' ? 'selected' : '' %>>Ativo</option><option value="INACTIVE" <%= product?.status === 'INACTIVE' ? 'selected' : '' %>>Inativo</option></select></label>
+            </div>
+
+            <div class="form-block-title-v47"><span>3</span><div><h3>Itens entregues</h3><p>Use o catálogo do lado ou digite o classname manualmente.</p></div></div>
+            <div class="item-builder-card-v47">
+              <div class="item-builder-head-v47"><span>Type / classname</span><span>Qtd</span><span>Nome visível</span><span></span></div>
+              <div id="itemRows" class="item-rows-v47">
+                <% productItemsRows.forEach((item) => { %>
+                  <div class="item-row-v47" data-row>
+                    <input name="itemClassname[]" value="<%= item.classname || '' %>" placeholder="BandageDressing" required>
+                    <input name="itemQuantity[]" type="number" min="1" value="<%= item.quantity || 1 %>" required>
+                    <input name="itemLabel[]" value="<%= item.label || '' %>" placeholder="Bandagens">
+                    <button type="button" class="btn danger small item-remove-btn" <%= productItemsRows.length === 1 ? 'disabled' : '' %>>✕</button>
+                  </div>
+                <% }) %>
+              </div>
+              <button type="button" class="btn" id="addItemRow">+ Adicionar type manual</button>
+            </div>
+
+            <div class="form-block-title-v47"><span>4</span><div><h3>Imagem e promoção</h3><p>Imagem pode vir do catálogo, URL ou upload.</p></div></div>
+            <div class="product-visual-grid-v47">
+              <div>
+                <label>URL de imagem<input id="productImageUrlInputV47" name="imageUrl" value="<%= product?.imageUrl || '' %>" placeholder="https://..."></label>
+                <label>Enviar imagem<input name="image" type="file" accept="image/*"></label>
+                <% if (product && (product.imageData || product.imageUrl)) { %><div class="current-product-image"><span>Imagem atual:</span><img class="thumb" src="<%= product.imageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : (product.imageUrl + (String(product.imageUrl || '').includes('?') ? '&' : '?') + 'v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) %>" onerror="this.src='/images/no-real-image.svg'" /></div><% } %>
+              </div>
+              <div>
+                <label class="check-row admin-feature-check"><input name="featured" type="checkbox" <%= product?.featured ? 'checked' : '' %>><span>Destacar esse item</span></label>
+                <label>Cor destaque<input name="highlightColor" type="color" value="<%= product?.highlightColor || '#ef4444' %>"></label>
+                <label class="check-row admin-feature-check"><input name="promoActive" type="checkbox" <%= product?.promoActive ? 'checked' : '' %>><span>Promoção própria</span></label>
+                <div class="inline-grid product-inline-grid two-cols"><label>Desconto (%)<input name="promoPercent" type="number" min="0" max="95" value="<%= product?.promoPercent || 15 %>"></label><label>Cor promo<input name="promoColor" type="color" value="<%= product?.promoColor || '#ff7a18' %>"></label></div>
+                <label>Texto do selo<input name="promoLabel" value="<%= product?.promoLabel || 'OFERTA ESPECIAL' %>"></label>
+              </div>
+            </div>
+
+            <details class="legacy-fields"><summary>Modo antigo / colar lista de types</summary><label>Importar por texto<textarea name="itemsText" class="items-textarea" placeholder="BandageDressing|2|Bandagens"><%= productItemsText %></textarea></label><label>Classname principal<input name="classname" value="<%= product?.classname || '' %>"></label><label>Quantidade principal<input name="quantity" type="number" min="1" value="<%= product?.quantity || 1 %>"></label></details>
+            <button class="btn primary save-product-v47" type="submit"><%= product ? '💾 Salvar produto' : '✅ Criar produto' %></button>
+          </form>
+
+          <aside class="catalog-picker-v47 card">
+            <div class="catalog-picker-head-v47"><div><p class="eyebrow">Catálogo DayZ Wiki/Fandom</p><h3>Escolha com imagem + type</h3></div><span><%= catalog.length %> itens</span></div>
+            <input id="catalogSearchV47" class="catalog-search-v47" placeholder="Buscar: prego, água, M4, truck, type...">
+            <div class="catalog-chip-row-v47" id="catalogCategoryChipsV47"></div>
+            <div class="catalog-list-v47" id="catalogListV47"></div>
+            <p class="muted small-note-v47">Ao clicar em “Usar”, ele preenche o type, nome, categoria e imagem. Também dá para editar manualmente depois.</p>
+          </aside>
+        </div>
+
+        <% if (product) { %>
+          <div class="card product-test-drop-v47"><h3>Testar drop no jogo</h3><p class="muted">Cria uma entrega real de teste para o Steam64 informado.</p><form method="POST" action="/admin/products/<%= product.id %>/test-drop" class="inline-grid"><input name="steam64" maxlength="17" placeholder="Steam64 do admin/teste" required><input name="nickname" placeholder="Nome opcional" value="Teste Admin"><button class="btn primary" type="submit">🧪 Testar drop no jogo</button></form></div>
+          <form method="POST" action="/admin/products/<%= product.id %>/delete-image" class="mt"><button class="btn danger" type="submit">Remover imagem</button></form>
+          <form method="POST" action="/admin/products/<%= product.id %>/delete" class="product-delete-editor-v50" onsubmit="return confirm('Tem certeza que quer excluir este produto da loja? Se ele já tiver vendas, vamos apenas desativar para não quebrar histórico dos players.');">
+            <p>Zona perigosa: remover este produto da loja.</p>
+            <button class="btn danger" type="submit">🗑️ Excluir produto</button>
+          </form>
+        <% } %>
+      <% } %>
+
+      <% if (actionTab === 'categories') { %>
+        <div class="admin-v47-panel-head">
+          <div>
+            <p class="eyebrow">Categorias da loja</p>
+            <h2>Organizar categorias e subcategorias</h2>
+            <p class="muted">A categoria principal fica pequena do lado. Aqui você cria, edita e define onde cada produto entra.</p>
+          </div>
+        </div>
+        <div class="category-editor-v47">
+          <form method="POST" action="/admin/categories" class="card category-edit-card-v47">
+            <input type="hidden" name="originalName" value="<%= selected.name %>">
+            <input type="hidden" name="originalServerType" value="<%= selected.serverType || 'all' %>">
+            <div class="form-block-title-v47"><span><%= selected.icon || '📦' %></span><div><h3>Editar: <%= selected.name %></h3><p>Deixe a loja organizada por filas e subfilas.</p></div></div>
+            <div class="inline-grid product-inline-grid two-cols">
+              <label>Nome<input name="name" value="<%= selected.name || '' %>" required></label>
+              <label>Slug / URL<input name="slug" value="<%= selected.slug || '' %>" placeholder="categoria-url"></label>
+              <label>Ícone<input name="icon" value="<%= selected.icon || '📦' %>"></label>
+              <label>Cor<input name="color" type="color" value="<%= selected.color || '#ef4444' %>"></label>
+              <label>Servidor<select name="serverType"><% ['all','vanilla','bbp'].forEach(s => { %><option value="<%= s %>" <%= (selected.serverType || 'all') === s ? 'selected' : '' %>><%= s === 'all' ? 'Todos' : s.toUpperCase() %></option><% }) %></select></label>
+              <label>Categoria pai<select name="parentName"><option value="">Sem pai / principal</option><% categories.filter(c => c.name !== selected.name).forEach(c => { %><option value="<%= c.name %>" <%= selected.parentName === c.name ? 'selected' : '' %>><%= c.name %></option><% }) %></select></label>
+              <label>Ordem<input name="order" type="number" value="<%= selected.order || 10 %>"></label>
+              <label class="check-row admin-feature-check"><input name="active" type="checkbox" <%= selected.active === false ? '' : 'checked' %>><span>Ativa na loja</span></label>
+            </div>
+            <label>Descrição curta<textarea name="description"><%= selected.description || '' %></textarea></label>
+            <div class="action-row-v47"><button class="btn primary" type="submit">💾 Salvar categoria</button></div>
+          </form>
+          <form method="POST" action="/admin/categories" class="card category-edit-card-v47" id="newCategoryQuick">
+            <div class="form-block-title-v47"><span>+</span><div><h3>Nova categoria/subcategoria</h3><p>Crie uma fila nova sem ocupar espaço no topo.</p></div></div>
+            <div class="inline-grid product-inline-grid two-cols">
+              <label>Nome<input name="name" placeholder="Ex: Caminhões" required></label>
+              <label>Categoria pai<select name="parentName"><option value="">Categoria principal</option><% categories.forEach(c => { %><option value="<%= c.name %>" <%= c.name === selected.name ? 'selected' : '' %>><%= c.name %></option><% }) %></select></label>
+              <label>Ícone<input name="icon" value="📦"></label>
+              <label>Cor<input name="color" type="color" value="#ef4444"></label>
+              <label>Servidor<select name="serverType"><option value="all">Todos</option><option value="vanilla">Vanilla</option><option value="bbp">Vanilla+</option></select></label>
+              <label>Ordem<input name="order" type="number" value="100"></label>
+            </div>
+            <label>Descrição curta<textarea name="description" placeholder="Texto opcional."></textarea></label>
+            <label class="check-row admin-feature-check"><input name="active" type="checkbox" checked><span>Ativa na loja</span></label>
+            <button class="btn primary" type="submit">Criar categoria</button>
+          </form>
+          <aside class="category-preview-v47 card" style="--cat:<%= selected.color || '#ef4444' %>">
+            <div class="preview-icon-v47"><%= selected.icon || '📦' %></div><h3><%= selected.name %></h3><p><%= selected.description || 'Confira os produtos dessa categoria na loja.' %></p><span><%= selected.productCount || 0 %> produto(s)</span>
+            <form method="POST" action="/admin/categories/delete" class="delete-category-box-v47"><input type="hidden" name="name" value="<%= selected.name %>"><input type="hidden" name="serverType" value="<%= selected.serverType || 'all' %>"><label class="check-row admin-feature-check"><input name="moveProductsToGeneral" type="checkbox" checked><span>Mover produtos para Geral</span></label><button class="btn danger" type="submit" onclick="return confirm('Apagar a categoria <%= selected.name %>?');">Excluir categoria</button></form>
+          </aside>
+        </div>
+      <% } %>
+
+      <% if (actionTab === 'catalog') { %>
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Catálogo pronto</p><h2>Itens DayZ com imagem e type</h2><p class="muted">Use essa lista para pegar o item certo sem ficar procurando classname. Depois crie o produto no botão “Novo produto”.</p></div><a class="btn primary" href="/admin/products?tab=create&category=<%= encodeURIComponent(selected.name) %>#productEditor">Criar produto usando catálogo</a></div>
+        <div class="catalog-full-v47 card"><div class="catalog-full-tools-v53"><input id="catalogSearchFullV47" placeholder="Buscar item, type ou categoria..."><span id="catalogFullCountV53" class="catalog-count-v53"></span></div><div class="catalog-grid-full-v47" id="catalogFullGridV47"></div><button id="catalogLoadMoreV53" class="btn" type="button">Carregar mais itens</button></div>
+      <% } %>
+
+      <% if (actionTab === 'promo') { %>
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Promoções</p><h2>Promoção global da loja</h2><p class="muted">Produto com promoção própria continua tendo prioridade sobre a promoção global.</p></div></div>
+        <form method="POST" action="/admin/promo/global" class="card promo-form-v47">
+          <label class="check-row admin-feature-check"><input name="enabled" type="checkbox" <%= globalPromo?.enabled ? 'checked' : '' %>><span>Ativar promoção global na loja inteira</span></label>
+          <div class="inline-grid product-inline-grid two-cols"><label>Desconto global (%)<input name="percent" type="number" min="0" max="95" value="<%= globalPromo?.percent || 10 %>"></label><label>Texto da promoção<input name="label" value="<%= globalPromo?.label || 'PROMO RELÂMPAGO' %>"></label><label>Cor principal<input name="color" type="color" value="<%= globalPromo?.color || '#ff7a18' %>"></label></div>
+          <button class="btn primary" type="submit">Salvar promoção global</button>
+        </form>
+      <% } %>
+
+      <% if (actionTab === 'boxes') { %>
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Caixas de drop</p><h2>Types de caixa salvos</h2><p class="muted">Quando o ADM criar produto, pode escolher essas caixas sem digitar tudo de novo.</p></div></div>
+        <div class="card boxes-manager-v47"><form method="POST" action="/admin/drop-box-types" class="dropbox-add-form-v47"><input name="boxType" placeholder="Ex: WoodenCrate" required><button class="btn primary">Salvar type</button></form><div class="dropbox-chip-list-v47"><% (dropBoxTypes || []).forEach(type => { %><form method="POST" action="/admin/drop-box-types/delete" class="dropbox-chip-v47"><input type="hidden" name="boxType" value="<%= type %>"><code><%= type %></code><button type="submit" title="Remover">×</button></form><% }) %></div></div>
+      <% } %>
+    </section>
+  </section>
+</main>
+
+<script>
+  const DAYZ_CATALOG_V47 = <%- JSON.stringify(catalog).replace(/</g, '\\u003c') %>;
+  const itemRows = document.getElementById('itemRows');
+  const addItemRowBtn = document.getElementById('addItemRow');
+  function escapeHtmlV47(value){ return String(value || '').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function syncRemoveButtons() { const rows = Array.from(itemRows?.querySelectorAll('[data-row]') || []); rows.forEach(row => { const btn = row.querySelector('.item-remove-btn'); if (btn) btn.disabled = rows.length === 1; }); }
+  function createItemRow(values = {}) { if (!itemRows) return; const row = document.createElement('div'); row.className = 'item-row-v47'; row.setAttribute('data-row', ''); row.innerHTML = `<input name="itemClassname[]" placeholder="BandageDressing" required value="${escapeHtmlV47(values.classname)}"><input name="itemQuantity[]" type="number" min="1" required value="${escapeHtmlV47(values.quantity || 1)}"><input name="itemLabel[]" placeholder="Bandagens" value="${escapeHtmlV47(values.label || '')}"><button type="button" class="btn danger small item-remove-btn">✕</button>`; row.querySelector('.item-remove-btn').addEventListener('click', () => { row.remove(); syncRemoveButtons(); }); itemRows.appendChild(row); syncRemoveButtons(); }
+  itemRows?.querySelectorAll('.item-remove-btn').forEach(btn => btn.addEventListener('click', () => { btn.closest('[data-row]')?.remove(); syncRemoveButtons(); }));
+  addItemRowBtn?.addEventListener('click', () => createItemRow());
+  syncRemoveButtons();
+
+  const adminProductSearchV47 = document.getElementById('adminProductSearchV47');
+  adminProductSearchV47?.addEventListener('input', () => { const q = adminProductSearchV47.value.trim().toLowerCase(); document.querySelectorAll('[data-product-card]').forEach(card => card.classList.toggle('is-hidden', q && !String(card.dataset.search || '').includes(q))); });
+
+  function useCatalogItem(item) {
+    if (!item) return;
+    const nameInput = document.getElementById('productNameInputV47');
+    const imageInput = document.getElementById('productImageUrlInputV47');
+    const descInput = document.getElementById('productDescriptionInputV47');
+    const catSelect = document.getElementById('productCategorySelectV47');
+    if (nameInput && !nameInput.value.trim()) nameInput.value = item.name;
+    if (imageInput && !imageInput.value.trim()) imageInput.value = item.imageUrl || '';
+    if (descInput && !descInput.value.trim()) descInput.value = `${item.name} (${item.classname}) selecionado pelo catálogo DayZ.`;
+    if (catSelect && item.category) {
+      const opt = Array.from(catSelect.options).find(o => o.value.toLowerCase() === item.category.toLowerCase());
+      if (opt) catSelect.value = opt.value;
+    }
+    const rows = Array.from(itemRows?.querySelectorAll('[data-row]') || []);
+    const empty = rows.find(row => !row.querySelector('input[name="itemClassname[]"]')?.value.trim());
+    const target = empty || null;
+    if (target) {
+      target.querySelector('input[name="itemClassname[]"]').value = item.classname;
+      target.querySelector('input[name="itemQuantity[]"]').value = 1;
+      target.querySelector('input[name="itemLabel[]"]').value = item.name;
+    } else {
+      createItemRow({ classname: item.classname, quantity: 1, label: item.name });
+    }
+    document.getElementById('productEditor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function catalogCardHtml(item, compact = false) {
+    return `<article class="catalog-item-v47 ${compact ? 'compact' : ''}"><img loading="lazy" decoding="async" src="${escapeHtmlV47(item.imageUrl)}" onerror="this.src='/images/no-real-image.svg'" alt="${escapeHtmlV47(item.name)}"><div><strong>${escapeHtmlV47(item.name)}</strong><code>${escapeHtmlV47(item.classname)}</code><small>${escapeHtmlV47(item.category)} • DayZ Wiki/Fandom</small></div><button type="button" class="btn small primary" data-use-catalog="${escapeHtmlV47(item.classname)}">Usar</button></article>`;
+  }
+  function filteredCatalog(searchId) {
+    const input = document.getElementById(searchId);
+    const q = String(input?.value || '').trim().toLowerCase();
+    return DAYZ_CATALOG_V47.filter(item => !q || [item.name,item.classname,item.category].join(' ').toLowerCase().includes(q));
+  }
+  function renderCatalog(targetId, searchId, limit = 80) {
+    const target = document.getElementById(targetId); const input = document.getElementById(searchId); if (!target) return;
+    const render = () => { const list = filteredCatalog(searchId).slice(0, limit); target.innerHTML = list.map(item => catalogCardHtml(item, true)).join('') || '<p class="muted">Nenhum item encontrado.</p>'; };
+    input?.addEventListener('input', render); render();
+  }
+  function renderFullCatalog() {
+    const target = document.getElementById('catalogFullGridV47');
+    const input = document.getElementById('catalogSearchFullV47');
+    const count = document.getElementById('catalogFullCountV53');
+    const more = document.getElementById('catalogLoadMoreV53');
+    if (!target) return;
+    let shown = 96;
+    const paint = () => {
+      const list = filteredCatalog('catalogSearchFullV47');
+      const visible = list.slice(0, shown);
+      target.innerHTML = visible.map(item => catalogCardHtml(item, false)).join('') || '<p class="muted">Nenhum item encontrado.</p>';
+      if (count) count.textContent = `${visible.length} de ${list.length} itens exibidos`;
+      if (more) more.style.display = visible.length < list.length ? 'inline-flex' : 'none';
+    };
+    input?.addEventListener('input', () => { shown = 96; paint(); });
+    more?.addEventListener('click', () => { shown += 96; paint(); });
+    paint();
+  }
+  renderCatalog('catalogListV47', 'catalogSearchV47', 70);
+  renderFullCatalog();
+  document.addEventListener('click', (ev) => { const btn = ev.target.closest('[data-use-catalog]'); if (!btn) return; const item = DAYZ_CATALOG_V47.find(i => i.classname === btn.dataset.useCatalog); useCatalogItem(item); });
+
+  const chipWrap = document.getElementById('catalogCategoryChipsV47');
+  if (chipWrap) {
+    const cats = Array.from(new Set(DAYZ_CATALOG_V47.map(i => i.category))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    chipWrap.innerHTML = cats.map(cat => `<button type="button" data-cat-chip="${escapeHtmlV47(cat)}">${escapeHtmlV47(cat)}</button>`).join('');
+    chipWrap.addEventListener('click', (ev) => { const btn = ev.target.closest('[data-cat-chip]'); if (!btn) return; const input = document.getElementById('catalogSearchV47'); if (input) { input.value = btn.dataset.catChip; input.dispatchEvent(new Event('input')); } });
+  }
+</script>
+<%- include('../partials/footer') %>

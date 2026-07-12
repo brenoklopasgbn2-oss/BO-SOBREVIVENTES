@@ -1,0 +1,482 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const theme = 'vanilla'; %>
+<% const playerCoins = player ? coins(player.coins || 0) : '0'; %>
+<% const accountHref = player ? '/wallet' : '#entrar'; %>
+<% const dayzImageFor = (type, name) => '/dayz-wiki-image?type=' + encodeURIComponent(type || '') + '&name=' + encodeURIComponent(name || type || ''); %>
+<% const visualFor = (product) => dayzImageFor(product.classname || product.items?.[0]?.classname || '', product.name || product.classname || ''); %>
+<% const normalizeCatKey = (cat = '') => String(cat || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); %>
+<% const isVehicleCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('veicul') && !key.includes('peca') || key.includes('carro'); }; %>
+<% const isVehiclePartsCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('peca') && key.includes('veicul'); }; %>
+<% const isKitBaseCatButton = (cat = '') => normalizeCatKey(cat).includes('kit') && normalizeCatKey(cat).includes('base'); %>
+<% const isVipCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('traje') || key.includes('vip') || key.includes('roupa'); }; %>
+<% const isMiscCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('diverso') || key.includes('geral') || key.includes('sem categoria'); }; %>
+<% const canonicalCatLabel = (cat = '') => isVehiclePartsCatButton(cat) ? 'Peças de Veículos' : (isVehicleCatButton(cat) ? 'Veículos' : (isKitBaseCatButton(cat) ? 'Kits Base' : (isVipCatButton(cat) ? 'Trajes VIPs' : (isMiscCatButton(cat) ? 'Diversos' : String(cat || '').trim())))); %>
+<% const categoryListRaw = ['Kits Base', 'Veículos', 'Peças de Veículos', 'Trajes VIPs', ...(categories || []), 'Diversos']; %>
+<% const seenCategoryKeys = new Set(); %>
+<% const allCats = categoryListRaw.map(canonicalCatLabel).filter(cat => { const key = normalizeCatKey(cat); if (!key || seenCategoryKeys.has(key)) return false; seenCategoryKeys.add(key); return true; }); %>
+<% const categoryButtonClassFor = (cat = '') => isVehicleCatButton(cat) ? 'category-priority-v63 category-vehicle-v63' : (isVehiclePartsCatButton(cat) ? 'category-priority-v63 category-parts-v80' : (isKitBaseCatButton(cat) ? 'category-priority-v63 category-kit-v63' : (isVipCatButton(cat) ? 'category-priority-v63 category-vip-v64' : (isMiscCatButton(cat) ? 'category-misc-v80' : '')))); %>
+<% const categoryButtonLabelFor = (cat = '') => isVehicleCatButton(cat) ? '🚗 Veículos Disponíveis' : (isVehiclePartsCatButton(cat) ? '🔧 Peças de Veículos' : (isKitBaseCatButton(cat) ? '🏗️ Kit Base' : (isVipCatButton(cat) ? '👑 Trajes VIPs' : (isMiscCatButton(cat) ? '📦 Diversos' : cat)))); %>
+<% const categoryHrefFor = (cat = '') => isVipCatButton(cat) ? '/outfits' : ('/shop?serverType=' + encodeURIComponent(selectedServer) + '&category=' + encodeURIComponent(canonicalCatLabel(cat)) + '#productsGrid'); %>
+<% const categoryIsActive = (cat = '') => selectedCategory && (isVehicleCatButton(cat) ? isVehicleCatButton(selectedCategory) : (isVehiclePartsCatButton(cat) ? isVehiclePartsCatButton(selectedCategory) : normalizeCatKey(selectedCategory) === normalizeCatKey(canonicalCatLabel(cat)))); %>
+<% const categoryVisualFor = (cat = '') => {
+  const key = String(cat || '').toLowerCase();
+  if ((key.includes('peça') || key.includes('peca')) && (key.includes('veículo') || key.includes('veiculo'))) return dayzImageFor('CarRadiator', 'Radiador');
+  if (key.includes('veículo') || key.includes('veiculo') || key.includes('carro')) return dayzImageFor('OffroadHatchback', 'Ada 4x4');
+  if (key.includes('kit')) return dayzImageFor('LargeTent', 'Large Tent');
+  if (key.includes('ferrament')) return dayzImageFor('Hatchet', 'Hatchet');
+  if (key.includes('constru')) return dayzImageFor('NailBox', 'Nails');
+  if (key.includes('equip')) return dayzImageFor('AssaultBag_Green', 'Assault Backpack');
+  if (key.includes('suprim')) return dayzImageFor('WaterBottle', 'Water Bottle');
+  if (key.includes('caixa') || key.includes('armazen')) return dayzImageFor('WoodenCrate', 'Wooden Crate');
+  return dayzImageFor('Canteen', 'Canteen');
+}; %>
+
+<% const safeHighlightColor = (color, fallback = '#ef4444') => /^#[0-9a-f]{6}$/i.test(String(color || '')) ? String(color) : fallback; %>
+<% const hexToRgb = (color) => { const c = safeHighlightColor(color).slice(1); return `${parseInt(c.slice(0,2),16)}, ${parseInt(c.slice(2,4),16)}, ${parseInt(c.slice(4,6),16)}`; }; %>
+<% const promoColorFor = (product) => product?.promo?.active ? safeHighlightColor(product.promo.color, '#ff7a18') : '#ff7a18'; %>
+
+<main class="container v9-store-page theme-<%= theme %>">
+  <div class="v9-bg v10-bg-cinematic" aria-hidden="true"></div>
+  <%- include('partials/alerts') %>
+
+  <section class="v9-hero-zone v10-hero-zone" aria-label="Loja RAID-Z">
+    <div class="v9-hero-copy v10-hero-copy">
+      <p class="v9-kicker">Bem-vindo ao RAID-Z</p>
+      <h1>Loja Vanilla.<br>Doe, equipe-se e <span>domine.</span></h1>
+      <p>Entre no Vanilla do RAID-Z. As doações ajudam a manter o servidor online e liberam itens úteis sem pay-to-win.</p>
+    </div>
+
+    <aside class="v9-wallet-hud v10-wallet-hud sz-wallet-hud" data-wallet-hud>
+      <div class="v9-wallet-text">
+        <span>Saldo do player</span>
+        <strong class="wallet-balance-animated" data-value="<%= player?.coins || 0 %>"><%= playerCoins %></strong>
+        <small><%= currencyName %></small>
+      </div>
+      <div class="v9-coin-medal sz-coin-spinner" aria-hidden="true"><span>RZ</span></div>
+      <a class="btn v9-gold-btn" href="<%= accountHref %>"><span>+</span> <%= player ? 'Fazer doação' : 'Entrar / cadastrar' %></a>
+    </aside>
+
+    <section class="v9-server-row v10-server-row" aria-label="Servidor ativo">
+      <a href="/shop?serverType=vanilla" class="server-card v9-server-card v9-server-vanilla <%= selectedServer === 'vanilla' ? 'selected' : '' %>">
+        <img src="/images/vanilla-card.png?v=68" alt="Servidor Vanilla" style="width:100%;height:100%;object-fit:cover;">
+        <div class="v9-server-overlay"></div>
+        <div class="v9-server-info">
+          <small>Servidor oficial</small>
+          <strong>Vanilla</strong>
+          <span>Único servidor ativo da loja</span>
+        </div>
+<div class="v9-enter-btn">Doar no Vanilla <b>→</b></div>
+      </a>
+    </section>
+  </section>
+
+  <section class="playtime-reward-alert-v78 sz-hover-card" aria-label="Moedas por tempo de jogatina">
+    <div class="playtime-reward-icon-v78" aria-hidden="true">⏱</div>
+    <div>
+      <strong>Ganhe moedas por tempo de jogatina</strong>
+      <p>Fique jogando no servidor RAID-Z e receba moedas automaticamente no seu saldo. O aviso aparece sem divulgar valores.</p>
+    </div>
+  </section>
+
+  <% if (!player) { %>
+    <section class="v10-login-panel" id="entrar">
+      <div>
+        <p class="v9-kicker">Primeiro acesso</p>
+        <h2>Entre com seu Steam64 para doar</h2>
+        <p>O site fica aberto para olhar os itens. Para doar ou finalizar pedido, salve seu Steam64.</p>
+      </div>
+      <form method="POST" action="/player/save" class="v10-login-form">
+        <input name="steam64" placeholder="Steam64 do player: 7656119..." maxlength="17" required>
+        <input name="nickname" placeholder="Nick no jogo">
+        <button class="btn v9-gold-btn" type="submit">Salvar e doar</button>
+      </form>
+    </section>
+  <% } %>
+
+  <section class="category-buttons-v32" id="categorias">
+    <div class="category-buttons-head-v32">
+      <p class="v9-kicker">Categorias</p>
+      <h2>Escolha a categoria</h2>
+      <small>Botões simples para selecionar rápido na loja RAID-Z Vanilla.</small>
+    </div>
+
+    <nav class="category-button-row-v32 category-button-row-v80" aria-label="Categorias da loja">
+      <% allCats.forEach(cat => { %>
+        <a class="category-button-v32 <%= categoryIsActive(cat) ? 'active' : '' %> <%= categoryButtonClassFor(cat) %>" href="<%= categoryHrefFor(cat) %>">
+          <span class="category-button-main-v63"><%= categoryButtonLabelFor(cat) %></span>
+        </a>
+      <% }) %>
+    </nav>
+  </section>
+
+  <% if (starterKit?.enabled && (!player || !starterKitClaimed)) { %>
+    <section class="starter-kit-card-v33 sz-hover-card" aria-label="Kit Inicial">
+      <div class="starter-kit-bg-v33"></div>
+      <div class="starter-kit-sparks-v33" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="starter-kit-left-v33">
+        <div class="starter-kit-art-v33">
+          <img loading="lazy" decoding="async" src="<%= starterKit.imageData ? ('/starter-kit-image?v=' + (starterKit.imageUpdatedAt || Date.now())) : ((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel') + (((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel').includes('?')) ? '&' : '?') + 'v=' + Date.now()) %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= starterKit.name %>">
+          <span>GRÁTIS</span>
+        </div>
+      </div>
+      <div class="starter-kit-copy-v33">
+        <span class="starter-kit-badge-v33">🎁 Resgate único</span>
+        <h2><%= starterKit.name || 'Kit Inicial' %></h2>
+        <p><%= starterKit.description || 'Resgate grátis uma única vez por conta.' %></p>
+        <% if (starterKit.bonusCoins) { %><div class="starter-kit-items-v33"><b>💰 +<%= coins(starterKit.bonusCoins) %> RZ no saldo</b></div><% } %>
+        <div class="starter-kit-items-v33">
+          <% (starterKit.items || []).slice(0, 5).forEach(item => { %>
+            <b><%= item.quantity || 1 %>x <%= item.label || item.classname %></b>
+          <% }) %>
+          <% if ((starterKit.items || []).length > 5) { %><b>+<%= (starterKit.items || []).length - 5 %> itens</b><% } %>
+        </div>
+      </div>
+      <div class="starter-kit-action-v33">
+        <strong>Uma vez por conta</strong>
+        <small>Depois de resgatar, esse card some da loja. Também ganha 5.000 RZ.</small>
+        <% if (!player) { %>
+          <a class="btn v9-buy-btn starter-kit-pulse-btn-v33" href="#entrar">Entrar para resgatar</a>
+        <% } else { %>
+          <form method="POST" action="/starter-kit/claim" data-starter-kit-claim>
+            <input type="hidden" name="serverType" value="<%= selectedServer %>">
+            <button class="btn v9-buy-btn starter-kit-pulse-btn-v33" type="submit">Resgatar kit inicial</button>
+          </form>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+
+  <% if (isVehicleCategory) { %>
+    <section class="v9-products-head v10-products-head vehicle-shop-head">
+      <div>
+        <p class="v9-kicker">Categoria especial</p>
+        <h2>Veículos premium do <%= selectedServer.toUpperCase() %></h2>
+        <p>O card mostra o valor cheio do veículo. Clique em Doar para escolher a skin/type e decidir se quer seguro. Não existe plano por dia ou por 7 dias.</p>
+      </div>
+      <a href="/my-vehicles" class="btn v9-outline-btn">Minha garagem</a>
+    </section>
+
+    <section class="vehicle-shop-board vehicle-shop-board-v32">
+      <div class="vehicle-shop-board-copy">
+        <span>🚗</span>
+        <div>
+          <strong>Compra de veículo refeito</strong>
+          <small>O player pode comprar sem seguro. Se escolher seguro na compra, o primeiro mês já vai incluso no valor do carro.</small>
+        </div>
+      </div>
+      <div class="vehicle-shop-board-pills">
+        <b><%= selectedServer.toUpperCase() %></b>
+        <b>Skin/type</b>
+        <b>Seguro opcional</b>
+      </div>
+    </section>
+
+    <section class="v9-product-grid product-grid-pro v10-product-grid vehicle-shop-grid vehicle-shop-grid-v32" id="productsGrid">
+      <% vehicleTemplates.forEach((v, index) => { %>
+        <% const image = v.imageData ? ('/vehicle-image/' + v.id + '?v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())) : ((v.imageUrl || '/images/no-real-image.svg') + (((v.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())); %>
+        <% const plans = [...(v.insurancePlans || []), ...(globalVehiclePlans || [])]; %>
+        <% const planPrice = (plan) => plan.billingType === 'PER_USE' ? 10000 : Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
+        <% const rawVariants = Array.isArray(v.variants) ? v.variants.filter(item => item && item.vehicleClassname) : []; %>
+        <% const variants = rawVariants.length ? rawVariants.map((item, idx) => ({ name: item.name || ('Skin ' + (idx + 1)), vehicleClassname: item.vehicleClassname, imageUrl: item.imageUrl || '', index: idx })) : [{ name: 'Padrão', vehicleClassname: v.vehicleClassname, imageUrl: '', index: 0 }]; %>
+        <% const showVariantSelector = variants.length > 1; %>
+        <% const firstVariant = variants[0]; %>
+        <% const previewImage = firstVariant.imageUrl || image; %>
+        <% const bestPrice = v.buyPriceCoins || 0; %>
+        <% const buyLabel = coins(bestPrice); %>
+        <% const featuredColor = theme === 'bbp' ? '#38bdf8' : '#ef4444'; %>
+        <% const featuredRgb = theme === 'bbp' ? '56, 189, 248' : '239, 68, 68'; %>
+
+        <article class="product-card-pro v9-product-card vehicle-shop-card vehicle-shop-card-v32 sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= featuredRgb %>;" data-product-name="<%= `${v.name} ${v.vehicleClassname} veiculo veículo carro seguro doacao`.toLowerCase() %>">
+          <div class="v9-product-art vehicle-shop-art vehicle-shop-art-v32">
+            <div class="vehicle-shop-server-badge"><%= v.serverType.toUpperCase() %></div>
+            <% if (showVariantSelector) { %><div class="vehicle-skin-count-v32"><%= variants.length %> skins</div><% } %>
+            <div class="vehicle-shop-orbit"></div>
+            <div class="v9-card-shine"></div>
+            <img src="<%= previewImage %>" alt="<%= v.name %>">
+          </div>
+
+          <div class="v9-product-content vehicle-shop-content vehicle-shop-content-v32">
+            <div class="v9-product-tags">
+              <span>Veículo</span>
+              <b>Doação</b>
+              <% if (showVariantSelector) { %><b><%= variants.length %> opções</b><% } %>
+            </div>
+
+            <h3><%= v.name %></h3>
+            <p><%= v.description || 'Veículo completo montado, pronto para dirigir no DayZ.' %></p>
+
+            <div class="vehicle-clean-price-v32">
+              <small>Valor do veículo</small>
+              <strong><i>RZ</i> <%= buyLabel %></strong>
+              <span>Seguro opcional: 1º mês incluso</span>
+            </div>
+
+            <% if (showVariantSelector) { %>
+              <div class="vehicle-skin-preview-v32">
+                <span>Skins disponíveis</span>
+                <b><%= variants.length %></b>
+              </div>
+            <% } %>
+
+            <div class="vehicle-shop-bottom vehicle-shop-bottom-v32">
+              <% if (player) { %>
+                <button class="btn v9-buy-btn vehicle-shop-buy" type="button" data-open-vehicle-config="vehicle-config-<%= v.id %>">Doar</button>
+              <% } else { %>
+                <a class="btn v9-buy-btn vehicle-shop-buy" href="#entrar">Entrar</a>
+              <% } %>
+            </div>
+          </div>
+        </article>
+
+        <div class="vehicle-config-modal-v32" id="vehicle-config-<%= v.id %>" hidden>
+          <div class="vehicle-config-backdrop-v32" data-close-vehicle-config></div>
+          <section class="vehicle-config-box-v32">
+            <button class="vehicle-config-close-v32" type="button" data-close-vehicle-config>×</button>
+            <div class="vehicle-config-preview-v32">
+              <img src="<%= previewImage %>" alt="<%= v.name %>" data-variant-preview-img>
+              <span><%= selectedServer.toUpperCase() %></span>
+            </div>
+            <div class="vehicle-config-content-v32">
+              <p class="v9-kicker">Configurar doação</p>
+              <h2><%= v.name %></h2>
+              <p>Escolha a opção e finalize. Seguro é opcional: todo veículo aparece na Minha Garagem. Sem seguro não tem reposição; com seguro o primeiro mês já está incluso no valor do carro.</p>
+
+              <% if (player) { %>
+                <form method="POST" action="/vehicles/buy/<%= v.id %>" class="vehicle-shop-form vehicle-shop-form-v32">
+                  <input type="hidden" name="variantIndex" value="0" data-variant-input>
+
+                  <% if (showVariantSelector) { %>
+                    <div class="vehicle-variant-picker-v32">
+                      <label>Escolha a skin / type</label>
+                      <div class="vehicle-variant-options-v32">
+                        <% variants.forEach((variant, variantIndex) => { %>
+                          <button type="button" class="vehicle-variant-option-v32 <%= variantIndex === 0 ? 'active' : '' %>" data-variant-choice data-index="<%= variantIndex %>" data-img="<%= variant.imageUrl || image %>" data-class="<%= variant.vehicleClassname %>" data-name="<%= variant.name %>">
+                            <img src="<%= variant.imageUrl || image %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= variant.name %>">
+                            <span><%= variant.name %></span>
+                          </button>
+                        <% }) %>
+                      </div>
+                      <small>Skin selecionada: <b data-variant-name><%= firstVariant.name %></b> • Type: <code data-variant-class><%= firstVariant.vehicleClassname %></code></small>
+                    </div>
+                  <% } %>
+
+                  <div class="vehicle-modal-grid-v32">
+                    <label>Tipo de doação/veículo
+                      <select name="ownershipType">
+                        <option value="OWNED">Doação do veículo — <%= coins(v.buyPriceCoins) %> RZ</option>
+                      </select>
+                    </label>
+                    <label>Plano de seguro
+                      <select name="insurancePlanId">
+                        <option value="">Sem seguro — aparece na garagem, sem reposição</option>
+                        <% plans.forEach(plan => { %>
+                          <option value="<%= plan.id %>">
+                            <%= plan.billingType === 'PER_USE'
+                              ? (plan.name + ' — primeiro mês incluso; depois cobra ' + coins(planPrice(plan)) + ' RZ cada uso')
+                              : (plan.name + ' — primeiro mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana') %>
+                          </option>
+                        <% }) %>
+                      </select>
+                    </label>
+                  </div>
+                  <small class="muted">Sem seguro: entrega e aparece na Minha Garagem, mas não libera reposição. Com seguro: o 1º mês já está incluso no valor do carro. Depois, por uso cobra 10.000 RZ quando usar; mensal custa 50% do valor do veículo.</small>
+                  <button class="btn v9-buy-btn vehicle-shop-buy" type="submit">Finalizar doação e dropar</button>
+                </form>
+              <% } else { %>
+                <a class="btn v9-buy-btn vehicle-shop-buy" href="#entrar">Entrar para doar</a>
+              <% } %>
+            </div>
+          </section>
+        </div>
+      <% }) %>
+
+      <% if (!vehicleTemplates.length) { %>
+        <div class="card center themed-empty v9-empty-state">
+          <h2>Nenhum veículo ativo neste servidor</h2>
+          <p>Cadastre veículos do <%= selectedServer.toUpperCase() %> no painel admin.</p>
+        </div>
+      <% } %>
+    </section>
+  <% } else { %>
+    <section class="v9-products-head v10-products-head">
+      <div>
+        <p class="v9-kicker">Itens em destaque</p>
+        <h2>Itens premium para dominar o servidor</h2>
+      </div>
+      <a href="<%= accountHref %>" class="btn v9-outline-btn"><%= player ? 'Fazer doação' : 'Entrar na loja' %></a>
+    </section>
+
+    <section class="v9-product-grid product-grid-pro v10-product-grid" id="productsGrid">
+      <% products.forEach((product, index) => { %>
+      <% const itemList = product.items?.length ? product.items : [{ classname: product.classname, quantity: product.quantity, label: null }]; %>
+      <% const visualSrc = product.imageData ? ('/product-image/' + product.id) : (product.imageUrl || visualFor(product)); %>
+      <% const featuredColor = safeHighlightColor(product.highlightColor || (theme === 'bbp' ? '#38bdf8' : '#ef4444')); %>
+      <article class="product-card-pro v9-product-card sz-hover-card <%= product.featured ? 'is-featured' : '' %> <%= product.promo?.active ? 'is-promo' : '' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= hexToRgb(featuredColor) %>;--promo-color:<%= promoColorFor(product) %>;--promo-rgb:<%= hexToRgb(promoColorFor(product)) %>;" data-product-name="<%= `${product.name} ${product.category} ${product.description || ''}`.toLowerCase() %>" data-cart-product-id="<%= product.id %>" data-cart-name="<%= product.name %>" data-cart-category="<%= product.category %>" data-cart-server="<%= product.serverType %>" data-cart-price="<%= product.displayPriceCoins %>" data-cart-image="<%= visualSrc %>">
+        <div class="v9-product-art">
+          <% if (product.promo?.active) { %><div class="promo-fire-badge">🔥 <%= product.promo.label %> -<%= product.promo.percent %>%</div><% } %>
+          <div class="v9-card-shine"></div>
+          <img loading="lazy" decoding="async" src="<%= visualSrc %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= product.name %>" style="max-width:88%;height:135px;object-fit:contain;">
+        </div>
+        <div class="v9-product-content">
+          <div class="v9-product-tags">
+            <span><%= product.category %></span>
+            <% if (itemList.length > 1) { %><b>Kit <%= itemList.length %></b><% } %>
+            <% if (product.promo?.active) { %><b class="promo-tag-inline">Promo</b><% } %>
+          </div>
+          <h3><%= product.name %></h3>
+          <p><%= product.description || 'Item disponível para entrega no servidor.' %></p>
+          <div class="v9-product-mini-list">
+            <% itemList.slice(0, 2).forEach(item => { %>
+              <small><b><%= item.quantity %>x</b> <%= item.label || product.name %></small>
+            <% }) %>
+          </div>
+          <div class="v9-product-bottom">
+            <div class="price-stack">
+              <% if (product.promo?.active) { %><small class="promo-old-price">de <%= coins(product.basePriceCoins) %> RZ</small><% } %>
+              <strong><i>RZ</i> <%= coins(product.displayPriceCoins) %></strong>
+              <% if (product.promo?.active) { %><small class="promo-save-line">economize <%= coins(product.savingsCoins) %> RZ</small><% } %>
+            </div>
+            <% if (player) { %>
+              <div class="product-actions-v42">
+                <form method="GET" action="/shop/confirm/<%= product.id %>">
+                  <input type="hidden" value="1" name="quantity">
+                  <button class="btn v9-buy-btn" type="submit">Doar agora</button>
+                </form>
+                <button class="btn cart-add-btn-v42" type="button" data-add-to-cart>+ Carrinho</button>
+              </div>
+            <% } else { %>
+              <a class="btn v9-buy-btn" href="#entrar">Entrar</a>
+            <% } %>
+          </div>
+        </div>
+      </article>
+    <% }) %>
+
+    <% if (!products.length) { %>
+      <div class="card center themed-empty v9-empty-state">
+        <h2>Nenhum item ativo neste servidor</h2>
+        <p>Cadastre produtos do <%= selectedServer.toUpperCase() %> no painel admin.</p>
+      </div>
+    <% } %>
+    </section>
+  <% } %>
+
+  <section class="v9-trust-strip v10-trust-strip" aria-label="Vantagens da loja">
+    <div><b>♜</b><strong>100% Seguro</strong><span>Proteção total e antifraude avançado</span></div>
+    <div><b>ϟ</b><strong>Entrega imediata</strong><span>Seus itens são entregues automaticamente</span></div>
+    <div><b>☊</b><strong>Suporte 24/7</strong><span>Nossa equipe sempre disponível</span></div>
+    <div><b>☷</b><strong>Comunidade ativa</strong><span>Junte-se à comunidade RAID-Z</span></div>
+  </section>
+</main>
+<% if (player) { %>
+  <aside class="floating-cart-v42" id="floatingCartV42" hidden>
+    <button type="button" class="floating-cart-open-v42" data-cart-toggle>
+      🧺 <b data-cart-count>0</b> <span>carrinho</span>
+    </button>
+    <div class="floating-cart-panel-v42" data-cart-panel hidden>
+      <div class="floating-cart-head-v42">
+        <strong>Seu carrinho</strong>
+        <button type="button" data-cart-toggle>×</button>
+      </div>
+      <div class="floating-cart-items-v42" data-cart-items></div>
+      <div class="floating-cart-total-v42"><span>Total</span><b>RZ <i data-cart-total>0</i></b></div>
+      <a class="btn primary" href="/cart">Finalizar tudo</a>
+      <button class="btn danger small" type="button" data-cart-clear>Limpar</button>
+    </div>
+  </aside>
+<% } %>
+<script id="vehicle-config-modal-v32-script">
+  document.querySelectorAll('[data-open-vehicle-config]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(btn.dataset.openVehicleConfig);
+      if (!modal) return;
+      modal.hidden = false;
+      document.body.classList.add('vehicle-modal-open-v32');
+      const box = modal.querySelector('.vehicle-config-box-v32');
+      const content = modal.querySelector('.vehicle-config-content-v32');
+      const preview = modal.querySelector('.vehicle-config-preview-v32');
+      if (box) box.scrollTop = 0;
+      if (content) content.scrollTop = 0;
+      if (preview) preview.scrollTop = 0;
+      requestAnimationFrame(() => {
+        if (box) box.scrollTop = 0;
+        box?.scrollIntoView({ block: 'center', inline: 'center' });
+      });
+    });
+  });
+  document.querySelectorAll('[data-close-vehicle-config]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const modal = btn.closest('.vehicle-config-modal-v32');
+      if (!modal) return;
+      modal.hidden = true;
+      document.body.classList.remove('vehicle-modal-open-v32');
+    });
+  });
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Escape') return;
+    document.querySelectorAll('.vehicle-config-modal-v32:not([hidden])').forEach((modal) => { modal.hidden = true; });
+    document.body.classList.remove('vehicle-modal-open-v32');
+  });
+  document.querySelectorAll('.vehicle-config-modal-v32').forEach((modal) => {
+    modal.querySelectorAll('[data-variant-choice]').forEach((choice) => {
+      choice.addEventListener('click', () => {
+        modal.querySelectorAll('[data-variant-choice]').forEach((item) => item.classList.remove('active'));
+        choice.classList.add('active');
+        const input = modal.querySelector('[data-variant-input]');
+        const preview = modal.querySelector('[data-variant-preview-img]');
+        const name = modal.querySelector('[data-variant-name]');
+        const className = modal.querySelector('[data-variant-class]');
+        if (input) input.value = choice.dataset.index || '0';
+        if (preview && choice.dataset.img) preview.src = choice.dataset.img;
+        if (name) name.textContent = choice.dataset.name || 'Padrão';
+        if (className) className.textContent = choice.dataset.class || '';
+      });
+    });
+  });
+</script>
+<script id="store-filter-scroll-script">
+  document.querySelectorAll('[data-cat-scroll]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const area = btn.parentElement?.querySelector('[data-cat-scroll-area]');
+      if (!area) return;
+      area.scrollBy({ left: Number(btn.dataset.catScroll || 1) * 280, behavior: 'smooth' });
+    });
+  });
+  const filterArea = document.querySelector('[data-cat-scroll-area]');
+  if (filterArea) {
+    filterArea.addEventListener('wheel', (ev) => {
+      if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) {
+        filterArea.scrollLeft += ev.deltaY;
+        ev.preventDefault();
+      }
+    }, { passive: false });
+  }
+</script>
+
+<script id="shop-category-autoscroll-v83">
+  (function(){
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    const topbar = document.querySelector('.topbar.v9-topbar');
+    const offset = ((topbar && topbar.offsetHeight) || 64) + 12;
+    const goToGrid = () => {
+      const y = grid.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    };
+    const url = new URL(window.location.href);
+    if (url.hash === '#productsGrid' || url.searchParams.has('category')) {
+      requestAnimationFrame(() => setTimeout(goToGrid, 60));
+    }
+    document.querySelectorAll('.category-button-v32[href*="#productsGrid"]').forEach((link) => {
+      link.addEventListener('click', () => {
+        sessionStorage.setItem('rzScrollToProducts', '1');
+      });
+    });
+    if (sessionStorage.getItem('rzScrollToProducts') === '1') {
+      sessionStorage.removeItem('rzScrollToProducts');
+      requestAnimationFrame(() => setTimeout(goToGrid, 60));
+    }
+  })();
+</script>
+<%- include('partials/footer') %>

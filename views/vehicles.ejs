@@ -1,0 +1,174 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<%
+  const theme = 'vanilla';
+  const accentHex = '#ef4444';
+  const accentRgb = '239,68,68';
+  const getVehicleImage = (v) => { const base = v.imageData ? ('/vehicle-image/' + v.id) : (v.imageUrl || '/images/no-real-image.svg'); return base + (base.includes('?') ? '&' : '?') + 'v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now()); };
+%>
+<main class="container vehicles-page theme-<%= theme %>">
+  <%- include('partials/alerts') %>
+
+  <section class="vehicle-hero-v2 card">
+    <div class="vehicle-hero-copy">
+      <p class="v9-kicker">Garagem RAID-Z</p>
+      <h1>Veículos com <span>estilo Vanilla</span><br> e animação premium</h1>
+      <p>Doe o veículo pelo valor cheio e escolha se quer seguro ou não. O primeiro mês do seguro já fica incluso no valor do carro quando o player seleciona um plano.</p>
+      <div class="vehicle-hero-badges">
+        <span>Veículo completo montado</span>
+        <span>Seguro opcional</span>
+        <span>Sem aluguel por dia/7 dias</span>
+        <span>Reposição pelo site</span>
+      </div>
+      <div class="vehicle-hero-actions">
+        <a class="btn primary" href="/my-vehicles">Minha garagem</a>
+        <a class="btn ghost-btn" href="/shop?serverType=<%= selectedServer %>">Voltar pra loja</a>
+      </div>
+    </div>
+    <div class="vehicle-hero-side">
+      <div class="vehicle-server-switch glass-row">
+        <a class="pill active" href="/vehicles?serverType=vanilla">Vanilla</a>
+      </div>
+      <div class="vehicle-hero-preview vehicle-preview-<%= theme %>">
+        <div class="vehicle-preview-glow"></div>
+        <img src="/images/vanilla-card.png?v=68" alt="Tema vanilla">
+        <div class="vehicle-preview-overlay"></div>
+        <div class="vehicle-preview-label">
+          <strong><%= theme.toUpperCase() %></strong>
+          <span>Experiência clássica survival</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% if (!player) { %>
+    <section class="v10-login-panel" id="entrar">
+      <div>
+        <p class="v9-kicker">Primeiro acesso</p>
+        <h2>Entre com Steam64 para doar e receber veículo</h2>
+        <p>Salve seu Steam64 para o veículo e a entrega caírem no jogo certinho.</p>
+      </div>
+      <form method="POST" action="/player/save" class="v10-login-form">
+        <input name="steam64" placeholder="Steam64 do player: 7656119..." maxlength="17" required>
+        <input name="nickname" placeholder="Nick no jogo">
+        <button class="btn v9-gold-btn" type="submit">Salvar Steam64</button>
+      </form>
+    </section>
+  <% } %>
+
+  <section class="vehicles-top-row">
+    <div>
+      <p class="v9-kicker">Escolha seu veículo</p>
+      <h2 class="vehicles-top-title">Cards com efeito 3D e doação rápida</h2>
+    </div>
+    <div class="vehicles-mini-legend">
+      <span><i></i> Hover animado</span>
+      <span><i></i> Visual separado por servidor</span>
+      <span><i></i> Doação permanente e seguro</span>
+    </div>
+  </section>
+
+  <section class="vehicle-grid vehicle-grid-pro">
+    <% templates.forEach(v => { %>
+      <% const image = getVehicleImage(v); %>
+      <% const plans = [...(v.insurancePlans || []), ...(globalPlans || [])]; %>
+      <% const parts = Array.isArray(v.parts) ? v.parts : []; %>
+      <% const bestPrice = v.buyPriceCoins || 0; %>
+      <% const planPrice = (plan) => plan.billingType === 'PER_USE' ? 10000 : Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
+      <article class="product-card-pro v9-product-card vehicle-card-pro sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>" style="--featured-color:<%= accentHex %>;--featured-rgb:<%= accentRgb %>;">
+        <div class="v9-product-art vehicle-art-stage">
+          <div class="vehicle-card-watermark"><%= v.serverType.toUpperCase() %></div>
+          <div class="v9-card-shine"></div>
+          <div class="vehicle-floor-shadow"></div>
+          <img src="<%= image %>" alt="<%= v.name %>">
+        </div>
+
+        <div class="v9-product-content vehicle-content-pro">
+          <div class="v9-product-tags vehicle-tags">
+            <span><%= v.serverType.toUpperCase() %></span>
+            <b>Doação permanente</b>
+            <% if (plans.length) { %><b>Seguro</b><% } %>
+          </div>
+
+          <h3><%= v.name %></h3>
+          <p><%= v.description || 'Veículo completo montado, pronto para dirigir e usar no DayZ.' %></p>
+
+          <div class="vehicle-chip-row">
+            <small><strong>Classe:</strong> <code><%= v.vehicleClassname %></code></small>
+            <small><strong>Peças:</strong> <%= parts.length %> montadas</small>
+          </div>
+
+          <div class="vehicle-price-grid-pro">
+            <% if (v.buyPriceCoins > 0) { %><div class="vehicle-price-pill"><span>Doar</span><strong><%= coins(v.buyPriceCoins) %> RZ</strong></div><% } %>
+            <div class="vehicle-price-pill"><span>Seguro uso</span><strong>1º mês incluso</strong></div>
+            <div class="vehicle-price-pill"><span>Mensal depois</span><strong><%= coins(Math.round(Number(v.buyPriceCoins || 0) * 0.5)) %> RZ</strong></div>
+          </div>
+
+          <div class="vehicle-highlight-line">
+            <div>
+              <small>Valor inicial</small>
+              <strong><%= coins(bestPrice) %> RZ</strong>
+            </div>
+            <div>
+              <small>Reposição</small>
+              <strong>Seguro opcional</strong>
+            </div>
+          </div>
+
+          <details class="vehicle-details vehicle-details-pro">
+            <summary>Ver peças montadas</summary>
+            <ul>
+              <% parts.slice(0, 30).forEach(part => { %>
+                <li><code><%= part.slot %></code> → <%= part.quantity || 1 %>x <code><%= part.classname %></code></li>
+              <% }) %>
+              <% if (!parts.length) { %><li class="muted">Sem peças cadastradas ainda.</li><% } %>
+            </ul>
+          </details>
+
+          <% if (player) { %>
+            <form method="POST" action="/vehicles/buy/<%= v.id %>" class="vehicle-buy-form-pro">
+              <div class="vehicle-form-grid">
+                <label>Tipo
+                  <select name="ownershipType">
+                    <option value="OWNED">Doação permanente</option>
+                  </select>
+                </label>
+                <label>Seguro
+                  <select name="insurancePlanId">
+                    <option value="">Sem seguro — aparece na garagem, sem reposição</option>
+                    <% plans.forEach(plan => { %>
+                      <option value="<%= plan.id %>">
+                        <%= plan.billingType === 'PER_USE'
+                          ? (plan.name + ' — 1º mês incluso; depois ' + coins(planPrice(plan)) + ' RZ por uso')
+                          : (plan.name + ' — 1º mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana') %>
+                      </option>
+                    <% }) %>
+                  </select>
+                </label>
+              </div>
+              <small class="muted vehicle-form-help">Sem seguro aparece na Minha Garagem sem reposição. Com seguro, 1º mês incluso no valor do carro.</small>
+              <button class="btn v9-buy-btn vehicle-buy-btn-pro" type="submit">Doar e dropar</button>
+            </form>
+          <% } else { %>
+            <a class="btn v9-buy-btn vehicle-buy-btn-pro" href="#entrar">Entrar para doar</a>
+          <% } %>
+        </div>
+      </article>
+    <% }) %>
+
+    <% if (!templates.length) { %>
+      <div class="card center wide-card themed-empty v9-empty-state">
+        <h2>Nenhum veículo ativo</h2>
+        <p class="muted">Cadastre veículos no painel Admin &gt; Veículos.</p>
+      </div>
+    <% } %>
+  </section>
+
+  <section class="v9-trust-strip vehicle-trust-strip" aria-label="Vantagens dos veículos">
+    <div><b>🚗</b><strong>Montado</strong><span>Veículo pronto para uso assim que cair no jogo</span></div>
+    <div><b>🛡️</b><strong>Seguro</strong><span>Opcional: 1º mês incluso, depois 10k por uso ou 50% mensal</span></div>
+    <div><b>⚡</b><strong>Rápido</strong><span>Doação e pedido de seguro no mesmo lugar</span></div>
+    <div><b>🎮</b><strong>Integrado</strong><span>Entrega automática ligada ao seu Steam64</span></div>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,110 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const theme = product.serverType === 'bbp' ? 'bbp' : 'vanilla'; %>
+<main class="container confirm-page theme-<%= theme %>">
+  <%- include('partials/alerts') %>
+
+  <section class="confirm-mini-hero <%= theme === 'bbp' ? 'hero-bbp' : 'hero-vanilla' %>">
+    <div>
+      <p class="eyebrow">Doação compacta</p>
+      <h1>Confirmar doação</h1>
+      <p>Confira rápido, use cupom/código streamer se tiver, marque a confirmação e finalize. Depois disso entra na fila de entrega do DayZ.</p>
+    </div>
+    <a class="btn ghost-btn" href="/shop?serverType=<%= product.serverType %>">Voltar para loja</a>
+  </section>
+
+  <section class="confirm-layout">
+    <article class="card confirm-card compact-confirm sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>">
+      <div class="confirm-product compact-product">
+        <div class="confirm-thumb">
+          <img src="<%= product.imageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : ((product.imageUrl || '/images/no-real-image.svg') + (((product.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) %>" alt="<%= product.name %>">
+        </div>
+        <div>
+          <div class="confirm-pills">
+            <span class="pill"><%= product.category %></span>
+            <span class="pill ghost"><%= product.serverType.toUpperCase() %></span>
+            <span class="pill ghost"><%= product.deliveryType === 'drop_box' ? '📦 Caixa' : (product.deliveryType === 'drop_at_feet' ? '⬇️ Chão' : '🔐 Virtual') %></span>
+            <% if (product.promo?.active) { %><span class="pill promo-inline-pill" style="background:<%= product.promo.color %>22;border-color:<%= product.promo.color %>55;color:#fff">🔥 <%= product.promo.label %> -<%= product.promo.percent %>%</span><% } %>
+          </div>
+          <h2><%= product.name %></h2>
+          <p><%= product.description || 'Produto da loja.' %></p>
+        </div>
+      </div>
+
+      <div class="confirm-section-title">
+        <h3>Itens que serão entregues</h3>
+        <small>Quantidade já multiplicada pela compra</small>
+      </div>
+      <div class="bundle-list confirm-list compact-list">
+        <% itemList.forEach(item => { %>
+          <div><b><%= item.totalQuantity %>x</b> <span><%= item.label || product.name %></span></div>
+        <% }) %>
+      </div>
+    </article>
+
+    <aside class="card checkout-box checkout-glass">
+      <p class="eyebrow">Resumo</p>
+      <h2>Total da doação</h2>
+      <% if (product.promo?.active) { %><div class="checkout-total-old">de <%= coins(originalTotalCoins) %> <span><%= currencyName %></span></div><% } %>
+      <div class="checkout-total"><%= coins(totalCoins) %> <span><%= currencyName %></span></div>
+      <% if (product.promo?.active) { %><div class="checkout-discount-chip">🔥 <%= product.promo.label %> • você economiza <%= coins(originalTotalCoins - totalCoins) %> <%= currencyName %></div><% } %>
+      <div class="checkout-row"><span>Player</span><b><%= player.nickname || player.steam64 %></b></div>
+      <div class="checkout-row"><span>Steam64</span><code><%= player.steam64 %></code></div>
+      <div class="checkout-row"><span>Quantidade</span><b><%= quantity %>x</b></div>
+      <div class="checkout-row"><span>Seu saldo</span><b><%= coins(player.coins) %> <%= currencyName %></b></div>
+      <% if (player.coins < totalCoins) { %>
+        <div class="alert error">Seu saldo atual não cobre o valor cheio. Você pode tentar usar cupom; sem desconto suficiente a finalização será recusada.</div>
+        <a class="btn primary" href="/wallet">Fazer doação antes</a>
+      <% } %>
+        <form method="POST" action="/shop/buy/<%= product.id %>" class="form-grid sz-buy-final-form">
+          <input type="hidden" name="quantity" value="<%= quantity %>">
+          <div class="gift-friend-box">
+            <label class="check gift-toggle-row">
+              <input type="checkbox" name="sendToFriend" id="sendToFriendToggle">
+              <span>🎁 Enviar este item para um amigo</span>
+            </label>
+            <div class="gift-fields" id="friendSteamFields" hidden>
+              <label>Steam64 do amigo que vai receber no DayZ
+                <input name="friendSteam64" id="friendSteam64Input" inputmode="numeric" maxlength="17" placeholder="7656119..." pattern="7656119[0-9]{10}">
+              </label>
+              <small>Você paga com seu saldo, mas a entrega cai para o Steam64 do amigo quando ele estiver no servidor.</small>
+            </div>
+          </div>
+
+          <div class="support-coupon-box">
+            <label>Cupom de desconto opcional
+              <input name="couponCode" placeholder="Ex: WIPE10" maxlength="32" style="text-transform:uppercase">
+            </label>
+            <label>Código para apoiar streamer opcional
+              <input name="streamerCode" placeholder="Ex: BRENO10" maxlength="32" style="text-transform:uppercase">
+            </label>
+            <small>O cupom aplica desconto na finalização. O código streamer registra a comissão no painel dele.</small>
+          </div>
+          <label class="check confirm-check">
+            <input type="checkbox" name="confirmPurchase" required>
+            Confirmo que quero fazer esta doação e gastar <%= coins(totalCoins) %> <%= currencyName %><% if (product.promo?.active) { %> com promoção aplicada<% } %>.
+          </label>
+          <button class="btn primary buy-pulse" type="submit">Confirmar doação</button>
+          <a class="btn" href="/shop?serverType=<%= product.serverType %>">Cancelar</a>
+        </form>
+    </aside>
+  </section>
+</main>
+
+<script>
+  (() => {
+    const toggle = document.getElementById('sendToFriendToggle');
+    const fields = document.getElementById('friendSteamFields');
+    const input = document.getElementById('friendSteam64Input');
+    if (!toggle || !fields || !input) return;
+    const sync = () => {
+      fields.hidden = !toggle.checked;
+      input.required = toggle.checked;
+      if (toggle.checked) setTimeout(() => input.focus(), 90);
+      if (!toggle.checked) input.value = '';
+    };
+    toggle.addEventListener('change', sync);
+    sync();
+  })();
+</script>
+<%- include('partials/footer') %>

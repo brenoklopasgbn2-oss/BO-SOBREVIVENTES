@@ -1,0 +1,76 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="hero homepage-hero">
+  <section class="hero-card hero-image-card home-redesign">
+    <div class="hero-overlay"></div>
+    <img src="/images/store-hero-main.png" alt="RAID-Z Store" class="hero-bg-art">
+    <div class="hero-text hero-text-over">
+      <p class="eyebrow">Loja oficial DayZ PC</p>
+      <h1>RAID-Z Store</h1>
+      <p>Entre com seu Steam64, compre <strong><%= currencyName %></strong> por Pix e finalize os itens para entrega no DayZ.</p>
+      <div class="hero-badges">
+        <span>Pix automático</span>
+        <span>Steam64 salvo</span>
+        <span>Entrega no jogo</span>
+        <span>R$1 = 1.000 <%= currencyName %></span>
+      </div>
+      <a class="btn primary hero-cta" href="#entrar">Entrar na loja</a>
+    </div>
+  </section>
+</main>
+<main class="container">
+  <%- include('partials/alerts') %>
+  <section class="promo-grid">
+    <article class="card promo-card rate-card sz-hover-card">
+      <p class="eyebrow">Cotação oficial</p>
+      <h2>1 real = 1.000 <%= currencyName %></h2>
+      <p class="muted">Exemplo: R$10 = 10.000 RZ, R$25 = 25.000 RZ e assim por diante.</p>
+      <a class="btn primary" href="#packages-preview">Ver pacotes</a>
+    </article>
+    <article class="card promo-card save-card sz-hover-card">
+      <h2>Como funciona</h2>
+      <p class="muted">O player salva o Steam64 uma vez e depois faz doações e recebe itens.</p>
+      <div class="steps compact">
+        <div><b>1</b><span>Salva Steam64</span></div>
+        <div><b>2</b><span>Compra RZ</span></div>
+        <div><b>3</b><span>Escolhe item</span></div>
+        <div><b>4</b><span>Recebe no DayZ</span></div>
+      </div>
+    </article>
+  </section>
+  <section class="split align-start homepage-content">
+    <section class="card login-card" id="entrar">
+      <p class="eyebrow">Primeiro acesso</p>
+      <h2>Entrar na loja</h2>
+      <p class="muted">Coloque seu Steam64 uma única vez. Depois o site lembra seu player e o saldo.</p>
+      <form method="POST" action="/player/save" class="form-grid">
+        <label>Steam64 do player
+          <input name="steam64" placeholder="7656119..." maxlength="17" required>
+        </label>
+        <label>Nome no jogo / apelido
+          <input name="nickname" placeholder="Seu nick">
+        </label>
+        <label>Discord ID opcional
+          <input name="discordId" placeholder="ID do Discord, se quiser">
+        </label>
+        <button class="btn primary" type="submit">Salvar e abrir loja</button>
+      </form>
+    </section>
+    <section class="card packages-preview" id="packages-preview">
+      <p class="eyebrow">Doações</p>
+      <h2>Pacotes de moedas</h2>
+      <p class="muted">Pacotes prontos. Você também pode doar um valor personalizado dentro da conta.</p>
+      <div class="package-grid compact-grid">
+        <% packages.forEach(pack => { %>
+          <article class="package-card sz-hover-card">
+            <h3><%= pack.name %></h3>
+            <strong><%= coins(pack.coins) %> <%= currencyName %></strong>
+            <span><%= brl(pack.amountBrl) %></span>
+            <% if (pack.bonusText) { %><small><%= pack.bonusText %></small><% } %>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  </section>
+</main>
+<%- include('partials/footer') %>

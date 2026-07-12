@@ -1,0 +1,70 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="shop-header">
+    <div>
+      <p class="eyebrow">Rastreamento completo</p>
+      <h1>Logs da loja</h1>
+      <p class="muted">Login admin, ajustes, vendas, entregas, saldo e eventos do sistema.</p>
+    </div>
+  </section>
+
+  <section class="card wide-card">
+    <h2>Audit log</h2>
+    <table>
+      <thead><tr><th>Data</th><th>Actor</th><th>Ação</th><th>Target</th><th>Dados</th></tr></thead>
+      <tbody>
+        <% auditLogs.forEach(log => { %>
+          <tr>
+            <td><%= dateTime(log.createdAt) %></td>
+            <td><%= log.actor %></td>
+            <td><strong><%= log.action %></strong></td>
+            <td><%= log.target || '-' %></td>
+            <td><small><%= JSON.stringify(log.data || {}) %></small></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="split">
+    <div class="card wide-card">
+      <h2>Movimentações de saldo</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Player</th><th>Tipo</th><th>Moedas</th><th>Saldo</th><th>Motivo</th></tr></thead>
+        <tbody>
+          <% ledgers.forEach(item => { %>
+            <tr>
+              <td><%= dateTime(item.createdAt) %></td>
+              <td><%= item.player.nickname || item.player.steam64 %></td>
+              <td><span class="status <%= item.type === 'CREDIT' ? 'approved' : 'pending' %>"><%= item.type %></span></td>
+              <td><%= coins(item.amount) %></td>
+              <td><%= coins(item.balanceAfter) %></td>
+              <td><%= item.reason %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <div class="card wide-card">
+      <h2>Últimas entregas</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Player</th><th>Item</th><th>Status</th><th>Erro</th></tr></thead>
+        <tbody>
+          <% deliveries.forEach(item => { %>
+            <tr>
+              <td><%= dateTime(item.updatedAt) %></td>
+              <td><%= item.player.nickname || item.player.steam64 %></td>
+              <td><%= item.productName %></td>
+              <td><span class="status <%= item.status.toLowerCase() %>"><%= item.status %></span></td>
+              <td><small><%= item.error || '-' %></small></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>

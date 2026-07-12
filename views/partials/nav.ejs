@@ -1,0 +1,36 @@
+<% const isAdminArea = String(path || "").startsWith("/admin"); %>
+<header class="topbar v9-topbar">
+  <a class="v9-brand" href="/shop?serverType=vanilla" aria-label="RAID-Z Store">
+    <span class="v9-logo-wrap"><img src="/images/sz-logo-main.png?v=11" alt="RAID-Z" style="width:58px;height:58px;max-width:58px;max-height:58px;object-fit:cover;border-radius:16px;"></span>
+    <span>
+      <strong>RAID-<b>Z</b> Store</strong>
+      <small>Sua evolução começa aqui</small>
+    </span>
+  </a>
+
+  <nav class="v9-main-nav" aria-label="Menu principal">
+    <a class="v9-nav-item <%= (path === '/shop' || path === '/') ? 'active' : '' %>" href="/shop?serverType=vanilla"><span>▣</span> Loja</a>
+    <% if (!isAdminArea) { %><a class="v9-nav-item" href="/shop?serverType=vanilla#categorias"><span>▦</span> Categorias</a><% } %>
+    <a class="v9-nav-item" href="/wallet"><span>◉</span> Doações</a>
+    <a class="v9-nav-item <%= path === '/my-vehicles' ? 'active' : '' %>" href="/my-vehicles"><span>🚗</span> Minha garagem</a>
+    <a class="v9-nav-item <%= path === '/outfits' ? 'active' : '' %>" href="/outfits"><span>👑</span> Trajes VIPs</a>
+    <a class="v9-nav-item <%= path === '/ranking' ? 'active' : '' %>" href="/ranking"><span>🏆</span> Ranking</a>
+    <a class="v9-nav-item <%= path === '/streamer' ? 'active' : '' %>" href="/streamer"><span>🎥</span> Painel Streamer</a>
+    <a class="v9-nav-item admin-entry-link" href="/admin"><span>⚙</span> Admin</a>
+  </nav>
+
+  <nav class="v9-account-nav" aria-label="Conta">
+    <% if (player) { %>
+      <a class="v9-account-pill" href="/wallet">
+        <span class="v9-account-icon">◎</span>
+        <span><strong>Minha conta</strong><small><%= player.nickname || 'Player' %></small></span>
+      </a>
+      <a class="v9-cart-pill" href="/cart" aria-label="Carrinho">🛒<b data-nav-cart-count>0</b></a>
+    <% } else { %>
+      <a class="v9-account-pill" href="#entrar">
+        <span class="v9-account-icon">◎</span>
+        <span><strong>Minha conta</strong><small>Entrar / Cadastrar</small></span>
+      </a>
+    <% } %>
+  </nav>
+</header>

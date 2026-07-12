@@ -1,0 +1,164 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container wallet-page wallet-page-v33">
+  <%- include('partials/alerts') %>
+
+  <section class="wallet-hero wallet-hero-v33 sz-hover-card" aria-label="Carteira do player">
+    <div class="wallet-hero-copy-v33">
+      <p class="eyebrow">Minhas doações</p>
+      <h1>Fazer <span>Doação</span></h1>
+      <p>Doe por Pix para manter o servidor online e receba RZ Coins para usar na loja Vanilla, veículos, seguros e kits. O saldo fica salvo na sua conta.</p>
+      <div class="wallet-badges wallet-badges-v33">
+        <span>⚡ Pix rápido</span>
+        <span>R$1 = 1.000 <%= currencyName %></span>
+        <span>Entrega no DayZ</span>
+      </div>
+      <div class="wallet-player-v33">
+        <b><%= player.nickname || 'Player' %></b>
+        <small>Steam64: <code><%= player.steam64 %></code></small>
+      </div>
+    </div>
+
+    <div class="wallet-balance-stage-v33">
+      <div class="wallet-balance-card-v33">
+        <span>Saldo atual</span>
+        <strong class="wallet-balance-animated" data-value="<%= player.coins || 0 %>"><%= coins(player.coins) %></strong>
+        <small><%= currencyName %></small>
+      </div>
+      <div class="wallet-coin-stack-v33" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><b>RZ</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="playtime-reward-alert-v78 wallet-playtime-v78 sz-hover-card" aria-label="Moedas por tempo de jogatina">
+    <div class="playtime-reward-icon-v78" aria-hidden="true">⏱</div>
+    <div>
+      <strong>Também dá para ganhar moedas jogando</strong>
+      <p>Seu tempo de jogatina no RAID-Z pode virar moedas no saldo automaticamente. O site não divulga valores nesse aviso.</p>
+    </div>
+  </section>
+
+  <section class="wallet-buy-panel wallet-buy-panel-v33" id="comprar-moedas">
+    <div class="wallet-buy-head wallet-buy-head-v33">
+      <div>
+        <p class="eyebrow">Doação por Pix</p>
+        <h2>Escolha sua doação</h2>
+        <p class="muted">Doações rápidas em cards 3D ou valor personalizado. <strong>R$1 = 1.000 <%= currencyName %></strong>.</p>
+      </div>
+      <div class="wallet-rate-chip wallet-rate-chip-v33"><span>cotação fixa</span><b>1.000 RZ / R$1</b></div>
+    </div>
+
+    <section class="card support-code-wallet-card">
+      <p class="eyebrow">Apoiar streamer</p>
+      <label>Código do streamer opcional
+        <input id="streamerSupportCodeWallet" placeholder="Ex: BRENO10" maxlength="32" style="text-transform:uppercase">
+      </label>
+      <small class="muted">Se preencher, essa doação aparece no painel do streamer e calcula a comissão configurada pelo admin.</small>
+    </section>
+
+    <div class="coin-store-layout-v33">
+      <div class="coin-pack-grid-v33">
+        <% packages.forEach((pack, index) => { %>
+          <form method="POST" action="/checkout/<%= pack.id %>" class="coin-pack-v33 sz-hover-card <%= index === 2 ? 'popular' : '' %>" data-coin-checkout>
+            <input type="hidden" name="streamerCode" data-support-code-hidden>
+            <% if (index === 2) { %><em>Mais escolhido</em><% } %>
+            <div class="coin-pack-art-v33"><span>RZ</span></div>
+            <div class="coin-pack-content-v33">
+              <small>Doação rápida</small>
+              <h3><%= pack.name %></h3>
+              <strong><%= coins(pack.coins) %> <%= currencyName %></strong>
+              <p><%= brl(pack.amountBrl) %></p>
+              <% if (pack.bonusText) { %><b><%= pack.bonusText %></b><% } else { %><b>R$1 = 1.000 RZ</b><% } %>
+              <button class="btn primary coin-buy-btn-v33" type="submit">Gerar Pix da doação</button>
+            </div>
+          </form>
+        <% }) %>
+      </div>
+
+      <form method="POST" action="/checkout-custom" class="wallet-custom-v33 sz-hover-card" id="customCoinsForm" data-coin-checkout>
+        <input type="hidden" name="streamerCode" data-support-code-hidden>
+        <div class="wallet-custom-top-v33">
+          <span>💎</span>
+          <div>
+            <small>Personalizado</small>
+            <h3>Monte sua doação</h3>
+          </div>
+        </div>
+        <div class="wallet-custom-value-v33">
+          <strong id="customCoinsValue">10.000 <%= currencyName %></strong>
+          <span id="customBrlValue">R$ 10,00</span>
+        </div>
+        <div class="wallet-custom-controls-v33">
+          <label>Quantidade de moedas</label>
+          <input type="range" min="1000" max="200000" step="1000" value="10000" id="customCoinsRange">
+          <input type="number" min="1000" max="5000000" step="1000" value="10000" name="customCoins" id="customCoinsInput">
+        </div>
+        <button class="btn primary coin-buy-btn-v33" type="submit">Gerar Pix da doação</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    (() => {
+      const range = document.getElementById('customCoinsRange');
+      const input = document.getElementById('customCoinsInput');
+      const coinsText = document.getElementById('customCoinsValue');
+      const brlText = document.getElementById('customBrlValue');
+      if (!range || !input) return;
+      const fmtCoins = (n) => new Intl.NumberFormat('pt-BR').format(n);
+      const fmtBrl = (n) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
+      const sync = (value) => {
+        let n = Number(value || 0);
+        if (!Number.isFinite(n) || n < 1000) n = 1000;
+        n = Math.round(n / 1000) * 1000;
+        range.value = Math.min(Number(range.max), n);
+        input.value = n;
+        coinsText.textContent = `${fmtCoins(n)} <%= currencyName %>`;
+        brlText.textContent = fmtBrl(n / 1000);
+      };
+      range.addEventListener('input', (e) => sync(e.target.value));
+      input.addEventListener('input', (e) => sync(e.target.value));
+      sync(input.value);
+    })();
+  </script>
+  <script>
+    (() => {
+      const codeInput = document.getElementById('streamerSupportCodeWallet');
+      const syncSupportCode = () => {
+        document.querySelectorAll('[data-support-code-hidden]').forEach((hidden) => { hidden.value = (codeInput?.value || '').toUpperCase().trim(); });
+      };
+      codeInput?.addEventListener('input', syncSupportCode);
+      document.querySelectorAll('[data-coin-checkout]').forEach((form) => form.addEventListener('submit', syncSupportCode));
+      syncSupportCode();
+    })();
+  </script>
+
+  <section class="split account-history account-history-v33">
+    <div class="card wide-card">
+      <h2>Últimas movimentações</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Motivo</th><th>Moedas</th><th>Saldo</th></tr></thead>
+        <tbody>
+          <% ledgers.forEach(l => { %>
+            <tr><td><%= dateTime(l.createdAt) %></td><td><%= l.reason %></td><td><%= coins(l.amount) %></td><td><%= coins(l.balanceAfter) %></td></tr>
+          <% }) %>
+          <% if (!ledgers.length) { %><tr><td colspan="4" class="muted">Nenhuma movimentação ainda.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+    <div class="card wide-card">
+      <h2>Entregas</h2>
+      <table>
+        <thead><tr><th>Item</th><th>Status</th><th>Data</th></tr></thead>
+        <tbody>
+          <% deliveries.forEach(d => { %>
+            <tr><td><%= d.productName %></td><td><span class="status <%= d.status.toLowerCase() %>"><%= d.status %></span></td><td><%= dateTime(d.createdAt) %></td></tr>
+          <% }) %>
+          <% if (!deliveries.length) { %><tr><td colspan="3" class="muted">Nenhuma entrega criada ainda.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="card">
+    <h1>Pagamentos Pix</h1>
+    <table>
+      <thead><tr><th>Data</th><th>Player</th><th>Valor</th><th>Moedas</th><th>Status</th><th>MP ID</th><th></th></tr></thead>
+      <tbody>
+        <% payments.forEach(p => { %>
+          <tr>
+            <td><%= dateTime(p.createdAt) %></td>
+            <td><%= p.player.nickname || p.player.steam64 %></td>
+            <td><%= brl(p.amountBrl) %></td>
+            <td><%= coins(p.coins) %></td>
+            <td><span class="status <%= p.status.toLowerCase() %>"><%= p.status %></span></td>
+            <td><small><%= p.providerPaymentId || '-' %></small></td>
+            <td>
+              <% if (p.status !== 'APPROVED') { %>
+                <form method="POST" action="/admin/payments/<%= p.id %>/approve" onsubmit="return confirm('Aprovar manualmente? Isso adiciona moedas.')"><button class="btn small">Aprovar manual</button></form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+<%- include('../partials/footer') %>

@@ -1,0 +1,139 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container ranking-page-v34">
+  <div class="ranking-bg-v34" aria-hidden="true"></div>
+  <%- include('partials/alerts') %>
+
+  <section class="ranking-hero-v34 sz-hover-card">
+    <div class="ranking-hero-copy-v34">
+      <p class="v9-kicker">RAID-Z competitivo</p>
+      <h1>Ranking <span>K/D</span> & Clãs</h1>
+      <p>Veja kills, mortes, KD, headshot, quem matou quem, Steam64, ranking por servidor e ranking de clãs por temporada.</p>
+      <div class="ranking-mode-pills-v34">
+        <a class="<%= selectedServer === 'global' ? 'active' : '' %>" href="/ranking?server=global&period=<%= selectedPeriod %>">Global</a>
+        <a class="<%= selectedServer === 'vanilla' ? 'active' : '' %>" href="/ranking?server=vanilla&period=<%= selectedPeriod %>">Vanilla</a>
+      </div>
+      <div class="ranking-mode-pills-v34 ranking-period-pills-v34">
+        <a class="<%= selectedPeriod === 'daily' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=daily">Diário</a>
+        <a class="<%= selectedPeriod === 'weekly' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=weekly">Semanal</a>
+        <a class="<%= selectedPeriod === 'monthly' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=monthly">Mensal</a>
+        <a class="<%= selectedPeriod === 'season' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=season">Temporada</a>
+        <a class="<%= selectedPeriod === 'all' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=all">Histórico</a>
+      </div>
+    </div>
+    <div class="ranking-stats-v34">
+      <div><span>Kills</span><strong><%= coins(totals.kills) %></strong></div>
+      <div><span>Players</span><strong><%= coins(totals.players) %></strong></div>
+      <div><span>Headshots</span><strong><%= coins(totals.headshots) %></strong></div>
+      <div><span>Maior distância</span><strong><%= Math.round(totals.longestKill || 0) %>m</strong></div>
+    </div>
+  </section>
+
+  <section class="ranking-tabs-v34" id="ranking-tabs">
+    <a href="#players">Players</a>
+    <a href="#clas">Clãs</a>
+    <a href="#historico">Quem matou quem</a>
+    <a href="#premios">Troféus</a>
+    <a href="#solicitar-cla">Criar clã</a>
+    <% if (player) { %><a href="/my-clan">Meu clã</a><% } %>
+  </section>
+
+  <section class="ranking-board-v34" id="players">
+    <div class="ranking-section-head-v34">
+      <div><p class="v9-kicker"><%= range.label %></p><h2>Top players</h2><small>Score = kills, KD, headshot, distância e menos mortes.</small></div>
+    </div>
+    <div class="ranking-table-card-v34">
+      <table class="ranking-table-v34">
+        <thead><tr><th>#</th><th>Player</th><th>Steam64</th><th>Kills</th><th>Mortes</th><th>KD</th><th>HS</th><th>Troféus</th><th>Pts troféu</th><th>Arma favorita</th><th>Mais matou</th><th>Quem mais matou ele</th><th>Score</th></tr></thead>
+        <tbody>
+          <% playerRanking.slice(0, 50).forEach((p, index) => { %>
+            <tr class="<%= index < 3 ? 'top-row' : '' %>">
+              <td><b class="rank-pos-v34"><%= index + 1 %></b></td>
+              <td><strong><%= p.name %></strong></td>
+              <td><code><%= p.steam64 %></code></td>
+              <td><%= p.kills %></td>
+              <td><%= p.deaths %></td>
+              <td><b><%= p.kd %></b></td>
+              <td><%= p.headshots %></td>
+              <td><div class="player-mini-trophies-v35"><% (p.badges || []).slice(0, 3).forEach(b => { %><span title="<%= b.title %>" style="--badge-color:<%= b.color %>"><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><% }) %><% if (!(p.badges || []).length) { %>-<% } %></div></td>
+              <td><%= p.badgePoints || 0 %></td>
+              <td><%= p.favoriteWeapon %></td>
+              <td><%= p.topVictim ? (p.topVictim[0] + ' x' + p.topVictim[1]) : '-' %></td>
+              <td><%= p.topNemesis ? (p.topNemesis[0] + ' x' + p.topNemesis[1]) : '-' %></td>
+              <td><strong><%= coins(p.score) %></strong></td>
+            </tr>
+          <% }) %>
+          <% if (!playerRanking.length) { %><tr><td colspan="13" class="muted">Ainda não tem kills registradas. Quando o mod enviar as kills, esse ranking enche sozinho.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="clan-ranking-v34" id="clas">
+    <div class="ranking-section-head-v34">
+      <div><p class="v9-kicker">Ranking de clãs</p><h2>Clãs dominando o servidor</h2><small>Soma as kills e mortes de todos os membros do clã.</small></div>
+    </div>
+    <div class="clan-grid-v34">
+      <% clanRanking.slice(0, 12).forEach((c, index) => { %>
+        <article class="clan-card-v34 sz-hover-card <%= index === 0 ? 'champion' : '' %>">
+          <div class="clan-flag-v34"><% if (c.flagUrl) { %><img src="<%= c.flagUrl %>" alt="Bandeira <%= c.name %>"><% } else { %><span><%= c.tag %></span><% } %></div>
+          <div class="clan-card-body-v34">
+            <small>#<%= index + 1 %> • <%= c.serverType.toUpperCase() %></small>
+            <h3>[<%= c.tag %>] <%= c.name %></h3>
+            <p><%= c.description || 'Clã cadastrado no RAID-Z.' %></p>
+            <div class="clan-mini-stats-v34">
+              <b><span>Kills</span><%= c.kills %></b>
+              <b><span>Mortes</span><%= c.deaths %></b>
+              <b><span>KD</span><%= c.kd %></b>
+              <b><span>Membros</span><%= c.membersCount %></b>
+            </div>
+            <div class="clan-awards-line-v34">
+              <% (c.awards || []).slice(0, 3).forEach(a => { %><span class="clan-trophy-chip-v35" style="--award-color:<%= a.color %>"><% if (a.imageUrl) { %><img src="<%= a.imageUrl %>" alt="Troféu"><% } else { %><%= a.icon %><% } %> <%= a.title %> <% if (a.points) { %>+<%= a.points %>pts<% } %></span><% }) %>
+              <% if (!(c.awards || []).length) { %><span>Sem troféu ainda</span><% } %>
+            </div>
+          </div>
+          <strong class="clan-score-v34"><%= coins(c.score) %></strong>
+        </article>
+      <% }) %>
+      <% if (!clanRanking.length) { %><div class="card wide-card center"><h2>Nenhum clã no ranking ainda</h2><p class="muted">Os clãs aparecem aqui quando o admin aprovar ou cadastrar.</p></div><% } %>
+    </div>
+  </section>
+
+  <section class="split ranking-split-v34" id="historico">
+    <div class="card wide-card ranking-kill-feed-v34">
+      <h2>Quem matou quem</h2>
+      <p class="muted">Últimas kills recebidas do servidor.</p>
+      <% recentKills.slice(0, 20).forEach(k => { %>
+        <div class="kill-feed-row-v34">
+          <b><%= k.killerName || k.killerSteam64 %></b>
+          <span>matou</span>
+          <b><%= k.victimName || k.victimSteam64 %></b>
+          <small><%= k.weapon || 'arma desconhecida' %> • <%= k.distanceMeters ? Math.round(k.distanceMeters) + 'm' : '-' %> • <%= k.serverType.toUpperCase() %> • <%= dateTime(k.occurredAt) %></small>
+        </div>
+      <% }) %>
+      <% if (!recentKills.length) { %><p class="muted">Sem histórico de kills ainda.</p><% } %>
+    </div>
+    <div class="card wide-card ranking-badges-v34" id="premios">
+      <h2>Troféus e títulos dos players</h2>
+      <p class="muted">Quando o admin finalizar evento ou temporada, os campeões ficam salvos aqui para todos verem.</p>
+      <% playerBadges.slice(0, 18).forEach(b => { %>
+        <div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= b.color %>"><span><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><strong><%= b.title %> <% if (b.points) { %><em>+<%= b.points %> pts</em><% } %></strong><small><%= b.playerName || b.steam64 %> • <%= b.description || 'Conquista do servidor' %></small></div>
+      <% }) %>
+      <% if (!playerBadges.length) { %><p class="muted">Nenhum player recebeu badge ainda.</p><% } %>
+    </div>
+  </section>
+
+  <section class="clan-request-panel-v34 clan-ticket-only-v45 sz-hover-card" id="solicitar-cla">
+    <div>
+      <p class="v9-kicker">Clãs e bandeiras</p>
+      <h2>Abra ticket no Discord para liberar seu clã</h2>
+      <p>Para evitar bagunça e clã falso, a solicitação pelo site foi removida. O player deve abrir um ticket no Discord e pedir para o ADM cadastrar o dono do clã. Depois que o ADM liberar, o dono acessa <b>Meu Clã</b> para adicionar/remover membros, escolher sub dono e ajustar a descrição.</p>
+    </div>
+    <div class="clan-ticket-steps-v45">
+      <span>1. Abra ticket no Discord</span>
+      <span>2. Envie nome do clã, TAG, Steam64 do dono e imagem da bandeira</span>
+      <span>3. ADM libera o dono e o painel Meu Clã</span>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>
