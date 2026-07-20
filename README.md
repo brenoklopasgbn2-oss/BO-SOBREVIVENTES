@@ -1,46 +1,30 @@
 # Bot RAID-Z Vanilla
 
-Bot do Discord já convertido para **RAID-Z**.
+Bot Discord oficial do **RAID-Z**.
 
-## O que foi mudado
+## Atualização atual
 
-- Removido sistema de escolha de servidor.
-- Removido BBP/DM da estrutura nova.
-- Mantido apenas **1 servidor: RAID-Z Vanilla**.
-- Cargo antigo de BBP é migrado para **Vanilla+**.
-- Cargos antigos de Vanilla/DM são migrados para **Vanilla**.
-- `/setup` agora apaga canais/categorias antigos e recria o Discord RAID-Z do zero.
-- Regras Vanilla mantidas, com clã aumentado para **10 jogadores**.
-- Criado canal novo de **regra da bandeira no raid**.
-- Bandeira no raid: solicitar para ADM; durante a bandeira ativa não pode raidar e não pode ser raidado.
-- Bandeira branca: pode ser solicitada **1 vez por mês**.
-- Todas as imagens dos painéis foram refeitas com identidade RAID-Z.
+- Canal **📻・missoes-de-raid** com o painel das missões dinâmicas transmitidas no rádio em **89.5 FM**.
+- Canal **⚪・bunker-airfield** com a entrada do bunker do Airfield e a **Chave Prata**.
+- RAID-Z IA atualizada para responder dúvidas sobre o Airfield, a Chave Prata e as missões de raid via rádio.
+- O `/setup` cria o que estiver faltando e atualiza apenas os painéis do próprio bot.
+- Canais, categorias e mensagens manuais existentes são preservados.
 
 ## Como usar
 
 1. Coloque o token no `.env`.
-2. Instale dependências:
+2. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-3. Registre comandos:
-
-```bash
-npm run deploy:commands
-```
-
-4. Ligue o bot:
+3. Inicie o bot:
 
 ```bash
 npm start
 ```
 
-5. No Discord, use:
+4. No Discord, use `/setup` ou `/atualizarcanais` e clique no botão de atualização.
 
-```text
-/setup
-```
-
-Atenção: esse comando apaga canais/categorias antigos que o bot conseguir deletar e recria a estrutura oficial RAID-Z Vanilla.
+O bot criará os canais novos sem apagar os canais e mensagens manuais do servidor.
