@@ -1,7 +1,7 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
 <% const theme = product.serverType === 'bbp' ? 'bbp' : 'vanilla'; %>
-<main class="container confirm-page theme-<%= theme %>">
+<main class="container confirm-page confirm-page-ready theme-<%= theme %>">
   <%- include('partials/alerts') %>
 
   <section class="confirm-mini-hero <%= theme === 'bbp' ? 'hero-bbp' : 'hero-vanilla' %>">
@@ -17,7 +17,7 @@
     <article class="card confirm-card compact-confirm sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>">
       <div class="confirm-product compact-product">
         <div class="confirm-thumb">
-          <img src="<%= product.imageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : ((product.imageUrl || '/images/no-real-image.svg') + (((product.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) %>" alt="<%= product.name %>">
+          <img src="<%= product.hasImageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : ((product.imageUrl || '/images/no-real-image.svg') + (((product.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) %>" alt="<%= product.name %>">
         </div>
         <div>
           <div class="confirm-pills">
@@ -58,6 +58,7 @@
       <% } %>
         <form method="POST" action="/shop/buy/<%= product.id %>" class="form-grid sz-buy-final-form">
           <input type="hidden" name="quantity" value="<%= quantity %>">
+          <input type="hidden" name="checkoutToken" value="<%= checkoutToken %>">
           <div class="gift-friend-box">
             <label class="check gift-toggle-row">
               <input type="checkbox" name="sendToFriend" id="sendToFriendToggle">

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="280" viewBox="0 0 240 280" role="img" aria-label="Caçador de Ouro">
+<defs>
+  <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fad68b"/><stop offset=".38" stop-color="#f7bd44"/><stop offset="1" stop-color="#6f551e"/>
+  </linearGradient>
+  <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#fad68b"/><stop offset="1" stop-color="#f7bd44"/>
+  </linearGradient>
+  <radialGradient id="core"><stop offset="0" stop-color="#f8c865" stop-opacity=".28"/><stop offset=".58" stop-color="#46381a" stop-opacity=".95"/><stop offset="1" stop-color="#02040a"/></radialGradient>
+  <filter id="shadow" x="-70%" y="-70%" width="240%" height="240%">
+    <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<ellipse cx="120" cy="249" rx="62" ry="12" fill="#f7bd44" opacity=".18" filter="url(#soft)"/>
+<path d="M120 10 202 43l-10 132c-4 43-30 72-72 94-42-22-68-51-72-94L38 43Z" fill="#f7bd44" opacity=".18" filter="url(#shadow)"/>
+<path d="M120 12 198 45l-10 126c-4 40-27 68-68 90-41-22-64-50-68-90L42 45Z" fill="url(#shield)" stroke="#fad68b" stroke-width="3"/>
+<path d="M120 25 184 52l-8 113c-3 33-21 57-56 77-35-20-53-44-56-77L56 52Z" fill="#050810" stroke="#6f551e" stroke-width="5"/>
+<path d="M120 34 174 57l-7 101c-2 29-17 48-47 66-30-18-45-37-47-66L66 57Z" fill="url(#core)" stroke="#f7bd44" stroke-width="2" opacity=".98"/>
+<path d="M82 50 120 34l38 16" fill="none" stroke="#fad68b" stroke-width="3" opacity=".75"/>
+<circle cx="120" cy="126" r="54" fill="none" stroke="#f7bd44" stroke-width="2" opacity=".35"/>
+<circle cx="120" cy="126" r="48" fill="none" stroke="#fad68b" stroke-width="1" opacity=".18" stroke-dasharray="4 7"/>
+
+<g transform="translate(120 126)">
+  <path d="M-33-15c0-25 17-43 33-43s33 18 33 43c0 18-8 28-18 34v17h-10v-13h-10v13h-10V19c-10-6-18-16-18-34Z" fill="none" stroke="url(#glow)" stroke-width="7"/>
+  <circle cx="-12" cy="-12" r="7" fill="url(#glow)"/><circle cx="12" cy="-12" r="7" fill="url(#glow)"/>
+  <path d="M-10 8h20M-5 8v9M5 8v9" stroke="url(#glow)" stroke-width="5" stroke-linecap="round"/>
+</g>
+<g filter="url(#shadow)">
+  <rect x="72" y="178" width="96" height="38" rx="12" fill="#05070c" stroke="#f7bd44" stroke-width="3"/>
+  <text x="120" y="204" fill="#fad68b" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="26" font-weight="900" letter-spacing=".5">100</text>
+</g>
+<text x="120" y="235" fill="#fad68b" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="900" letter-spacing="2.2">OURO</text>
+<path d="M74 245h92" stroke="#f7bd44" stroke-width="2" opacity=".48"/>
+<text x="120" y="259" fill="#dbe4ef" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="800" letter-spacing="1.8">RAID-Z • 04</text>
+</svg>

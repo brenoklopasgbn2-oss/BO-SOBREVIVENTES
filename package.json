@@ -1,19 +1,44 @@
 {
-  "name": "bot-raid-z",
-  "version": "1.0.2",
-  "description": "Bot Discord para recriar e organizar a comunidade DayZ RAID-Z Vanilla.",
+  "name": "raidz-web-store",
+  "version": "1.0.129",
+  "description": "RAID-Z Store V129 - Seguro automático e somente veículos ativos no mod",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "deploy:commands": "node src/deploy-commands.js"
-  },
-  "engines": {
-    "node": "18.x"
+    "dev": "nodemon src/index.js",
+    "start": "node src/scripts/predeploySafetyCheck.js && prisma generate && prisma migrate deploy && node src/index.js",
+    "start:local": "node src/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "seed": "node prisma/seed.js",
+    "safe:deploy-check": "node src/scripts/predeploySafetyCheck.js"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.8.2",
-    "discord-html-transcripts": "^3.2.0",
-    "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5"
+    "@prisma/client": "^6.10.1",
+    "basic-ftp": "^6.0.1",
+    "bcryptjs": "^3.0.2",
+    "compression": "^1.8.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.1",
+    "node-cron": "^4.1.0",
+    "qrcode": "^1.5.4",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.10.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

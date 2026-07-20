@@ -6,21 +6,30 @@ import { createAdminCookie, requireAdmin } from '../middleware/auth.js';
 import { slugify } from '../utils/slug.js';
 import { changePlayerCoins } from '../services/playerService.js';
 import { logBalanceChange } from '../services/discordLogger.js';
-import { manuallyApprovePayment } from '../services/paymentService.js';
+import { manuallyApprovePayment, syncPaymentStatusByLocalId, checkMercadoPagoConnection } from '../services/paymentService.js';
 import { getMonthlyStats, getMonthlyHistory, parseMonthKey, sendCurrentMonthlyReport } from '../services/reportService.js';
 import { logAudit } from '../services/auditService.js';
 import { parseProductItemsInput } from '../utils/productItems.js';
 import { saveGlobalPromo, getGlobalPromo, normalizePromoColor, normalizePromoPercent } from '../services/promotionService.js';
-import { createOrUpdateVehicleTemplateFromBody, createInsurancePlanFromBody, partsToText, variantsToText, cargoItemsToText, vehicleTemplatePayload } from '../services/vehicleRentalService.js';
+import { createOrUpdateVehicleTemplateFromBody, createInsurancePlanFromBody, partsToText, variantsToText, cargoItemsToText, vehicleTemplatePayload, publishVehicleDeliveryImmediately, queueVehicleDeliveryImmediately, createVehiclePlayerInventoryAccessoryDeliveries, restoreMissingVehicleWithSameId } from '../services/vehicleRentalService.js';
 import { getStarterKit, saveStarterKitFromBody, starterKitItemsToText, dropStarterKitForAdmin } from '../services/starterKitService.js';
 import { DEATHMATCH_ACTIONS, DEATHMATCH_CLASS_OPTIONS, getDeathmatchConfig, saveDeathmatchGameplay, upsertDeathmatchStreamer, removeDeathmatchStreamer, upsertDeathmatchGiftMapping, removeDeathmatchGiftMapping, enqueueDeathmatchGiftEvent, clearDeathmatchStreamer } from '../services/deathmatchService.js';
 import { createClanWithOwner, registerKillEventFromGame, getRankingData } from '../services/rankingService.js';
 import { sendRankingToDiscord } from '../services/discordLogger.js';
-import { getAdminSupportDashboard, upsertCouponFromBody, upsertStreamerCodeFromBody, markStreamerCommissionPaid } from '../services/supportService.js';
+import { getAdminSupportDashboard, getStreamerDashboardBySteam64, upsertCouponFromBody, upsertStreamerCodeFromBody, markStreamerCommissionPaid } from '../services/supportService.js';
 import { getFullDayzItemCatalog } from '../services/dayzCatalogService.js';
-import { listOutfitTemplates, upsertOutfitTemplateFromBody, outfitItemsToText, getActiveOutfitForPlayer } from '../services/outfitService.js';
+import { listOutfitTemplates, upsertOutfitTemplateFromBody, outfitItemsToText, getActiveOutfitForPlayer, assignPrivateVipMembers, removePrivateVipMember, grantOutfitToPlayerByAdmin, revokeOutfitSubscriptionByAdmin, PRIVATE_VIP_SOURCE } from '../services/outfitService.js';
 import { prepareUploadedImage } from '../utils/pngTransparency.js';
-import { getFtpConfig, saveFtpConfig, testFtpConnection, runFileBridgeCycle, getFileBridgeHealth } from '../services/fileBridgeService.js';
+import { getFtpConfig, saveFtpConfig, testFtpConnection, runFileBridgeCycle, syncPlayerFilesNow, getFileBridgeHealth, getFtpDiagnostics, detectAndApplyFtpBasePath, warmImmediateFtpConnection } from '../services/fileBridgeService.js';
+import { getManagedOutfitAdminData, listManagedOutfitsForOwner, revokeClanManagedOutfitAccess, updateCustomOutfitOrder, updateFlagRequest } from '../services/managedOutfitService.js';
+import {
+  getClanRecruitmentDiscordConfig,
+  getClanRecruitmentRecommendations,
+  getClanRecruitmentScheduleRows,
+  saveClanRecruitmentDiscordConfig,
+  sendClanRecruitmentDiscordNow,
+  sendClanRecruitmentWebhookTest
+} from '../services/clanRecruitmentDiscordService.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -32,6 +41,8 @@ const upload = multer({
 });
 
 const DEATHMATCH_PANEL_LOCKED = true;
+const ADMIN_WIPE_ENABLED = ['1', 'true', 'yes', 'sim', 'on'].includes(String(process.env.ENABLE_ADMIN_WIPE || '').trim().toLowerCase());
+const ADMIN_WIPE_CONFIRM_PHRASE = 'APAGAR TODOS OS DADOS RAID-Z';
 
 function normalizeHighlightColor(value, fallback = '#ef4444') {
   const color = String(value || '').trim();
@@ -84,6 +95,16 @@ function parseProductItemsFromBody(body) {
 }
 
 export const adminRoutes = Router();
+
+// V88: impede o navegador/proxy de exibir um menu ADM antigo após o deploy.
+adminRoutes.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  res.set('X-RAIDZ-Store-Version', '1.0.110');
+  next();
+});
 
 const SEED_DELETED_PRODUCTS_KEY = 'seed.deletedProducts.v66';
 const SEED_DELETED_VEHICLES_KEY = 'seed.deletedVehicles.v66';
@@ -274,7 +295,7 @@ function mergeCatalogWithProducts(catalog, products) {
         name: item.label || product.name || classname,
         classname,
         category: product.category || 'Itens da Loja',
-        imageUrl: product.imageData ? `/product-image/${product.id}` : (product.imageUrl || '/images/no-real-image.svg'),
+        imageUrl: product.imageData ? `/product-image/${product.id}?v=${product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now()}` : (product.imageUrl || '/images/no-real-image.svg'),
         wikiImageUrl: `https://dayz.fandom.com/wiki/Special:Search?query=${encodeURIComponent(classname)}`,
         source: 'Itens cadastrados na loja'
       });
@@ -310,32 +331,75 @@ adminRoutes.post('/logout', (req, res) => {
 
 adminRoutes.use(requireAdmin);
 
+adminRoutes.get('/version', (req, res) => {
+  res.json({ version: '1.0.122', ftpPanel: '/admin/ftp', fileBridge: true, ftpDiagnostics: true, ftpAutoDetectPath: true, ftpControlTimeoutSeconds: 25, starterKitFtpImmediate: true, managedFlagFtpImmediate: true, adminStreamerPreview: true, adminRestoreMissingVehicleSameId: true });
+});
+
+adminRoutes.get(['/ftp-config', '/file-bridge', '/arquivos'], (req, res) => {
+  res.redirect('/admin/ftp');
+});
 
 adminRoutes.get('/ftp', async (req, res) => {
-  const [ftp, health] = await Promise.all([getFtpConfig(), getFileBridgeHealth()]);
-  res.render('admin/ftp', { title: 'FTP / Arquivos DayZ', ftp, health });
+  const [ftp, health, diagnostics] = await Promise.all([getFtpConfig(), getFileBridgeHealth(), getFtpDiagnostics()]);
+  res.render('admin/ftp', { title: 'FTP / Arquivos DayZ', ftp, health, diagnostics });
 });
 
 adminRoutes.post('/ftp', async (req, res) => {
   try {
     const saved = await saveFtpConfig(req.body);
+    let warmError = null;
+    let warmResult = null;
+    if (saved.enabled) {
+      try {
+        warmResult = await warmImmediateFtpConnection();
+      } catch (error) {
+        warmError = String(error?.message || error);
+      }
+    }
     await logAudit({
       actor: 'admin',
       action: 'file_bridge.ftp.updated',
       target: saved.basePath,
-      data: { enabled: saved.enabled, host: saved.host, port: saved.port, secure: saved.secure, pollSeconds: saved.pollSeconds }
+      data: { enabled: saved.enabled, host: saved.host, port: saved.port, secure: saved.secure, pollSeconds: saved.pollSeconds, warmError, warmResult }
     });
-    res.redirect('/admin/ftp?success=' + encodeURIComponent('Configuração FTP salva sem apagar dados existentes.'));
+    if (warmError) {
+      return res.redirect('/admin/ftp?error=' + encodeURIComponent(`Configuração salva, mas o FTP ainda não conectou: ${warmError}`));
+    }
+    const successMessage = warmResult?.pathAutoCorrected
+      ? `Configuração salva. A pasta foi corrigida automaticamente de ${warmResult.previousBasePath} para ${warmResult.basePath} e a conexão ficou pronta.`
+      : 'Configuração FTP salva e conexão preparada sem apagar dados existentes.';
+    return res.redirect('/admin/ftp?success=' + encodeURIComponent(successMessage));
   } catch (err) {
-    res.redirect('/admin/ftp?error=' + encodeURIComponent(err.message));
+    return res.redirect('/admin/ftp?error=' + encodeURIComponent(err.message));
   }
 });
 
 adminRoutes.post('/ftp/test', async (req, res) => {
   try {
     const result = await testFtpConnection();
-    await logAudit({ actor: 'admin', action: 'file_bridge.ftp.tested', target: result.basePath, data: { ok: true } });
-    res.redirect('/admin/ftp?success=' + encodeURIComponent(`FTP conectado. Pasta pronta: ${result.basePath}`));
+    await logAudit({
+      actor: 'admin',
+      action: 'file_bridge.ftp.tested',
+      target: result.basePath,
+      data: { ok: true, durationMs: result.durationMs, folders: result.folders?.length || 0, pendingDeliveries: result.pendingDeliveries || 0 }
+    });
+    res.redirect('/admin/ftp?success=' + encodeURIComponent(`Diagnóstico concluído: conexão, pastas e leitura/escrita funcionando em ${result.basePath}.`));
+  } catch (err) {
+    res.redirect('/admin/ftp?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/ftp/detect-path', async (req, res) => {
+  try {
+    const result = await detectAndApplyFtpBasePath();
+    await logAudit({
+      actor: 'admin',
+      action: 'file_bridge.ftp.path_detected',
+      target: result.basePath,
+      data: { changed: result.changed, sync: result.sync }
+    });
+    const action = result.changed ? 'Pasta do mod encontrada e aplicada' : 'Pasta configurada já estava correta';
+    res.redirect('/admin/ftp?success=' + encodeURIComponent(`${action}: ${result.basePath}. A fila pendente foi sincronizada agora.`));
   } catch (err) {
     res.redirect('/admin/ftp?error=' + encodeURIComponent(err.message));
   }
@@ -348,11 +412,75 @@ adminRoutes.post('/ftp/sync', async (req, res) => {
       actor: 'admin',
       action: 'file_bridge.sync.manual',
       target: result.basePath || 'file_bridge',
-      data: { deliveryResults: result.deliveryResults || 0, playtimeEvents: result.playtimeEvents || 0, skipped: Boolean(result.skipped), reason: result.reason || null }
+      data: { deliveryResults: result.deliveryResults || 0, deliveryFilesUploaded: result.deliveryFilesUploaded || 0, pendingDeliveries: result.pendingDeliveries || 0, pendingDeliveryPlayers: result.pendingDeliveryPlayers || 0, playtimeEvents: result.playtimeEvents || 0, rankingFiles: result.rankingFiles || 0, rankingKills: result.rankingKills || 0, rankingIgnoredDeaths: result.rankingIgnoredDeaths || 0, skipped: Boolean(result.skipped), reason: result.reason || null }
     });
-    res.redirect('/admin/ftp?success=' + encodeURIComponent(`Sincronização concluída. Resultados: ${result.deliveryResults || 0}; recompensas: ${result.playtimeEvents || 0}.`));
+    res.redirect('/admin/ftp?success=' + encodeURIComponent(`Sincronização concluída. Arquivos de entrega enviados: ${result.deliveryFilesUploaded || 0}; entregas pendentes no FTP: ${result.pendingDeliveries || 0} para ${result.pendingDeliveryPlayers || 0} player(s); resultados processados: ${result.deliveryResults || 0}; recompensas: ${result.playtimeEvents || 0}; ranking: ${result.rankingFiles || 0} arquivo(s).`));
   } catch (err) {
     res.redirect('/admin/ftp?error=' + encodeURIComponent(err.message));
+  }
+
+});
+
+adminRoutes.get('/clan-recruitment-discord', async (req, res) => {
+  const config = await getClanRecruitmentDiscordConfig();
+  const recruitingClans = await prisma.clan.findMany({
+    where: { status: 'ACTIVE', isRecruiting: true },
+    include: { ownerPlayer: true, members: { where: { status: 'ACTIVE' } } },
+    orderBy: [{ updatedAt: 'desc' }, { name: 'asc' }]
+  });
+  res.render('admin/clanRecruitmentDiscord', {
+    title: 'Discord • Recrutamento de Clãs',
+    config,
+    recruitingClans: getClanRecruitmentScheduleRows(recruitingClans, config),
+    recommendations: getClanRecruitmentRecommendations(config),
+    publicUrlConfigured: Boolean(String(env.publicUrl || '').trim()) && !/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/i.test(String(env.publicUrl || '').trim())
+  });
+});
+
+adminRoutes.post('/clan-recruitment-discord', async (req, res) => {
+  try {
+    const saved = await saveClanRecruitmentDiscordConfig(req.body);
+    await logAudit({
+      actor: 'admin',
+      action: 'clan_recruitment_discord.config.updated',
+      target: 'clanRecruitmentDiscord.v107',
+      data: {
+        enabled: saved.enabled,
+        intervalHours: saved.intervalHours,
+        webhookCount: [saved.webhookUrl1, saved.webhookUrl2].filter(Boolean).length,
+        sendInstructions: saved.sendInstructions
+      }
+    });
+    res.redirect('/admin/clan-recruitment-discord?success=' + encodeURIComponent('Configuração de recrutamento no Discord salva.'));
+  } catch (err) {
+    res.redirect('/admin/clan-recruitment-discord?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/clan-recruitment-discord/send-now', async (req, res) => {
+  try {
+    const result = await sendClanRecruitmentDiscordNow({ force: true, dueOnly: true });
+    await logAudit({ actor: 'admin', action: 'clan_recruitment_discord.sent.manual', target: 'discord', data: result });
+    const msg = result.sentClans
+      ? `Enviado agora: ${result.clan?.name ? ('[' + result.clan.tag + '] ' + result.clan.name) : result.sentClans + ' clã'} para ${result.targets} webhook(s).`
+      : 'Nenhum clã está recrutando no momento.';
+    res.redirect('/admin/clan-recruitment-discord?success=' + encodeURIComponent(msg));
+  } catch (err) {
+    res.redirect('/admin/clan-recruitment-discord?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/clan-recruitment-discord/test/:slot', async (req, res) => {
+  try {
+    const config = await getClanRecruitmentDiscordConfig();
+    const slot = String(req.params.slot || '1') === '2' ? '2' : '1';
+    const webhook = slot === '2' ? config.webhookUrl2 : config.webhookUrl1;
+    if (!webhook) throw new Error(`Webhook ${slot} não foi preenchido.`);
+    const result = await sendClanRecruitmentWebhookTest(webhook, slot);
+    await logAudit({ actor: 'admin', action: 'clan_recruitment_discord.test', target: `webhook_${slot}`, data: result });
+    res.redirect('/admin/clan-recruitment-discord?success=' + encodeURIComponent(`Teste do Webhook ${slot} enviado com sucesso.`));
+  } catch (err) {
+    res.redirect('/admin/clan-recruitment-discord?error=' + encodeURIComponent(err.message));
   }
 });
 
@@ -392,7 +520,7 @@ adminRoutes.get('/', async (req, res) => {
     vehicleRespawnLogs,
     supportSalesCount
   };
-  res.render('admin/dashboard', { title: 'Painel Admin', stats, playerCount, pendingDeliveries, productsCount, lastPayments, lastPurchases, safeDataStats });
+  res.render('admin/dashboard', { title: 'Painel Admin', stats, playerCount, pendingDeliveries, productsCount, lastPayments, lastPurchases, safeDataStats, adminWipeEnabled: ADMIN_WIPE_ENABLED, adminWipeConfirmPhrase: ADMIN_WIPE_CONFIRM_PHRASE });
 });
 
 
@@ -402,7 +530,13 @@ adminRoutes.get('/', async (req, res) => {
 
 adminRoutes.post('/wipe/reset-store-stats', async (req, res) => {
   try {
+    if (!ADMIN_WIPE_ENABLED) {
+      throw new Error('WIPE GERAL bloqueado pela proteção de dados. Para liberar manualmente, configure ENABLE_ADMIN_WIPE=true no Railway e reinicie o site.');
+    }
     assertAdminPassword(req.body);
+    if (String(req.body.confirmPhrase || '').trim() !== ADMIN_WIPE_CONFIRM_PHRASE) {
+      throw new Error(`Confirmação inválida. Digite exatamente: ${ADMIN_WIPE_CONFIRM_PHRASE}`);
+    }
     const result = await prisma.$transaction(async (tx) => {
       const counts = {
         streamerSales: await tx.streamerSupportSale.deleteMany({}),
@@ -443,6 +577,35 @@ adminRoutes.get('/streamer', async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+});
+
+// Visualização segura pelo ADM. Antes o botão apontava para /streamer e era
+// barrado porque aquela rota exige sessão criada pelo L dentro do DayZ.
+adminRoutes.get('/streamer/:steam64/panel', async (req, res, next) => {
+  try {
+    const steam64 = String(req.params.steam64 || '').trim();
+    if (!/^\d{17}$/.test(steam64)) throw new Error('Steam64 do streamer inválido.');
+
+    const [streamerDashboard, allManaged] = await Promise.all([
+      getStreamerDashboardBySteam64(steam64),
+      listManagedOutfitsForOwner(steam64)
+    ]);
+
+    res.render('streamer', {
+      title: `Painel de ${streamerDashboard.streamerCode.streamerName}`,
+      streamerDashboard,
+      managedOutfits: allManaged.filter(outfit => outfit.ownerType === 'STREAMER'),
+      managerReturnTo: '/streamer',
+      loginCode: streamerDashboard.streamerCode.code,
+      loginSteam64: steam64,
+      error: null,
+      success: null,
+      deathmatchLocked: true,
+      adminPreview: true
+    });
+  } catch (err) {
+    res.redirect('/admin/streamer?error=' + encodeURIComponent(err.message));
   }
 });
 
@@ -832,6 +995,11 @@ adminRoutes.post('/clans/:id/delete', async (req, res) => {
     assertAdminPassword(req.body);
     const clan = await prisma.clan.findUnique({ where: { id: req.params.id } });
     if (!clan) throw new Error('Clã não encontrado.');
+    const expected = `APAGAR ${String(clan.tag || '').toUpperCase()}`;
+    if (String(req.body.confirmClanDelete || '').trim().toUpperCase() !== expected) {
+      throw new Error(`Digite exatamente ${expected} para apagar o clã.`);
+    }
+    await revokeClanManagedOutfitAccess(clan.id);
     await prisma.clan.delete({ where: { id: clan.id } });
     await logAudit({ actor: 'admin', action: 'clan.deleted.secure', target: clan.id, data: { name: clan.name, tag: clan.tag } });
     res.redirect('/admin/ranking?success=' + encodeURIComponent('Clã apagado com segurança.'));
@@ -902,8 +1070,8 @@ adminRoutes.get('/logs', async (req, res) => {
 
 adminRoutes.get('/vehicles', async (req, res) => {
   const [templates, plans, playerVehicles] = await Promise.all([
-    prisma.vehicleTemplate.findMany({ where: { active: true }, include: { insurancePlans: { where: { active: true }, orderBy: { createdAt: 'desc' } } }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
-    prisma.vehicleInsurancePlan.findMany({ where: { active: true }, include: { template: true }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
+    prisma.vehicleTemplate.findMany({ where: { active: true }, include: { insurancePlans: { where: { active: true, billingType: 'SUBSCRIPTION' }, orderBy: { createdAt: 'desc' } } }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
+    prisma.vehicleInsurancePlan.findMany({ where: { active: true, billingType: 'SUBSCRIPTION' }, include: { template: true }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
     prisma.playerVehicle.findMany({ include: { player: true, template: true, insurancePlan: true }, orderBy: { updatedAt: 'desc' }, take: 80 })
   ]);
   res.render('admin/vehicles', { title: 'Veículos e Seguros', templates, plans, playerVehicles, vehicle: null, partsToText, variantsToText, cargoItemsToText });
@@ -911,8 +1079,8 @@ adminRoutes.get('/vehicles', async (req, res) => {
 
 adminRoutes.get('/vehicles/:id/edit', async (req, res) => {
   const [templates, plans, playerVehicles, vehicle] = await Promise.all([
-    prisma.vehicleTemplate.findMany({ where: { active: true }, include: { insurancePlans: { where: { active: true }, orderBy: { createdAt: 'desc' } } }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
-    prisma.vehicleInsurancePlan.findMany({ where: { active: true }, include: { template: true }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
+    prisma.vehicleTemplate.findMany({ where: { active: true }, include: { insurancePlans: { where: { active: true, billingType: 'SUBSCRIPTION' }, orderBy: { createdAt: 'desc' } } }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
+    prisma.vehicleInsurancePlan.findMany({ where: { active: true, billingType: 'SUBSCRIPTION' }, include: { template: true }, orderBy: [{ active: 'desc' }, { createdAt: 'desc' }] }),
     prisma.playerVehicle.findMany({ include: { player: true, template: true, insurancePlan: true }, orderBy: { updatedAt: 'desc' }, take: 80 }),
     prisma.vehicleTemplate.findUnique({ where: { id: req.params.id }, include: { insurancePlans: true } })
   ]);
@@ -1003,8 +1171,26 @@ adminRoutes.post('/vehicle-insurance-plans', async (req, res) => {
 adminRoutes.post('/vehicle-insurance-plans/:id/toggle', async (req, res) => {
   try {
     const current = await prisma.vehicleInsurancePlan.findUnique({ where: { id: req.params.id } });
+    if (!current) throw new Error('Plano não encontrado.');
+    if (current.billingType !== 'SUBSCRIPTION') throw new Error('Seguro por uso removido. Crie ou use um plano mensal.');
     await prisma.vehicleInsurancePlan.update({ where: { id: req.params.id }, data: { active: !current.active } });
     res.redirect('/admin/vehicles?success=Plano atualizado.');
+  } catch (err) {
+    res.redirect('/admin/vehicles?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/player-vehicles/:id/restore-missing', async (req, res) => {
+  try {
+    const result = await restoreMissingVehicleWithSameId({ playerVehicleId: req.params.id });
+    const details = [
+      `Carro sumido restaurado com o mesmo ID ${result.vehicleKey}.`,
+      result.cancelledClaims ? `${result.cancelledClaims} solicitação(ões) travada(s) foram canceladas.` : null,
+      result.restoredInsuranceUses ? `${result.restoredInsuranceUses} uso(s) de seguro foram devolvidos.` : null,
+      result.refundedCoins ? `${result.refundedCoins.toLocaleString('pt-BR')} RZ foram estornados.` : null,
+      result.fileBridgeImmediate?.ok ? 'Arquivo enviado ao FTP imediatamente.' : 'Entrega salva e colocada na fila rápida do FTP.'
+    ].filter(Boolean).join(' ');
+    res.redirect('/admin/vehicles?success=' + encodeURIComponent(details));
   } catch (err) {
     res.redirect('/admin/vehicles?error=' + encodeURIComponent(err.message));
   }
@@ -1017,13 +1203,13 @@ adminRoutes.post('/player-vehicles/:id/reset-delivery', async (req, res) => {
       if (!v) throw new Error('Veículo do player não encontrado.');
 
       const pending = await tx.vehicleRespawnLog.findFirst({
-        where: { playerVehicleId: v.id, status: 'PENDING', action: { in: ['RESPAWN', 'ADMIN_RESPAWN'] } },
+        where: { playerVehicleId: v.id, status: 'PENDING', action: { in: ['RESPAWN', 'ADMIN_RESPAWN', 'ADMIN_RESTORE_MISSING'] } },
         orderBy: { createdAt: 'desc' }
       });
       if (pending) throw new Error('Já existe uma reposição pendente para esse veículo. Não foi criada outra.');
 
       const oldKey = v.currentVehicleKey || null;
-      const newKey = `SZADMIN_${v.id}_${Date.now().toString(36)}`;
+      const newKey = `RZADMIN_${v.id}_${Date.now().toString(36)}`;
       const delivery = await tx.deliveryQueue.create({
         data: {
           purchaseId: null,
@@ -1035,18 +1221,29 @@ adminRoutes.post('/player-vehicles/:id/reset-delivery', async (req, res) => {
           quantity: 1,
           deliveryType: 'drop_at_feet',
           status: 'PENDING',
-          meta: { kind: 'vehicle_rental', action: 'ADMIN_RESPAWN', playerVehicleId: v.id, vehicleKey: newKey, deleteOldVehicleKey: oldKey, displayName: v.displayName, ...vehicleTemplatePayload(v.template), deliveryMode: 'vehicle_full_mounted', fullVehicle: true, mounted: true, shouldMountParts: true }
+          meta: { kind: 'vehicle_rental', action: 'ADMIN_RESPAWN', playerVehicleId: v.id, vehicleKey: newKey, deleteOldVehicleKey: oldKey, displayName: v.displayName, ...vehicleTemplatePayload({ ...v.template, vehicleClassname: v.vehicleClassname }), vehicleClassname: v.vehicleClassname, deliveryMode: 'vehicle_full_mounted', fullVehicle: true, mounted: true, shouldMountParts: true }
         }
       });
       await tx.playerVehicle.update({ where: { id: v.id }, data: { currentVehicleKey: newKey } });
       await tx.vehicleRespawnLog.create({
         data: { playerVehicleId: v.id, playerId: v.playerId, deliveryId: delivery.id, action: 'ADMIN_RESPAWN', oldVehicleKey: oldKey, newVehicleKey: newKey, status: 'PENDING' }
       });
-      return { vehicleId: v.id, steam64: v.steam64, deliveryId: delivery.id, oldKey, newKey };
+      const accessoryDeliveries = await createVehiclePlayerInventoryAccessoryDeliveries({
+        tx,
+        playerId: v.playerId,
+        steam64: v.steam64,
+        serverType: v.serverType,
+        action: 'ADMIN_RESPAWN',
+        parentDeliveryId: delivery.id,
+        playerVehicleId: v.id,
+        displayName: v.displayName
+      });
+      return { vehicleId: v.id, steam64: v.steam64, deliveryId: delivery.id, accessoryDeliveryIds: accessoryDeliveries.map(item => item.id), oldKey, newKey };
     }, { isolationLevel: 'Serializable' });
 
     await logAudit({ actor: 'admin', action: 'vehicle.admin_respawn.created', target: result.vehicleId, data: result });
-    res.redirect('/admin/vehicles?success=Reposição admin criada.');
+    await queueVehicleDeliveryImmediately(result.steam64, 'reposição admin de veículo');
+    res.redirect('/admin/vehicles?success=' + encodeURIComponent('Reposição admin criada e enviada imediatamente ao FTP.'));
   } catch (err) {
     res.redirect('/admin/vehicles?error=' + encodeURIComponent(err.message));
   }
@@ -1425,29 +1622,127 @@ adminRoutes.post('/packages/:id', async (req, res) => {
 
 adminRoutes.get('/outfits', async (req, res, next) => {
   try {
-    const [outfits, activeSubs, fullCatalog] = await Promise.all([
-      listOutfitTemplates({ includeInactive: true, serverType: 'vanilla' }),
-      prisma.playerOutfitSubscription.findMany({ where: { status: 'ACTIVE' }, include: { player: true, outfitTemplate: true }, orderBy: { expiresAt: 'asc' }, take: 120 }),
-      getFullDayzItemCatalog()
+    const [outfits, activeSubs, privateSubs, fullCatalog, managedAdminData] = await Promise.all([
+      listOutfitTemplates({ includeInactive: true, includePrivate: true, serverType: 'vanilla' }),
+      prisma.playerOutfitSubscription.findMany({
+        where: { status: 'ACTIVE', expiresAt: { gt: new Date() } },
+        include: { player: true, outfitTemplate: true },
+        orderBy: { expiresAt: 'asc' },
+        take: 120
+      }),
+      prisma.playerOutfitSubscription.findMany({
+        where: { status: 'ACTIVE', expiresAt: { gt: new Date() }, outfitTemplate: { is: { isPrivate: true } } },
+        include: { player: true, outfitTemplate: true },
+        orderBy: { steam64: 'asc' },
+        take: 500
+      }),
+      getFullDayzItemCatalog(),
+      getManagedOutfitAdminData()
     ]);
-    const editing = req.query.edit ? await prisma.outfitTemplate.findUnique({ where: { id: String(req.query.edit) } }) : null;
-    res.render('admin/outfits', { title: 'Trajes VIP', outfits, activeSubs, editing, outfitItemsToText, catalog: fullCatalog });
+    const editing = req.query.edit
+      ? await prisma.outfitTemplate.findUnique({ where: { id: String(req.query.edit) } })
+      : null;
+    res.render('admin/outfits', {
+      title: 'Trajes VIP',
+      outfits,
+      activeSubs,
+      privateSubs,
+      editing,
+      outfitItemsToText,
+      catalog: fullCatalog,
+      privateVipSource: PRIVATE_VIP_SOURCE,
+      customOutfitOrders: managedAdminData.orders,
+      outfitFlagRequests: managedAdminData.flagRequests,
+      creatingPrivate: req.query.private === '1'
+    });
   } catch (err) { next(err); }
 });
 
 adminRoutes.post('/outfits', upload.single('image'), async (req, res) => {
   try {
     const outfit = await upsertOutfitTemplateFromBody({ body: req.body, file: req.file });
-    await logAudit({ actor: 'admin', action: 'outfit.created', target: outfit.id, data: { name: outfit.name, priceCoins: outfit.priceCoins, durationDays: outfit.durationDays } });
-    res.redirect('/admin/outfits?success=' + encodeURIComponent('Traje VIP criado.'));
+    let memberResult = { assigned: [], invalid: [] };
+    if (outfit.isPrivate && String(req.body.privateSteamIds || '').trim()) {
+      memberResult = await assignPrivateVipMembers({ outfitId: outfit.id, membersText: req.body.privateSteamIds, durationDays: req.body.durationDays, actor: 'admin' });
+    }
+    await logAudit({ actor: 'admin', action: 'outfit.created', target: outfit.id, data: { name: outfit.name, priceCoins: outfit.priceCoins, durationDays: outfit.durationDays, isPrivate: outfit.isPrivate } });
+    const parts = [outfit.isPrivate ? 'VIP privado criado.' : 'Traje VIP criado.'];
+    if (memberResult.assigned.length) parts.push(`${memberResult.assigned.length} Steam64 adicionada(s).`);
+    if (memberResult.invalid.length) parts.push(`${memberResult.invalid.length} linha(s) inválida(s) ignorada(s).`);
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(parts.join(' ')));
   } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
 });
 
 adminRoutes.post('/outfits/:id', upload.single('image'), async (req, res) => {
   try {
     const outfit = await upsertOutfitTemplateFromBody({ body: req.body, file: req.file, id: req.params.id });
-    await logAudit({ actor: 'admin', action: 'outfit.updated', target: outfit.id, data: { name: outfit.name, priceCoins: outfit.priceCoins, durationDays: outfit.durationDays } });
-    res.redirect('/admin/outfits?success=' + encodeURIComponent('Traje VIP atualizado.'));
+    let memberResult = { assigned: [], invalid: [] };
+    if (outfit.isPrivate && String(req.body.privateSteamIds || '').trim()) {
+      memberResult = await assignPrivateVipMembers({ outfitId: outfit.id, membersText: req.body.privateSteamIds, durationDays: req.body.durationDays, actor: 'admin' });
+    }
+    await logAudit({ actor: 'admin', action: 'outfit.updated', target: outfit.id, data: { name: outfit.name, priceCoins: outfit.priceCoins, durationDays: outfit.durationDays, isPrivate: outfit.isPrivate } });
+    const parts = [outfit.isPrivate ? 'VIP privado atualizado.' : 'Traje VIP atualizado.'];
+    if (memberResult.assigned.length) parts.push(`${memberResult.assigned.length} Steam64 adicionada(s).`);
+    if (memberResult.invalid.length) parts.push(`${memberResult.invalid.length} linha(s) inválida(s) ignorada(s).`);
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(parts.join(' ')));
+  } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
+});
+
+adminRoutes.post('/outfits/:id/grant', async (req, res) => {
+  try {
+    const result = await grantOutfitToPlayerByAdmin({
+      outfitId: req.params.id,
+      steam64: req.body.steam64,
+      durationDays: req.body.durationDays,
+      nickname: req.body.nickname,
+      actor: 'admin'
+    });
+
+    let ftpText = ' O arquivo VIP será atualizado no próximo ciclo do FTP.';
+    try {
+      const sync = await syncPlayerFilesNow(result.player.steam64);
+      ftpText = sync?.skipped
+        ? ' O FTP já estava processando e atualizará no ciclo em andamento.'
+        : ' Arquivo VIP atualizado no FTP.';
+    } catch (syncError) {
+      ftpText = ` VIP salvo no site, mas o FTP não respondeu agora: ${String(syncError?.message || syncError).slice(0, 180)}.`;
+    }
+
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(
+      `${result.outfit.name} liberado para ${result.player.steam64} por ${result.durationDays} dia(s), até ${result.expiresAt.toLocaleString('pt-BR')}.${ftpText}`
+    ));
+  } catch (err) {
+    res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/outfits/subscriptions/:subscriptionId/revoke', async (req, res) => {
+  try {
+    const revoked = await revokeOutfitSubscriptionByAdmin({ subscriptionId: req.params.subscriptionId, actor: 'admin' });
+    try { await syncPlayerFilesNow(revoked.steam64); } catch {}
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(
+      `VIP ${revoked.outfitTemplate?.name || ''} removido do Steam64 ${revoked.steam64}.`
+    ));
+  } catch (err) {
+    res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message));
+  }
+});
+
+adminRoutes.post('/outfits/:id/private-members', async (req, res) => {
+  try {
+    const result = await assignPrivateVipMembers({ outfitId: req.params.id, membersText: req.body.privateSteamIds, durationDays: req.body.durationDays, actor: 'admin' });
+    if (!result.assigned.length && !result.invalid.length) throw new Error('Digite pelo menos uma Steam64.');
+    const parts = [];
+    if (result.assigned.length) parts.push(`${result.assigned.length} player(s) adicionado(s) ao VIP privado por ${result.durationDays} dia(s).`);
+    if (result.invalid.length) parts.push(`${result.invalid.length} linha(s) inválida(s) ignorada(s).`);
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(parts.join(' ')));
+  } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
+});
+
+adminRoutes.post('/outfits/private-members/:subscriptionId/remove', async (req, res) => {
+  try {
+    const removed = await removePrivateVipMember({ subscriptionId: req.params.subscriptionId, actor: 'admin' });
+    res.redirect('/admin/outfits?success=' + encodeURIComponent(`Player ${removed.steam64} removido do VIP privado.`));
   } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
 });
 
@@ -1462,8 +1757,22 @@ adminRoutes.post('/outfits/:id/toggle', async (req, res) => {
 adminRoutes.post('/outfits/check-player', async (req, res) => {
   try {
     const active = await getActiveOutfitForPlayer(req.body.steam64, req.body.serverType || 'vanilla');
-    const msg = active ? `Player tem traje ativo: ${active.outfitTemplate.name} até ${active.expiresAt.toLocaleDateString('pt-BR')}.` : 'Player não tem traje ativo.';
+    const msg = active ? `Player tem traje ativo: ${active.outfitTemplate.name} até ${active.expiresAt.toLocaleString('pt-BR')} (${active.source}).` : 'Player não tem traje ativo.';
     res.redirect('/admin/outfits?success=' + encodeURIComponent(msg));
+  } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
+});
+
+adminRoutes.post('/outfits/custom-orders/:id/status', async (req, res) => {
+  try {
+    await updateCustomOutfitOrder({ id: req.params.id, status: req.body.status, outfitTemplateId: req.body.outfitTemplateId, note: req.body.note });
+    res.redirect('/admin/outfits?success=' + encodeURIComponent('Status do pedido personalizado atualizado.'));
+  } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
+});
+
+adminRoutes.post('/outfits/flag-requests/:id/status', async (req, res) => {
+  try {
+    await updateFlagRequest({ id: req.params.id, status: req.body.status, adminNote: req.body.adminNote });
+    res.redirect('/admin/outfits?success=' + encodeURIComponent('Solicitação de bandeira atualizada.'));
   } catch (err) { res.redirect('/admin/outfits?error=' + encodeURIComponent(err.message)); }
 });
 
@@ -1505,14 +1814,32 @@ adminRoutes.post('/payments/:id/approve', async (req, res) => {
   }
 });
 
+adminRoutes.post('/payments/:id/sync', async (req, res) => {
+  try {
+    const payment = await syncPaymentStatusByLocalId(req.params.id, { force: true });
+    res.redirect(`/admin/payments?success=${encodeURIComponent(`Mercado Pago consultado. Status atual: ${payment.status}.`)}`);
+  } catch (err) {
+    res.redirect(`/admin/payments?error=${encodeURIComponent(err.message)}`);
+  }
+});
+
+adminRoutes.post('/payments/check-mercadopago', async (req, res) => {
+  try {
+    const result = await checkMercadoPagoConnection();
+    res.redirect(`/admin/payments?success=${encodeURIComponent(`Token aceito. Pix disponível. API ativa: ${result.mode}.`)}`);
+  } catch (err) {
+    res.redirect(`/admin/payments?error=${encodeURIComponent(err.message)}`);
+  }
+});
+
 adminRoutes.get('/deliveries', async (req, res) => {
   const deliveries = await prisma.deliveryQueue.findMany({ include: { player: true, purchase: true }, orderBy: { createdAt: 'desc' }, take: 150 });
   res.render('admin/deliveries', { title: 'Entregas', deliveries });
 });
 
 adminRoutes.post('/deliveries/:id/reset', async (req, res) => {
-  await prisma.$transaction(async tx => {
-    await tx.deliveryQueue.update({
+  const delivery = await prisma.$transaction(async tx => {
+    const updated = await tx.deliveryQueue.update({
       where: { id: req.params.id },
       data: { status: 'PENDING', error: null, claimedAt: null, deliveredAt: null }
     });
@@ -1521,7 +1848,9 @@ adminRoutes.post('/deliveries/:id/reset', async (req, res) => {
       where: { deliveryId: req.params.id },
       data: { status: 'PENDING', error: null }
     });
+    return updated;
   });
   await logAudit({ actor: 'admin', action: 'delivery.reset', target: req.params.id });
-  res.redirect('/admin/deliveries?success=Entrega voltou para pendente com recuperação segura.');
+  await publishVehicleDeliveryImmediately(delivery.steam64, 'reenvio manual de entrega');
+  res.redirect('/admin/deliveries?success=' + encodeURIComponent('Entrega voltou para pendente e foi reenviada imediatamente ao FTP.'));
 });

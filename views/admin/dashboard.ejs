@@ -3,6 +3,25 @@
 <main class="container">
   <%- include('_admin_nav') %>
   <%- include('../partials/alerts') %>
+
+  <section class="card ftp-dashboard-card-v88">
+    <div>
+      <p class="eyebrow">FILE BRIDGE V88</p>
+      <h2>FTP do servidor DayZ</h2>
+      <p class="muted">Configure host, porta, usuário, senha e a pasta <code>RAIDZ_FileBridge</code>. O mod lê somente arquivos locais.</p>
+    </div>
+    <a class="btn primary ftp-dashboard-btn-v88" href="/admin/ftp">🗂️ ABRIR CONFIGURAÇÃO FTP</a>
+  </section>
+
+  <section class="card" style="display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;border-color:rgba(239,68,68,.28)">
+    <div>
+      <p class="eyebrow">RECRUTAMENTO DE CLÃS V107</p>
+      <h2>Discord com até 2 webhooks</h2>
+      <p class="muted">Regule os canais, o intervalo em horas e envie os clãs recrutando com imagens e instruções.</p>
+    </div>
+    <a class="btn primary" href="/admin/clan-recruitment-discord">📢 CONFIGURAR RECRUTAMENTO DC</a>
+  </section>
+
   <section class="shop-header">
     <div><p class="eyebrow">Controle da loja</p><h1>Dashboard</h1><p class="muted">Resumo rápido do mês atual, atalhos de vendas e logs.</p></div>
     <div class="admin-actions"><a class="btn" href="/admin/sales">Ver vendas</a><a class="btn" href="/admin/logs">Ver logs</a><form method="POST" action="/admin/send-monthly-report"><button class="btn primary">Mandar resumo mensal no Discord</button></form></div>
@@ -22,7 +41,7 @@
       <div>
         <p class="eyebrow">Proteção de atualização</p>
         <h2>Dados que ficam salvos quando atualizar o site</h2>
-        <p class="muted">Deploy normal não apaga saldo, garagem, uso de seguro, compras, entregas nem apoio streamer. Só o botão <b>WIPE GERAL</b> limpa esses dados.</p>
+        <p class="muted">Deploy normal não apaga players, perfis, clãs, recrutamentos, horários do Discord, saldos, garagem, compras ou entregas. O WIPE GERAL fica bloqueado por padrão no código.</p>
       </div>
       <span class="status approved">SEGURO ATIVO</span>
     </div>
@@ -47,13 +66,19 @@
   </section>
 
   <section class="card danger-zone-card">
-    <p class="eyebrow">Wipe Geral / Lançamento</p>
-    <h2>WIPE GERAL do painel</h2>
-    <p class="muted">Use antes de liberar o servidor de verdade. Ele deixa o painel limpo como novo: apaga players, saldos, Pix, compras, entregas, garagem, veículos dos players, ranking, clãs, estatísticas, histórico de apoio e logs. Mantém somente a estrutura da loja: produtos, itens, pacotes de moedas, veículos cadastrados, seguros, cupons, códigos streamer e configurações.</p>
-    <form method="POST" action="/admin/wipe/reset-store-stats" class="inline-grid" onsubmit="return confirm('WIPE GERAL: vai apagar players, saldos, compras, Pix, entregas, garagem, ranking, clãs e estatísticas. Produtos e itens ficam. Confirmar?');">
-      <input type="password" name="adminPassword" placeholder="Senha admin" required>
-      <button class="btn danger" type="submit">WIPE GERAL - limpar painel</button>
-    </form>
+    <p class="eyebrow">Proteção máxima de dados</p>
+    <h2>WIPE GERAL <%= adminWipeEnabled ? 'LIBERADO MANUALMENTE' : 'BLOQUEADO' %></h2>
+    <% if (!adminWipeEnabled) { %>
+      <p class="muted">O botão que apagava players, perfis, saldos, compras, garagem, ranking e clãs foi bloqueado por padrão. Atualizar ou reiniciar o site não libera essa função.</p>
+      <div class="info-strip-v44">Para manter todos os dados, deixe <code>ENABLE_ADMIN_WIPE</code> ausente ou como <code>false</code> no Railway.</div>
+    <% } else { %>
+      <p class="muted">A variável <code>ENABLE_ADMIN_WIPE=true</code> está ativa. Esta função apaga todos os dados operacionais e só deve ser usada em um wipe real do servidor.</p>
+      <form method="POST" action="/admin/wipe/reset-store-stats" class="inline-grid" onsubmit="return confirm('ATENÇÃO: isso apaga players, perfis, clãs, saldos, compras, garagem e recrutamentos. Confirmar o wipe real?');">
+        <input type="password" name="adminPassword" placeholder="Senha admin" required>
+        <input type="text" name="confirmPhrase" placeholder="Digite: <%= adminWipeConfirmPhrase %>" required>
+        <button class="btn danger" type="submit">EXECUTAR WIPE GERAL</button>
+      </form>
+    <% } %>
   </section>
 </main>
 <%- include('../partials/footer') %>

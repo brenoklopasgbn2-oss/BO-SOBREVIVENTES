@@ -43,6 +43,7 @@
 
       <form method="POST" action="/cart/buy" id="cartCheckoutForm" class="form-grid">
         <input type="hidden" name="cartItemsJson" id="cartItemsJson" value="[]">
+        <input type="hidden" name="checkoutToken" value="<%= checkoutToken %>">
         <label>Cupom de desconto
           <input name="couponCode" placeholder="EX: WIPE10" maxlength="32" style="text-transform:uppercase">
         </label>
@@ -50,10 +51,11 @@
           <input name="streamerCode" placeholder="EX: BRENO" maxlength="32" style="text-transform:uppercase">
         </label>
         <label class="check confirm-check">
-          <input type="checkbox" required>
+          <input type="checkbox" name="confirmPurchase" required>
           Confirmo que quero comprar todos os itens do carrinho com meu saldo RZ.
         </label>
         <button class="btn primary buy-pulse" type="submit" id="cartCheckoutButton">Finalizar carrinho</button>
+        <div id="cartCheckoutStatus" class="muted" role="status" aria-live="polite"></div>
         <button class="btn danger" type="button" id="cartClearButton">Limpar carrinho</button>
       </form>
       <p class="muted">O preço final é recalculado no servidor na hora da compra. Assim ninguém consegue burlar valor pelo navegador.</p>
@@ -71,6 +73,8 @@
     const form = document.getElementById('cartCheckoutForm');
     const clearBtn = document.getElementById('cartClearButton');
     const checkoutBtn = document.getElementById('cartCheckoutButton');
+    const checkoutStatus = document.getElementById('cartCheckoutStatus');
+    let submitting = false;
 
     function money(n) { return new Intl.NumberFormat('pt-BR').format(Math.max(0, Math.floor(Number(n || 0)))); }
     function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { return []; } }
@@ -126,8 +130,22 @@
       sync();
     });
 
-    form.addEventListener('submit', () => {
-      setTimeout(() => write([]), 600);
+    form.addEventListener('submit', (ev) => {
+      if (submitting) {
+        ev.preventDefault();
+        return;
+      }
+      const items = read().filter(item => item && item.productId);
+      if (!items.length) {
+        ev.preventDefault();
+        return;
+      }
+      submitting = true;
+      checkoutBtn.disabled = true;
+      clearBtn.disabled = true;
+      checkoutBtn.textContent = 'Processando uma única vez...';
+      if (checkoutStatus) checkoutStatus.textContent = 'Compra enviada. Não feche nem clique novamente.';
+      form.querySelectorAll('input:not([type="hidden"])').forEach(input => { input.readOnly = true; });
     });
 
     sync();

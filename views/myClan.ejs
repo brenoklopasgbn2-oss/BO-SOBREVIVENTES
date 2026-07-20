@@ -1,72 +1,224 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
-<main class="container my-clan-page-v34">
+<style>
+  .myclan-v106{display:grid;gap:20px}.myclan-empty-v106,.myclan-panel-v106{padding:24px;border-radius:32px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(10,14,24,.97),rgba(4,8,14,.96));box-shadow:0 24px 80px rgba(0,0,0,.28)}.myclan-hero-v106{position:relative;overflow:hidden;min-height:300px}.myclan-hero-v106::before{content:"";position:absolute;inset:0;background:url('<%= membership?.clan?.bannerImage || '/images/raidz-clans-hero.webp' %>') center/cover no-repeat;opacity:.34}.myclan-hero-v106::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,12,.2),rgba(2,6,12,.9) 70%,rgba(2,6,12,.96))}.myclan-hero-inner-v106{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:end;min-height:300px}.myclan-hero-inner-v106 img{width:110px;height:110px;object-fit:cover;border-radius:28px;border:1px solid rgba(255,255,255,.18);background:#050913}.myclan-hero-inner-v106 h1{margin:10px 0 8px;font-size:2.3rem}.myclan-hero-inner-v106 p{margin:0;color:#d8e0ea;max-width:760px}.myclan-stat-grid-v106{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px}.myclan-stat-v106{padding:14px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}.myclan-stat-v106 small{color:#9fb0c8}.myclan-stat-v106 strong{display:block;font-size:1.2rem}
+  .myclan-grid-v106{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.myclan-form-v106{display:grid;gap:12px}.myclan-form-grid-v106{display:grid;grid-template-columns:1fr 1fr;gap:12px}.myclan-form-v106 input,.myclan-form-v106 textarea{width:100%}.myclan-member-grid-v106,.myclan-app-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.myclan-member-card-v106,.myclan-app-card-v106{padding:16px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:grid;gap:10px}.myclan-member-head-v106,.myclan-app-head-v106{display:flex;gap:12px;align-items:center}.myclan-member-head-v106 img{width:64px;height:64px;object-fit:cover;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:#050913}.myclan-badge-row-v106{display:flex;gap:8px;flex-wrap:wrap}.myclan-badge-row-v106 span{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.76rem;font-weight:800}.myclan-actions-v106{display:flex;gap:8px;flex-wrap:wrap}.myclan-actions-v106 form{flex:1}.myclan-actions-v106 .btn{width:100%}.muted-note{color:#9fb0c8} .clan-vip-showcase-v111{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center;padding:22px;border-radius:30px;border:1px solid rgba(239,68,68,.34);background:radial-gradient(circle at 15% 20%,rgba(239,68,68,.2),transparent 38%),linear-gradient(145deg,rgba(12,18,30,.98),rgba(4,7,12,.98));box-shadow:0 28px 90px rgba(0,0,0,.34)}.clan-vip-showcase-v111 img{width:100%;height:220px;object-fit:contain;border-radius:24px;background:#050913;border:1px solid rgba(255,255,255,.1)}.clan-vip-showcase-v111 h2{margin:4px 0 8px}.clan-vip-showcase-v111 p{margin:0;color:#cdd7e4}.clan-vip-list-v111{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.clan-vip-list-v111 span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.78rem;font-weight:800}.clan-vip-empty-v111{padding:20px;border-radius:26px;border:1px dashed rgba(255,255,255,.14);background:rgba(255,255,255,.025)} @media (max-width:980px){.myclan-hero-inner-v106,.myclan-grid-v106,.clan-vip-showcase-v111{grid-template-columns:1fr}.myclan-form-grid-v106{grid-template-columns:1fr}.myclan-stat-grid-v106{grid-template-columns:1fr 1fr}}
+</style>
+<main class="container myclan-v106">
   <%- include('partials/alerts') %>
+
   <% if (!membership) { %>
-    <section class="clan-request-panel-v34 clan-ticket-only-v45 sz-hover-card">
-      <div><p class="v9-kicker">Meu clã</p><h1>Você ainda não está em um clã</h1><p>Abra um ticket no Discord e peça para o ADM liberar você como dono do clã pelo Steam64. Depois de liberado, o painel “Meu Clã” aparece aqui para gerenciar membros, sub dono e descrição.</p></div>
-      <a class="btn primary" href="/ranking#solicitar-cla">Ver instruções</a>
+    <section class="myclan-empty-v106">
+      <p class="eyebrow">Meu clã</p>
+      <h1>Você ainda não está em um clã</h1>
+      <p>Abra a nova aba de Clãs & Recrutamento para criar um clã, ver quem está recrutando ou mandar sua solicitação com formulário integrado.</p>
+      <a class="btn primary" href="/clans">Ir para Clãs & Recrutamento</a>
     </section>
-  <% } else { const clan = membership.clan; const canManage = ['OWNER','SUB_OWNER'].includes(membership.role); %>
-    <section class="my-clan-hero-v34 sz-hover-card">
-      <div class="clan-flag-big-v34"><% if (clan.flagUrl) { %><img src="<%= clan.flagUrl %>" alt="Bandeira"><% } else { %><span><%= clan.tag %></span><% } %></div>
-      <div>
-        <p class="v9-kicker">Meu clã • <%= membership.role === 'OWNER' ? 'Dono' : membership.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro' %></p>
-        <h1>[<%= clan.tag %>] <%= clan.name %></h1>
-        <p><%= clan.description || 'Sem descrição cadastrada.' %></p>
-        <div class="ranking-mode-pills-v34"><a href="/ranking#clas">Ver ranking do clã</a><a href="#membros">Membros</a><a href="#trofeus">Troféus</a></div>
-      </div>
-    </section>
-
-    <section class="split">
-      <div class="card wide-card" id="membros">
-        <h2>Membros do clã</h2>
-        <table><thead><tr><th>Player</th><th>Steam64</th><th>Cargo</th><th>Entrou</th><th></th></tr></thead><tbody>
-          <% clan.members.forEach(m => { %>
-            <tr>
-              <td><%= m.player.nickname || 'Player' %></td><td><code><%= m.steam64 %></code></td><td><span class="status approved"><%= m.role %></span></td><td><%= dateTime(m.joinedAt) %></td>
-              <td>
-                <% if (canManage && m.role !== 'OWNER') { %>
-                  <div class="admin-actions compact-actions-v34">
-                    <% if (membership.role === 'OWNER') { %><form method="POST" action="/my-clan/members/<%= m.id %>/sub-owner"><button class="btn small">Sub dono</button></form><% } %>
-                    <form method="POST" action="/my-clan/members/<%= m.id %>/remove"><button class="btn small">Remover</button></form>
-                  </div>
-                <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody></table>
-      </div>
-      <div class="card wide-card" id="trofeus">
-        <h2>Troféus do clã</h2>
-        <% clan.awards.forEach(a => { %><div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= a.color %>"><span><% if (a.imageUrl) { %><img src="<%= a.imageUrl %>" alt="Troféu"><% } else { %><%= a.icon %><% } %></span><strong><%= a.title %> <% if (a.points) { %><em>+<%= a.points %> pts</em><% } %></strong><small><%= a.eventName || 'Evento' %> • <%= a.description || 'Conquista do clã' %></small></div><% }) %>
-        <% if (!clan.awards.length) { %><p class="muted">O clã ainda não ganhou eventos registrados.</p><% } %>
-        <h2>Minhas badges</h2>
-        <% badges.forEach(b => { %><div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= b.color %>"><span><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><strong><%= b.title %> <% if (b.points) { %><em>+<%= b.points %> pts</em><% } %></strong><small><%= b.description || 'Conquista do player' %></small></div><% }) %>
-        <% if (!badges.length) { %><p class="muted">Você ainda não tem badge de campeão.</p><% } %>
-      </div>
-    </section>
-
-    <% if (canManage) { %>
-      <section class="split">
-        <div class="card wide-card">
-          <h2>Configurar clã</h2>
-          <form method="POST" action="/my-clan/update" class="form-grid">
-            <p class="muted">A bandeira do clã só pode ser trocada pelo admin. O dono/sub dono pode editar a descrição e gerenciar membros.</p>
-            <label>Descrição<textarea name="description"><%= clan.description || '' %></textarea></label>
-            <button class="btn primary">Salvar descrição</button>
-          </form>
+  <% } else { %>
+    <section class="myclan-panel-v106 myclan-hero-v106">
+      <div class="myclan-hero-inner-v106">
+        <img src="<%= membership.clan.flagImage %>" alt="<%= membership.clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+        <div>
+          <p class="eyebrow">Painel do clã</p>
+          <h1>[<%= membership.clan.tag %>] <%= membership.clan.name %></h1>
+          <p><%= membership.clan.description || 'Sem descrição cadastrada.' %></p>
+          <div class="myclan-badge-row-v106" style="margin-top:12px">
+            <span>Seu cargo: <%= membership.role === 'OWNER' ? 'Dono' : (membership.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></span>
+            <span><%= membership.clan.isRecruiting ? '📢 Recrutando' : '⛔ Recrutamento fechado' %></span>
+            <% if ((membership.clan.activeOutfitNames || []).length) { %><span>👑 VIPs do clã: <%= membership.clan.activeOutfitNames.join(', ') %></span><% } %>
+          </div>
         </div>
-        <div class="card wide-card">
-          <h2>Adicionar player</h2>
-          <form method="POST" action="/my-clan/members/add" class="form-grid">
-            <label>Steam64 do player<input name="steam64" maxlength="17" placeholder="7656119..." required></label>
-            <label>Nome no jogo<input name="nickname" placeholder="Nick opcional"></label>
-            <button class="btn primary">Adicionar no clã</button>
-          </form>
+        <div class="myclan-stat-grid-v106">
+          <div class="myclan-stat-v106"><small>Membros</small><strong><%= membership.clan.memberCount %></strong></div>
+          <div class="myclan-stat-v106"><small>Pendentes</small><strong><%= membership.clan.pendingApplications %></strong></div>
+          <div class="myclan-stat-v106"><small>Premiações</small><strong><%= (membership.clan.awards || []).length %></strong></div>
+        </div>
+      </div>
+    </section>
+
+    <% if (membership.clan.clanVipOutfit) { const clanVipPaid = membership.clan.clanVipOutfit.billingMode === 'PAID'; const currentClanMember = membership.clan.members.find(member => member.playerId === membership.playerId); %>
+      <section class="clan-vip-showcase-v111">
+        <img src="<%= membership.clan.clanVipOutfit.imageSrc %>" onerror="this.src='/images/raidz-vips-store.webp'" alt="<%= membership.clan.clanVipOutfit.name %>">
+        <div>
+          <p class="eyebrow">Traje VIP oficial do clã</p>
+          <h2><%= membership.clan.clanVipOutfit.name %></h2>
+          <p><%= membership.clan.clanVipOutfit.description || 'Traje personalizado exclusivo deste clã.' %></p>
+          <div class="clan-vip-list-v111">
+            <span>👑 Dono recebe gratuitamente</span>
+            <% if (clanVipPaid) { %>
+              <span>💰 Membros pagam <%= coins(membership.clan.clanVipOutfit.monthlyPriceCoins) %> RZ / 30 dias</span>
+              <span>🚫 Sem renovação, o VIP expira</span>
+            <% } else { %>
+              <span>✅ Gratuito para todos os membros ativos</span>
+              <span>⚡ Liberação automática</span>
+            <% } %>
+            <span>🚫 Ao sair do clã, o acesso é removido</span>
+          </div>
+          <% if (membership.role === 'OWNER' || !clanVipPaid) { %>
+            <div class="notice success"><strong>Seu acesso está liberado gratuitamente.</strong></div>
+          <% } else if (currentClanMember?.clanVipActive) { %>
+            <div class="notice success"><strong>Seu traje está ativo</strong> até <%= dateTime(currentClanMember.clanVipExpiresAt) %>.</div>
+            <form method="POST" action="/clans/<%= membership.clan.slug %>/vip/buy" style="margin-top:10px"><button class="btn primary" type="submit">Renovar mais 30 dias</button></form>
+          <% } else { %>
+            <div class="notice">Você ainda não pagou a mensalidade deste traje.</div>
+            <form method="POST" action="/clans/<%= membership.clan.slug %>/vip/buy" style="margin-top:10px"><button class="btn primary" type="submit">Comprar por <%= coins(membership.clan.clanVipOutfit.monthlyPriceCoins) %> RZ / 30 dias</button></form>
+          <% } %>
+          <% if (membership.role === 'OWNER') { %><a class="btn" href="/clan-outfit" style="margin-top:10px">Abrir detalhes do traje do clã</a><% } %>
         </div>
       </section>
+    <% } else if (membership.role === 'OWNER') { %>
+      <section class="clan-vip-empty-v111">
+        <p class="eyebrow">Traje VIP do clã</p>
+        <h2>Nenhum traje personalizado ligado ao dono</h2>
+        <p class="muted-note">Quando o ADM finalizar e ligar o traje personalizado ao Steam64 do dono, ele aparecerá aqui. O ADM escolhe se será gratuito para os membros ou pago por 30 dias.</p>
+        <button class="btn" type="button" disabled>Novas compras temporariamente desativadas</button>
+      </section>
     <% } %>
+
+    <section class="myclan-grid-v106">
+      <article class="myclan-panel-v106">
+        <div>
+          <p class="eyebrow">Editar clã</p>
+          <h2>Configuração completa</h2>
+          <p class="muted-note">O dono ou sub dono pode mexer no perfil do clã, recrutamento, imagens e descrição.</p>
+        </div>
+        <% if (membership.role === 'OWNER' || membership.role === 'SUB_OWNER') { %>
+          <form method="POST" action="/my-clan/update" enctype="multipart/form-data" class="myclan-form-v106">
+            <div class="myclan-form-grid-v106">
+              <label>Nome do clã
+                <input name="name" maxlength="80" value="<%= membership.clan.name %>" <%= membership.role !== 'OWNER' ? 'readonly' : '' %>>
+              </label>
+              <label>TAG
+                <input name="tag" maxlength="8" value="<%= membership.clan.tag %>" <%= membership.role !== 'OWNER' ? 'readonly' : '' %>>
+              </label>
+              <label>Cor de destaque
+                <input type="color" name="accentColor" value="<%= membership.clan.accentColor || '#ef4444' %>">
+              </label>
+              <label>Contato / Discord
+                <input name="recruitmentContact" maxlength="160" value="<%= membership.clan.recruitmentContact || '' %>">
+              </label>
+              <label>Link da imagem do clã (opcional)
+                <input name="flagUrl" value="<%= membership.clan.flagUrl || '' %>" placeholder="https://...">
+              </label>
+              <label>Imagem / logo do clã
+                <input type="file" name="flagImage" accept="image/png,image/jpeg,image/webp,image/gif">
+              </label>
+              <label>Banner do clã
+                <input type="file" name="bannerImage" accept="image/png,image/jpeg,image/webp,image/gif">
+              </label>
+              <label style="display:flex;align-items:end;gap:8px"><input type="checkbox" name="isRecruiting" value="1" <%= membership.clan.isRecruiting ? 'checked' : '' %>> Clã recrutando</label>
+            </div>
+            <label>Descrição
+              <textarea name="description" rows="4" maxlength="1200"><%= membership.clan.description || '' %></textarea>
+            </label>
+            <label>Título do recrutamento
+              <input name="recruitmentTitle" maxlength="120" value="<%= membership.clan.recruitmentTitle || '' %>">
+            </label>
+            <label>Mensagem do recrutamento
+              <textarea name="recruitmentMessage" rows="4" maxlength="1200"><%= membership.clan.recruitmentMessage || '' %></textarea>
+            </label>
+            <label>Requisitos / observações
+              <textarea name="recruitmentRequirements" rows="4" maxlength="1200"><%= membership.clan.recruitmentRequirements || '' %></textarea>
+            </label>
+            <button class="btn primary" type="submit">Salvar alterações do clã</button>
+          </form>
+        <% } else { %>
+          <p>Apenas dono ou sub dono consegue mexer nas configurações do clã.</p>
+        <% } %>
+      </article>
+
+      <article class="myclan-panel-v106">
+        <div>
+          <p class="eyebrow">Adicionar membro</p>
+          <h2>Inclusão manual</h2>
+          <p class="muted-note">Use o nick in-game e o Steam64 do player. Se ele já estiver em outro clã, a loja bloqueia a entrada.</p>
+        </div>
+        <% if (membership.role === 'OWNER' || membership.role === 'SUB_OWNER') { %>
+          <form method="POST" action="/my-clan/members/add" class="myclan-form-v106">
+            <label>Nick in-game
+              <input name="nickname" maxlength="100" required placeholder="Nome do player no jogo">
+            </label>
+            <label>Steam64
+              <input name="steam64" maxlength="17" required placeholder="7656119...">
+            </label>
+            <button class="btn primary" type="submit">Adicionar player ao clã</button>
+          </form>
+        <% } else { %>
+          <p>Você é membro do clã, então só consegue visualizar a equipe.</p>
+        <% } %>
+      </article>
+    </section>
+
+    <section class="myclan-panel-v106">
+      <div>
+        <p class="eyebrow">Membros do clã</p>
+        <h2>Equipe atual</h2>
+      </div>
+      <div class="myclan-member-grid-v106">
+        <% membership.clan.members.forEach(member => { %>
+          <article class="myclan-member-card-v106">
+            <div class="myclan-member-head-v106">
+              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
+              <div>
+                <strong><%= member.displayName %></strong>
+                <small><%= member.role === 'OWNER' ? 'Dono' : (member.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></small>
+              </div>
+            </div>
+            <div class="myclan-badge-row-v106">
+              <span>Steam64: <%= member.steam64 %></span>
+              <% if (member.activeOutfit?.outfitTemplate?.name) { %><span>👑 <%= member.activeOutfit.outfitTemplate.name %></span><% } else { %><span>Sem VIP ativo</span><% } %>
+            </div>
+            <% if (member.player?.profileBio) { %><p class="muted-note"><%= member.player.profileBio %></p><% } %>
+            <% if ((membership.role === 'OWNER' || membership.role === 'SUB_OWNER') && member.role !== 'OWNER') { %>
+              <div class="myclan-actions-v106">
+                <% if (membership.role === 'OWNER' && member.role !== 'SUB_OWNER') { %>
+                  <form method="POST" action="/my-clan/members/<%= member.id %>/sub-owner"><button class="btn" type="submit">Promover a sub dono</button></form>
+                <% } %>
+                <form method="POST" action="/my-clan/members/<%= member.id %>/remove"><button class="btn" type="submit">Remover do clã</button></form>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="myclan-panel-v106" id="solicitacoes">
+      <div>
+        <p class="eyebrow">Solicitações de recrutamento</p>
+        <h2>Formulários recebidos</h2>
+      </div>
+      <div class="myclan-app-grid-v106">
+        <% (membership.clan.joinApplications || []).forEach(app => { %>
+          <article class="myclan-app-card-v106">
+            <div class="myclan-app-head-v106">
+              <div>
+                <strong><%= app.requesterName || app.player?.nickname || app.requesterSteam64 %></strong>
+                <small>Steam64: <%= app.requesterSteam64 %></small>
+                <small>Status: <%= app.status %> • <%= dateTime(app.createdAt) %></small>
+              </div>
+            </div>
+            <% if (app.inGameName) { %><div class="myclan-badge-row-v106"><span>Nick in-game: <%= app.inGameName %></span></div><% } %>
+            <p><%= app.message || 'Sem mensagem adicional.' %></p>
+            <% if (app.ownerNote) { %><p class="muted-note">Obs. do clã: <%= app.ownerNote %></p><% } %>
+            <% if (app.status === 'PENDING' && (membership.role === 'OWNER' || membership.role === 'SUB_OWNER')) { %>
+              <div class="myclan-actions-v106">
+                <form method="POST" action="/my-clan/applications/<%= app.id %>/approve">
+                  <input name="ownerNote" placeholder="Obs. opcional para o player">
+                  <button class="btn primary" type="submit">Aprovar e adicionar</button>
+                </form>
+                <form method="POST" action="/my-clan/applications/<%= app.id %>/reject">
+                  <input name="ownerNote" placeholder="Motivo opcional">
+                  <button class="btn" type="submit">Recusar</button>
+                </form>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+        <% if (!(membership.clan.joinApplications || []).length) { %>
+          <article class="myclan-app-card-v106"><p>Nenhuma solicitação recebida ainda.</p></article>
+        <% } %>
+      </div>
+    </section>
   <% } %>
 </main>
 <%- include('partials/footer') %>

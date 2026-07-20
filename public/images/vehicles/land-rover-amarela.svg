@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-label="Land Rover Amarela">
+  <defs><radialGradient id="g" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#273449"/><stop offset="1" stop-color="#04070d"/></radialGradient><filter id="s"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#000" flood-opacity=".55"/></filter></defs>
+  <rect width="900" height="560" rx="42" fill="url(#g)"/>
+  <g opacity=".12" fill="#fff"><circle cx="120" cy="90" r="2"/><circle cx="760" cy="120" r="2"/><circle cx="690" cy="430" r="2"/></g>
+  <g filter="url(#s)" transform="translate(90 135)">
+    <path d="M118 220h520c32 0 58 26 58 58v30H58v-30c0-32 26-58 60-58Z" fill="#151923"/>
+    <path d="M130 88h310c72 0 128 42 180 126H86l44-126Z" fill="#c69a2c"/>
+    <path d="M166 118h112v76H136l30-76Zm142 0h118c44 0 78 20 112 76H308v-76Z" fill="#9fb4c9" opacity=".75"/>
+    <path d="M84 206h610l32 46v52H44v-42l40-56Z" fill="#c69a2c"/>
+    <path d="M62 282h114v34H62zM602 282h120v34H602z" fill="#f5d35c" opacity=".95"/>
+    <circle cx="186" cy="318" r="70" fill="#05070b"/><circle cx="186" cy="318" r="38" fill="#414a56"/><circle cx="186" cy="318" r="16" fill="#c7cbd1"/>
+    <circle cx="586" cy="318" r="70" fill="#05070b"/><circle cx="586" cy="318" r="38" fill="#414a56"/><circle cx="586" cy="318" r="16" fill="#c7cbd1"/>
+    <path d="M62 254h640" stroke="#000" stroke-opacity=".35" stroke-width="10"/>
+    <path d="M252 214h1M490 214h1" stroke="#111" stroke-width="22" stroke-linecap="round"/>
+  </g>
+  <text x="450" y="62" text-anchor="middle" fill="#f8fafc" font-family="Arial Black,Arial,sans-serif" font-size="34">Land Rover Amarela</text>
+  <text x="450" y="506" text-anchor="middle" fill="#ffb56b" font-family="Arial, sans-serif" font-size="22" font-weight="700">RAID-Z • Veículo</text>
+</svg>

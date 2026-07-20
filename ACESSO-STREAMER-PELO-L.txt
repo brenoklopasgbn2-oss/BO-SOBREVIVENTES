@@ -1,0 +1,28 @@
+ACESSO SEGURO AO PAINEL STREAMER PELO L
+=======================================
+
+O login público por Steam64/código foi removido.
+O painel /streamer agora só abre com uma sessão assinada criada pelo servidor DayZ.
+
+FLUXO DO MOD AO APERTAR L
+-------------------------
+1. O lado servidor do MOD identifica o Steam64 real do player.
+2. O servidor chama uma destas rotas usando a API_KEY no header X-API-Key:
+
+   GET  /api/game/streamer/access?steam64=7656119XXXXXXXXXX
+   POST /api/game/streamer/access
+        JSON: {"steam64":"7656119XXXXXXXXXX"}
+
+3. A API devolve JSON com o campo "url". Exemplo:
+   {"ok":true,"url":"https://SEU-SITE/streamer/from-game?token=..."}
+
+4. O MOD abre exatamente a URL devolvida para aquele player.
+5. O token expira em 120 segundos. O navegador recebe uma sessão protegida por 8 horas.
+
+IMPORTANTE
+----------
+- Não monte a URL usando somente ?steam64=.
+- Não coloque a API_KEY na URL aberta no navegador.
+- A API_KEY deve ficar somente no lado servidor do MOD/config do servidor.
+- Steam64 não liberado em Admin > Apoio Streamer recebe erro 403.
+- Digitar o Steam64 do streamer no site não abre mais o painel.

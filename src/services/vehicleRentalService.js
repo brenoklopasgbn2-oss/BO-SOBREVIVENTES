@@ -7,7 +7,6 @@ import { prepareUploadedImage } from '../utils/pngTransparency.js';
 const GAME_SERVER_TYPES = ['vanilla', 'bbp'];
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export const NORMAL_INSURANCE_DISTANCE_METERS = 250;
-export const VEHICLE_PER_USE_INSURANCE_PRICE = 10000;
 
 export function getVehicleMonthlyInsurancePrice(template) {
   const value = Math.max(0, Number(template?.buyPriceCoins || 0));
@@ -17,12 +16,35 @@ export function getVehicleMonthlyInsurancePrice(template) {
 export function getVehicleInsurancePlanPrice(plan, template, { chargeAtPurchase = false } = {}) {
   if (!plan) return 0;
 
-  // V61: na hora de comprar/doar o veículo, o primeiro mês do seguro já está incluso
-  // no valor cheio do carro. Depois disso: mensal custa 50% do veículo, e por uso cobra 10k ao acionar.
+  // O primeiro mês do seguro mensal já está incluso na compra do veículo.
   if (chargeAtPurchase) return 0;
-
-  if (plan.billingType === 'PER_USE') return VEHICLE_PER_USE_INSURANCE_PRICE;
   return getVehicleMonthlyInsurancePrice(template);
+}
+
+async function resolveMonthlyInsurancePlan(tx, template, requestedPlanId = null) {
+  if (requestedPlanId) {
+    const requested = await tx.vehicleInsurancePlan.findUnique({ where: { id: requestedPlanId } });
+    if (!requested || !requested.active) throw new Error('Seguro não encontrado ou inativo.');
+    if (requested.billingType !== 'SUBSCRIPTION') throw new Error('O seguro por uso foi removido. Escolha o seguro mensal.');
+    if (requested.templateId && requested.templateId !== template.id) throw new Error('Esse seguro pertence a outro veículo.');
+    return requested;
+  }
+
+  // V129: todo veículo novo sai obrigatoriamente com seguro mensal ativo.
+  // Primeiro tenta um plano exclusivo do modelo; se não existir, usa o plano global.
+  const templatePlan = await tx.vehicleInsurancePlan.findFirst({
+    where: { active: true, billingType: 'SUBSCRIPTION', templateId: template.id },
+    orderBy: { updatedAt: 'desc' }
+  });
+  if (templatePlan) return templatePlan;
+
+  const globalPlan = await tx.vehicleInsurancePlan.findFirst({
+    where: { active: true, billingType: 'SUBSCRIPTION', templateId: null },
+    orderBy: { updatedAt: 'desc' }
+  });
+  if (globalPlan) return globalPlan;
+
+  throw new Error('Nenhum seguro mensal ativo foi encontrado. Cadastre ou ative um plano no painel ADM.');
 }
 
 export function normalizeServerType(value, fallback = 'vanilla') {
@@ -215,6 +237,14 @@ function normalizeCargoItemForPayload(item, index = 0) {
     ...item,
     slot,
     slotName: slot,
+    location: 'cargo',
+    destination: 'vehicle_cargo',
+    container: 'vehicle',
+    inventoryLocation: 'cargo',
+    toCargo: true,
+    putInCargo: true,
+    mount: false,
+    attached: false,
     classname,
     className: classname,
     type: classname,
@@ -224,27 +254,100 @@ function normalizeCargoItemForPayload(item, index = 0) {
   };
 }
 
+export const VEHICLE_PLAYER_INVENTORY_ACCESSORIES = [
+  {
+    classname: 'HeadlightH7',
+    quantity: 2,
+    label: '2 lâmpadas H7'
+  }
+];
+
+// O mod do veículo agora instala o MuranoCarlock. O site remove qualquer tentativa
+// antiga de colocá-lo dentro do carro, mas não cria mais entrega do CarLock.
+const LEGACY_REQUIRED_VEHICLE_CARGO_CLASSES = new Set(['muranocarlock', 'headlighth7']);
+
+const V101_FORCED_HEADLIGHT_SLOTS = new Set([
+  'reflector_1_1', 'reflector_1_2', 'reflector_1',
+  'reflector_2_1', 'reflector_2_2', 'reflector_2'
+]);
+
+function normalizedClassname(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function nextSortOrder(items) {
+  return (Array.isArray(items) ? items : []).reduce((max, item, index) => {
+    const current = Number.isFinite(Number(item?.sortOrder)) ? Number(item.sortOrder) : index;
+    return Math.max(max, current);
+  }, -1) + 1;
+}
+
+function isV101ForcedMountedHeadlight(part) {
+  const classname = normalizedClassname(part?.classname || part?.className || part?.type);
+  if (classname !== 'headlighth7') return false;
+  const slot = String(part?.slot || part?.slotName || part?.attachSlot || '').trim().toLowerCase();
+  const label = String(part?.label || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  return V101_FORCED_HEADLIGHT_SLOTS.has(slot) || label.includes('lampada dianteira');
+}
+
+// Regra RAID-Z V113: o mod instala o MuranoCarlock. O site só mantém as 2 HeadlightH7
+// como entregas separadas ao inventário. Aqui também removemos tentativas antigas
+// de Murano/H7 dentro do veículo sem tocar nas demais peças ou cargas do painel.
+export function ensureVehicleRequiredEquipment(template = {}) {
+  const originalParts = Array.isArray(template?.parts) ? template.parts : [];
+  const originalCargo = Array.isArray(template?.cargoItems) ? template.cargoItems : [];
+
+  const parts = originalParts
+    .filter((part) => !isV101ForcedMountedHeadlight(part))
+    .map((item) => ({ ...item }));
+
+  const cargoItems = originalCargo
+    .filter((item) => !LEGACY_REQUIRED_VEHICLE_CARGO_CLASSES.has(normalizedClassname(item?.classname || item?.className || item?.type)))
+    .map((item, index) => ({
+      ...item,
+      sortOrder: Number.isFinite(Number(item?.sortOrder)) ? Number(item.sortOrder) : index
+    }));
+
+  return { parts, cargoItems };
+}
+
 export function vehicleTemplatePayload(template) {
-  const parts = (Array.isArray(template.parts) ? template.parts : [])
+  const requiredEquipment = ensureVehicleRequiredEquipment(template);
+  const parts = requiredEquipment.parts
     .map(normalizeVehiclePartForPayload)
     .filter(Boolean);
-  const cargoItems = (Array.isArray(template.cargoItems) ? template.cargoItems : [])
+  const cargoItems = requiredEquipment.cargoItems
     .map(normalizeCargoItemForPayload)
     .filter(Boolean);
 
   return {
     vehicleClassname: template.vehicleClassname,
     parts,
-    // aliases para o mod DayZ aceitar o mesmo conteúdo com nomes diferentes
+    // aliases das peças montadas para compatibilidade com versões do mod
     vehicleParts: parts,
     attachments: parts,
     attachmentItems: parts,
     attachToVehicle: parts,
     mountParts: parts,
+
+    // Cargas cadastradas manualmente continuam dentro do veículo. As 2 lâmpadas H7
+    // são entregues separadamente; o MuranoCarlock fica por conta do mod.
     cargoItems,
     inventoryItems: cargoItems,
     storageItems: cargoItems,
     itemsInsideVehicle: cargoItems,
+    vehicleCargoItems: cargoItems,
+    vehicleInventoryItems: cargoItems,
+    trunkItems: cargoItems,
+    itemsInCargo: cargoItems,
+    cargo: cargoItems,
+    items: cargoItems,
+    cargoDeliveryMode: 'vehicle_inventory',
+    cargoDestination: 'vehicle_cargo',
+    spawnCargoInsideVehicle: true,
+    placeItemsInCargo: true,
+    loadCargoAfterSpawn: true,
+
     fluids: template.fluids || { fuelPercent: 80, waterPercent: 100, oilPercent: 100 },
     fullVehicle: true,
     mounted: true,
@@ -276,6 +379,105 @@ function normalizeCoverageType(value) {
   const v = String(value || 'NORMAL').trim().toUpperCase();
   if (['THEFT', 'ROUBO', 'STOLEN'].includes(v)) return 'THEFT';
   return 'NORMAL';
+}
+
+export async function publishVehicleDeliveryImmediately(steam64, context = 'vehicle') {
+  const cleaned = String(steam64 || '').trim();
+  if (!/^7656119\d{10}$/.test(cleaned)) return { ok: false, skipped: true, reason: 'invalid_steam64' };
+
+  try {
+    const { publishPlayerDeliveryFilesNow } = await import('./fileBridgeService.js');
+    return await publishPlayerDeliveryFilesNow([cleaned]);
+  } catch (error) {
+    try {
+      const { queueImmediatePlayerFileSync } = await import('./fileBridgeService.js');
+      queueImmediatePlayerFileSync(cleaned);
+    } catch {}
+    console.error(`[VEHICLE_FTP_NOW] ${context} salvo, mas o envio FTP imediato falhou:`, error.message);
+    return { ok: false, error: String(error?.message || error) };
+  }
+}
+
+export async function queueVehicleDeliveryImmediately(steam64, context = 'vehicle') {
+  const cleaned = String(steam64 || '').trim();
+  if (!/^7656119\d{10}$/.test(cleaned)) return { ok: false, skipped: true, reason: 'invalid_steam64' };
+
+  try {
+    const { queueImmediatePlayerFileSync } = await import('./fileBridgeService.js');
+    const queued = queueImmediatePlayerFileSync(cleaned);
+    return { ok: Boolean(queued), queued: Boolean(queued), background: true };
+  } catch (error) {
+    console.error(`[VEHICLE_FTP_QUEUE] ${context} salvo, mas não foi possível iniciar o envio rápido:`, error.message);
+    return { ok: false, error: String(error?.message || error) };
+  }
+}
+
+function playerInventoryAccessoryMeta({ action, parentDeliveryId, playerVehicleId = null, displayName = '', accessory = null } = {}) {
+  return {
+    kind: 'vehicle_player_inventory_accessory',
+    action,
+    parentVehicleDeliveryId: parentDeliveryId || null,
+    playerVehicleId,
+    vehicleDisplayName: displayName || '',
+    deliveryMode: 'player_inventory',
+    itemDeliveryMode: 'player_inventory',
+    requestedDeliveryType: 'player_inventory',
+    target: 'player_inventory',
+    destination: 'player_inventory',
+    destinationType: 'PLAYER_INVENTORY',
+    preferredDestination: 'player_inventory',
+    inventoryOwner: 'player',
+    inventorySlot: 'inventory',
+    slot: 'inventory',
+    giveToPlayerInventory: true,
+    createInPlayerInventory: true,
+    placeInPlayerInventory: true,
+    putInPlayerInventory: true,
+    directToPlayerInventory: true,
+    preferPlayerInventory: true,
+    inventoryFirst: true,
+    playerInventoryItems: accessory ? [{ slot: 'inventory', classname: accessory.classname, quantity: accessory.quantity, label: accessory.label }] : [],
+    inventoryItems: accessory ? [{ slot: 'inventory', classname: accessory.classname, quantity: accessory.quantity, label: accessory.label }] : [],
+    items: accessory ? [{ slot: 'inventory', classname: accessory.classname, quantity: accessory.quantity, label: accessory.label }] : [],
+    fallbackDropAtFeet: true,
+    fallbackDeliveryType: 'drop_at_feet',
+    v103VehicleAccessoryInventory: true
+  };
+}
+
+export async function createVehiclePlayerInventoryAccessoryDeliveries({
+  tx,
+  playerId,
+  steam64,
+  serverType,
+  action,
+  parentDeliveryId,
+  playerVehicleId = null,
+  displayName = ''
+}) {
+  if (!tx) throw new Error('Transação obrigatória para criar acessórios do veículo.');
+
+  const deliveries = [];
+  for (const accessory of VEHICLE_PLAYER_INVENTORY_ACCESSORIES) {
+    const delivery = await tx.deliveryQueue.create({
+      data: {
+        purchaseId: null,
+        playerId,
+        steam64,
+        serverType,
+        productName: `Acessório do veículo: ${accessory.label} — inventário do jogador`,
+        classname: accessory.classname,
+        quantity: accessory.quantity,
+        // Mantém drop_at_feet como fallback para versões antigas do mod. O meta
+        // V103 manda primeiro criar direto no inventário do jogador.
+        deliveryType: 'drop_at_feet',
+        status: 'PENDING',
+        meta: playerInventoryAccessoryMeta({ action, parentDeliveryId, playerVehicleId, displayName, accessory })
+      }
+    });
+    deliveries.push(delivery);
+  }
+  return deliveries;
 }
 
 // IMPORTANTE:
@@ -367,7 +569,215 @@ async function createVehicleDelivery({ tx, player, playerVehicle, template, acti
     }
   });
 
-  return delivery;
+  const accessoryDeliveries = await createVehiclePlayerInventoryAccessoryDeliveries({
+    tx,
+    playerId: player.id,
+    steam64: player.steam64,
+    serverType: playerVehicle.serverType,
+    action,
+    parentDeliveryId: delivery.id,
+    playerVehicleId: playerVehicle.id,
+    displayName: playerVehicle.displayName
+  });
+
+  return { ...delivery, accessoryDeliveries };
+}
+
+
+export async function restoreMissingVehicleWithSameId({ playerVehicleId }) {
+  const result = await prisma.$transaction(async (tx) => {
+    const vehicle = await tx.playerVehicle.findUnique({
+      where: { id: playerVehicleId },
+      include: { player: true, template: true, insurancePlan: true }
+    });
+    if (!vehicle) throw new Error('Veículo do player não encontrado.');
+    if (vehicle.status !== 'ACTIVE') throw new Error('Esse veículo não está ativo na garagem.');
+    if (isExpired(vehicle.expiresAt)) throw new Error('Esse veículo venceu. Renove antes de restaurar.');
+
+    // O ID precisa continuar igual ao salvo na garagem. Se uma versão antiga nunca
+    // gerou o ID, cria um único ID de recuperação e passa a mantê-lo dali em diante.
+    const stableVehicleKey = vehicle.currentVehicleKey
+      || `RZRECOVER_${vehicle.id}_${Date.now().toString(36)}`;
+
+    // Uma solicitação de seguro travada pode deixar entrega/log PENDING para sempre.
+    // O botão de recuperação cancela somente essas filas do mesmo veículo antes de
+    // recriar o carro sumido. Assim não nasce uma segunda reposição atrasada depois.
+    const pendingLogs = await tx.vehicleRespawnLog.findMany({
+      where: {
+        playerVehicleId: vehicle.id,
+        status: 'PENDING',
+        action: { in: ['RESPAWN', 'ADMIN_RESPAWN', 'ADMIN_RESTORE_MISSING'] }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const pendingDeliveryIds = pendingLogs.map(log => log.deliveryId).filter(Boolean);
+    let cancelledDeliveryIds = [];
+    if (pendingDeliveryIds.length) {
+      const pendingPlayerDeliveries = await tx.deliveryQueue.findMany({
+        where: {
+          playerId: vehicle.playerId,
+          status: { in: ['PENDING', 'PROCESSING'] }
+        },
+        select: { id: true, meta: true }
+      });
+      const parentIds = new Set(pendingDeliveryIds);
+      cancelledDeliveryIds = pendingPlayerDeliveries
+        .filter(item => parentIds.has(item.id) || parentIds.has(item.meta?.parentVehicleDeliveryId))
+        .map(item => item.id);
+
+      if (cancelledDeliveryIds.length) {
+        await tx.deliveryQueue.updateMany({
+          where: { id: { in: cancelledDeliveryIds } },
+          data: {
+            status: 'FAILED',
+            claimedAt: null,
+            error: 'Cancelada pelo ADM para restaurar o carro sumido com o mesmo ID.'
+          }
+        });
+      }
+
+      await tx.vehicleRespawnLog.updateMany({
+        where: { id: { in: pendingLogs.map(log => log.id) } },
+        data: {
+          status: 'FAILED',
+          error: 'Cancelada pelo ADM para restaurar o carro sumido com o mesmo ID.'
+        }
+      });
+    }
+
+    // Se uma reposição de seguro estava PENDING, devolve a cobrança e o uso porque
+    // ela foi cancelada pelo botão de recuperação e não entregou o veículo.
+    const cancelledInsuranceClaims = pendingLogs.filter(log => log.action === 'RESPAWN');
+    const refundedCoins = cancelledInsuranceClaims.reduce((sum, log) => sum + Math.max(0, Number(log.costCoins || 0)), 0);
+    if (refundedCoins > 0) {
+      await changePlayerCoins({
+        playerId: vehicle.playerId,
+        amount: refundedCoins,
+        reason: `Estorno de seguro travado: ${vehicle.displayName}`,
+        refType: 'vehicle_admin_restore_refund',
+        refId: vehicle.id,
+        tx
+      });
+    }
+
+    const restoredUses = cancelledInsuranceClaims.length;
+    const payloadTemplate = {
+      ...vehicle.template,
+      vehicleClassname: vehicle.vehicleClassname
+    };
+
+    const delivery = await tx.deliveryQueue.create({
+      data: {
+        purchaseId: null,
+        playerId: vehicle.playerId,
+        steam64: vehicle.steam64,
+        serverType: vehicle.serverType,
+        productName: `ADM restaurar carro sumido (mesmo ID): ${vehicle.displayName}`,
+        classname: vehicle.vehicleClassname,
+        quantity: 1,
+        deliveryType: 'drop_at_feet',
+        status: 'PENDING',
+        meta: {
+          kind: 'vehicle_rental',
+          action: 'ADMIN_RESTORE_MISSING',
+          playerVehicleId: vehicle.id,
+          vehicleKey: stableVehicleKey,
+          deleteOldVehicleKey: null,
+          displayName: vehicle.displayName,
+          serverType: vehicle.serverType,
+          deliveryMode: 'vehicle_full_mounted',
+          restoreMissingVehicle: true,
+          preserveVehicleKey: true,
+          sameVehicleId: true,
+          useExistingVehicleKey: true,
+          forceSpawnIfMissing: true,
+          skipOldVehicleLookup: true,
+          doNotDeleteOldVehicle: true,
+          removeOldBeforeSpawn: false,
+          adminRecovery: true,
+          skipInsuranceCharge: true,
+          skipInsuranceUsage: true,
+          ...vehicleTemplatePayload(payloadTemplate),
+          vehicleClassname: vehicle.vehicleClassname
+        }
+      }
+    });
+
+    const updatedVehicle = await tx.playerVehicle.update({
+      where: { id: vehicle.id },
+      data: {
+        currentVehicleKey: stableVehicleKey,
+        currentVehicleMoving: false,
+        currentVehicleOccupied: false,
+        currentVehicleCanTheftClaim: true,
+        currentVehicleSpeedKmh: 0,
+        currentVehiclePosition: null,
+        currentVehicleLastSeenAt: null,
+        lastRespawnAt: new Date(),
+        insuranceUsesThisWeek: Math.max(0, Number(vehicle.insuranceUsesThisWeek || 0) - restoredUses),
+        insuranceUsesTotal: Math.max(0, Number(vehicle.insuranceUsesTotal || 0) - restoredUses),
+        deliveriesCreated: { increment: 1 }
+      }
+    });
+
+    await tx.vehicleRespawnLog.create({
+      data: {
+        playerVehicleId: vehicle.id,
+        playerId: vehicle.playerId,
+        deliveryId: delivery.id,
+        action: 'ADMIN_RESTORE_MISSING',
+        oldVehicleKey: stableVehicleKey,
+        newVehicleKey: stableVehicleKey,
+        costCoins: 0,
+        status: 'PENDING'
+      }
+    });
+
+    const accessoryDeliveries = await createVehiclePlayerInventoryAccessoryDeliveries({
+      tx,
+      playerId: vehicle.playerId,
+      steam64: vehicle.steam64,
+      serverType: vehicle.serverType,
+      action: 'ADMIN_RESTORE_MISSING',
+      parentDeliveryId: delivery.id,
+      playerVehicleId: vehicle.id,
+      displayName: vehicle.displayName
+    });
+
+    return {
+      vehicle: updatedVehicle,
+      steam64: vehicle.steam64,
+      deliveryId: delivery.id,
+      accessoryDeliveryIds: accessoryDeliveries.map(item => item.id),
+      vehicleKey: stableVehicleKey,
+      cancelledClaims: pendingLogs.length,
+      cancelledDeliveryIds,
+      refundedCoins,
+      restoredInsuranceUses: restoredUses
+    };
+  }, { isolationLevel: 'Serializable' });
+
+  await logAudit({
+    actor: 'admin',
+    action: 'vehicle.admin_restore_missing_same_id',
+    target: result.vehicle.id,
+    data: {
+      deliveryId: result.deliveryId,
+      accessoryDeliveryIds: result.accessoryDeliveryIds,
+      vehicleKey: result.vehicleKey,
+      cancelledClaims: result.cancelledClaims,
+      cancelledDeliveryIds: result.cancelledDeliveryIds,
+      refundedCoins: result.refundedCoins,
+      restoredInsuranceUses: result.restoredInsuranceUses
+    }
+  });
+
+  const immediate = await publishVehicleDeliveryImmediately(result.steam64, 'restauração admin de carro sumido com mesmo ID');
+  if (!immediate?.ok) {
+    await queueVehicleDeliveryImmediately(result.steam64, 'restauração admin de carro sumido com mesmo ID');
+  }
+  return { ...result, fileBridgeImmediate: immediate };
 }
 
 async function createDirectVehicleDelivery({ tx, player, template, costCoins = 0, variant = null }) {
@@ -399,14 +809,25 @@ async function createDirectVehicleDelivery({ tx, player, template, costCoins = 0
     }
   });
 
+  const accessoryDeliveries = await createVehiclePlayerInventoryAccessoryDeliveries({
+    tx,
+    playerId: player.id,
+    steam64: player.steam64,
+    serverType: template.serverType,
+    action: 'BUY_DIRECT',
+    parentDeliveryId: delivery.id,
+    playerVehicleId: null,
+    displayName: template.name
+  });
+
   await logAudit({
     actor: player.steam64,
     action: 'vehicle.direct_purchase.delivery_created',
     target: delivery.id,
-    data: { templateId: template.id, vehicleClassname: payloadTemplate.vehicleClassname, variant: variant?.name || null, vehicleKey, costCoins }
+    data: { templateId: template.id, vehicleClassname: payloadTemplate.vehicleClassname, variant: variant?.name || null, vehicleKey, costCoins, accessoryDeliveryIds: accessoryDeliveries.map(item => item.id) }
   });
 
-  return delivery;
+  return { ...delivery, accessoryDeliveries };
 }
 
 export async function buyOrRentVehicle({ playerId, templateId, ownershipType = 'OWNED', insurancePlanId = null, variantIndex = 0 }) {
@@ -425,38 +846,23 @@ export async function buyOrRentVehicle({ playerId, templateId, ownershipType = '
     const vehiclePrice = getRentPrice(template, normalizedOwnership);
     if (vehiclePrice <= 0) throw new Error('Esse veículo está sem valor de doação cadastrado.');
 
-    let insurancePlan = null;
-    let insurancePrice = 0;
-    let insuranceExpiresAt = null;
-    let selectedInsurancePlanId = insurancePlanId || null;
-
-    // V70: seguro opcional.
-    // Sem seguro: compra normal, entrega no pé e aparece na garagem sem direito a reposição.
-    // O player pode adicionar seguro depois pela Minha Garagem.
-    // Com seguro escolhido na compra: o primeiro mês já está incluso no valor do veículo.
-    // Depois vence e o player escolhe renovar mensal por 50% do valor ou usar plano por uso pagando 10k por acionamento.
-
-    if (selectedInsurancePlanId) {
-      insurancePlan = await tx.vehicleInsurancePlan.findUnique({ where: { id: selectedInsurancePlanId } });
-      if (!insurancePlan || !insurancePlan.active) throw new Error('Seguro não encontrado ou inativo.');
-      if (insurancePlan.templateId && insurancePlan.templateId !== template.id) throw new Error('Esse seguro pertence a outro veículo.');
-      insurancePrice = getVehicleInsurancePlanPrice(insurancePlan, template, { chargeAtPurchase: true });
-      insuranceExpiresAt = addDays(new Date(), insurancePlan.durationDays || 30); // primeiro mês incluso no valor do veículo, inclusive plano por uso
-    }
+    // V129: seguro mensal obrigatório em toda compra. O primeiro mês continua
+    // incluso no valor do veículo; depois a renovação custa 50% do valor do carro.
+    const insurancePlan = await resolveMonthlyInsurancePlan(tx, template, insurancePlanId || null);
+    const insurancePrice = getVehicleInsurancePlanPrice(insurancePlan, template, { chargeAtPurchase: true });
+    const insuranceExpiresAt = addDays(new Date(), insurancePlan.durationDays || 30);
 
     const total = vehiclePrice + insurancePrice;
     const updatedPlayer = await changePlayerCoins({
       playerId,
       amount: -total,
-      reason: `Veículo doado: ${template.name}${insurancePlan ? ' + seguro ' + insurancePlan.name : ' sem seguro'}`,
+      reason: `Veículo doado: ${template.name} + seguro ${insurancePlan.name}`,
       refType: 'vehicle',
       refId: template.id,
       tx
     });
 
-    // V70: todo veículo comprado fica na Minha Garagem.
-    // Sem seguro: aparece na garagem para o player poder adicionar seguro depois,
-    // mas não libera reposição enquanto não tiver plano ativo.
+    // V129: todo veículo comprado fica na Minha Garagem com seguro mensal ativo.
     const days = getOwnershipDays(normalizedOwnership);
     const playerVehicle = await tx.playerVehicle.create({
       data: {
@@ -482,7 +888,16 @@ export async function buyOrRentVehicle({ playerId, templateId, ownershipType = '
       }
     });
 
-    const delivery = await createVehicleDelivery({ tx, player: updatedPlayer, playerVehicle, template, action: 'BUY', costCoins: total, variant: selectedVariant });
+    const delivery = await createVehicleDelivery({
+      tx,
+      player: updatedPlayer,
+      playerVehicle,
+      template,
+      action: 'BUY',
+      costCoins: total,
+      insuranceCoverageType: insurancePlan.coverageType || 'NORMAL',
+      variant: selectedVariant
+    });
     return { player: updatedPlayer, template: selectedTemplate, insurancePlan, playerVehicle, delivery, total, direct: false, variant: selectedVariant };
   });
 
@@ -500,6 +915,7 @@ export async function buyOrRentVehicle({ playerId, templateId, ownershipType = '
       deliveryId: result.delivery?.id
     }
   });
+  result.fileBridgeImmediate = await queueVehicleDeliveryImmediately(result.player.steam64, 'compra de veículo');
   return result;
 }
 
@@ -551,19 +967,11 @@ export async function requestVehicleRespawn({ playerId, playerVehicleId, coverag
       weekStart = weekly.weekStart;
     }
 
-    if (plan.billingType === 'PER_USE') {
-      // Se o seguro por uso foi escolhido na compra, o primeiro mês já ficou incluso no valor do veículo.
-      // Durante esse período, acionar reposição não cobra 10k. Depois do vencimento, cobra 10k por uso.
-      cost = vehicle.insuranceExpiresAt && !isExpired(vehicle.insuranceExpiresAt)
-        ? 0
-        : getVehicleInsurancePlanPrice(plan, vehicle.template);
-      newUses += 1;
-    } else {
-      if (isExpired(vehicle.insuranceExpiresAt)) throw new Error('Seu seguro mensal venceu. Renove antes de usar.');
-      if (newUses >= Number(plan.maxUsesPerWeek || 1)) throw new Error(`Seu seguro já usou ${newUses}/${plan.maxUsesPerWeek} reposições nesta semana.`);
-      cost = Number(plan.respawnFeeCoins || 0);
-      newUses += 1;
-    }
+    if (plan.billingType !== 'SUBSCRIPTION') throw new Error('O seguro por uso foi removido. Renove para o seguro mensal.');
+    if (!vehicle.insuranceExpiresAt || isExpired(vehicle.insuranceExpiresAt)) throw new Error('Seu seguro mensal venceu. Renove antes de usar.');
+    if (newUses >= Number(plan.maxUsesPerWeek || 5)) throw new Error(`Seu seguro já usou ${newUses}/${plan.maxUsesPerWeek || 5} reposições nesta semana.`);
+    cost = Number(plan.respawnFeeCoins || 0);
+    newUses += 1;
 
     const updatedPlayer = cost > 0
       ? await changePlayerCoins({ playerId: player.id, amount: -cost, reason: `Reposição seguro: ${vehicle.displayName}`, refType: 'vehicle_respawn', refId: vehicle.id, tx })
@@ -590,6 +998,7 @@ export async function requestVehicleRespawn({ playerId, playerVehicleId, coverag
     target: result.vehicle.id,
     data: { costCoins: result.cost, deliveryId: result.delivery.id, planId: result.plan.id, coverageType: result.delivery.meta?.insuranceCoverageType || null, insuranceRules: result.delivery.meta?.insuranceRules || null, weeklyUsesAfter: result.newUses }
   });
+  result.fileBridgeImmediate = await queueVehicleDeliveryImmediately(result.player.steam64, 'reposição de seguro');
   return result;
 }
 
@@ -608,6 +1017,7 @@ export async function renewVehicle({ playerId, playerVehicleId, days = 30 }) {
     return { player: updatedPlayer, vehicle: updatedVehicle, price };
   });
   await logAudit({ actor: result.player.steam64, action: 'vehicle.renewed', target: result.vehicle.id, data: { costCoins: result.price } });
+  result.fileBridgeImmediate = await queueVehicleDeliveryImmediately(result.player.steam64, 'renovação de veículo');
   return result;
 }
 
@@ -618,7 +1028,7 @@ export async function renewInsurance({ playerId, playerVehicleId }) {
     if (!player || !vehicle) throw new Error('Veículo não encontrado.');
     const plan = vehicle.insurancePlan;
     if (!plan) throw new Error('Esse veículo não tem plano de seguro mensal.');
-    if (plan.billingType !== 'SUBSCRIPTION') throw new Error('Esse seguro é por uso, não precisa renovar.');
+    if (plan.billingType !== 'SUBSCRIPTION') throw new Error('O seguro por uso foi removido. Escolha o seguro mensal.');
     const price = getVehicleInsurancePlanPrice(plan, vehicle.template);
     const baseDate = vehicle.insuranceExpiresAt && new Date(vehicle.insuranceExpiresAt).getTime() > Date.now() ? new Date(vehicle.insuranceExpiresAt) : new Date();
     const insuranceExpiresAt = addDays(baseDate, plan.durationDays || 30);
@@ -628,6 +1038,7 @@ export async function renewInsurance({ playerId, playerVehicleId }) {
     return { player: updatedPlayer, vehicle: updatedVehicle, price };
   });
   await logAudit({ actor: result.player.steam64, action: 'vehicle.insurance.renewed', target: result.vehicle.id, data: { costCoins: result.price } });
+  result.fileBridgeImmediate = await queueVehicleDeliveryImmediately(result.player.steam64, 'renovação de seguro');
   return result;
 }
 
@@ -639,11 +1050,10 @@ export async function upgradeInsurancePlan({ playerId, playerVehicleId, planId }
 
     const plan = await tx.vehicleInsurancePlan.findUnique({ where: { id: planId } });
     if (!plan || !plan.active) throw new Error('Plano de seguro inválido ou inativo.');
+    if (plan.billingType !== 'SUBSCRIPTION') throw new Error('O seguro por uso foi removido. Escolha o seguro mensal.');
     if (plan.templateId && plan.templateId !== vehicle.templateId) throw new Error('Esse plano pertence a outro veículo.');
 
-    const price = plan.billingType === 'SUBSCRIPTION'
-      ? getVehicleInsurancePlanPrice(plan, vehicle.template)
-      : 0;
+    const price = getVehicleInsurancePlanPrice(plan, vehicle.template);
     const updatedPlayer = price > 0
       ? await changePlayerCoins({ playerId, amount: -price, reason: `${vehicle.insurancePlanId ? 'Upgrade' : 'Contratação'} seguro ${plan.name} para ${vehicle.displayName}`, refType: 'vehicle_insurance_upgrade', refId: vehicle.id, tx })
       : player;
@@ -654,11 +1064,7 @@ export async function upgradeInsurancePlan({ playerId, playerVehicleId, planId }
       insuranceUsesWeekStart: new Date()
     };
 
-    if (plan.billingType === 'SUBSCRIPTION') {
-      data.insuranceExpiresAt = addDays(new Date(), plan.durationDays || 30);
-    } else {
-      data.insuranceExpiresAt = null;
-    }
+    data.insuranceExpiresAt = addDays(new Date(), plan.durationDays || 30);
 
     const updatedVehicle = await tx.playerVehicle.update({ where: { id: vehicle.id }, data });
     await tx.vehicleRespawnLog.create({
@@ -680,14 +1086,24 @@ export async function upgradeInsurancePlan({ playerId, playerVehicleId, planId }
     target: result.vehicle.id,
     data: { oldPlanId: result.oldPlanId, newPlanId: result.newPlan.id, costCoins: result.price }
   });
+  result.fileBridgeImmediate = await queueVehicleDeliveryImmediately(result.player.steam64, 'atualização de seguro');
   return result;
 }
 
 export async function cancelPlayerVehicle({ playerId, playerVehicleId }) {
   const vehicle = await prisma.playerVehicle.findFirst({ where: { id: playerVehicleId, playerId } });
   if (!vehicle) throw new Error('Veículo não encontrado.');
-  const updated = await prisma.playerVehicle.update({ where: { id: vehicle.id }, data: { status: 'CANCELLED' } });
+  if (vehicle.status !== 'ACTIVE') throw new Error('Esse veículo já não está ativo na conta.');
+
+  const updated = await prisma.playerVehicle.update({
+    where: { id: vehicle.id },
+    data: { status: 'CANCELLED' }
+  });
   await logAudit({ actor: vehicle.steam64, action: 'vehicle.cancelled', target: vehicle.id, data: { currentVehicleKey: vehicle.currentVehicleKey } });
+
+  // A fila imediata também atualiza o arquivo de seguros/garagem do mod.
+  // Assim o veículo removido some sem esperar o próximo ciclo periódico do FTP.
+  updated.fileBridgeImmediate = await queueVehicleDeliveryImmediately(vehicle.steam64, 'remoção de veículo da conta');
   return updated;
 }
 
@@ -768,6 +1184,7 @@ export async function createOrUpdateVehicleTemplateFromBody({ body, file, id = n
   const cargoItems = parseVehicleCargoItemsInput(body.cargoItemsText);
   const fluids = normalizeFluids(body);
   const variants = parseVehicleVariantsInput(body.variantsText);
+  const requiredEquipment = ensureVehicleRequiredEquipment({ parts, cargoItems });
   const data = {
     name: body.name,
     description: body.description || null,
@@ -778,8 +1195,8 @@ export async function createOrUpdateVehicleTemplateFromBody({ body, file, id = n
     rent7DaysCoins: Number(body.rent7DaysCoins || 0),
     rent30DaysCoins: Number(body.rent30DaysCoins || 0),
     imageUrl: body.imageUrl || null,
-    parts,
-    cargoItems: cargoItems.length ? cargoItems : null,
+    parts: requiredEquipment.parts,
+    cargoItems: requiredEquipment.cargoItems,
     fluids,
     variants: variants.length ? variants : null,
     active: body.active === 'on'
@@ -797,7 +1214,7 @@ export async function createOrUpdateVehicleTemplateFromBody({ body, file, id = n
 }
 
 export async function createInsurancePlanFromBody(body) {
-  const billingType = String(body.billingType || 'PER_USE').toUpperCase() === 'SUBSCRIPTION' ? 'SUBSCRIPTION' : 'PER_USE';
+  const billingType = 'SUBSCRIPTION';
   return prisma.vehicleInsurancePlan.create({
     data: {
       templateId: body.templateId || null,

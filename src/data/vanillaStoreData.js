@@ -11,6 +11,7 @@ export const storeCategories = [
   { name: 'Veículos', serverType: 'vanilla', order: 15 },
   { name: 'Peças de Veículos', serverType: 'vanilla', order: 18 },
   { name: 'Trajes VIPs', serverType: 'vanilla', order: 20 },
+  { name: 'Saco de Dormir', serverType: 'vanilla', order: 25 },
   { name: 'Construção', serverType: 'vanilla', order: 30 },
   { name: 'Ferramentas', serverType: 'vanilla', order: 40 },
   { name: 'Suprimentos', serverType: 'vanilla', order: 50 },
@@ -33,8 +34,10 @@ export const starterKitConfig = {
     { classname: 'CodeLock', quantity: 1, label: 'Code Lock', sortOrder: 3 },
     { classname: 'Rope', quantity: 1, label: 'Corda', sortOrder: 4 },
     { classname: 'Hatchet', quantity: 1, label: 'Machadinha', sortOrder: 5 },
-    { classname: 'WoodenPlank', quantity: 10, label: 'Fardo de tábuas 1/2 (10)', sortOrder: 6 },
-    { classname: 'WoodenPlank', quantity: 10, label: 'Fardo de tábuas 2/2 (10)', sortOrder: 7 }
+    { classname: 'Pliers', quantity: 1, label: 'Alicate', sortOrder: 6 },
+    { classname: 'MetalWire', quantity: 1, label: 'Arame', sortOrder: 7 },
+    { classname: 'WoodenPlank', quantity: 20, label: 'Tábuas (20)', sortOrder: 8 },
+    { classname: 'WoodenLog', quantity: 4, label: 'Troncos (4)', sortOrder: 9 }
   ]
 };
 
@@ -158,6 +161,47 @@ export const vanillaProducts = [
       { classname: 'PowerGenerator', quantity: 1, label: 'Gerador' },
       { classname: 'CableReel', quantity: 1, label: 'Carretel de cabo' }
     ]
+  }),
+
+
+  product({
+    name: 'Saco de Dormir Azul',
+    slug: 'saco-dormir-azul-ddtb',
+    description: 'Saco de dormir azul. Cada player pode manter apenas 1 saco ativo. Em base normal deve ficar fora da base principal; em base No Raid pode ficar na base principal. Player encontrado com 2 sacos de dormir recebe ban. Também existem sacos gratuitos spawnando nos bunkers. Quem não quiser usar saco pode morrer/respawnar no jogo para trocar o spawn, pois o servidor usa spawn Vanilla melhorado. Mais informações no Discord.',
+    category: 'Saco de Dormir',
+    classname: 'DDTB_sleepingbag_Blue',
+    quantity: 1,
+    priceCoins: 40000,
+    imageUrl: '/images/sleeping-bags/sleepingbag-blue.jpg',
+    featured: true,
+    highlightColor: '#3b82f6',
+    items: [{ classname: 'DDTB_sleepingbag_Blue', quantity: 1, label: 'Saco de Dormir Azul' }]
+  }),
+  product({
+    name: 'Saco de Dormir Verde',
+    slug: 'saco-dormir-verde-ddtb',
+    description: 'Saco de dormir verde. Cada player pode manter apenas 1 saco ativo. Em base normal deve ficar fora da base principal; em base No Raid pode ficar na base principal. Player encontrado com 2 sacos de dormir recebe ban. Também existem sacos gratuitos spawnando nos bunkers. Quem não quiser usar saco pode morrer/respawnar no jogo para trocar o spawn, pois o servidor usa spawn Vanilla melhorado. Mais informações no Discord.',
+    category: 'Saco de Dormir',
+    classname: 'DDTB_sleepingbag_Green',
+    quantity: 1,
+    priceCoins: 40000,
+    imageUrl: '/images/sleeping-bags/sleepingbag-green.jpg',
+    featured: true,
+    highlightColor: '#22c55e',
+    items: [{ classname: 'DDTB_sleepingbag_Green', quantity: 1, label: 'Saco de Dormir Verde' }]
+  }),
+  product({
+    name: 'Blocos de Concreto x5',
+    slug: 'blocos-concreto-5-vanilla',
+    description: 'Pacote com 5 blocos de concreto para construção e evolução da base subterrânea.',
+    category: 'Construção',
+    classname: 'ConcreteBlock',
+    quantity: 5,
+    priceCoins: 15000,
+    imageUrl: '/images/items/concrete-blocks-5.svg',
+    featured: true,
+    highlightColor: '#94a3b8',
+    items: [{ classname: 'ConcreteBlock', quantity: 5, label: 'Blocos de concreto (5)' }]
   }),
 
   single({ name: 'Fita / Duct Tape', slug: 'fita-duct-tape-1-real', description: 'Fita para reparo. Valor de doação R$1.', category: 'Ferramentas', classname: 'DuctTape', label: 'Fita', priceCoins: 1000, imageUrl: wikiImage('DuctTape', 'Fita / Duct Tape'), featured: true }),
@@ -442,122 +486,102 @@ const vehicle = (data) => ({
 });
 
 export const defaultVehicles = [
-  // V69: RAID-Z usa Land Rover MSFZ com MuranoCarlock e M1025 Apocalypse com CarKey.
+  // V113: toda compra/reposição entrega apenas 2 HeadlightH7; o MuranoCarlock é instalado pelo mod.
   // Todos os veículos ficam no valor das Land Rover: 70.000 RZ.
   vehicle({
     name: 'Land Rover Normal',
     slug: 'land-rover-amarela-msfz',
-    description: 'Land Rover MSFZ normal completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ normal completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-normal-real.png',
-    parts: landRoverParts({ suffix: '', hood: 'MSFZ_LandRover_Hood', driverDoor: 'MSFZ_LandRover_Driver_Door', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door', trunk: 'MSFZ_LandRover_Trunk' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '', hood: 'MSFZ_LandRover_Hood', driverDoor: 'MSFZ_LandRover_Driver_Door', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door', trunk: 'MSFZ_LandRover_Trunk' })
   }),
   vehicle({
     name: 'Land Rover Camo 1',
     slug: 'land-rover-camo1-msfz',
-    description: 'Land Rover MSFZ Camo 1 completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ Camo 1 completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover_camo1',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-camo1-real.png',
-    parts: landRoverParts({ suffix: '_camo1', hood: 'MSFZ_LandRover_Hood_camo1', driverDoor: 'MSFZ_LandRover_Driver_Door_camo1', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_camo1', trunk: 'MSFZ_LandRover_Trunk_camo1' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '_camo1', hood: 'MSFZ_LandRover_Hood_camo1', driverDoor: 'MSFZ_LandRover_Driver_Door_camo1', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_camo1', trunk: 'MSFZ_LandRover_Trunk_camo1' })
   }),
   vehicle({
     name: 'Land Rover IND',
     slug: 'land-rover-verde-ind-msfz',
-    description: 'Land Rover MSFZ IND completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ IND completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover_ind',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-ind-real.png',
-    parts: landRoverParts({ suffix: '_ind', hood: 'MSFZ_LandRover_Hood_ind', driverDoor: 'MSFZ_LandRover_Driver_Door_ind', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_ind', trunk: 'MSFZ_LandRover_Trunk_ind' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '_ind', hood: 'MSFZ_LandRover_Hood_ind', driverDoor: 'MSFZ_LandRover_Driver_Door_ind', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_ind', trunk: 'MSFZ_LandRover_Trunk_ind' })
   }),
   vehicle({
     name: 'Land Rover Red',
     slug: 'land-rover-red-msfz',
-    description: 'Land Rover MSFZ vermelha completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ vermelha completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover_red',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-red-real.png',
-    parts: landRoverParts({ suffix: '_red', hood: 'MSFZ_LandRover_Hood_red', driverDoor: 'MSFZ_LandRover_Driver_Door_red', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_red', trunk: 'MSFZ_LandRover_Trunk_red' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '_red', hood: 'MSFZ_LandRover_Hood_red', driverDoor: 'MSFZ_LandRover_Driver_Door_red', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_red', trunk: 'MSFZ_LandRover_Trunk_red' })
   }),
   vehicle({
     name: 'Land Rover Black',
     slug: 'land-rover-preta-msfz',
-    description: 'Land Rover MSFZ preta completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ preta completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover_black',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-black-real.png',
-    parts: landRoverParts({ suffix: '_black', hood: 'MSFZ_LandRover_Hood_black', driverDoor: 'MSFZ_LandRover_Driver_Door_black', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_black', trunk: 'MSFZ_LandRover_Trunk_black' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '_black', hood: 'MSFZ_LandRover_Hood_black', driverDoor: 'MSFZ_LandRover_Driver_Door_black', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_black', trunk: 'MSFZ_LandRover_Trunk_black' })
   }),
   vehicle({
     name: 'Land Rover Winter',
     slug: 'land-rover-winter-msfz',
-    description: 'Land Rover MSFZ Winter completa, pronta para dirigir. Vai com MuranoCarlock, sem chave antiga.',
+    description: 'Land Rover MSFZ Winter completa, pronta para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'MSFZ_LandRover_Winter',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/land-rover-winter-real.png',
-    parts: landRoverParts({ suffix: '_Winter', hood: 'MSFZ_LandRover_Hood_Winter', driverDoor: 'MSFZ_LandRover_Driver_Door_Winter', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_Winter', trunk: 'MSFZ_LandRover_Trunk_Winter' }),
-    cargoItems: [{ slot: 'cargo', classname: 'MuranoCarlock', quantity: 1, label: 'Murano CarLock', sortOrder: 0 }]
+    parts: landRoverParts({ suffix: '_Winter', hood: 'MSFZ_LandRover_Hood_Winter', driverDoor: 'MSFZ_LandRover_Driver_Door_Winter', coDriverDoor: 'MSFZ_LandRover_CoDriver_Door_Winter', trunk: 'MSFZ_LandRover_Trunk_Winter' })
   }),
 
   vehicle({
     name: 'M1025 Apocalipse',
     slug: 'm1025-apoc',
-    description: 'TP Apoc M1025 com arma, completo e pronto para dirigir. Vai com CarKey.',
+    description: 'TP Apoc M1025 com arma, completo e pronto para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'TP_Apoc_M1025',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/m1025-apoc-real.png',
-    parts: m1025Parts('TP_Apoc_M1025', 'Apoc M1025'),
-    cargoItems: [{ slot: 'cargo', classname: 'CarKey', quantity: 1, label: 'CarKey', sortOrder: 0 }]
+    parts: m1025Parts('TP_Apoc_M1025', 'Apoc M1025')
   }),
   vehicle({
     name: 'M1025 Apocalipse Black',
     slug: 'm1025-apoc-black',
-    description: 'TP Apoc M1025 Black com arma, completo e pronto para dirigir. Vai com CarKey.',
+    description: 'TP Apoc M1025 Black com arma, completo e pronto para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'TP_Apoc_M1025_Black',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/m1025-apoc-black-real.png',
-    parts: m1025Parts('TP_Apoc_M1025_Black', 'Black Apoc M1025'),
-    cargoItems: [{ slot: 'cargo', classname: 'CarKey', quantity: 1, label: 'CarKey', sortOrder: 0 }]
+    parts: m1025Parts('TP_Apoc_M1025_Black', 'Black Apoc M1025')
   }),
   vehicle({
     name: 'M1025 Apocalipse Camo',
     slug: 'm1025-apoc-camo',
-    description: 'TP Apoc M1025 Camo com arma, completo e pronto para dirigir. Vai com CarKey.',
+    description: 'TP Apoc M1025 Camo com arma, completo e pronto para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'TP_Apoc_M1025_Camo',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/m1025-apoc-camo-real.png',
-    parts: m1025Parts('TP_Apoc_M1025_Camo', 'Camo Apoc M1025'),
-    cargoItems: [{ slot: 'cargo', classname: 'CarKey', quantity: 1, label: 'CarKey', sortOrder: 0 }]
+    parts: m1025Parts('TP_Apoc_M1025_Camo', 'Camo Apoc M1025')
   }),
   vehicle({
     name: 'M1025 Apocalipse Tan',
     slug: 'm1025-apoc-tan',
-    description: 'TP Apoc M1025 Tan com arma, completo e pronto para dirigir. Vai com CarKey.',
+    description: 'TP Apoc M1025 Tan com arma, completo e pronto para dirigir. 2 lâmpadas H7 são enviadas separadamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.',
     vehicleClassname: 'TP_Apoc_M1025_Tan',
     buyPriceCoins: 70000,
     imageUrl: '/images/vehicles/m1025-apoc-tan-real.png',
     parts: m1025Parts('TP_Apoc_M1025_Tan', 'Tan Apoc M1025'),
-    cargoItems: [{ slot: 'cargo', classname: 'CarKey', quantity: 1, label: 'CarKey', sortOrder: 0 }]
   })
 ];
 
 export const defaultInsurancePlans = [
-  {
-    name: 'Seguro por uso 10k',
-    billingType: 'PER_USE',
-    coverageType: 'NORMAL',
-    priceCoins: 10000,
-    respawnFeeCoins: 0,
-    durationDays: 30,
-    maxUsesPerWeek: 999,
-    description: 'Seguro opcional. Na compra do veículo o primeiro mês fica incluso; depois cobra 10.000 RZ somente quando usar a reposição.'
-  },
   {
     name: 'Seguro Mensal 50% do veículo',
     billingType: 'SUBSCRIPTION',
@@ -565,7 +589,7 @@ export const defaultInsurancePlans = [
     priceCoins: 35000,
     respawnFeeCoins: 0,
     durationDays: 30,
-    maxUsesPerWeek: 2,
-    description: 'Seguro mensal por 30 dias. Na compra do veículo o primeiro mês fica incluso; renovação custa 50% do valor do veículo e libera 2 reposições por semana.'
+    maxUsesPerWeek: 5,
+    description: 'Seguro mensal por 30 dias. Na compra do veículo o primeiro mês fica incluso; a renovação custa 50% do valor do veículo e o uso é feito dentro do jogo pela tecla L.'
   }
 ];

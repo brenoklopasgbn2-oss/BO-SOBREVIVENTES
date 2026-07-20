@@ -1,0 +1,137 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<style>
+  .clan-detail-v106{display:grid;gap:20px}.clan-banner-v106{position:relative;overflow:hidden;border-radius:34px;min-height:320px;border:1px solid rgba(255,255,255,.08);background:#060b14}.clan-banner-v106::before{content:"";position:absolute;inset:0;background:url('<%= clan.bannerImage %>') center/cover no-repeat;opacity:.45}.clan-banner-v106::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,12,.15),rgba(2,6,12,.88) 68%,rgba(2,6,12,.98))}.clan-banner-inner-v106{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:end;padding:30px;min-height:320px}.clan-banner-inner-v106 img{width:120px;height:120px;object-fit:cover;border-radius:30px;border:1px solid rgba(255,255,255,.18);background:#050913}.clan-banner-copy-v106 h1{margin:10px 0 8px;font-size:2.4rem}.clan-banner-copy-v106 p{margin:0;color:#d5dde7;max-width:780px}.clan-banner-tags-v106{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.clan-banner-tags-v106 span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);font-size:.8rem;font-weight:800}
+  .clan-detail-grid-v106{display:grid;grid-template-columns:1.08fr .92fr;gap:18px}.clan-panel-v106{padding:22px;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(10,14,24,.97),rgba(4,7,12,.96));display:grid;gap:16px}.clan-panel-v106 h2,.clan-panel-v106 h3{margin:0}.clan-panel-v106 p{margin:0;color:#d3dbe7}.clan-info-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.clan-info-box-v106{padding:14px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.clan-info-box-v106 strong{display:block;font-size:1.05rem}.clan-info-box-v106 small{color:#9fb0c8}
+  .clan-member-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.clan-member-card-v106{padding:16px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:grid;gap:10px}.clan-member-head-v106{display:flex;gap:12px;align-items:center}.clan-member-head-v106 img{width:62px;height:62px;object-fit:cover;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:#050913}.clan-member-card-v106 strong{display:block}.clan-member-card-v106 small{color:#9fb0c8}.clan-member-card-v106 .tag{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.74rem;font-weight:800}
+  .clan-public-vip-v111{display:grid;grid-template-columns:210px 1fr;gap:22px;align-items:center;padding:22px;border-radius:30px;border:1px solid rgba(239,68,68,.3);background:radial-gradient(circle at 15% 20%,rgba(239,68,68,.18),transparent 40%),linear-gradient(145deg,rgba(10,15,25,.97),rgba(3,7,12,.97))}.clan-public-vip-v111 img{width:100%;height:210px;object-fit:contain;border-radius:24px;background:#050913;border:1px solid rgba(255,255,255,.1)}.clan-public-vip-v111 h2{margin:5px 0 8px}.clan-public-vip-v111 p{margin:0;color:#d4deea}.clan-public-vip-tags-v111{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.clan-public-vip-tags-v111 span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.78rem;font-weight:800}.clan-apply-form-v106{display:grid;gap:12px}.clan-apply-form-v106 input,.clan-apply-form-v106 textarea{width:100%}
+  @media (max-width: 980px){.clan-banner-inner-v106,.clan-detail-grid-v106,.clan-public-vip-v111{grid-template-columns:1fr}.clan-banner-copy-v106 h1{font-size:2rem}}
+</style>
+<main class="container clan-detail-v106">
+  <%- include('partials/alerts') %>
+
+  <section class="clan-banner-v106" style="box-shadow:0 30px 90px rgba(0,0,0,.35), inset 0 0 0 1px <%= clan.accentColor %>33">
+    <div class="clan-banner-inner-v106">
+      <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+      <div class="clan-banner-copy-v106">
+        <p class="eyebrow">Página pública do clã</p>
+        <h1>[<%= clan.tag %>] <%= clan.name %></h1>
+        <p><%= clan.description || clan.recruitmentMessage || 'Esse clã ainda não adicionou uma descrição pública.' %></p>
+        <div class="clan-banner-tags-v106">
+          <span><%= clan.serverType.toUpperCase() %></span>
+          <span><%= clan.memberCount %> membro(s)</span>
+          <% if (clan.isRecruiting) { %><span>📢 Recrutando agora</span><% } %>
+          <% if ((clan.activeOutfitNames || []).length) { %><span>VIPs: <%= clan.activeOutfitNames.join(', ') %></span><% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% if (clan.clanVipOutfit) { const clanVipPaid = clan.clanVipOutfit.billingMode === 'PAID'; const viewerIsOwner = viewerMembership?.clan?.id === clan.id && viewerClanMember?.role === 'OWNER'; %>
+    <section class="clan-public-vip-v111">
+      <img src="<%= clan.clanVipOutfit.imageSrc %>" onerror="this.src='/images/raidz-vips-store.webp'" alt="<%= clan.clanVipOutfit.name %>">
+      <div>
+        <p class="eyebrow">Traje VIP personalizado do clã</p>
+        <h2><%= clan.clanVipOutfit.name %></h2>
+        <p><%= clan.clanVipOutfit.description || 'Traje exclusivo usado pelos membros deste clã.' %></p>
+        <div class="clan-public-vip-tags-v111">
+          <span>👑 Exclusivo do clã</span>
+          <% if (clanVipPaid) { %>
+            <span>💰 <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ por player / 30 dias</span>
+            <span>👑 Dono do clã não paga</span>
+            <span>🚫 Venceu e não renovou: perde o acesso</span>
+          <% } else { %>
+            <span>✅ Gratuito para todos os membros ativos</span>
+            <span>⚡ Liberação automática</span>
+          <% } %>
+          <span>🎮 Entregue pelo sistema no DayZ</span>
+        </div>
+        <% if (viewerMembership?.clan?.id === clan.id) { %>
+          <% if (!clanVipPaid || viewerIsOwner) { %>
+            <div class="notice success" style="margin-top:14px"><strong>Acesso liberado:</strong> <%= viewerIsOwner ? 'o dono recebe gratuitamente o próprio traje.' : 'este traje foi configurado como gratuito para o clã.' %></div>
+          <% } else if (viewerClanMember?.clanVipActive) { %>
+            <div class="notice success" style="margin-top:14px"><strong>Seu traje está ativo</strong> até <%= dateTime(viewerClanMember.clanVipExpiresAt) %>.</div>
+            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Renovar por mais 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ do seu saldo?')"><button class="btn primary" type="submit">Renovar por mais 30 dias</button></form>
+          <% } else { %>
+            <div class="notice" style="margin-top:14px">Você faz parte do clã, mas ainda não pagou a mensalidade deste traje.</div>
+            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Comprar este traje por 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ do seu saldo?')"><button class="btn primary" type="submit">Comprar por <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ / 30 dias</button></form>
+          <% } %>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+
+  <section class="clan-detail-grid-v106">
+    <article class="clan-panel-v106">
+      <h2>Informações do clã</h2>
+      <div class="clan-info-grid-v106">
+        <div class="clan-info-box-v106"><small>Dono</small><strong><%= clan.ownerPlayer?.nickname || clan.ownerPlayer?.steam64 || '—' %></strong></div>
+        <div class="clan-info-box-v106"><small>Sub dono</small><strong><%= clan.subOwnerPlayer?.nickname || clan.subOwnerPlayer?.steam64 || 'Não definido' %></strong></div>
+        <div class="clan-info-box-v106"><small>Premiações</small><strong><%= (clan.awards || []).length %></strong></div>
+        <div class="clan-info-box-v106"><small>Recrutamento</small><strong><%= clan.isRecruiting ? 'Aberto' : 'Fechado' %></strong></div>
+      </div>
+      <% if (clan.recruitmentTitle || clan.recruitmentMessage || clan.recruitmentRequirements) { %>
+        <div class="clan-panel-v106" style="padding:16px;border-radius:24px;background:rgba(255,255,255,.03)">
+          <% if (clan.recruitmentTitle) { %><h3><%= clan.recruitmentTitle %></h3><% } %>
+          <% if (clan.recruitmentMessage) { %><p><%= clan.recruitmentMessage %></p><% } %>
+          <% if (clan.recruitmentRequirements) { %><p><strong>Requisitos:</strong> <%= clan.recruitmentRequirements %></p><% } %>
+          <% if (clan.recruitmentContact) { %><p><strong>Contato:</strong> <%= clan.recruitmentContact %></p><% } %>
+        </div>
+      <% } %>
+
+      <h3>Membros e VIPs</h3>
+      <div class="clan-member-grid-v106">
+        <% clan.members.forEach(member => { %>
+          <article class="clan-member-card-v106">
+            <div class="clan-member-head-v106">
+              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
+              <div>
+                <strong><%= member.displayName %></strong>
+                <small><%= member.role === 'OWNER' ? 'Dono' : (member.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></small>
+              </div>
+            </div>
+            <span class="tag">Steam64: <%= member.steam64 %></span>
+            <% if (member.player?.profileBio) { %><small><%= member.player.profileBio %></small><% } %>
+            <% if (member.activeOutfit?.outfitTemplate?.name) { %><span class="tag">👑 <%= member.activeOutfit.outfitTemplate.name %></span><% } else { %><span class="tag">Sem traje VIP ativo</span><% } %>
+          </article>
+        <% }) %>
+      </div>
+    </article>
+
+    <aside class="clan-panel-v106" id="form-recrutamento">
+      <h2>Entrar no clã</h2>
+      <% if (viewerMembership?.clan?.id === clan.id) { %>
+        <p>Você já faz parte deste clã.</p>
+        <a class="btn primary" href="/my-clan">Abrir painel do meu clã</a>
+      <% } else if (viewerMembership?.clan) { %>
+        <p>Você já faz parte do clã [<%= viewerMembership.clan.tag %>] <%= viewerMembership.clan.name %>. Saia dele antes de entrar em outro.</p>
+      <% } else if (!player) { %>
+        <p>Entre com seu Steam64 na loja para enviar o formulário de recrutamento.</p>
+        <a class="btn primary" href="/shop#entrar">Entrar com Steam64</a>
+      <% } else if (!player.hasAvatar) { %>
+        <p>Para se candidatar a um clã, a loja exige uma imagem de perfil salva no seu Steam64.</p>
+        <a class="btn primary" href="/wallet#perfil-player">Enviar imagem de perfil</a>
+      <% } else if (!clan.isRecruiting) { %>
+        <p>Esse clã não está recrutando no momento.</p>
+      <% } else { %>
+        <% const pendingApp = (viewerApplications || []).find(app => app.status === 'PENDING'); %>
+        <% if (pendingApp) { %>
+          <p>Você já enviou uma solicitação para esse clã em <strong><%= dateTime(pendingApp.createdAt) %></strong>.</p>
+        <% } %>
+        <form method="POST" action="/clans/<%= clan.slug %>/apply" class="clan-apply-form-v106">
+          <label>Steam64
+            <input value="<%= player.steam64 %>" readonly>
+          </label>
+          <label>Nick in-game
+            <input name="inGameName" maxlength="100" required value="<%= player.nickname || '' %>" placeholder="Seu nome dentro do servidor">
+          </label>
+          <label>Pequeno formulário
+            <textarea name="message" rows="6" maxlength="1200" placeholder="Fale rápido sobre você, disponibilidade, estilo de jogo e por que quer entrar no clã."></textarea>
+          </label>
+          <button class="btn primary" type="submit">Enviar para o dono do clã</button>
+        </form>
+      <% } %>
+    </aside>
+  </section>
+</main>
+<%- include('partials/footer') %>

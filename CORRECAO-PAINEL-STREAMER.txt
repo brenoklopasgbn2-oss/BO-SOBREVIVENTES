@@ -1,0 +1,14 @@
+CORREÇÃO DO PAINEL STREAMER
+===========================
+
+- Removido o formulário público de entrada por Steam64/código.
+- Removido o botão Painel Streamer do menu público.
+- /streamer não aceita mais ?steam64= nem ?code=.
+- Solicitação de saque usa o Steam64 da sessão segura, sem confiar em campos escondidos.
+- Criada entrada exclusiva do jogo por token assinado e temporário.
+- Token de abertura expira em 120 segundos.
+- Sessão do navegador expira em 8 horas.
+- Steam64 precisa continuar ativo e liberado pelo ADM.
+
+A integração que o MOD deve chamar ao apertar L está em:
+ACESSO-STREAMER-PELO-L.txt

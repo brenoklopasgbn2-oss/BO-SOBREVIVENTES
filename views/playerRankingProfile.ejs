@@ -1,0 +1,195 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/css/ranking-v117.css?v=119">
+<%- include('partials/nav') %>
+
+<main class="rz-ranking-page rz-player-profile-page">
+  <div class="rz-ranking-backdrop" aria-hidden="true"></div>
+  <%- include('partials/alerts') %>
+
+  <nav class="rz-profile-breadcrumb">
+    <a href="/ranking?server=<%= selectedServer %>">← Voltar ao ranking</a>
+    <span>/</span>
+    <strong>Perfil competitivo</strong>
+  </nav>
+
+  <section class="rz-profile-hero">
+    <div class="rz-profile-cover"></div>
+    <div class="rz-profile-avatar-wrap">
+      <img src="<%= profilePlayer.avatarUrl %>" alt="Avatar de <%= profilePlayer.nickname %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
+      <span>#<%= ranks.allTime || '—' %></span>
+    </div>
+    <div class="rz-profile-identity">
+      <span class="rz-eyebrow">Perfil competitivo RAID-Z</span>
+      <h1><%= membership?.clan ? ('[' + membership.clan.tag + '] ') : '' %><%= profilePlayer.nickname %></h1>
+      <p><%= profilePlayer.profileBio || 'Sobrevivente competitivo do RAID-Z.' %></p>
+      <div class="rz-profile-meta">
+        <code><%= profilePlayer.steam64 %></code>
+        <% if (membership?.clan) { %><a href="/clans/<%= membership.clan.slug %>">Clã [<%= membership.clan.tag %>] <%= membership.clan.name %></a><% } %>
+        <% if (isOwnProfile) { %><a href="/wallet#perfil-player">Editar perfil</a><% } %>
+      </div>
+    </div>
+    <div class="rz-profile-rank-box">
+      <small>Ranking histórico</small>
+      <strong>#<%= ranks.allTime || '—' %></strong>
+      <span>de <%= ranks.totalPlayers || 0 %> players</span>
+      <em>#<%= ranks.weekly || '—' %> nos últimos 7 dias</em>
+    </div>
+  </section>
+
+  <section class="rz-filter-strip rz-profile-filter">
+    <div class="rz-filter-group">
+      <span>Servidor</span>
+      <% [['global','Global'],['vanilla','Vanilla'],['bbp','BBP'],['deathmatch','Deathmatch']].forEach(([value,label]) => { %>
+        <a class="<%= selectedServer === value ? 'active' : '' %>" href="/ranking/player/<%= profilePlayer.steam64 %>?server=<%= value %>"><%= label %></a>
+      <% }) %>
+    </div>
+    <div class="rz-profile-filter-actions">
+      <a href="#historico">Histórico completo</a>
+      <a href="#trofeus">Troféus</a>
+      <a href="#armas">Armas</a>
+    </div>
+  </section>
+
+  <section class="rz-profile-stat-grid">
+    <article><span>Kills</span><strong><%= stats.kills %></strong><small><%= periodStats.sevenDays.kills %> nos últimos 7 dias</small></article>
+    <article><span>Mortes</span><strong><%= stats.deaths %></strong><small><%= periodStats.sevenDays.deaths %> nos últimos 7 dias</small></article>
+    <article><span>KD</span><strong class="<%= stats.kd >= 1 ? 'rz-positive' : 'rz-negative' %>"><%= Number(stats.kd).toFixed(2) %></strong><small><%= Number(periodStats.thirtyDays.kd).toFixed(2) %> nos últimos 30 dias</small></article>
+    <article><span>Headshots</span><strong><%= stats.headshots %></strong><small><%= Number(stats.headshotRate || 0).toFixed(1) %>% das kills</small></article>
+    <article><span>Maior distância</span><strong><%= Math.round(stats.longestKill || 0) %>m</strong><small><%= stats.favoriteWeapon || '—' %></small></article>
+    <article><span>Score</span><strong class="rz-gold"><%= coins(stats.score) %></strong><small><%= totalTrophyPoints %> pontos de troféus</small></article>
+  </section>
+
+  <section class="rz-profile-dashboard">
+    <article class="rz-rank-panel rz-activity-panel">
+      <header class="rz-panel-head compact">
+        <div><h2>Atividade dos últimos 14 dias</h2><p>Kills e mortes registradas por dia.</p></div>
+      </header>
+      <% const maxActivity = Math.max(1, ...activityByDay.flatMap(day => [day.kills, day.deaths])); %>
+      <div class="rz-activity-chart">
+        <% activityByDay.forEach((day) => { %>
+          <div class="rz-activity-day" title="<%= day.label %>: <%= day.kills %> kills / <%= day.deaths %> mortes">
+            <div class="rz-activity-bars">
+              <i class="kills" style="height:<%= Math.max(3, Math.round((day.kills / maxActivity) * 100)) %>%"></i>
+              <i class="deaths" style="height:<%= Math.max(3, Math.round((day.deaths / maxActivity) * 100)) %>%"></i>
+            </div>
+            <span><%= day.label %></span>
+          </div>
+        <% }) %>
+      </div>
+      <div class="rz-chart-legend"><span><i class="kills"></i>Kills</span><span><i class="deaths"></i>Mortes</span></div>
+    </article>
+
+    <article class="rz-rank-panel rz-profile-summary-panel">
+      <header class="rz-panel-head compact"><div><h2>Resumo de combate</h2><p>Principais marcas do player.</p></div></header>
+      <div class="rz-combat-summary">
+        <div><span>Arma favorita</span><strong><%= stats.favoriteWeapon || '—' %></strong></div>
+        <div><span>Rival mais abatido</span><strong><%= stats.topVictim ? stats.topVictim[0] : '—' %></strong><small><%= stats.topVictim ? stats.topVictim[1] + ' eliminações' : 'Sem dados' %></small></div>
+        <div><span>Maior carrasco</span><strong><%= stats.topNemesis ? stats.topNemesis[0] : '—' %></strong><small><%= stats.topNemesis ? stats.topNemesis[1] + ' mortes' : 'Sem dados' %></small></div>
+        <div><span>Troféus</span><strong><%= badges.length %></strong><small><%= totalTrophyPoints %> pontos acumulados</small></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="rz-rank-panel rz-profile-trophies" id="trofeus">
+    <header class="rz-panel-head">
+      <div><h2>Galeria de troféus</h2><p>Conquistas permanentes liberadas automaticamente e premiações especiais.</p></div>
+      <div class="rz-trophy-total"><strong><%= badges.length %>/<%= trophyProgress.length %></strong><span>conquistados</span></div>
+    </header>
+    <div class="rz-earned-trophies">
+      <% badges.forEach((badge) => { %>
+        <article style="--trophy:<%= badge.color || '#f7bd44' %>">
+          <div class="rz-earned-icon"><% if (badge.imageUrl) { %><img loading="lazy" decoding="async" src="<%= badge.imageUrl %>" alt="Troféu <%= badge.title %>"><% } else { %><span><%= badge.icon || '🏆' %></span><% } %></div>
+          <div><small><%= badge.metadata?.rarity || (badge.source === 'AUTOMATIC' ? 'Automático' : 'Premiação especial') %> • +<%= badge.points || 0 %> pts</small><h3><%= badge.title %></h3><p><%= badge.description || 'Conquista do servidor.' %></p><time><%= dateTime(badge.awardedAt) %></time></div>
+        </article>
+      <% }) %>
+      <% if (!badges.length) { %><div class="rz-empty-card">Este player ainda não conquistou troféus.</div><% } %>
+    </div>
+
+    <header class="rz-subsection-head"><h3>Próximas conquistas</h3><p>Progresso calculado em tempo real com o histórico do player.</p></header>
+    <div class="rz-next-trophies">
+      <% nextTrophies.forEach((trophy) => { %>
+        <article style="--trophy:<%= trophy.color %>">
+          <img loading="lazy" decoding="async" src="<%= trophy.imageUrl %>" alt="Próximo troféu: <%= trophy.title %>">
+          <div><small><%= trophy.rarity %> • +<%= trophy.points %> pontos</small><h3><%= trophy.title %></h3><p><%= trophy.progressLabel %></p><div class="rz-progress"><i style="width:<%= trophy.percent %>%"></i></div><b><%= trophy.percent %>% concluído</b></div>
+        </article>
+      <% }) %>
+      <% if (!nextTrophies.length) { %><div class="rz-empty-card">Todas as conquistas automáticas foram liberadas.</div><% } %>
+    </div>
+  </section>
+
+  <section class="rz-profile-two-columns">
+    <article class="rz-rank-panel" id="armas">
+      <header class="rz-panel-head compact"><div><h2>Desempenho por arma</h2><p>Armas com mais eliminações.</p></div></header>
+      <div class="rz-weapon-table">
+        <div class="head"><span>Arma</span><span>Kills</span><span>HS</span><span>Precisão</span><span>Distância</span></div>
+        <% weaponStats.forEach((weapon) => { %>
+          <div><strong><%= weapon.weapon %></strong><span><%= weapon.kills %></span><span><%= weapon.headshots %></span><span><%= Number(weapon.headshotRate).toFixed(1) %>%</span><span><%= Math.round(weapon.longestKill || 0) %>m</span></div>
+        <% }) %>
+        <% if (!weaponStats.length) { %><div class="rz-empty">Nenhuma arma registrada.</div><% } %>
+      </div>
+    </article>
+
+    <article class="rz-rank-panel">
+      <header class="rz-panel-head compact"><div><h2>Rivais e confrontos</h2><p>Balanço contra os adversários mais encontrados.</p></div></header>
+      <div class="rz-rival-list">
+        <% rivals.forEach((rival) => { %>
+          <a href="/ranking/player/<%= rival.steam64 %>?server=<%= selectedServer %>">
+            <span><strong><%= rival.name %></strong><small><%= rival.steam64 %></small></span>
+            <b class="kills"><%= rival.kills %> K</b>
+            <b class="deaths"><%= rival.deaths %> M</b>
+            <em class="<%= rival.balance >= 0 ? 'positive' : 'negative' %>"><%= rival.balance >= 0 ? '+' : '' %><%= rival.balance %></em>
+          </a>
+        <% }) %>
+        <% if (!rivals.length) { %><div class="rz-empty">Nenhum confronto registrado.</div><% } %>
+      </div>
+    </article>
+  </section>
+
+  <% if (serverBreakdown.length) { %>
+  <section class="rz-rank-panel">
+    <header class="rz-panel-head compact"><div><h2>Desempenho por servidor</h2><p>Separação das estatísticas por modalidade.</p></div></header>
+    <div class="rz-server-breakdown">
+      <% serverBreakdown.forEach((row) => { %>
+        <article><span><%= row.serverType.toUpperCase() %></span><strong><%= row.kills %> kills</strong><small><%= row.deaths %> mortes • KD <%= Number(row.kd).toFixed(2) %> • <%= row.headshots %> HS</small></article>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (membership?.clan) { %>
+  <section class="rz-rank-panel rz-profile-clan-panel">
+    <div class="rz-profile-clan-banner" style="background-image:url('/clan-banner/<%= membership.clan.id %>')"></div>
+    <img src="/clan-flag/<%= membership.clan.id %>" alt="Bandeira do clã" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+    <div><span class="rz-eyebrow">Clã atual</span><h2>[<%= membership.clan.tag %>] <%= membership.clan.name %></h2><p><%= membership.clan.description || 'Clã competitivo do RAID-Z.' %></p><a class="rz-inline-action" href="/clans/<%= membership.clan.slug %>">Abrir perfil do clã</a></div>
+    <div class="rz-profile-clan-score"><small>Score do clã</small><strong><%= clanRank ? coins(clanRank.score) : 0 %></strong><span><%= membership.clan.members.length %> membros</span></div>
+  </section>
+  <% } %>
+
+  <section class="rz-rank-panel rz-history-panel" id="historico">
+    <header class="rz-panel-head">
+      <div><h2>Histórico completo de combate</h2><p>Todos os eventos do player, organizados em páginas com arma, distância, local e servidor.</p></div>
+      <div class="rz-panel-period"><%= historyPagination.total %> eventos</div>
+    </header>
+    <div class="rz-history-list">
+      <% recentEvents.forEach((event) => { %>
+        <div class="rz-history-row <%= event.type === 'KILL' ? 'kill' : 'death' %>">
+          <span class="rz-history-status"><%= event.type === 'KILL' ? 'KILL' : 'MORTE' %></span>
+          <div><strong><%= event.type === 'KILL' ? 'Eliminou' : 'Foi eliminado por' %> <a href="/ranking/player/<%= event.opponentSteam64 %>?server=<%= selectedServer %>"><%= event.opponentName %></a></strong><small><%= event.weapon %><%= event.distanceMeters ? ' • ' + Math.round(event.distanceMeters) + 'm' : '' %><%= event.headshot ? ' • HEADSHOT' : '' %></small></div>
+          <span><%= event.place || 'Local não informado' %></span>
+          <b><%= event.serverType.toUpperCase() %></b>
+          <time><%= dateTime(event.occurredAt) %></time>
+        </div>
+      <% }) %>
+      <% if (!recentEvents.length) { %><div class="rz-empty">Sem histórico de combate.</div><% } %>
+    </div>
+    <% if (historyPagination.totalPages > 1) { %>
+      <nav class="rz-history-pagination" aria-label="Paginação do histórico">
+        <% if (historyPagination.hasPrevious) { %><a href="/ranking/player/<%= profilePlayer.steam64 %>?server=<%= selectedServer %>&page=<%= historyPagination.page - 1 %>#historico">← Página anterior</a><% } else { %><span></span><% } %>
+        <strong>Página <%= historyPagination.page %> de <%= historyPagination.totalPages %></strong>
+        <% if (historyPagination.hasNext) { %><a href="/ranking/player/<%= profilePlayer.steam64 %>?server=<%= selectedServer %>&page=<%= historyPagination.page + 1 %>#historico">Próxima página →</a><% } else { %><span></span><% } %>
+      </nav>
+    <% } %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,80 @@
+<style>
+  .managed-outfits-v99{display:grid;gap:18px;margin:22px 0}.managed-card-v99{border:1px solid rgba(239,68,68,.24);background:linear-gradient(145deg,rgba(19,25,38,.96),rgba(5,9,16,.96));border-radius:24px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.26)}.managed-head-v99{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.managed-head-v99 img{width:120px;height:120px;object-fit:contain;border-radius:18px;background:#050a12;border:1px solid rgba(255,255,255,.1)}.managed-head-v99 h2{margin:0 0 5px}.managed-badges-v99{display:flex;gap:7px;flex-wrap:wrap}.managed-layout-v99{display:grid;grid-template-columns:minmax(270px,.75fr) minmax(420px,1.25fr);gap:18px;margin-top:18px}.managed-box-v99{border:1px solid rgba(148,163,184,.15);background:rgba(2,7,15,.62);border-radius:18px;padding:15px}.managed-box-v99 h3{margin:0 0 10px}.managed-add-v99{display:grid;gap:9px}.managed-add-v99 input{width:100%;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:#060b14;color:#fff;padding:12px}.managed-member-v99{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(148,163,184,.12)}.managed-member-v99:last-child{border-bottom:0}.managed-member-v99 form{display:inline-flex;gap:6px}.managed-member-v99 small{color:#9dadc1}.managed-warning-v99{border:1px solid rgba(251,191,36,.28);background:rgba(120,53,15,.18);border-radius:13px;padding:11px;color:#fde68a;margin:10px 0}.managed-flag-v99{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid rgba(148,163,184,.14)}.status-active-v99{color:#86efac}.status-expired-v99{color:#fca5a5}@media(max-width:900px){.managed-head-v99{grid-template-columns:80px 1fr}.managed-head-v99>form{grid-column:1/-1}.managed-head-v99 img{width:80px;height:80px}.managed-layout-v99{grid-template-columns:1fr}.managed-member-v99{grid-template-columns:1fr}.managed-member-v99 form{display:flex;flex-wrap:wrap}}
+</style>
+<% const managedAdminPreview = Boolean(typeof adminPreview !== 'undefined' && adminPreview); %>
+<section class="managed-outfits-v99">
+  <% if (!(managedOutfits || []).length) { %>
+    <div class="managed-card-v99"><h2>Nenhum traje ligado ao seu Steam64</h2><p class="muted">O ADM precisa abrir o traje no painel, ativar “Painel de membros” e informar seu Steam64 como dono.</p></div>
+  <% } %>
+  <% (managedOutfits || []).forEach(outfit => { const isStreamer = outfit.ownerType === 'STREAMER'; const clanPaid = !isStreamer && Number(outfit.memberMonthlyPriceCoins || 0) > 0; const activeCount = (outfit.activeMembers || []).length; %>
+    <article class="managed-card-v99">
+      <div class="managed-head-v99">
+        <img src="<%= outfit.imageData ? '/outfit-image/' + outfit.id : (outfit.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= outfit.name %>">
+        <div>
+          <div class="managed-badges-v99"><span class="pill success"><%= isStreamer ? 'STREAMER NÃO PAGA' : 'TRAJE PERSONALIZADO DO CLÃ' %></span><span class="pill"><%= activeCount %>/<%= outfit.maxManagedMembers %> usuários ativos</span><% if (!isStreamer) { %><span class="pill"><%= clanPaid ? (coins(outfit.memberMonthlyPriceCoins) + ' RZ/player/30 dias') : 'GRATUITO PARA O CLÃ' %></span><% } %><span class="pill">Mapa Chernarus incluso</span></div>
+          <h2><%= outfit.name %></h2>
+          <p class="muted"><%= outfit.description || '' %></p>
+          <small>Dono liberado: <strong><%= outfit.managedOwnerSteam64 %></strong></small>
+        </div>
+        <% if (managedAdminPreview) { %>
+          <button class="btn" type="button" disabled>Prévia do ADM</button>
+        <% } else { %>
+          <form method="POST" action="/managed-outfits/<%= outfit.id %>/flag-request" onsubmit="return confirm('Dropar agora a bandeira <%= outfit.flagClassname || '' %> no seu personagem?')">
+            <input type="hidden" name="returnTo" value="<%= managerReturnTo %>">
+            <button class="btn primary" type="submit">Dropar minha bandeira</button>
+          </form>
+        <% } %>
+      </div>
+
+      <% if (!isStreamer && clanPaid) { %><div class="managed-warning-v99">Este traje está no modo <strong>pago</strong>. O dono recebe gratuitamente; cada membro paga <strong><%= coins(outfit.memberMonthlyPriceCoins) %> RZ</strong> com o próprio saldo para usar por 30 dias. Se não renovar, o acesso expira.</div><% } else if (!isStreamer) { %><div class="managed-warning-v99">Este traje está no modo <strong>gratuito</strong>. O dono e todos os membros ativos recebem automaticamente enquanto estiverem no clã.</div><% } else { %>
+        <div class="managed-warning-v99">O streamer dono recebe o traje sem pagar. Ele pode liberar até <strong><%= outfit.maxManagedMembers %> player(s)</strong>; o ADM pode aumentar esse limite.</div>
+      <% } %>
+
+      <div class="managed-layout-v99">
+        <div class="managed-box-v99">
+          <h3>Adicionar player</h3>
+          <% if (managedAdminPreview) { %>
+            <p class="muted">Na prévia do ADM, adicionar e remover usuários fica bloqueado.</p>
+          <% } else if (!isStreamer) { %>
+            <p class="muted">Os usuários desta lista vêm dos membros ativos do clã. <%= clanPaid ? 'Cada membro faz a própria compra/renovação no painel Meu Clã.' : 'No modo gratuito, o acesso é liberado automaticamente.' %></p>
+            <a class="btn primary" href="/my-clan">Abrir painel Meu Clã</a>
+          <% } else { %>
+            <form class="managed-add-v99" method="POST" action="/managed-outfits/<%= outfit.id %>/members/add">
+              <input type="hidden" name="returnTo" value="<%= managerReturnTo %>">
+              <input name="nickname" maxlength="100" placeholder="Nome do player (opcional)">
+              <input name="memberSteam64" inputmode="numeric" pattern="[0-9]{17}" maxlength="17" placeholder="Steam64 com 17 números" required>
+              <button class="btn primary" type="submit">Liberar gratuitamente</button>
+            </form>
+          <% } %>
+          <div class="managed-flag-v99">
+            <div><strong>Bandeira separada</strong><br><small><%= outfit.flagClassname || 'Aguardando classname do ADM' %></small></div>
+            <small>Ao apertar o botão, ela é enviada na hora para dropar no pé do responsável.</small>
+          </div>
+        </div>
+
+        <div class="managed-box-v99">
+          <h3>Quem pode usar</h3>
+          <% const visibleMembers = (outfit.members || []).filter(m => m.source !== 'STREAMER_OWNER'); %>
+          <% if (isStreamer && outfit.ownerAccess) { %>
+            <div class="managed-member-v99"><div><strong><%= outfit.ownerAccess.player?.nickname || 'Streamer dono' %></strong> <span class="pill success">DONO</span><br><small><%= outfit.ownerAccess.steam64 %> • acesso grátis e permanente</small></div></div>
+          <% } %>
+          <% visibleMembers.forEach(member => { const active = member.status === 'ACTIVE' && new Date(member.expiresAt) > new Date(); %>
+            <div class="managed-member-v99">
+              <div><strong><%= member.player?.nickname || 'Player' %></strong><br><small><%= member.steam64 %> • <span class="<%= active ? 'status-active-v99' : 'status-expired-v99' %>"><%= active ? (isStreamer ? 'LIBERADO' : (clanPaid && member.source === 'CLAN_CUSTOM_PAID' ? ('PAGO ATÉ ' + new Date(member.expiresAt).toLocaleDateString('pt-BR')) : 'LIBERADO PELO CLÃ')) : (clanPaid ? 'SEM MENSALIDADE ATIVA' : 'BLOQUEADO') %></span></small></div>
+              <div>
+                <% if (managedAdminPreview) { %>
+                  <span class="pill">Somente visualização</span>
+                <% } else if (isStreamer) { %>
+                  <form method="POST" action="/managed-outfits/members/<%= member.id %>/remove"><input type="hidden" name="returnTo" value="<%= managerReturnTo %>"><button class="btn small" type="submit">Remover</button></form>
+                <% } else { %>
+                  <a class="btn small" href="/my-clan">Gerenciar no clã</a>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+          <% if (!visibleMembers.length) { %><p class="muted">Nenhum player foi adicionado ainda.</p><% } %>
+        </div>
+      </div>
+    </article>
+  <% }) %>
+</section>

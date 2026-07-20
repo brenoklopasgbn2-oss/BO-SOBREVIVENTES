@@ -5,7 +5,7 @@
   const allVehicles = Array.isArray(allGarageVehicles) ? allGarageVehicles : garageVehicles;
   const nowMs = Date.now();
   const activeVehicleCount = allVehicles.filter(v => v.status === 'ACTIVE' && !(v.expiresAt && new Date(v.expiresAt).getTime() < nowMs)).length;
-  const insuredVehicleCount = allVehicles.filter(v => !!v.insurancePlanId || !!v.insurancePlan).length;
+  const insuredVehicleCount = allVehicles.filter(v => (!!v.insurancePlanId || !!v.insurancePlan) && (!v.insuranceExpiresAt || new Date(v.insuranceExpiresAt).getTime() > nowMs)).length;
   const vanillaCount = allVehicles.filter(v => v.serverType === 'vanilla').length;
   const selectedLabel = selectedGarageServer === 'vanilla' ? 'Vanilla' : 'Todos os veículos';
   const vehicleImage = (v) => { const base = v?.template?.imageData ? ('/vehicle-image/' + v.template.id) : (v?.template?.imageUrl || '/images/vanilla-card.png?v=68'); return base + (base.includes('?') ? '&' : '?') + 'v=' + (v?.template?.updatedAt ? new Date(v.template.updatedAt).getTime() : Date.now()); };
@@ -13,14 +13,12 @@
   const planLabel = (v) => v?.insurancePlan ? v.insurancePlan.name : 'Sem seguro';
   const planModeLabel = (v) => {
     if (!v?.insurancePlan) return 'Sem plano';
-    if (v.insurancePlan.billingType === 'PER_USE') return 'Seguro por uso';
     return (v.insurancePlan.durationDays || 30) >= 30 ? 'Mensal' : `${v.insurancePlan.durationDays || 30} dias`;
   };
-  const weeklyLimit = (v) => v?.insurancePlan?.billingType === 'SUBSCRIPTION' ? Number(v.insurancePlan.maxUsesPerWeek || 1) : null;
-  const insurancePlanPrice = (plan, v) => plan?.billingType === 'PER_USE' ? 10000 : Math.round(Number(v?.template?.buyPriceCoins || 0) * 0.5);
+  const weeklyLimit = (v) => v?.insurancePlan ? Number(v.insurancePlan.maxUsesPerWeek || 5) : null;
+  const insurancePlanPrice = (plan, v) => Math.round(Number(v?.template?.buyPriceCoins || 0) * 0.5);
   const weeklyText = (v) => {
     if (!v?.insurancePlan) return '0/0';
-    if (v.insurancePlan.billingType === 'PER_USE') return `${v.insuranceUsesThisWeek || 0}/livre`;
     return `${v.insuranceUsesThisWeek || 0}/${weeklyLimit(v) || 1}`;
   };
   const weeklyPct = (v) => {
@@ -66,7 +64,7 @@
         <div class="garage-title-v29">
           <p class="v9-kicker">RAID-Z Store</p>
           <h1>MINHA GARAGEM</h1>
-          <p>Gerencie seus veículos, veja o servidor de cada carro, acione seguro normal ou seguro por roubo e controle suas reposições.</p>
+          <p>Gerencie seus veículos e seus planos. A compra e a renovação do seguro continuam no site; o uso do seguro é feito somente dentro do jogo pela tecla L.</p>
           <div class="garage-server-tabs-v29" aria-label="Filtro de servidor da garagem">
             <a class="<%= selectedGarageServer === 'all' ? 'active' : '' %>" href="/my-vehicles">Todos <b><%= allVehicles.length %></b></a>
             <a class="server-vanilla <%= selectedGarageServer === 'vanilla' ? 'active' : '' %>" href="/my-vehicles?serverType=vanilla">Vanilla <b><%= vanillaCount %></b></a>
@@ -90,7 +88,7 @@
             <span>盾</span>
             <small>Seguros disponíveis</small>
             <strong><%= insuredVehicleCount %></strong>
-            <em>normal + roubo</em>
+            <em>compra e renovação no site</em>
           </article>
         </div>
       </section>
@@ -114,13 +112,13 @@
                 <div class="garage-card-art-v29">
                   <img src="<%= image %>" alt="<%= v.displayName %>">
                   <span class="garage-server-chip-v29 <%= v.serverType %>"><%= serverLabel(v) %></span>
-                  <span class="garage-live-chip-v29 <%= pendingClaim ? 'moving' : 'stopped' %>"><%= pendingClaim ? 'Seguro pendente' : 'Fila local pronta' %></span>
+                  <span class="garage-live-chip-v29 stopped">Uso somente no jogo</span>
                 </div>
                 <div class="garage-card-content-v29">
                   <h2><%= v.displayName %></h2>
                   <div class="garage-card-meta-v29">
                     <span>▣ Integração: arquivos locais + FTP</span>
-                    <span>◉ Estado: <%= pendingClaim ? 'aguardando o mod concluir' : 'sem reposição pendente' %></span>
+                    <span>◉ Seguro: use dentro do servidor pela tecla L</span>
                     <span>★ Plano: <%= planLabel(v) %></span>
                     <span>盾 Usos na semana: <%= weeklyText(v) %></span>
                     <% if (pendingClaim) { %>
@@ -130,7 +128,7 @@
                   <div class="garage-card-buttons-v29">
                     <button type="button" data-garage-detail="<%= v.id %>">Detalhes</button>
                     <button type="button" disabled><%= pendingClaim ? 'Processando por arquivo' : 'Sem consulta ao jogo' %></button>
-                    <button type="button" class="accent" data-garage-detail="<%= v.id %>" data-scroll-actions="1"><%= pendingClaim ? 'Ver pendência' : 'Acionar seguro' %></button>
+                    <button type="button" class="accent" data-garage-detail="<%= v.id %>" data-scroll-actions="1">Ver plano do seguro</button>
                   </div>
                 </div>
               </article>
@@ -160,10 +158,10 @@
               <div class="garage-detail-grid-v29">
                 <div><small>Servidor do veículo</small><strong><%= serverLabel(v) %></strong></div>
                 <div><small>Seguro atual</small><strong><%= planModeLabel(v) %></strong></div>
-                <div><small>Seguro por roubo</small><strong class="<%= pendingClaim ? 'orange' : 'green' %>"><%= pendingClaim ? 'Aguardando conclusão local' : 'Disponível para acionar' %></strong></div>
+                <div><small>Uso do seguro</small><strong class="green">Dentro do jogo pela tecla L</strong></div>
                 <div><small>Comunicação</small><strong>Arquivos locais + FTP</strong></div>
-                <div><small>Consulta ao jogo</small><strong>Desativada</strong></div>
-                <div><small>Regra de remoção</small><strong>Somente parado e sem ocupantes</strong></div>
+                <div><small>Site</small><strong>Compra e renovação do plano</strong></div>
+                <div><small>Mod</small><strong>Localiza, remove e repõe o veículo</strong></div>
                 <div><small>Veículo vence</small><strong><%= v.expiresAt ? dateTime(v.expiresAt) : 'Permanente' %></strong></div>
               </div>
             </div>
@@ -180,30 +178,11 @@
             </div>
 
             <aside class="garage-actions-v29" id="garage-actions-<%= v.id %>">
-              <% if (v.insurancePlan) { %>
-                <form method="POST" action="/my-vehicles/<%= v.id %>/respawn">
-                  <input type="hidden" name="coverageType" value="NORMAL">
-                  <button class="garage-action-option-v29 normal" type="submit" <%= (!isActive || pendingClaim) ? 'disabled' : '' %>>
-                    <span>盾</span>
-                    <b>Acionar seguro normal</b>
-                    <small>Requer estar até 250m do veículo</small>
-                  </button>
-                </form>
-                <form method="POST" action="/my-vehicles/<%= v.id %>/respawn">
-                  <input type="hidden" name="coverageType" value="THEFT">
-                  <button class="garage-action-option-v29 theft" type="submit" <%= (!isActive || pendingClaim) ? 'disabled' : '' %>>
-                    <span>♟</span>
-                    <b>Acionar seguro por roubo</b>
-                    <small><%= pendingClaim ? 'Já existe uma reposição pendente' : 'Sem limite de distância; aguarda parar e esvaziar' %></small>
-                  </button>
-                </form>
-              <% } else { %>
-                <div class="garage-action-option-v29 blocked">
-                  <span>×</span>
-                  <b>Sem seguro ativo</b>
-                  <small>Adicione um plano para liberar reposição</small>
-                </div>
-              <% } %>
+              <div class="garage-action-option-v29 normal">
+                <span>🎮</span>
+                <b>Usar seguro dentro do jogo</b>
+                <small>Entre no servidor, aperte L e abra Seguro dos meus veículos. O site não aciona mais reposições.</small>
+              </div>
 
               <% if (planOptions.length) { %>
                 <form method="POST" action="/my-vehicles/<%= v.id %>/upgrade-insurance" class="garage-upgrade-v29">
@@ -211,7 +190,7 @@
                     <select name="planId" required>
                       <% planOptions.forEach(plan => { %>
                         <option value="<%= plan.id %>" <%= v.insurancePlanId === plan.id ? 'selected' : '' %>>
-                          <%= plan.name %> — <%= plan.billingType === 'PER_USE' ? ('por uso ' + coins(insurancePlanPrice(plan, v)) + ' RZ') : ('mensal ' + coins(insurancePlanPrice(plan, v)) + ' RZ / ' + plan.maxUsesPerWeek + 'x semana') %>
+                          <%= plan.name %> — mensal <%= coins(insurancePlanPrice(plan, v)) %> RZ / <%= plan.maxUsesPerWeek %>x semana
                         </option>
                       <% }) %>
                     </select>
@@ -219,7 +198,7 @@
                   <button class="garage-action-option-v29 upgrade" type="submit">
                     <span>⇧</span>
                     <b><%= v.insurancePlanId ? 'Upgrade de plano' : 'Adicionar seguro' %></b>
-                    <small>Seguro por uso 10k ou mensal 50% do veículo. Na compra do carro, o 1º mês já vem incluso.</small>
+                    <small>Seguro mensal: renovação por 50% do valor do veículo. Na compra do carro, o 1º mês já vem incluso.</small>
                   </button>
                 </form>
               <% } %>
@@ -258,26 +237,26 @@
       <% } else { %>
         <section class="garage-empty-v29">
           <h2>Nenhum veículo nessa garagem</h2>
-          <p>Doe um veículo na categoria Veículos. Todo veículo com seguro aparece aqui para reposição.</p>
+          <p>Doe um veículo na categoria Veículos. Todo veículo comprado aparece aqui; seguros são usados dentro do jogo pela tecla L.</p>
           <a class="btn v9-gold-btn" href="/shop?serverType=vanilla&category=<%= encodeURIComponent('Veículos') %>">Ver veículos</a>
         </section>
       <% } %>
 
       <section class="garage-insurance-explain-v29" id="seguros">
-        <h2>COMO FUNCIONAM OS SEGUROS</h2>
+        <h2>COMO FUNCIONA O SEGURO</h2>
         <div class="garage-insurance-cards-v29">
           <article class="normal">
-            <span>盾</span>
+            <span>🛒</span>
             <div>
-              <h3>Seguro normal</h3>
-              <p>Use quando você está perto do veículo. O player precisa estar até <b>250m</b> do carro antigo. O sistema remove somente o veículo com o ID salvo e cria uma nova reposição.</p>
+              <h3>No site</h3>
+              <p>Você compra, adiciona, troca ou renova o plano de seguro. O site envia a validade e os dados do veículo para os arquivos do mod.</p>
             </div>
           </article>
           <article class="theft">
-            <span>♟</span>
+            <span>🎮</span>
             <div>
-              <h3>Seguro por roubo</h3>
-              <p>Use quando seu carro foi levado por outros jogadores. O player pode estar em qualquer canto do mapa. O sistema ignora a distância e só apaga quando o carro estiver <b>parado</b> e <b>sem player dentro</b>.</p>
+              <h3>Dentro do jogo</h3>
+              <p>Aperte <b>L</b>, abra <b>Seguro dos meus veículos</b> e escolha o carro. O mod procura o veículo, apaga o antigo quando encontrado e entrega a reposição. Limite: <b>5 usos por semana</b>.</p>
             </div>
           </article>
         </div>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+  </defs>
+  <rect width="420" height="420" rx="64" fill="#050913"/>
+  <path d="M210 64l112 40v78c0 88-55 143-112 174-57-31-112-86-112-174v-78z" fill="url(#g)" stroke="#f8fafc" stroke-opacity=".32" stroke-width="8"/>
+  <path d="M154 190l34 34 78-78" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="210" y="374" font-size="24" fill="#e9edf5" text-anchor="middle" font-family="Arial, sans-serif">CLAN RAID-Z</text>
+</svg>

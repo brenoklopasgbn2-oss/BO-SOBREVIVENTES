@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 720">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#050913"/>
+      <stop offset="45%" stop-color="#0d1524"/>
+      <stop offset="100%" stop-color="#320a0a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1400" height="720" fill="url(#bg)"/>
+  <rect width="1400" height="720" fill="url(#glow)"/>
+  <g opacity=".12" stroke="#fff">
+    <path d="M0 590h1400"/><path d="M0 520h1400"/><path d="M0 450h1400"/>
+    <path d="M210 0v720"/><path d="M420 0v720"/><path d="M630 0v720"/><path d="M840 0v720"/><path d="M1050 0v720"/>
+  </g>
+  <g transform="translate(170 120)">
+    <path d="M270 0l172 62v136c0 145-85 235-172 286-87-51-172-141-172-286V62z" fill="#0b1220" stroke="#ff7a7a" stroke-width="10"/>
+    <path d="M270 62l102 36v100c0 100-58 162-102 190-44-28-102-90-102-190V98z" fill="#ef4444" opacity=".86"/>
+    <path d="M220 182l36 36 80-80" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#f8fafc" font-family="Arial, sans-serif">
+    <text x="770" y="240" font-size="42" font-weight="700">CLÃS &amp; RECRUTAMENTO</text>
+    <text x="770" y="302" font-size="22" opacity=".9">Monte seu clã, exiba sua identidade, recrute membros e mostre seus VIPs.</text>
+    <text x="770" y="340" font-size="22" opacity=".9">Tudo integrado ao Steam64 do player dentro da loja RAID-Z.</text>
+    <text x="770" y="430" font-size="28" font-weight="700" fill="#ff8b8b">RAID-Z</text>
+  </g>
+</svg>

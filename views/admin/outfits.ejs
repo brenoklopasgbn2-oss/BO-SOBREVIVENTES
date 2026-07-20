@@ -1,39 +1,239 @@
 <%- include('../partials/head') %>
 <%- include('../partials/nav') %>
-<main class="admin-shell-v46 admin-outfits-v49">
+<main class="admin-shell-v46 admin-outfits-v92">
   <%- include('../partials/alerts') %>
   <%- include('_admin_nav') %>
   <style>
-    .admin-outfits-v49 .admin-main-v49{min-width:0}.outfits-board-v49{display:grid;grid-template-columns:minmax(340px,440px) minmax(0,1fr);gap:18px}.outfit-form-v49,.outfit-list-panel-v49,.outfit-active-panel-v49{border:1px solid rgba(148,163,184,.16);border-radius:24px;background:linear-gradient(180deg,rgba(9,16,30,.90),rgba(3,7,14,.94));padding:18px;box-shadow:0 28px 80px rgba(0,0,0,.28)}.outfit-form-v49 label{display:grid;gap:7px;color:#dbe4f0;font-weight:850;margin-bottom:10px}.outfit-form-v49 input,.outfit-form-v49 textarea,.outfit-form-v49 select{width:100%;background:#050b16;border:1px solid rgba(148,163,184,.18);border-radius:12px;color:#fff;padding:12px}.outfit-form-v49 textarea{min-height:190px;font-family:ui-monospace,Consolas,monospace}.outfit-grid-admin-v49{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}.outfit-admin-card-v49{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;padding:12px;border:1px solid rgba(148,163,184,.14);border-radius:19px;background:rgba(15,23,42,.62)}.outfit-admin-card-v49 img{width:82px;height:82px;object-fit:contain;border-radius:15px;background:#050b16}.outfit-admin-card-v49 h3{margin:0}.outfit-admin-card-v49 p{margin:5px 0;color:#aeb8c8}.outfit-admin-card-v49 code{display:inline-block;margin:3px 3px 0 0;font-size:.7rem;background:rgba(255,255,255,.06);border-radius:8px;padding:4px 6px}.outfit-actions-admin-v49{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.catalog-mini-v49{max-height:430px;overflow:auto;display:grid;gap:7px}.catalog-mini-v49 button{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.55);color:#fff;border-radius:12px;padding:7px;cursor:pointer}.catalog-mini-v49 img{width:42px;height:42px;object-fit:contain}.catalog-mini-v49 small{color:#9fb0c5}.outfit-split-v49{display:grid;grid-template-columns:1fr 340px;gap:14px}.active-subs-v49{display:grid;gap:8px;max-height:320px;overflow:auto}.active-subs-v49 div{padding:10px;border:1px solid rgba(148,163,184,.13);border-radius:12px;background:rgba(255,255,255,.04)}@media(max-width:1100px){.outfits-board-v49,.outfit-split-v49{grid-template-columns:1fr}}
+    .admin-outfits-v92 .admin-main-v49{min-width:0}
+    .outfits-board-v92{display:grid;grid-template-columns:minmax(350px,460px) minmax(0,1fr);gap:18px}
+    .outfit-form-v92,.outfit-list-panel-v92,.outfit-active-panel-v92,.private-manager-v92{border:1px solid rgba(148,163,184,.16);border-radius:24px;background:linear-gradient(180deg,rgba(9,16,30,.92),rgba(3,7,14,.96));padding:18px;box-shadow:0 28px 80px rgba(0,0,0,.28)}
+    .outfit-form-v92 label{display:grid;gap:7px;color:#dbe4f0;font-weight:850;margin-bottom:10px}
+    .outfit-form-v92 input,.outfit-form-v92 textarea,.outfit-form-v92 select,.private-manager-v92 input,.private-manager-v92 textarea,.outfit-active-panel-v92 input{width:100%;background:#050b16;border:1px solid rgba(148,163,184,.18);border-radius:12px;color:#fff;padding:12px}
+    .outfit-form-v92 textarea{min-height:190px;font-family:ui-monospace,Consolas,monospace}
+    .private-ids-v92{min-height:120px!important}
+    .mode-box-v92{padding:13px;border:1px solid rgba(239,68,68,.28);border-radius:16px;background:rgba(239,68,68,.07);margin:12px 0}
+    .mode-box-v92 strong{display:block;margin-bottom:5px;color:#fecaca}
+    .outfit-grid-admin-v92{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:12px}
+    .outfit-admin-card-v92{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;padding:12px;border:1px solid rgba(148,163,184,.14);border-radius:19px;background:rgba(15,23,42,.62)}
+    .outfit-admin-card-v92.private{border-color:rgba(168,85,247,.42);background:linear-gradient(135deg,rgba(88,28,135,.20),rgba(15,23,42,.68))}
+    .outfit-admin-card-v92 img{width:82px;height:82px;object-fit:contain;border-radius:15px;background:#050b16}
+    .outfit-admin-card-v92 h3{margin:0}.outfit-admin-card-v92 p{margin:5px 0;color:#aeb8c8}
+    .outfit-admin-card-v92 code{display:inline-block;margin:3px 3px 0 0;font-size:.7rem;background:rgba(255,255,255,.06);border-radius:8px;padding:4px 6px}
+    .outfit-actions-admin-v92{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .vip-badge-v92{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:.68rem;font-weight:1000;text-transform:uppercase;background:rgba(168,85,247,.2);color:#e9d5ff;border:1px solid rgba(168,85,247,.4);margin-bottom:6px}
+    .catalog-mini-v92{max-height:430px;overflow:auto;display:grid;gap:7px}.catalog-mini-v92 button{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.55);color:#fff;border-radius:12px;padding:7px;cursor:pointer}.catalog-mini-v92 img{width:42px;height:42px;object-fit:contain}.catalog-mini-v92 small{color:#9fb0c5}
+    .outfit-split-v92{display:grid;grid-template-columns:1fr 350px;gap:14px}.active-subs-v92{display:grid;gap:8px;max-height:320px;overflow:auto}.active-subs-v92>div{padding:10px;border:1px solid rgba(148,163,184,.13);border-radius:12px;background:rgba(255,255,255,.04)}
+    .private-manager-v92{grid-column:1/-1;margin-top:18px}.private-grid-v92{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px}.private-card-v92{padding:15px;border:1px solid rgba(168,85,247,.30);border-radius:18px;background:rgba(88,28,135,.10)}.private-card-v92 h3{margin:0 0 4px}.private-member-v92{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(148,163,184,.12)}.private-member-v92:last-child{border-bottom:0}.private-member-v92 small{color:#aeb8c8}.danger-mini-v92{background:rgba(239,68,68,.16)!important;border-color:rgba(239,68,68,.38)!important;color:#fecaca!important}
+    .warning-v92{padding:10px 12px;border-radius:12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);color:#fde68a;margin:10px 0}
+    .admin-grant-v124{display:grid;gap:7px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(148,163,184,.14)}
+    .admin-grant-v124 strong{font-size:.76rem;color:#c4b5fd;text-transform:uppercase;letter-spacing:.06em}
+    .admin-grant-v124 input{width:100%;min-width:0;background:#050b16;border:1px solid rgba(148,163,184,.18);border-radius:10px;color:#fff;padding:9px}
+    .admin-grant-row-v124{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:7px}
+    .active-sub-row-v124{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+    @media(max-width:1100px){.outfits-board-v92,.outfit-split-v92{grid-template-columns:1fr}}
   </style>
   <section class="admin-main-v49">
-    <div class="admin-page-head-v46"><p class="eyebrow">Trajes / Assinaturas</p><h1>Trajes VIP mensais</h1><p class="muted">Configure quais types o player vai nascer no inventário enquanto a assinatura estiver ativa. O mod vai consultar a API quando o player renascer.</p></div>
-    <div class="outfits-board-v49">
-      <form class="outfit-form-v49" method="POST" action="<%= editing ? '/admin/outfits/' + editing.id : '/admin/outfits' %>" enctype="multipart/form-data">
-        <h2><%= editing ? 'Editar traje' : 'Criar traje' %></h2>
-        <label>Nome<input name="name" value="<%= editing?.name || '' %>" required></label>
-        <div class="inline-grid two-cols"><label>Nível<input name="level" type="number" min="1" value="<%= editing?.level || 1 %>"></label><label>Preço RZ mensal<input name="priceCoins" type="number" min="0" value="<%= editing?.priceCoins || 0 %>"></label></div>
-        <div class="inline-grid two-cols"><label>Dias<input name="durationDays" type="number" min="1" value="<%= editing?.durationDays || 30 %>"></label><label>Servidor<select name="serverType"><option value="vanilla" <%= editing?.serverType === 'vanilla' ? 'selected' : '' %>>Vanilla</option><option value="bbp" <%= editing?.serverType === 'bbp' ? 'selected' : '' %>>Vanilla+</option></select></label></div>
-        <label>Descrição<textarea name="description"><%= editing?.description || '' %></textarea></label>
-        <label>Imagem URL<input name="imageUrl" value="<%= editing?.imageUrl || '' %>" placeholder="https://... ou deixe vazio para buscar na Wiki pelo type"></label>
+    <div class="admin-page-head-v46">
+      <p class="eyebrow">Trajes / Assinaturas</p>
+      <h1>Trajes VIP e VIP privado</h1>
+      <p class="muted">Agora qualquer traje pode ser liberado pelo ADM para uma Steam64 com validade individual em dias. A nova liberação substitui o traje anterior do player e atualiza o arquivo VIP do mod.</p>
+    </div>
+
+    <% const privateMode = editing ? Boolean(editing.isPrivate) : Boolean(creatingPrivate); %>
+    <% const normalDefaultItems = 'body|Hoodie_Black|1|Moletom\nlegs|Jeans_Black|1|Calça\nfeet|AthleticShoes_Black|1|Tênis\ninventory|BandageDressing|2|2 bandagens\ninventory|BakedBeansCan|1|1 lata de comida\ninventory|HuntingKnife|1|Faca\ninventory|ChernarusMap|1|Mapa Chernarus'; %>
+    <% const privateDefaultItems = 'back|STZ_TacticalBackpack|1|STZ Tactical Backpack\nHeadgear|STZ_TacticalBoonie|1|STZ Tactical Boonie\nlegs|STZ_TacticalPants|1|STZ Tactical Pants\nbody|STZ_TacticalShirt|1|STZ Tactical Shirt\nGloves|STZ_TacticalGloves|1|STZ Tactical Gloves\nfeet|STZ_TacticalBoots|1|STZ Tactical Boots\nmask|STZ_TacticalBalaclava|1|STZ Tactical Balaclava\neyewear|SportGlasses_Black|1|Óculos preto\ninventory|HuntingKnife|1|Faca\ninventory|ChernarusMap|1|Mapa\ninventory|BakedBeansCan|1|1 lata de comida\ninventory|BandageDressing|2|2 bandagens'; %>
+
+    <div class="outfits-board-v92">
+      <form class="outfit-form-v92" method="POST" action="<%= editing ? '/admin/outfits/' + editing.id : '/admin/outfits' %>" enctype="multipart/form-data">
+        <h2><%= editing ? 'Editar traje' : (privateMode ? 'Criar VIP privado' : 'Criar traje VIP') %></h2>
+        <label>Nome<input name="name" value="<%= editing?.name || (privateMode ? 'Traje VIP Privado' : '') %>" required></label>
+
+        <div class="mode-box-v92">
+          <label class="check-row" style="margin:0"><input id="isPrivateVipV92" name="isPrivate" type="checkbox" <%= privateMode ? 'checked' : '' %>><span><strong>VIP privado / oculto</strong>Não aparece na loja. O ADM define quantos dias cada Steam64 poderá usar.</span></label>
+        </div>
+
+        <div class="inline-grid two-cols">
+          <label>Nível<input name="level" type="number" min="1" max="99" value="<%= editing?.level || (privateMode ? 99 : 1) %>"></label>
+          <label>Preço RZ mensal<input id="priceCoinsV92" name="priceCoins" type="number" min="0" value="<%= editing?.priceCoins || 0 %>"></label>
+        </div>
+        <div class="inline-grid two-cols">
+          <label>Dias padrão<input id="durationDaysV92" name="durationDays" type="number" min="1" max="3650" value="<%= editing?.durationDays || 30 %>"><small class="muted">Usado como padrão; no card do traje você escolhe os dias de cada player.</small></label>
+          <label>Servidor<select name="serverType"><option value="vanilla" <%= editing?.serverType === 'vanilla' || !editing ? 'selected' : '' %>>Vanilla</option><option value="bbp" <%= editing?.serverType === 'bbp' ? 'selected' : '' %>>Vanilla+</option></select></label>
+        </div>
+        <label>Descrição<textarea name="description"><%= editing?.description || (privateMode ? 'VIP privado. Apenas players liberados pelo painel ADM recebem este traje pelo período definido.' : '') %></textarea></label>
+        <label>Imagem URL<input name="imageUrl" value="<%= editing?.imageUrl || '' %>" placeholder="https://... ou /images/..."></label>
         <label>Upload imagem<input name="image" type="file" accept="image/*"></label>
-        <label>Types do traje <small class="muted">Formato: slot|classname|quantidade|nome. Ex: inventory|BandageDressing|1|Bandagem</small><textarea id="outfitItemsTextV49" name="itemsText" required><%= editing ? outfitItemsToText(editing.items || []) : 'body|Hoodie_Black|1|Moletom\nlegs|Jeans_Black|1|Calça\nfeet|AthleticShoes_Black|1|Tênis\ninventory|BandageDressing|1|Bandagem\ninventory|BakedBeansCan|1|Comida\ninventory|KitchenKnife|1|Faca\ninventory|SodaCan_Pipsi|1|Bebida' %></textarea></label>
-        <label class="check-row"><input name="active" type="checkbox" <%= !editing || editing.active ? 'checked' : '' %>><span>Ativo para venda</span></label>
-        <label class="check-row"><input name="streamerRewardEnabled" type="checkbox" <%= editing?.streamerRewardEnabled ? 'checked' : '' %>><span>Pode ser escolhido no bônus de 7 dias por streamer</span></label>
+        <label>Types do traje
+          <small class="muted">Formato: slot|classname|quantidade|nome. Ex.: inventory|BandageDressing|2|2 bandagens</small>
+          <textarea id="outfitItemsTextV92" name="itemsText" required><%= editing ? outfitItemsToText(editing.items || []) : (privateMode ? privateDefaultItems : normalDefaultItems) %></textarea>
+        </label>
+
+        <div id="privateIdsBoxV92" style="<%= privateMode ? '' : 'display:none' %>">
+          <label>Steam64 para adicionar ao VIP privado
+            <small class="muted">Uma por linha. Também aceita “Nome - 7656119...”. Eles receberão o número de dias informado em “Dias padrão”.</small>
+            <textarea class="private-ids-v92" name="privateSteamIds" placeholder="[STZ] Player - 7656119..."></textarea>
+          </label>
+        </div>
+
+        <div id="managedBoxV99" class="mode-box-v92" style="<%= privateMode ? '' : 'display:none' %>">
+          <label class="check-row" style="margin:0 0 10px"><input id="managedAccessV99" name="managedAccessEnabled" type="checkbox" <%= editing?.managedAccessEnabled ? 'checked' : '' %>><span><strong>Painel de membros para streamer/líder</strong>O dono informado abaixo poderá adicionar, remover e dropar a bandeira personalizada.</span></label>
+          <div id="managedFieldsV99" style="<%= editing?.managedAccessEnabled ? '' : 'display:none' %>">
+            <label>Steam64 do dono<input name="managedOwnerSteam64" maxlength="17" pattern="[0-9]{17}" value="<%= editing?.managedOwnerSteam64 || '' %>" placeholder="7656119..."></label>
+            <div class="inline-grid two-cols">
+              <label>Tipo do dono<select name="managedOwnerType"><option value="STREAMER" <%= editing?.managedOwnerType !== 'CLAN' ? 'selected' : '' %>>Streamer (não paga)</option><option value="CLAN" <%= editing?.managedOwnerType === 'CLAN' ? 'selected' : '' %>>Líder de clã</option></select></label>
+              <label>Máximo de usuários<input name="maxManagedMembers" type="number" min="1" max="200" value="<%= editing?.maxManagedMembers || 10 %>"></label>
+            </div>
+            <div class="inline-grid two-cols">
+              <label>Liberação para membros do clã
+                <select name="clanBillingMode">
+                  <option value="FREE" <%= !editing || Number(editing?.memberMonthlyPriceCoins || 0) <= 0 ? 'selected' : '' %>>Gratuito — todos os membros recebem automaticamente</option>
+                  <option value="PAID" <%= Number(editing?.memberMonthlyPriceCoins || 0) > 0 ? 'selected' : '' %>>Pago — cada player paga 20.000 RZ por 30 dias</option>
+                </select>
+                <small class="muted">Vale somente quando o tipo do dono for Líder de clã. O dono do clã não paga.</small>
+              </label>
+              <label>Preço da criação<input name="creationPriceCoins" type="number" min="0" value="<%= editing?.creationPriceCoins || 0 %>" placeholder="50000"></label>
+            </div>
+            <label>Classname da bandeira<input name="flagClassname" value="<%= editing?.flagClassname || '' %>" placeholder="OCL_Flag ou STZ_Flag"></label>
+            <div class="warning-v92">Não coloque a bandeira na lista de itens. Ela será dropada separadamente e na hora pelo botão do dono. O Mapa Chernarus é acrescentado automaticamente em todos os trajes.</div>
+          </div>
+        </div>
+
+        <label class="check-row"><input name="active" type="checkbox" <%= !editing || editing.active ? 'checked' : '' %>><span id="activeLabelV92"><%= privateMode ? 'VIP privado ativo' : 'Ativo para venda' %></span></label>
+        <label id="streamerBoxV92" class="check-row" style="<%= privateMode ? 'display:none' : '' %>"><input name="streamerRewardEnabled" type="checkbox" <%= editing?.streamerRewardEnabled ? 'checked' : '' %>><span>Pode ser escolhido no bônus de 7 dias por streamer</span></label>
         <button class="btn primary" type="submit"><%= editing ? 'Salvar traje' : 'Criar traje' %></button>
       </form>
-      <section class="outfit-split-v49">
-        <div class="outfit-list-panel-v49"><div class="admin-v47-panel-head"><div><p class="eyebrow">Cadastrados</p><h2>Trajes criados</h2></div><a class="btn" href="/admin/outfits">Novo</a></div><div class="outfit-grid-admin-v49"><% outfits.forEach(o => { const items = Array.isArray(o.items) ? o.items : []; %><article class="outfit-admin-card-v49"><img src="<%= o.imageData ? '/outfit-image/' + o.id : (o.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'"><div><h3><%= o.name %></h3><p>Nível <%= o.level %> • <%= coins(o.priceCoins) %> RZ • <%= o.durationDays %> dias</p><% items.slice(0,5).forEach(i => { %><code><%= i.classname %></code><% }) %><div class="outfit-actions-admin-v49"><a class="btn small primary" href="/admin/outfits?edit=<%= o.id %>">Editar</a><form method="POST" action="/admin/outfits/<%= o.id %>/toggle"><button class="btn small"><%= o.active ? 'Desativar' : 'Ativar' %></button></form></div></div></article><% }) %></div></div>
-        <aside class="outfit-active-panel-v49"><h2>Teste / Ativos</h2><form method="POST" action="/admin/outfits/check-player" class="form-stack"><input name="steam64" maxlength="17" placeholder="Steam64 para consultar"><button class="btn">Consultar traje ativo</button></form><h3>Assinaturas ativas</h3><div class="active-subs-v49"><% activeSubs.forEach(s => { %><div><strong><%= s.player?.nickname || s.steam64 %></strong><br><small><%= s.outfitTemplate?.name %> • até <%= s.expiresAt.toLocaleDateString('pt-BR') %> • <%= s.source %></small></div><% }) %></div><h3>Catálogo rápido</h3><input id="catalogSearchOutfitV49" placeholder="Buscar type para adicionar..." style="width:100%;margin-bottom:8px"><div class="catalog-mini-v49" id="catalogOutfitV49"></div></aside>
+
+      <section class="outfit-split-v92">
+        <div class="outfit-list-panel-v92">
+          <div class="admin-v47-panel-head">
+            <div><p class="eyebrow">Cadastrados</p><h2>Trajes criados</h2></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/admin/outfits">Novo normal</a><a class="btn primary" href="/admin/outfits?private=1">Novo privado</a></div>
+          </div>
+          <div class="outfit-grid-admin-v92">
+            <% outfits.forEach(o => { const items = Array.isArray(o.items) ? o.items : []; const members = (privateSubs || []).filter(s => s.outfitTemplateId === o.id); %>
+              <article class="outfit-admin-card-v92 <%= o.isPrivate ? 'private' : '' %>">
+                <img src="<%= o.imageData ? '/outfit-image/' + o.id : (o.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'">
+                <div>
+                  <% if (o.isPrivate) { %><span class="vip-badge-v92"><%= o.managedAccessEnabled ? 'Gerenciado' : 'Privado / oculto' %></span><% } %>
+                  <h3><%= o.name %></h3>
+                  <p><% if (o.isPrivate) { %><%= members.length %> player(s) cadastrado(s)<% if (o.managedAccessEnabled) { %><br>Dono: <%= o.managedOwnerSteam64 %> • limite <%= o.maxManagedMembers %><% if (o.managedOwnerType === 'CLAN') { %><br><strong><%= Number(o.memberMonthlyPriceCoins || 0) > 0 ? ('Pago: ' + coins(o.memberMonthlyPriceCoins) + ' RZ/player/30 dias') : 'Gratuito para todos os membros' %></strong><% } %><% } %><% } else { %>Nível <%= o.level %> • <%= coins(o.priceCoins) %> RZ • <%= o.durationDays %> dias<% } %></p>
+                  <% items.slice(0,5).forEach(i => { %><code><%= i.classname %></code><% }) %>
+                  <div class="outfit-actions-admin-v92">
+                    <a class="btn small primary" href="/admin/outfits?edit=<%= o.id %>">Editar</a>
+                    <form method="POST" action="/admin/outfits/<%= o.id %>/toggle"><button class="btn small"><%= o.active ? 'Desativar' : 'Ativar' %></button></form>
+                  </div>
+                  <form method="POST" action="/admin/outfits/<%= o.id %>/grant" class="admin-grant-v124">
+                    <strong>Liberar ou renovar para player</strong>
+                    <input name="steam64" inputmode="numeric" maxlength="17" pattern="[0-9]{17}" placeholder="Steam64 com 17 números" required>
+                    <div class="admin-grant-row-v124">
+                      <input name="nickname" maxlength="100" placeholder="Nome do player (opcional)">
+                      <input name="durationDays" type="number" min="1" max="3650" value="<%= o.durationDays || 30 %>" title="Quantidade de dias" required>
+                    </div>
+                    <button class="btn small primary" type="submit" <%= !o.active ? 'disabled title="Ative o traje primeiro"' : '' %>>Liberar por dias</button>
+                  </form>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        </div>
+
+        <aside class="outfit-active-panel-v92">
+          <h2>Teste / Ativos</h2>
+          <form method="POST" action="/admin/outfits/check-player" class="form-stack"><input name="steam64" maxlength="20" placeholder="Steam64 para consultar"><button class="btn">Consultar traje ativo</button></form>
+          <h3>Assinaturas ativas</h3>
+          <div class="active-subs-v92">
+            <% activeSubs.forEach(s => { %>
+              <div class="active-sub-row-v124">
+                <div><strong><%= s.player?.nickname || s.steam64 %></strong><br><small><%= s.outfitTemplate?.name %> • até <%= s.expiresAt.toLocaleString('pt-BR') %> • <%= s.source %></small></div>
+                <form method="POST" action="/admin/outfits/subscriptions/<%= s.id %>/revoke"><button class="btn small danger-mini-v92" type="submit">Remover</button></form>
+              </div>
+            <% }) %>
+          </div>
+          <h3>Catálogo rápido</h3>
+          <input id="catalogSearchOutfitV92" placeholder="Buscar type para adicionar..." style="width:100%;margin-bottom:8px">
+          <div class="catalog-mini-v92" id="catalogOutfitV92"></div>
+        </aside>
+      </section>
+
+      <section class="private-manager-v92">
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Acesso privado em lote</p><h2>Players dos VIPs privados</h2></div></div>
+        <div class="warning-v92">O ID do Higor enviado na imagem tem 20 dígitos, então não foi cadastrado automaticamente. Steam64 válido possui 17 dígitos; corrija e adicione abaixo.</div>
+        <% const privateOutfits = outfits.filter(o => o.isPrivate && !o.managedAccessEnabled); %>
+        <% if (!privateOutfits.length) { %><p class="muted">Crie um traje marcando “VIP privado / oculto”.</p><% } %>
+        <div class="private-grid-v92">
+          <% privateOutfits.forEach(o => { const members = (privateSubs || []).filter(s => s.outfitTemplateId === o.id); %>
+            <article class="private-card-v92">
+              <span class="vip-badge-v92">Não aparece na loja</span>
+              <h3><%= o.name %></h3>
+              <p class="muted"><%= members.length %> Steam64 ativa(s). Defina os dias abaixo; qualquer traje anterior do player será substituído.</p>
+              <form method="POST" action="/admin/outfits/<%= o.id %>/private-members" class="form-stack">
+                <textarea name="privateSteamIds" rows="3" placeholder="Nome - 7656119..." required></textarea>
+                <label>Dias para esses players<input name="durationDays" type="number" min="1" max="3650" value="<%= o.durationDays || 30 %>" required></label>
+                <button class="btn primary" type="submit">Adicionar / renovar player(s)</button>
+              </form>
+              <div style="margin-top:12px">
+                <% members.forEach(s => { %>
+                  <div class="private-member-v92">
+                    <div><strong><%= s.player?.nickname || 'Player sem nome' %></strong><br><small><%= s.steam64 %> • até <%= s.expiresAt.toLocaleString('pt-BR') %></small></div>
+                    <form method="POST" action="/admin/outfits/subscriptions/<%= s.id %>/revoke"><button class="btn small danger-mini-v92" type="submit">Remover</button></form>
+                  </div>
+                <% }) %>
+                <% if (!members.length) { %><p class="muted">Nenhum player cadastrado nesse traje.</p><% } %>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      </section>
+
+      <section class="private-manager-v92">
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Pedidos pagos</p><h2>Trajes personalizados de clã</h2></div><span class="pill"><%= (customOutfitOrders || []).length %></span></div>
+        <div class="private-grid-v92">
+          <% (customOutfitOrders || []).forEach(order => { %>
+            <article class="private-card-v92">
+              <span class="vip-badge-v92"><%= order.status %></span>
+              <h3><%= order.clanTag ? '[' + order.clanTag + '] ' : '' %><%= order.clanName || 'Sem nome' %></h3>
+              <p class="muted"><%= order.player?.nickname || order.leaderName || 'Líder' %> • <%= order.steam64 %><br>Criação: <%= coins(order.creationPriceCoins) %> RZ • mensal: <%= coins(order.monthlyMemberPriceCoins) %> RZ/player</p>
+              <form method="POST" action="/admin/outfits/custom-orders/<%= order.id %>/status" class="form-stack">
+                <select name="status"><% ['AWAITING_TICKET','IN_PRODUCTION','READY','CANCELLED'].forEach(st => { %><option value="<%= st %>" <%= order.status === st ? 'selected' : '' %>><%= st %></option><% }) %></select>
+                <select name="outfitTemplateId"><option value="">Sem traje ligado</option><% outfits.filter(o=>o.isPrivate).forEach(o => { %><option value="<%= o.id %>" <%= order.outfitTemplateId === o.id ? 'selected' : '' %>><%= o.name %></option><% }) %></select>
+                <textarea name="note" rows="2" placeholder="Observação"><%= order.note || '' %></textarea>
+                <button class="btn primary" type="submit">Salvar pedido</button>
+              </form>
+            </article>
+          <% }) %>
+          <% if (!(customOutfitOrders || []).length) { %><p class="muted">Nenhum pedido personalizado ainda.</p><% } %>
+        </div>
+      </section>
+
+      <section class="private-manager-v92">
+        <div class="admin-v47-panel-head"><div><p class="eyebrow">Bandeiras automáticas</p><h2>Histórico de drops de bandeira</h2></div><span class="pill"><%= (outfitFlagRequests || []).filter(r=>r.status==='PENDING').length %> pendente(s)</span></div>
+        <div class="private-grid-v92">
+          <% (outfitFlagRequests || []).forEach(request => { %>
+            <article class="private-card-v92">
+              <span class="vip-badge-v92"><%= request.status %></span>
+              <h3><%= request.outfitTemplate?.name || 'Traje' %></h3>
+              <p class="muted"><%= request.requesterName || 'Responsável' %> • <%= request.requesterSteam64 %><br>Classname: <code><%= request.flagClassname || '-' %></code></p>
+              <form method="POST" action="/admin/outfits/flag-requests/<%= request.id %>/status" class="form-stack">
+                <select name="status"><% ['PENDING','APPROVED','DELIVERED','REJECTED'].forEach(st => { %><option value="<%= st %>" <%= request.status === st ? 'selected' : '' %>><%= st %></option><% }) %></select>
+                <textarea name="adminNote" rows="2" placeholder="Observação do ADM"><%= request.adminNote || '' %></textarea>
+                <button class="btn primary" type="submit">Atualizar bandeira</button>
+              </form>
+            </article>
+          <% }) %>
+          <% if (!(outfitFlagRequests || []).length) { %><p class="muted">Nenhuma bandeira dropada ainda.</p><% } %>
+        </div>
       </section>
     </div>
   </section>
 </main>
 <script>
- const CATALOG_OUTFIT_V49 = <%- JSON.stringify(catalog || []).replace(/</g, '\\u003c') %>;
- function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
- function renderOutfitCatalog(){const q=String(document.getElementById('catalogSearchOutfitV49')?.value||'').toLowerCase();const list=CATALOG_OUTFIT_V49.filter(i=>!q||[i.name,i.classname,i.category].join(' ').toLowerCase().includes(q)).slice(0,80);document.getElementById('catalogOutfitV49').innerHTML=list.map(i=>`<button type="button" data-cn="${esc(i.classname)}" data-name="${esc(i.name)}"><img loading="lazy" decoding="async" src="${esc(i.imageUrl)}" onerror="this.src='/images/no-real-image.svg'"><span><b>${esc(i.name)}</b><small>${esc(i.classname)}</small></span><em>+</em></button>`).join('');}
- document.getElementById('catalogSearchOutfitV49')?.addEventListener('input',renderOutfitCatalog);renderOutfitCatalog();
- document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cn]');if(!b)return;const ta=document.getElementById('outfitItemsTextV49');ta.value+=(ta.value.trim()?'\n':'')+`inventory|${b.dataset.cn}|1|${b.dataset.name}`;ta.focus();});
+  const CATALOG_OUTFIT_V92 = <%- JSON.stringify(catalog || []).replace(/</g, '\\u003c') %>;
+  function escV92(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function renderOutfitCatalogV92(){const input=document.getElementById('catalogSearchOutfitV92');const target=document.getElementById('catalogOutfitV92');if(!target)return;const q=String(input?.value||'').toLowerCase();const list=CATALOG_OUTFIT_V92.filter(i=>!q||[i.name,i.classname,i.category].join(' ').toLowerCase().includes(q)).slice(0,80);target.innerHTML=list.map(i=>`<button type="button" data-cn="${escV92(i.classname)}" data-name="${escV92(i.name)}"><img loading="lazy" decoding="async" src="${escV92(i.imageUrl)}" onerror="this.src='/images/no-real-image.svg'"><span><b>${escV92(i.name)}</b><small>${escV92(i.classname)}</small></span><em>+</em></button>`).join('');}
+  document.getElementById('catalogSearchOutfitV92')?.addEventListener('input',renderOutfitCatalogV92);renderOutfitCatalogV92();
+  document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cn]');if(!b)return;const ta=document.getElementById('outfitItemsTextV92');if(!ta)return;ta.value+=(ta.value.trim()?'\n':'')+`inventory|${b.dataset.cn}|1|${b.dataset.name}`;ta.focus();});
+  function syncManagedV99(){const managed=Boolean(document.getElementById('managedAccessV99')?.checked);const fields=document.getElementById('managedFieldsV99');const ids=document.getElementById('privateIdsBoxV92');if(fields)fields.style.display=managed?'':'none';if(ids)ids.style.display=managed?'none':'';}
+  function syncPrivateModeV92(){const checked=Boolean(document.getElementById('isPrivateVipV92')?.checked);const ids=document.getElementById('privateIdsBoxV92');const streamer=document.getElementById('streamerBoxV92');const price=document.getElementById('priceCoinsV92');const days=document.getElementById('durationDaysV92');const activeLabel=document.getElementById('activeLabelV92');const managedBox=document.getElementById('managedBoxV99');if(ids)ids.style.display=checked?'':'none';if(streamer)streamer.style.display=checked?'none':'';if(managedBox)managedBox.style.display=checked?'':'none';if(price){price.readOnly=checked;if(checked)price.value='0';}if(days){days.readOnly=false;if(!days.value)days.value='30';}if(activeLabel)activeLabel.textContent=checked?'VIP privado ativo':'Ativo para venda';syncManagedV99();}
+  document.getElementById('isPrivateVipV92')?.addEventListener('change',syncPrivateModeV92);document.getElementById('managedAccessV99')?.addEventListener('change',syncManagedV99);syncPrivateModeV92();
 </script>
 <%- include('../partials/footer') %>

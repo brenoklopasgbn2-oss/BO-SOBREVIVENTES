@@ -13,10 +13,10 @@
     <div class="vehicle-hero-copy">
       <p class="v9-kicker">Garagem RAID-Z</p>
       <h1>Veículos com <span>estilo Vanilla</span><br> e animação premium</h1>
-      <p>Doe o veículo pelo valor cheio e escolha se quer seguro ou não. O primeiro mês do seguro já fica incluso no valor do carro quando o player seleciona um plano.</p>
+      <p>Doe o veículo pelo valor cheio com seguro mensal já incluído. O primeiro mês fica ativo automaticamente.</p>
       <div class="vehicle-hero-badges">
         <span>Veículo completo montado</span>
-        <span>Seguro opcional</span>
+        <span>Seguro mensal incluso</span>
         <span>Sem aluguel por dia/7 dias</span>
         <span>Reposição pelo site</span>
       </div>
@@ -74,7 +74,7 @@
       <% const plans = [...(v.insurancePlans || []), ...(globalPlans || [])]; %>
       <% const parts = Array.isArray(v.parts) ? v.parts : []; %>
       <% const bestPrice = v.buyPriceCoins || 0; %>
-      <% const planPrice = (plan) => plan.billingType === 'PER_USE' ? 10000 : Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
+      <% const planPrice = (plan) => Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
       <article class="product-card-pro v9-product-card vehicle-card-pro sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>" style="--featured-color:<%= accentHex %>;--featured-rgb:<%= accentRgb %>;">
         <div class="v9-product-art vehicle-art-stage">
           <div class="vehicle-card-watermark"><%= v.serverType.toUpperCase() %></div>
@@ -100,7 +100,7 @@
 
           <div class="vehicle-price-grid-pro">
             <% if (v.buyPriceCoins > 0) { %><div class="vehicle-price-pill"><span>Doar</span><strong><%= coins(v.buyPriceCoins) %> RZ</strong></div><% } %>
-            <div class="vehicle-price-pill"><span>Seguro uso</span><strong>1º mês incluso</strong></div>
+            <div class="vehicle-price-pill"><span>Seguro mensal</span><strong>1º mês incluso</strong></div>
             <div class="vehicle-price-pill"><span>Mensal depois</span><strong><%= coins(Math.round(Number(v.buyPriceCoins || 0) * 0.5)) %> RZ</strong></div>
           </div>
 
@@ -111,7 +111,7 @@
             </div>
             <div>
               <small>Reposição</small>
-              <strong>Seguro opcional</strong>
+              <strong>Seguro incluso</strong>
             </div>
           </div>
 
@@ -135,18 +135,16 @@
                 </label>
                 <label>Seguro
                   <select name="insurancePlanId">
-                    <option value="">Sem seguro — aparece na garagem, sem reposição</option>
+                    
                     <% plans.forEach(plan => { %>
                       <option value="<%= plan.id %>">
-                        <%= plan.billingType === 'PER_USE'
-                          ? (plan.name + ' — 1º mês incluso; depois ' + coins(planPrice(plan)) + ' RZ por uso')
-                          : (plan.name + ' — 1º mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana') %>
+                        <%= plan.name + ' — 1º mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana' %>
                       </option>
                     <% }) %>
                   </select>
                 </label>
               </div>
-              <small class="muted vehicle-form-help">Sem seguro aparece na Minha Garagem sem reposição. Com seguro, 1º mês incluso no valor do carro.</small>
+              <small class="muted vehicle-form-help">Todo veículo aparece na Minha Garagem com o 1º mês do seguro ativo.</small>
               <button class="btn v9-buy-btn vehicle-buy-btn-pro" type="submit">Doar e dropar</button>
             </form>
           <% } else { %>
@@ -166,8 +164,8 @@
 
   <section class="v9-trust-strip vehicle-trust-strip" aria-label="Vantagens dos veículos">
     <div><b>🚗</b><strong>Montado</strong><span>Veículo pronto para uso assim que cair no jogo</span></div>
-    <div><b>🛡️</b><strong>Seguro</strong><span>Opcional: 1º mês incluso, depois 10k por uso ou 50% mensal</span></div>
-    <div><b>⚡</b><strong>Rápido</strong><span>Doação e pedido de seguro no mesmo lugar</span></div>
+    <div><b>🛡️</b><strong>Seguro</strong><span>1º mês incluso, depois renovação mensal de 50%</span></div>
+    <div><b>⚡</b><strong>Rápido</strong><span>Compra e renovação do seguro pelo site</span></div>
     <div><b>🎮</b><strong>Integrado</strong><span>Entrega automática ligada ao seu Steam64</span></div>
   </section>
 </main>

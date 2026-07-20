@@ -1,0 +1,116 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<style>
+  .clan-dc-admin-v107{display:grid;gap:20px}.clan-dc-hero-v107{padding:24px;border-radius:30px;border:1px solid rgba(239,68,68,.25);background:linear-gradient(145deg,rgba(15,21,34,.96),rgba(4,8,14,.97));box-shadow:0 26px 80px rgba(0,0,0,.3)}.clan-dc-hero-v107 h1{margin:6px 0 10px}.clan-dc-grid-v107{display:grid;grid-template-columns:1.12fr .88fr;gap:18px}.clan-dc-card-v107{padding:20px;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(10,15,25,.96),rgba(4,8,14,.96));display:grid;gap:14px}.clan-dc-card-v107 h2{margin:0}.clan-dc-form-v107{display:grid;gap:13px}.clan-dc-form-v107 input,.clan-dc-form-v107 textarea,.clan-dc-form-v107 select{width:100%}.clan-dc-two-v107{display:grid;grid-template-columns:1fr 1fr;gap:12px}.clan-dc-status-grid-v107{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.clan-dc-stat-v107{padding:14px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.clan-dc-stat-v107 small{display:block;color:#98a8bf}.clan-dc-stat-v107 strong{display:block;margin-top:4px}.clan-dc-actions-v107{display:flex;gap:10px;flex-wrap:wrap}.clan-dc-actions-v107 form{flex:1;min-width:190px}.clan-dc-actions-v107 button{width:100%}.clan-dc-list-v107{display:grid;gap:10px}.clan-dc-clan-v107{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.clan-dc-clan-v107 small{color:#9dadc1}.clan-dc-note-v107{padding:14px;border-radius:20px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:#fde68a}.clan-dc-good-v107{padding:14px;border-radius:20px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#bbf7d0}.clan-dc-preview-v107{display:grid;gap:12px}.clan-dc-preview-box-v107{padding:16px;border-radius:22px;background:linear-gradient(145deg,rgba(44,10,10,.7),rgba(8,12,20,.92));border-left:5px solid #ef4444}.clan-dc-preview-box-v107 strong{display:block}.clan-dc-preview-box-v107 small{color:#b9c5d5}@media(max-width:980px){.clan-dc-grid-v107,.clan-dc-two-v107{grid-template-columns:1fr}}
+</style>
+<main class="container clan-dc-admin-v107">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+
+  <section class="clan-dc-hero-v107">
+    <p class="eyebrow">Discord automático</p>
+    <h1>Recrutamento de clãs por Webhook</h1>
+    <p class="muted">Configure até <strong>2 webhooks na mesma opção</strong>. Cada clã tem seu próprio relógio: depois que um clã é anunciado, somente ele espera o intervalo configurado para aparecer novamente. Outro clã anunciado depois terá outro horário.</p>
+  </section>
+
+  <% if (!publicUrlConfigured) { %>
+    <div class="clan-dc-note-v107"><strong>Atenção:</strong> a variável <code>PUBLIC_URL</code> não está configurada. O texto será enviado, mas as imagens e links públicos podem não aparecer no Discord.</div>
+  <% } %>
+
+  <section class="clan-dc-grid-v107">
+    <article class="clan-dc-card-v107">
+      <div>
+        <p class="eyebrow">Configuração</p>
+        <h2>Webhooks e intervalo</h2>
+      </div>
+      <form method="POST" action="/admin/clan-recruitment-discord" class="clan-dc-form-v107">
+        <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="enabled" value="1" <%= config.enabled ? 'checked' : '' %> style="width:auto"> Ativar envio automático</label>
+        <label>Webhook 1 — canal principal de recrutamento
+          <input type="url" name="webhookUrl1" value="<%= config.webhookUrl1 || '' %>" placeholder="https://discord.com/api/webhooks/...">
+        </label>
+        <label>Webhook 2 — segundo canal opcional
+          <input type="url" name="webhookUrl2" value="<%= config.webhookUrl2 || '' %>" placeholder="https://discord.com/api/webhooks/...">
+        </label>
+        <div class="clan-dc-two-v107">
+          <label>Repetir a cada quantas horas
+            <input type="number" name="intervalHours" min="1" max="168" step="1" value="<%= config.intervalHours || 6 %>" required>
+          </label>
+          <label style="display:flex;gap:10px;align-items:end;padding-bottom:10px"><input type="checkbox" name="sendInstructions" value="1" <%= config.sendInstructions ? 'checked' : '' %> style="width:auto"> Enviar também “como participar”</label>
+        </div>
+        <button class="btn primary" type="submit">Salvar configuração do Discord</button>
+      </form>
+
+      <div class="clan-dc-actions-v107">
+        <form method="POST" action="/admin/clan-recruitment-discord/test/1"><button class="btn" type="submit">Testar Webhook 1</button></form>
+        <form method="POST" action="/admin/clan-recruitment-discord/test/2"><button class="btn" type="submit">Testar Webhook 2</button></form>
+        <form method="POST" action="/admin/clan-recruitment-discord/send-now"><button class="btn primary" type="submit">Enviar anúncios vencidos agora</button></form>
+      </div>
+    </article>
+
+    <aside class="clan-dc-card-v107">
+      <div>
+        <p class="eyebrow">Status</p>
+        <h2>Automação</h2>
+      </div>
+      <div class="clan-dc-status-grid-v107">
+        <div class="clan-dc-stat-v107"><small>Sistema</small><strong><%= config.enabled ? 'ATIVO' : 'DESATIVADO' %></strong></div>
+        <div class="clan-dc-stat-v107"><small>Intervalo</small><strong><%= config.intervalHours %> hora(s)</strong></div>
+        <div class="clan-dc-stat-v107"><small>Webhooks</small><strong><%= [config.webhookUrl1, config.webhookUrl2].filter(Boolean).length %>/2</strong></div>
+        <div class="clan-dc-stat-v107"><small>Último status</small><strong><%= config.lastStatus || 'NEVER' %></strong></div>
+        <div class="clan-dc-stat-v107"><small>Último envio</small><strong><%= config.lastSentAt ? dateTime(config.lastSentAt) : 'Nunca' %></strong></div>
+        <div class="clan-dc-stat-v107"><small>Clãs no último envio</small><strong><%= config.lastSentClans || 0 %></strong></div>
+        <div class="clan-dc-stat-v107"><small>Último clã enviado</small><strong><%= config.lastSentClanName || 'Nenhum ainda' %></strong></div>
+        <div class="clan-dc-stat-v107"><small>Último clã enviado</small><strong><%= config.lastSentClanName || "Nenhum" %></strong></div>
+      </div>
+      <% if (config.lastError) { %><div class="clan-dc-note-v107"><strong>Último erro:</strong> <%= config.lastError %></div><% } %>
+
+      <div class="clan-dc-preview-v107">
+        <h3>Como vai aparecer</h3>
+        <div class="clan-dc-preview-box-v107">
+          <strong>🛡️ [TAG] NOME DO CLÃ ESTÁ RECRUTANDO</strong>
+          <small>Imagem do clã + banner + logo RAID-Z + líder + membros + requisitos + VIP + botão/link para formulário. O automático envia um clã por vez.</small>
+        </div>
+        <div class="clan-dc-preview-box-v107" style="border-left-color:#111827">
+          <strong>📝 COMO PARTICIPAR</strong>
+          <small>Passo a passo para abrir a loja pelo L, entrar na aba de clãs, preencher nick e mandar o formulário ao dono.</small>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="clan-dc-grid-v107">
+    <article class="clan-dc-card-v107">
+      <div>
+        <p class="eyebrow">Clãs incluídos</p>
+        <h2>Recrutando agora</h2>
+      </div>
+      <div class="clan-dc-list-v107">
+        <% recruitingClans.forEach(item => { const clan = item.clan; %>
+          <div class="clan-dc-clan-v107">
+            <div>
+              <strong>[<%= clan.tag %>] <%= clan.name %></strong><br>
+              <small>Líder: <%= clan.ownerPlayer?.nickname || clan.ownerPlayer?.steam64 || '-' %></small><br>
+              <small>Último anúncio: <%= item.lastSentAt ? dateTime(item.lastSentAt) : 'Ainda não enviado' %></small><br>
+              <small>Próximo anúncio: <%= item.due ? 'AGORA / VENCIDO' : dateTime(item.nextSentAt) %></small>
+            </div>
+            <div style="display:grid;gap:7px;justify-items:end">
+              <span class="pill approved"><%= clan.members.length %> membros</span>
+              <span class="pill <%= item.due ? 'pending' : 'approved' %>"><%= item.due ? 'PRONTO PARA ENVIAR' : 'AGENDADO' %></span>
+            </div>
+          </div>
+        <% }) %>
+        <% if (!recruitingClans.length) { %><div class="clan-dc-note-v107">Nenhum clã está com “Recrutando” ativado. Ative no painel do clã para ele receber seu próprio horário de divulgação automática.</div><% } %>
+      </div>
+    </article>
+
+    <aside class="clan-dc-card-v107">
+      <div>
+        <p class="eyebrow">Organização de canais</p>
+        <h2>Recomendação</h2>
+      </div>
+      <% recommendations.forEach(item => { %><div class="clan-dc-good-v107"><%= item %></div><% }) %>
+      <p class="muted">Sugestão de uso: Webhook 1 em <strong>#recrutamento-clãs</strong> e Webhook 2 em <strong>#anúncios</strong> ou <strong>#comunidade</strong>. Assim o mesmo aviso vai nos dois canais sem precisar duplicar configuração. Cada clã repete de acordo com o próprio último anúncio. Exemplo: Clã 1 às 10h repete às 16h; Clã 2 às 11h repete às 17h, usando intervalo de 6 horas.</p>
+    </aside>
+  </section>
+</main>
+<%- include('../partials/footer') %>

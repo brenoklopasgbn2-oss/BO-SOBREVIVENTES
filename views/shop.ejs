@@ -1,4 +1,5 @@
 <%- include('partials/head') %>
+<link rel="stylesheet" href="/css/store-v118.css?v=119">
 <%- include('partials/nav') %>
 <% const theme = 'vanilla'; %>
 <% const playerCoins = player ? coins(player.coins || 0) : '0'; %>
@@ -10,13 +11,14 @@
 <% const isVehiclePartsCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('peca') && key.includes('veicul'); }; %>
 <% const isKitBaseCatButton = (cat = '') => normalizeCatKey(cat).includes('kit') && normalizeCatKey(cat).includes('base'); %>
 <% const isVipCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('traje') || key.includes('vip') || key.includes('roupa'); }; %>
+<% const isSleepingBagCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('saco') && key.includes('dormir'); }; %>
 <% const isMiscCatButton = (cat = '') => { const key = normalizeCatKey(cat); return key.includes('diverso') || key.includes('geral') || key.includes('sem categoria'); }; %>
-<% const canonicalCatLabel = (cat = '') => isVehiclePartsCatButton(cat) ? 'Peças de Veículos' : (isVehicleCatButton(cat) ? 'Veículos' : (isKitBaseCatButton(cat) ? 'Kits Base' : (isVipCatButton(cat) ? 'Trajes VIPs' : (isMiscCatButton(cat) ? 'Diversos' : String(cat || '').trim())))); %>
+<% const canonicalCatLabel = (cat = '') => isVehiclePartsCatButton(cat) ? 'Peças de Veículos' : (isVehicleCatButton(cat) ? 'Veículos' : (isKitBaseCatButton(cat) ? 'Kits Base' : (isVipCatButton(cat) ? 'Trajes VIPs' : (isSleepingBagCatButton(cat) ? 'Saco de Dormir' : (isMiscCatButton(cat) ? 'Diversos' : String(cat || '').trim()))))); %>
 <% const categoryListRaw = ['Kits Base', 'Veículos', 'Peças de Veículos', 'Trajes VIPs', ...(categories || []), 'Diversos']; %>
 <% const seenCategoryKeys = new Set(); %>
 <% const allCats = categoryListRaw.map(canonicalCatLabel).filter(cat => { const key = normalizeCatKey(cat); if (!key || seenCategoryKeys.has(key)) return false; seenCategoryKeys.add(key); return true; }); %>
-<% const categoryButtonClassFor = (cat = '') => isVehicleCatButton(cat) ? 'category-priority-v63 category-vehicle-v63' : (isVehiclePartsCatButton(cat) ? 'category-priority-v63 category-parts-v80' : (isKitBaseCatButton(cat) ? 'category-priority-v63 category-kit-v63' : (isVipCatButton(cat) ? 'category-priority-v63 category-vip-v64' : (isMiscCatButton(cat) ? 'category-misc-v80' : '')))); %>
-<% const categoryButtonLabelFor = (cat = '') => isVehicleCatButton(cat) ? '🚗 Veículos Disponíveis' : (isVehiclePartsCatButton(cat) ? '🔧 Peças de Veículos' : (isKitBaseCatButton(cat) ? '🏗️ Kit Base' : (isVipCatButton(cat) ? '👑 Trajes VIPs' : (isMiscCatButton(cat) ? '📦 Diversos' : cat)))); %>
+<% const categoryButtonClassFor = (cat = '') => isVehicleCatButton(cat) ? 'category-priority-v63 category-vehicle-v63' : (isVehiclePartsCatButton(cat) ? 'category-priority-v63 category-parts-v80' : (isKitBaseCatButton(cat) ? 'category-priority-v63 category-kit-v63' : (isVipCatButton(cat) ? 'category-priority-v63 category-vip-v64' : (isSleepingBagCatButton(cat) ? 'category-priority-v63 category-sleep-v115' : (isMiscCatButton(cat) ? 'category-misc-v80' : ''))))); %>
+<% const categoryButtonLabelFor = (cat = '') => isVehicleCatButton(cat) ? '🚗 Veículos Disponíveis' : (isVehiclePartsCatButton(cat) ? '🔧 Peças de Veículos' : (isKitBaseCatButton(cat) ? '🏗️ Kit Base' : (isVipCatButton(cat) ? '👑 Trajes VIPs' : (isSleepingBagCatButton(cat) ? '🛏️ Saco de Dormir' : (isMiscCatButton(cat) ? '📦 Diversos' : cat))))); %>
 <% const categoryHrefFor = (cat = '') => isVipCatButton(cat) ? '/outfits' : ('/shop?serverType=' + encodeURIComponent(selectedServer) + '&category=' + encodeURIComponent(canonicalCatLabel(cat)) + '#productsGrid'); %>
 <% const categoryIsActive = (cat = '') => selectedCategory && (isVehicleCatButton(cat) ? isVehicleCatButton(selectedCategory) : (isVehiclePartsCatButton(cat) ? isVehiclePartsCatButton(selectedCategory) : normalizeCatKey(selectedCategory) === normalizeCatKey(canonicalCatLabel(cat)))); %>
 <% const categoryVisualFor = (cat = '') => {
@@ -31,152 +33,303 @@
   if (key.includes('caixa') || key.includes('armazen')) return dayzImageFor('WoodenCrate', 'Wooden Crate');
   return dayzImageFor('Canteen', 'Canteen');
 }; %>
+<% const categoryIconFor = (cat = '') => {
+  const key = normalizeCatKey(cat);
+  if (isVehiclePartsCatButton(cat)) return '/images/store-categories-v119/pecas-veiculos.webp';
+  if (isVehicleCatButton(cat)) return '/images/store-categories-v119/veiculos.webp';
+  if (isKitBaseCatButton(cat)) return '/images/store-categories-v119/kits-base.webp';
+  if (isVipCatButton(cat)) return '/images/store-categories-v119/trajes-vips.webp';
+  if (isSleepingBagCatButton(cat)) return '/images/store-categories-v119/saco-dormir.webp';
+  if (key.includes('constru')) return '/images/store-categories-v119/construcao.webp';
+  if (key.includes('ferrament')) return '/images/store-categories-v119/ferramentas.webp';
+  if (key.includes('armazen') || key.includes('caixa')) return '/images/store-categories-v119/armazenamento.webp';
+  if (key.includes('suprim')) return '/images/store-categories-v119/suprimentos.webp';
+  return '/images/store-categories-v119/diversos.webp';
+}; %>
+<% const categoryDescriptionFor = (cat = '') => {
+  const key = normalizeCatKey(cat);
+  if (isVehiclePartsCatButton(cat)) return 'Peças essenciais para manter seu veículo funcionando.';
+  if (isVehicleCatButton(cat)) return 'Carros completos, skins e seguro mensal incluso.';
+  if (isKitBaseCatButton(cat)) return 'Tudo para começar ou fortalecer sua base.';
+  if (isVipCatButton(cat)) return 'Trajes exclusivos e benefícios por período.';
+  if (isSleepingBagCatButton(cat)) return 'Escolha seu ponto de respawn seguindo as regras.';
+  if (key.includes('constru')) return 'Materiais para expandir e proteger sua base.';
+  if (key.includes('ferrament')) return 'Ferramentas úteis para sobreviver e construir.';
+  if (key.includes('armazen') || key.includes('caixa')) return 'Organize seu loot com mais segurança.';
+  if (key.includes('suprim')) return 'Comida, bebida, medicina e itens de apoio.';
+  return 'Itens especiais e utilidades para sua jornada.';
+}; %>
 
 <% const safeHighlightColor = (color, fallback = '#ef4444') => /^#[0-9a-f]{6}$/i.test(String(color || '')) ? String(color) : fallback; %>
 <% const hexToRgb = (color) => { const c = safeHighlightColor(color).slice(1); return `${parseInt(c.slice(0,2),16)}, ${parseInt(c.slice(2,4),16)}, ${parseInt(c.slice(4,6),16)}`; }; %>
 <% const promoColorFor = (product) => product?.promo?.active ? safeHighlightColor(product.promo.color, '#ff7a18') : '#ff7a18'; %>
 
-<main class="container v9-store-page theme-<%= theme %>">
+
+<style>
+  .clan-ticker-v113{position:relative;overflow:hidden;margin:0 0 14px;min-height:48px;border:1px solid rgba(239,68,68,.22);border-radius:16px;background:linear-gradient(90deg,rgba(8,13,22,.98),rgba(18,9,12,.96),rgba(8,13,22,.98));box-shadow:0 14px 40px rgba(0,0,0,.24)}
+  .clan-ticker-v113::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(239,68,68,.08),transparent);transform:translateX(-100%);animation:clanTickerGlow113 5s linear infinite;pointer-events:none}
+  .clan-ticker-item-v113{display:none;position:relative;z-index:1;min-height:48px;padding:7px 10px;align-items:center;gap:10px;color:#eef2f8;text-decoration:none}.clan-ticker-item-v113.active{display:flex;animation:clanTickerIn113 .35s ease}
+  .clan-ticker-item-v113 img{width:34px;height:34px;flex:0 0 34px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#050913}.clan-ticker-copy-v113{min-width:0;display:flex;align-items:center;gap:8px;flex:1}.clan-ticker-copy-v113 b{white-space:nowrap}.clan-ticker-copy-v113 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#aebbd0;font-size:.82rem}.clan-ticker-badge-v113{flex:0 0 auto;padding:5px 9px;border-radius:999px;background:rgba(239,68,68,.14);color:#fecaca;font-weight:900;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}.clan-ticker-action-v113{flex:0 0 auto;color:#fff;font-weight:900;font-size:.78rem}
+  @keyframes clanTickerIn113{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@keyframes clanTickerGlow113{to{transform:translateX(100%)}}
+  @media(max-width:700px){.clan-ticker-copy-v113 span,.clan-ticker-action-v113{display:none}.clan-ticker-copy-v113 b{overflow:hidden;text-overflow:ellipsis}.clan-ticker-item-v113{gap:8px}.clan-ticker-badge-v113{font-size:.64rem}}
+</style>
+
+
+<style>
+  .category-sleep-v115{border-color:rgba(59,130,246,.45)!important;background:linear-gradient(135deg,rgba(30,64,175,.20),rgba(21,128,61,.14))!important}
+  .sleeping-rules-v115{margin:18px 0 24px;padding:22px;border:1px solid rgba(239,68,68,.30);border-radius:28px;background:radial-gradient(circle at top right,rgba(59,130,246,.14),transparent 34%),linear-gradient(145deg,rgba(8,13,23,.97),rgba(4,7,13,.97));box-shadow:0 24px 70px rgba(0,0,0,.30)}
+  .sleeping-rules-head-v115{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.sleeping-rules-head-v115 h2{margin:4px 0 6px}.sleeping-rules-head-v115 p{margin:0;color:#aebbd0}.sleeping-price-v115{padding:12px 16px;border-radius:18px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);font-weight:900;color:#fff}.sleeping-rules-grid-v115{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}.sleeping-rule-v115{padding:14px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#dce5f1;line-height:1.45}.sleeping-rule-v115 strong{display:block;color:#fff;margin-bottom:4px}.sleeping-warning-v115{border-color:rgba(239,68,68,.38);background:rgba(127,29,29,.16)}
+</style>
+
+<main class="container v9-store-page theme-<%= theme %> store-v118">
   <div class="v9-bg v10-bg-cinematic" aria-hidden="true"></div>
   <%- include('partials/alerts') %>
 
-  <section class="v9-hero-zone v10-hero-zone" aria-label="Loja RAID-Z">
-    <div class="v9-hero-copy v10-hero-copy">
-      <p class="v9-kicker">Bem-vindo ao RAID-Z</p>
-      <h1>Loja Vanilla.<br>Doe, equipe-se e <span>domine.</span></h1>
-      <p>Entre no Vanilla do RAID-Z. As doações ajudam a manter o servidor online e liberam itens úteis sem pay-to-win.</p>
+  <% if ((recruitingClans || []).length) { %>
+    <section class="clan-ticker-v113" data-clan-ticker aria-label="Clãs recrutando">
+      <% recruitingClans.forEach((clan, index) => { %>
+        <a class="clan-ticker-item-v113 <%= index === 0 ? 'active' : '' %>" data-clan-ticker-item href="/clans/<%= clan.slug %>">
+          <img src="<%= clan.flagImage %>" alt="<%= clan.name %>">
+          <span class="clan-ticker-badge-v113">Recrutando</span>
+          <span class="clan-ticker-copy-v113">
+            <b>[<%= clan.tag %>] <%= clan.name %></b>
+            <span><%= clan.recruitmentTitle || clan.recruitmentMessage || (clan.memberCount + ' membros • clique para ver o formulário') %></span>
+          </span>
+          <span class="clan-ticker-action-v113">Ver clã →</span>
+        </a>
+      <% }) %>
+    </section>
+    <% if (recruitingClans.length > 1) { %>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const items = Array.from(document.querySelectorAll('[data-clan-ticker-item]'));
+          if (items.length < 2) return;
+          let current = 0;
+          window.setInterval(function () {
+            items[current].classList.remove('active');
+            current = (current + 1) % items.length;
+            items[current].classList.add('active');
+          }, 5000);
+        });
+      </script>
+    <% } %>
+  <% } %>
+
+  <section class="rz-store-hero-v118" aria-label="Loja RAID-Z">
+    <div class="rz-store-hero-bg-v118" aria-hidden="true"></div>
+    <div class="rz-store-hero-copy-v118">
+      <div class="rz-store-eyebrow-v118">
+        <span class="rz-live-dot-v118"></span>
+        RAID-Z STORE • VANILLA 1PP
+      </div>
+      <h1>Prepare-se.<br>Equipe-se. <span>Domine.</span></h1>
+      <p>Doações que ajudam a manter o RAID-Z online e entregam seus itens com rapidez, segurança e praticidade.</p>
+      <div class="rz-store-hero-actions-v118">
+        <a class="btn rz-primary-btn-v118" href="#categorias">Explorar loja <b>→</b></a>
+        <a class="btn rz-secondary-btn-v118" href="<%= accountHref %>"><%= player ? 'Adicionar moedas' : 'Entrar com Steam64' %></a>
+      </div>
+      <div class="rz-store-hero-points-v118">
+        <span>✓ Entrega automática</span>
+        <span>✓ Compra segura</span>
+        <span>✓ Suporte da staff</span>
+      </div>
     </div>
 
-    <aside class="v9-wallet-hud v10-wallet-hud sz-wallet-hud" data-wallet-hud>
-      <div class="v9-wallet-text">
-        <span>Saldo do player</span>
-        <strong class="wallet-balance-animated" data-value="<%= player?.coins || 0 %>"><%= playerCoins %></strong>
-        <small><%= currencyName %></small>
+    <aside class="rz-store-account-v118 sz-wallet-hud" data-wallet-hud>
+      <div class="rz-store-account-top-v118">
+        <div>
+          <small>Saldo disponível</small>
+          <strong class="wallet-balance-animated" data-value="<%= player?.coins || 0 %>"><%= playerCoins %></strong>
+          <span><%= currencyName %></span>
+        </div>
+        <div class="rz-coin-v118 sz-coin-spinner" aria-hidden="true">RZ</div>
       </div>
-      <div class="v9-coin-medal sz-coin-spinner" aria-hidden="true"><span>RZ</span></div>
-      <a class="btn v9-gold-btn" href="<%= accountHref %>"><span>+</span> <%= player ? 'Fazer doação' : 'Entrar / cadastrar' %></a>
+      <a class="btn rz-wallet-btn-v118" href="<%= accountHref %>">
+        <b>+</b> <%= player ? 'Fazer doação' : 'Entrar / cadastrar' %>
+      </a>
+      <div class="rz-store-account-foot-v118">
+        <span><%= player ? ('Logado como ' + (player.nickname || 'Player')) : 'Acesso rápido e seguro' %></span>
+        <a href="<%= player ? '/cart' : '#entrar' %>">Ver carrinho</a>
+      </div>
     </aside>
 
-    <section class="v9-server-row v10-server-row" aria-label="Servidor ativo">
-      <a href="/shop?serverType=vanilla" class="server-card v9-server-card v9-server-vanilla <%= selectedServer === 'vanilla' ? 'selected' : '' %>">
-        <img src="/images/vanilla-card.png?v=68" alt="Servidor Vanilla" style="width:100%;height:100%;object-fit:cover;">
-        <div class="v9-server-overlay"></div>
-        <div class="v9-server-info">
-          <small>Servidor oficial</small>
-          <strong>Vanilla</strong>
-          <span>Único servidor ativo da loja</span>
-        </div>
-<div class="v9-enter-btn">Doar no Vanilla <b>→</b></div>
-      </a>
-    </section>
+    <a href="/shop?serverType=vanilla" class="rz-server-card-v118 server-card <%= selectedServer === 'vanilla' ? 'selected' : '' %>">
+      <img src="/images/vanilla-card.png?v=118" alt="Servidor RAID-Z Vanilla">
+      <div class="rz-server-overlay-v118"></div>
+      <div class="rz-server-status-v118"><i></i> Servidor oficial</div>
+      <div class="rz-server-cta-v118">Comprar no Vanilla <b>→</b></div>
+    </a>
   </section>
 
-  <section class="playtime-reward-alert-v78 sz-hover-card" aria-label="Moedas por tempo de jogatina">
-    <div class="playtime-reward-icon-v78" aria-hidden="true">⏱</div>
+  <section class="rz-reward-bar-v118 sz-hover-card" aria-label="Moedas por tempo de jogatina">
+    <div class="rz-reward-icon-v118" aria-hidden="true">⏱</div>
     <div>
-      <strong>Ganhe moedas por tempo de jogatina</strong>
-      <p>Fique jogando no servidor RAID-Z e receba moedas automaticamente no seu saldo. O aviso aparece sem divulgar valores.</p>
+      <strong>Jogue e ganhe moedas automaticamente</strong>
+      <p>Seu tempo online no RAID-Z gera recompensas no saldo da loja.</p>
     </div>
+    <a href="#productsGrid">Ver itens <b>→</b></a>
   </section>
 
   <% if (!player) { %>
-    <section class="v10-login-panel" id="entrar">
-      <div>
-        <p class="v9-kicker">Primeiro acesso</p>
-        <h2>Entre com seu Steam64 para doar</h2>
-        <p>O site fica aberto para olhar os itens. Para doar ou finalizar pedido, salve seu Steam64.</p>
+    <section class="rz-login-panel-v118" id="entrar">
+      <div class="rz-login-copy-v118">
+        <span>PRIMEIRO ACESSO</span>
+        <h2>Entre com seu Steam64</h2>
+        <p>Você pode olhar toda a loja sem login. Para finalizar uma doação, salve seu Steam64 e nick.</p>
       </div>
-      <form method="POST" action="/player/save" class="v10-login-form">
-        <input name="steam64" placeholder="Steam64 do player: 7656119..." maxlength="17" required>
-        <input name="nickname" placeholder="Nick no jogo">
-        <button class="btn v9-gold-btn" type="submit">Salvar e doar</button>
+      <form method="POST" action="/player/save" class="rz-login-form-v118">
+        <label>
+          <span>Steam64</span>
+          <input name="steam64" placeholder="7656119..." maxlength="17" required>
+        </label>
+        <label>
+          <span>Nick no jogo</span>
+          <input name="nickname" placeholder="Seu nick">
+        </label>
+        <button class="btn rz-primary-btn-v118" type="submit">Salvar e continuar</button>
       </form>
     </section>
   <% } %>
 
-  <section class="category-buttons-v32" id="categorias">
-    <div class="category-buttons-head-v32">
-      <p class="v9-kicker">Categorias</p>
-      <h2>Escolha a categoria</h2>
-      <small>Botões simples para selecionar rápido na loja RAID-Z Vanilla.</small>
+  <section class="rz-category-panel-v118 category-buttons-v32" id="categorias">
+    <div class="rz-section-head-v118">
+      <div>
+        <span class="rz-section-kicker-v118">NAVEGAÇÃO RÁPIDA</span>
+        <h2>O que você procura?</h2>
+        <p>Escolha uma categoria para ver somente os itens que precisa.</p>
+      </div>
+      <div class="rz-current-category-v118">
+        <small>Categoria atual</small>
+        <strong><%= selectedCategory || 'Kits Base' %></strong>
+      </div>
     </div>
 
-    <nav class="category-button-row-v32 category-button-row-v80" aria-label="Categorias da loja">
+    <nav class="rz-category-grid-v118 category-button-row-v32 category-button-row-v80" aria-label="Categorias da loja">
       <% allCats.forEach(cat => { %>
-        <a class="category-button-v32 <%= categoryIsActive(cat) ? 'active' : '' %> <%= categoryButtonClassFor(cat) %>" href="<%= categoryHrefFor(cat) %>">
-          <span class="category-button-main-v63"><%= categoryButtonLabelFor(cat) %></span>
+        <a class="rz-category-card-v118 category-button-v32 <%= categoryIsActive(cat) ? 'active' : '' %>" href="<%= categoryHrefFor(cat) %>">
+          <span class="rz-category-art-v118">
+            <img loading="lazy" decoding="async" src="<%= categoryIconFor(cat) %>" onerror="this.src='/images/no-real-image.svg'" alt="">
+          </span>
+          <span class="rz-category-copy-v118">
+            <strong><%= canonicalCatLabel(cat) %></strong>
+            <small><%= categoryDescriptionFor(cat) %></small>
+          </span>
+          <b>→</b>
         </a>
       <% }) %>
     </nav>
   </section>
 
-  <% if (starterKit?.enabled && (!player || !starterKitClaimed)) { %>
-    <section class="starter-kit-card-v33 sz-hover-card" aria-label="Kit Inicial">
-      <div class="starter-kit-bg-v33"></div>
-      <div class="starter-kit-sparks-v33" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="starter-kit-left-v33">
-        <div class="starter-kit-art-v33">
-          <img loading="lazy" decoding="async" src="<%= starterKit.imageData ? ('/starter-kit-image?v=' + (starterKit.imageUpdatedAt || Date.now())) : ((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel') + (((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel').includes('?')) ? '&' : '?') + 'v=' + Date.now()) %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= starterKit.name %>">
-          <span>GRÁTIS</span>
-        </div>
-      </div>
-      <div class="starter-kit-copy-v33">
-        <span class="starter-kit-badge-v33">🎁 Resgate único</span>
+  <% if (starterKit?.enabled) { %>
+    <section class="rz-starter-v118 starter-kit-card-v33 sz-hover-card" aria-label="Kit Inicial">
+      <div class="rz-starter-glow-v118" aria-hidden="true"></div>
+      <figure class="rz-starter-art-v118">
+        <img loading="lazy" decoding="async" src="<%= starterKit.hasImageData ? ('/starter-kit-image?v=' + (starterKit.imageUpdatedAt || Date.now())) : ((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel') + (((starterKit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel').includes('?')) ? '&' : '?') + 'v=' + Date.now()) %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= starterKit.name %>">
+        <span>GRÁTIS</span>
+      </figure>
+      <div class="rz-starter-copy-v118">
+        <div class="rz-starter-badge-v118"><%= player && starterKitClaimed ? '✓ KIT JÁ RESGATADO' : '🎁 RESGATE ÚNICO' %></div>
         <h2><%= starterKit.name || 'Kit Inicial' %></h2>
         <p><%= starterKit.description || 'Resgate grátis uma única vez por conta.' %></p>
-        <% if (starterKit.bonusCoins) { %><div class="starter-kit-items-v33"><b>💰 +<%= coins(starterKit.bonusCoins) %> RZ no saldo</b></div><% } %>
-        <div class="starter-kit-items-v33">
+        <div class="rz-starter-items-v118">
+          <% if (starterKit.bonusCoins) { %><b>+<%= coins(starterKit.bonusCoins) %> RZ</b><% } %>
           <% (starterKit.items || []).slice(0, 5).forEach(item => { %>
-            <b><%= item.quantity || 1 %>x <%= item.label || item.classname %></b>
+            <span><strong><%= item.quantity || 1 %>x</strong> <%= item.label || item.classname %></span>
           <% }) %>
-          <% if ((starterKit.items || []).length > 5) { %><b>+<%= (starterKit.items || []).length - 5 %> itens</b><% } %>
+          <% if ((starterKit.items || []).length > 5) { %><span>+<%= (starterKit.items || []).length - 5 %> itens</span><% } %>
         </div>
       </div>
-      <div class="starter-kit-action-v33">
-        <strong>Uma vez por conta</strong>
-        <small>Depois de resgatar, esse card some da loja. Também ganha 5.000 RZ.</small>
+      <div class="rz-starter-action-v118">
+        <small><%= player && starterKitClaimed ? 'Seu traje grátis de 7 dias já está liberado.' : 'Uma vez por conta. Depois, escolha seu traje grátis de 7 dias.' %></small>
         <% if (!player) { %>
-          <a class="btn v9-buy-btn starter-kit-pulse-btn-v33" href="#entrar">Entrar para resgatar</a>
+          <a class="btn rz-starter-btn-v118" href="#entrar">Entrar para resgatar</a>
+        <% } else if (starterKitClaimed) { %>
+          <a class="btn rz-starter-btn-v118" href="/outfits">Ver trajes disponíveis</a>
         <% } else { %>
           <form method="POST" action="/starter-kit/claim" data-starter-kit-claim>
             <input type="hidden" name="serverType" value="<%= selectedServer %>">
-            <button class="btn v9-buy-btn starter-kit-pulse-btn-v33" type="submit">Resgatar kit inicial</button>
+            <button class="btn rz-starter-btn-v118" type="submit">Resgatar kit inicial</button>
           </form>
         <% } %>
       </div>
     </section>
   <% } %>
 
-  <% if (isVehicleCategory) { %>
-    <section class="v9-products-head v10-products-head vehicle-shop-head">
-      <div>
-        <p class="v9-kicker">Categoria especial</p>
-        <h2>Veículos premium do <%= selectedServer.toUpperCase() %></h2>
-        <p>O card mostra o valor cheio do veículo. Clique em Doar para escolher a skin/type e decidir se quer seguro. Não existe plano por dia ou por 7 dias.</p>
+  <% if (isSleepingBagCatButton(selectedCategory)) { %>
+    <section class="sleeping-rules-v115" aria-label="Regras do saco de dormir">
+      <div class="sleeping-rules-head-v115">
+        <div>
+          <p class="v9-kicker">Leia antes de comprar</p>
+          <h2>Regras do Saco de Dormir</h2>
+          <p>Os modelos azul e verde custam o mesmo valor. Não existe espera de 15 dias para comprar.</p>
+        </div>
+        <div class="sleeping-price-v115">40.000 RZ cada</div>
       </div>
-      <a href="/my-vehicles" class="btn v9-outline-btn">Minha garagem</a>
+      <div class="sleeping-rules-grid-v115">
+        <div class="sleeping-rule-v115"><strong>Máximo permitido</strong>Cada player pode manter somente <b>1 saco de dormir ativo</b>.</div>
+        <div class="sleeping-rule-v115"><strong>Base normal</strong>O saco deve ficar <b>fora da base principal</b>.</div>
+        <div class="sleeping-rule-v115"><strong>Base No Raid</strong>Player No Raid pode usar o saco dentro da base principal, mas continua sem direito a FOB.</div>
+        <div class="sleeping-rule-v115 sleeping-warning-v115"><strong>Punição</strong>Se a staff encontrar o player usando ou mantendo <b>2 sacos de dormir</b>, será aplicado <b>BAN</b>.</div>
+        <div class="sleeping-rule-v115"><strong>Também existe grátis</strong>Quem não tiver moedas pode encontrar sacos de dormir spawnando gratuitamente nos bunkers.</div>
+        <div class="sleeping-rule-v115"><strong>Não quer usar saco?</strong>Pode morrer/respawnar no jogo para trocar o local de nascimento. O servidor usa <b>spawn Vanilla melhorado</b>.</div>
+        <div class="sleeping-rule-v115"><strong>Mais informações</strong>Acesse o Discord oficial do RAID-Z para consultar as regras completas.</div>
+      </div>
     </section>
+  <% } %>
 
+  <section class="rz-catalog-toolbar-v118" aria-label="Ferramentas do catálogo">
+    <div class="rz-catalog-title-v118">
+      <span class="rz-section-kicker-v118">CATÁLOGO RAID-Z</span>
+      <h2><%= selectedCategory || 'Kits Base' %></h2>
+      <p><b data-store-visible-count><%= isVehicleCategory ? vehicleTemplates.length : products.length %></b> item(ns) disponível(is) nesta categoria.</p>
+    </div>
+    <div class="rz-catalog-controls-v118">
+      <label class="rz-search-v118">
+        <span>⌕</span>
+        <input type="search" placeholder="Buscar item..." autocomplete="off" data-store-search>
+      </label>
+      <label class="rz-sort-v118">
+        <span>Ordenar</span>
+        <select data-store-sort>
+          <option value="default">Destaques</option>
+          <option value="price-asc">Menor preço</option>
+          <option value="price-desc">Maior preço</option>
+          <option value="name">Nome A–Z</option>
+        </select>
+      </label>
+      <% if (isVehicleCategory) { %>
+        <a href="/my-vehicles" class="btn rz-secondary-btn-v118">Minha garagem</a>
+      <% } else { %>
+        <a href="<%= accountHref %>" class="btn rz-secondary-btn-v118"><%= player ? 'Adicionar moedas' : 'Entrar' %></a>
+      <% } %>
+    </div>
+  </section>
+  <div class="rz-search-empty-v118" data-store-empty hidden>
+    <strong>Nenhum item encontrado</strong>
+    <span>Tente outro nome ou escolha uma categoria diferente.</span>
+  </div>
+
+  <% if (isVehicleCategory) { %>
     <section class="vehicle-shop-board vehicle-shop-board-v32">
       <div class="vehicle-shop-board-copy">
         <span>🚗</span>
         <div>
           <strong>Compra de veículo refeito</strong>
-          <small>O player pode comprar sem seguro. Se escolher seguro na compra, o primeiro mês já vai incluso no valor do carro.</small>
+          <small>Todo veículo já sai com seguro mensal ativo. O primeiro mês vai incluso no valor do carro.</small>
         </div>
       </div>
       <div class="vehicle-shop-board-pills">
         <b><%= selectedServer.toUpperCase() %></b>
         <b>Skin/type</b>
-        <b>Seguro opcional</b>
+        <b>Seguro incluso</b>
       </div>
     </section>
 
     <section class="v9-product-grid product-grid-pro v10-product-grid vehicle-shop-grid vehicle-shop-grid-v32" id="productsGrid">
       <% vehicleTemplates.forEach((v, index) => { %>
-        <% const image = v.imageData ? ('/vehicle-image/' + v.id + '?v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())) : ((v.imageUrl || '/images/no-real-image.svg') + (((v.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())); %>
+        <% const image = v.hasImageData ? ('/vehicle-image/' + v.id + '?v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())) : ((v.imageUrl || '/images/no-real-image.svg') + (((v.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (v.updatedAt ? new Date(v.updatedAt).getTime() : Date.now())); %>
         <% const plans = [...(v.insurancePlans || []), ...(globalVehiclePlans || [])]; %>
-        <% const planPrice = (plan) => plan.billingType === 'PER_USE' ? 10000 : Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
+        <% const planPrice = (plan) => Math.round(Number(v.buyPriceCoins || 0) * 0.5); %>
         <% const rawVariants = Array.isArray(v.variants) ? v.variants.filter(item => item && item.vehicleClassname) : []; %>
         <% const variants = rawVariants.length ? rawVariants.map((item, idx) => ({ name: item.name || ('Skin ' + (idx + 1)), vehicleClassname: item.vehicleClassname, imageUrl: item.imageUrl || '', index: idx })) : [{ name: 'Padrão', vehicleClassname: v.vehicleClassname, imageUrl: '', index: 0 }]; %>
         <% const showVariantSelector = variants.length > 1; %>
@@ -187,13 +340,13 @@
         <% const featuredColor = theme === 'bbp' ? '#38bdf8' : '#ef4444'; %>
         <% const featuredRgb = theme === 'bbp' ? '56, 189, 248' : '239, 68, 68'; %>
 
-        <article class="product-card-pro v9-product-card vehicle-shop-card vehicle-shop-card-v32 sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= featuredRgb %>;" data-product-name="<%= `${v.name} ${v.vehicleClassname} veiculo veículo carro seguro doacao`.toLowerCase() %>">
+        <article class="rz-product-card-v118 product-card-pro v9-product-card vehicle-shop-card vehicle-shop-card-v32 sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= featuredRgb %>;" data-store-card data-store-price="<%= bestPrice %>" data-store-title="<%= v.name.toLowerCase() %>" data-product-name="<%= `${v.name} ${v.vehicleClassname} veiculo veículo carro seguro doacao`.toLowerCase() %>">
           <div class="v9-product-art vehicle-shop-art vehicle-shop-art-v32">
             <div class="vehicle-shop-server-badge"><%= v.serverType.toUpperCase() %></div>
             <% if (showVariantSelector) { %><div class="vehicle-skin-count-v32"><%= variants.length %> skins</div><% } %>
             <div class="vehicle-shop-orbit"></div>
             <div class="v9-card-shine"></div>
-            <img src="<%= previewImage %>" alt="<%= v.name %>">
+            <img loading="lazy" decoding="async" src="<%= previewImage %>" alt="<%= v.name %>">
           </div>
 
           <div class="v9-product-content vehicle-shop-content vehicle-shop-content-v32">
@@ -209,7 +362,7 @@
             <div class="vehicle-clean-price-v32">
               <small>Valor do veículo</small>
               <strong><i>RZ</i> <%= buyLabel %></strong>
-              <span>Seguro opcional: 1º mês incluso</span>
+              <span>Seguro mensal: 1º mês incluso</span>
             </div>
 
             <% if (showVariantSelector) { %>
@@ -234,16 +387,16 @@
           <section class="vehicle-config-box-v32">
             <button class="vehicle-config-close-v32" type="button" data-close-vehicle-config>×</button>
             <div class="vehicle-config-preview-v32">
-              <img src="<%= previewImage %>" alt="<%= v.name %>" data-variant-preview-img>
+              <img loading="lazy" decoding="async" src="<%= previewImage %>" alt="<%= v.name %>" data-variant-preview-img>
               <span><%= selectedServer.toUpperCase() %></span>
             </div>
             <div class="vehicle-config-content-v32">
               <p class="v9-kicker">Configurar doação</p>
               <h2><%= v.name %></h2>
-              <p>Escolha a opção e finalize. Seguro é opcional: todo veículo aparece na Minha Garagem. Sem seguro não tem reposição; com seguro o primeiro mês já está incluso no valor do carro.</p>
+              <p>Escolha a opção e finalize. Todo veículo já sai com seguro mensal ativo e o primeiro mês está incluso no valor do carro.</p>
 
               <% if (player) { %>
-                <form method="POST" action="/vehicles/buy/<%= v.id %>" class="vehicle-shop-form vehicle-shop-form-v32">
+                <form method="POST" action="/vehicles/buy/<%= v.id %>" class="vehicle-shop-form vehicle-shop-form-v32" data-vehicle-purchase-form>
                   <input type="hidden" name="variantIndex" value="0" data-variant-input>
 
                   <% if (showVariantSelector) { %>
@@ -252,7 +405,7 @@
                       <div class="vehicle-variant-options-v32">
                         <% variants.forEach((variant, variantIndex) => { %>
                           <button type="button" class="vehicle-variant-option-v32 <%= variantIndex === 0 ? 'active' : '' %>" data-variant-choice data-index="<%= variantIndex %>" data-img="<%= variant.imageUrl || image %>" data-class="<%= variant.vehicleClassname %>" data-name="<%= variant.name %>">
-                            <img src="<%= variant.imageUrl || image %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= variant.name %>">
+                            <img loading="lazy" decoding="async" src="<%= variant.imageUrl || image %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= variant.name %>">
                             <span><%= variant.name %></span>
                           </button>
                         <% }) %>
@@ -269,19 +422,21 @@
                     </label>
                     <label>Plano de seguro
                       <select name="insurancePlanId">
-                        <option value="">Sem seguro — aparece na garagem, sem reposição</option>
+                        
                         <% plans.forEach(plan => { %>
                           <option value="<%= plan.id %>">
-                            <%= plan.billingType === 'PER_USE'
-                              ? (plan.name + ' — primeiro mês incluso; depois cobra ' + coins(planPrice(plan)) + ' RZ cada uso')
-                              : (plan.name + ' — primeiro mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana') %>
+                            <%= plan.name + ' — primeiro mês incluso; depois ' + coins(planPrice(plan)) + ' RZ/mês / ' + plan.maxUsesPerWeek + 'x semana' %>
                           </option>
                         <% }) %>
                       </select>
                     </label>
                   </div>
-                  <small class="muted">Sem seguro: entrega e aparece na Minha Garagem, mas não libera reposição. Com seguro: o 1º mês já está incluso no valor do carro. Depois, por uso cobra 10.000 RZ quando usar; mensal custa 50% do valor do veículo.</small>
-                  <button class="btn v9-buy-btn vehicle-shop-buy" type="submit">Finalizar doação e dropar</button>
+                  <small class="muted">Seguro mensal obrigatório: o 1º mês já está incluso no valor do carro. Depois, a renovação custa 50% do valor do veículo.</small>
+                  <div class="vehicle-accessory-note-v103">💡 Ao confirmar, <b>2 HeadlightH7</b> serão enviadas ao inventário. O MuranoCarlock será instalado pelo mod do veículo.</div>
+                  <div class="vehicle-purchase-actions-v103">
+                    <button class="btn vehicle-purchase-cancel-v103" type="button" data-close-vehicle-config>Cancelar</button>
+                    <button class="btn v9-buy-btn vehicle-shop-buy vehicle-confirm-purchase-v103" type="submit" data-confirm-vehicle-purchase>Confirmar compra do veículo</button>
+                  </div>
                 </form>
               <% } else { %>
                 <a class="btn v9-buy-btn vehicle-shop-buy" href="#entrar">Entrar para doar</a>
@@ -299,24 +454,16 @@
       <% } %>
     </section>
   <% } else { %>
-    <section class="v9-products-head v10-products-head">
-      <div>
-        <p class="v9-kicker">Itens em destaque</p>
-        <h2>Itens premium para dominar o servidor</h2>
-      </div>
-      <a href="<%= accountHref %>" class="btn v9-outline-btn"><%= player ? 'Fazer doação' : 'Entrar na loja' %></a>
-    </section>
-
     <section class="v9-product-grid product-grid-pro v10-product-grid" id="productsGrid">
       <% products.forEach((product, index) => { %>
       <% const itemList = product.items?.length ? product.items : [{ classname: product.classname, quantity: product.quantity, label: null }]; %>
-      <% const visualSrc = product.imageData ? ('/product-image/' + product.id) : (product.imageUrl || visualFor(product)); %>
+      <% const visualSrc = product.hasImageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : (product.imageUrl || visualFor(product)); %>
       <% const featuredColor = safeHighlightColor(product.highlightColor || (theme === 'bbp' ? '#38bdf8' : '#ef4444')); %>
-      <article class="product-card-pro v9-product-card sz-hover-card <%= product.featured ? 'is-featured' : '' %> <%= product.promo?.active ? 'is-promo' : '' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= hexToRgb(featuredColor) %>;--promo-color:<%= promoColorFor(product) %>;--promo-rgb:<%= hexToRgb(promoColorFor(product)) %>;" data-product-name="<%= `${product.name} ${product.category} ${product.description || ''}`.toLowerCase() %>" data-cart-product-id="<%= product.id %>" data-cart-name="<%= product.name %>" data-cart-category="<%= product.category %>" data-cart-server="<%= product.serverType %>" data-cart-price="<%= product.displayPriceCoins %>" data-cart-image="<%= visualSrc %>">
+      <article class="rz-product-card-v118 product-card-pro v9-product-card sz-hover-card <%= product.featured ? 'is-featured' : '' %> <%= product.promo?.active ? 'is-promo' : '' %>" style="--featured-color:<%= featuredColor %>;--featured-rgb:<%= hexToRgb(featuredColor) %>;--promo-color:<%= promoColorFor(product) %>;--promo-rgb:<%= hexToRgb(promoColorFor(product)) %>;" data-store-card data-store-price="<%= product.displayPriceCoins %>" data-store-title="<%= product.name.toLowerCase() %>" data-product-name="<%= `${product.name} ${product.category} ${product.description || ''}`.toLowerCase() %>" data-cart-product-id="<%= product.id %>" data-cart-name="<%= product.name %>" data-cart-category="<%= product.category %>" data-cart-server="<%= product.serverType %>" data-cart-price="<%= product.displayPriceCoins %>" data-cart-image="<%= visualSrc %>">
         <div class="v9-product-art">
           <% if (product.promo?.active) { %><div class="promo-fire-badge">🔥 <%= product.promo.label %> -<%= product.promo.percent %>%</div><% } %>
           <div class="v9-card-shine"></div>
-          <img loading="lazy" decoding="async" src="<%= visualSrc %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= product.name %>" style="max-width:88%;height:135px;object-fit:contain;">
+          <img loading="lazy" decoding="async" src="<%= visualSrc %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= product.name %>">
         </div>
         <div class="v9-product-content">
           <div class="v9-product-tags">
@@ -362,11 +509,11 @@
     </section>
   <% } %>
 
-  <section class="v9-trust-strip v10-trust-strip" aria-label="Vantagens da loja">
-    <div><b>♜</b><strong>100% Seguro</strong><span>Proteção total e antifraude avançado</span></div>
-    <div><b>ϟ</b><strong>Entrega imediata</strong><span>Seus itens são entregues automaticamente</span></div>
-    <div><b>☊</b><strong>Suporte 24/7</strong><span>Nossa equipe sempre disponível</span></div>
-    <div><b>☷</b><strong>Comunidade ativa</strong><span>Junte-se à comunidade RAID-Z</span></div>
+  <section class="rz-trust-grid-v118" aria-label="Vantagens da loja">
+    <div><b>01</b><span><strong>Compra segura</strong><small>Saldo vinculado ao seu Steam64.</small></span></div>
+    <div><b>02</b><span><strong>Entrega automática</strong><small>Pedido enviado direto para o servidor.</small></span></div>
+    <div><b>03</b><span><strong>Suporte da staff</strong><small>Ajuda rápida pelo Discord oficial.</small></span></div>
+    <div><b>04</b><span><strong>Comunidade ativa</strong><small>Servidor feito para durar e evoluir.</small></span></div>
   </section>
 </main>
 <% if (player) { %>
@@ -391,6 +538,10 @@
     btn.addEventListener('click', () => {
       const modal = document.getElementById(btn.dataset.openVehicleConfig);
       if (!modal) return;
+      // O modal nasce dentro da grade de produtos. Elementos ancestrais com
+      // transform/perspective podem fazer position:fixed ficar preso na grade.
+      // Levar o modal ao body garante centralização real na janela inteira.
+      if (modal.parentElement !== document.body) document.body.appendChild(modal);
       modal.hidden = false;
       document.body.classList.add('vehicle-modal-open-v32');
       const box = modal.querySelector('.vehicle-config-box-v32');
@@ -401,7 +552,6 @@
       if (preview) preview.scrollTop = 0;
       requestAnimationFrame(() => {
         if (box) box.scrollTop = 0;
-        box?.scrollIntoView({ block: 'center', inline: 'center' });
       });
     });
   });
@@ -431,6 +581,21 @@
         if (preview && choice.dataset.img) preview.src = choice.dataset.img;
         if (name) name.textContent = choice.dataset.name || 'Padrão';
         if (className) className.textContent = choice.dataset.class || '';
+      });
+    });
+
+    modal.querySelectorAll('[data-vehicle-purchase-form]').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        const button = form.querySelector('[data-confirm-vehicle-purchase]');
+        if (!button) return;
+        if (form.dataset.submitting === '1') {
+          event.preventDefault();
+          return;
+        }
+        form.dataset.submitting = '1';
+        button.disabled = true;
+        button.classList.add('is-loading-v103');
+        button.textContent = 'Confirmando compra...';
       });
     });
   });
@@ -479,4 +644,5 @@
     }
   })();
 </script>
+<script src="/js/store-v118.js?v=118" defer></script>
 <%- include('partials/footer') %>

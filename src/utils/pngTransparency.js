@@ -259,3 +259,21 @@ export function prepareUploadedImage(file) {
   }
   return { imageData: file.buffer.toString('base64'), imageMime: file.mimetype };
 }
+
+export function prepareRawUploadedImage(file) {
+  if (!file?.buffer) return null;
+  const mime = String(file.mimetype || '').toLowerCase();
+  const allowed = new Set(['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif']);
+  if (!allowed.has(mime)) throw new Error('Use uma imagem PNG, JPG, WEBP ou GIF.');
+  return { imageData: file.buffer.toString('base64'), imageMime: mime === 'image/jpg' ? 'image/jpeg' : mime };
+}
+
+export function makePngFullyOpaque(buffer) {
+  try {
+    const decoded = parsePng(buffer);
+    for (let i = 3; i < decoded.rgba.length; i += 4) decoded.rgba[i] = 255;
+    return encodePngRgba(decoded.width, decoded.height, decoded.rgba);
+  } catch (_) {
+    return buffer;
+  }
+}

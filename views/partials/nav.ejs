@@ -14,15 +14,19 @@
     <a class="v9-nav-item" href="/wallet"><span>◉</span> Doações</a>
     <a class="v9-nav-item <%= path === '/my-vehicles' ? 'active' : '' %>" href="/my-vehicles"><span>🚗</span> Minha garagem</a>
     <a class="v9-nav-item <%= path === '/outfits' ? 'active' : '' %>" href="/outfits"><span>👑</span> Trajes VIPs</a>
-    <a class="v9-nav-item <%= path === '/ranking' ? 'active' : '' %>" href="/ranking"><span>🏆</span> Ranking</a>
-    <a class="v9-nav-item <%= path === '/streamer' ? 'active' : '' %>" href="/streamer"><span>🎥</span> Painel Streamer</a>
+    <a class="v9-nav-item <%= String(path || '').startsWith('/ranking') ? 'active' : '' %>" href="/ranking"><span>🏆</span> Ranking</a>
+    <a class="v9-nav-item <%= (String(path || '').startsWith('/clans') || path === '/my-clan') ? 'active' : '' %>" href="/clans"><span>🛡</span> Clãs</a>
+    <% if (streamerAccessApproved) { %><a class="v9-nav-item <%= path === '/streamer' ? 'active' : '' %>" href="/streamer"><span>🎥</span> Painel Streamer</a><% } %>
+    <% if (isAdminArea) { %><a class="v9-nav-item ftp-top-link-v88 <%= path && String(path).startsWith('/admin/ftp') ? 'active' : '' %>" href="/admin/ftp"><span>🗂️</span> FTP</a><% } %>
     <a class="v9-nav-item admin-entry-link" href="/admin"><span>⚙</span> Admin</a>
   </nav>
 
   <nav class="v9-account-nav" aria-label="Conta">
     <% if (player) { %>
-      <a class="v9-account-pill" href="/wallet">
-        <span class="v9-account-icon">◎</span>
+      <a class="v9-account-pill" href="/wallet" style="gap:12px">
+        <span class="v9-account-icon" style="display:grid;place-items:center;overflow:hidden;padding:0;background:transparent;border:1px solid rgba(255,255,255,.12)">
+          <img src="<%= player.hasAvatar ? ('/player-avatar/' + player.id + '?v=' + (player.updatedAt ? new Date(player.updatedAt).getTime() : Date.now())) : '/images/raidz-profile-default.webp' %>" alt="Avatar do player" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'" style="width:100%;height:100%;object-fit:cover;border-radius:999px;display:block;">
+        </span>
         <span><strong>Minha conta</strong><small><%= player.nickname || 'Player' %></small></span>
       </a>
       <a class="v9-cart-pill" href="/cart" aria-label="Carrinho">🛒<b data-nav-cart-count>0</b></a>

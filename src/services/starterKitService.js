@@ -1,9 +1,31 @@
 import { prisma } from '../db/prisma.js';
 import { logAudit } from './auditService.js';
 import { prepareUploadedImage } from '../utils/pngTransparency.js';
+import { publishPlayerDeliveryFilesNow, queueImmediatePlayerFileSync } from './fileBridgeService.js';
+import { randomUUID } from 'crypto';
 
 const SETTING_KEY = 'starterKit.v1';
 const GAME_SERVER_TYPES = ['vanilla', 'bbp'];
+
+
+// O mod atual cria uma entidade por registro de entrega e, para madeira,
+// não transforma `quantity` em pilha. Por isso tábuas e troncos precisam
+// ser separados em um registro por unidade para garantir a quantidade real.
+const STARTER_UNIT_PER_DELIVERY_CLASSNAMES = new Set(['woodenplank', 'woodenlog']);
+
+function expandStarterKitItemDeliveries(item = {}) {
+  const classname = String(item.classname || '').trim();
+  const quantity = Math.max(1, Math.min(Math.floor(Number(item.quantity || 1)), 999));
+  if (!STARTER_UNIT_PER_DELIVERY_CLASSNAMES.has(classname.toLowerCase())) {
+    return [{ quantity, unitIndex: 0, unitCount: 1, splitIntoUnits: false }];
+  }
+  return Array.from({ length: quantity }, (_, index) => ({
+    quantity: 1,
+    unitIndex: index,
+    unitCount: quantity,
+    splitIntoUnits: true
+  }));
+}
 
 function normalizeServerType(value, fallback = 'vanilla') {
   const serverType = String(value || fallback).trim().toLowerCase();
@@ -64,8 +86,10 @@ function defaultStarterKit() {
       { classname: 'CodeLock', quantity: 1, label: 'Code Lock', sortOrder: 3 },
       { classname: 'Rope', quantity: 1, label: 'Corda', sortOrder: 4 },
       { classname: 'Hatchet', quantity: 1, label: 'Machadinha', sortOrder: 5 },
-      { classname: 'WoodenPlank', quantity: 10, label: 'Fardo de tábuas 1/2 (10)', sortOrder: 6 },
-      { classname: 'WoodenPlank', quantity: 10, label: 'Fardo de tábuas 2/2 (10)', sortOrder: 7 }
+      { classname: 'Pliers', quantity: 1, label: 'Alicate', sortOrder: 6 },
+      { classname: 'MetalWire', quantity: 1, label: 'Arame', sortOrder: 7 },
+      { classname: 'WoodenPlank', quantity: 20, label: 'Tábuas (20)', sortOrder: 8 },
+      { classname: 'WoodenLog', quantity: 4, label: 'Troncos (4)', sortOrder: 9 }
     ]
   };
 }
@@ -174,16 +198,23 @@ function resolveDeliveryServer(kit, selectedServerType) {
 async function createStarterKitDeliveries({ tx, player, kit, serverType, adminTest = false }) {
   const prefix = adminTest ? '[TESTE ADMIN KIT INICIAL]' : '[KIT INICIAL]';
   const deliveries = [];
+
+  // V96: monta todas as linhas e grava em um único INSERT. Antes eram mais de
+  // 30 INSERTs sequenciais (20 tábuas + 4 troncos + demais itens), o que fazia
+  // o Kit Inicial parecer muito mais lento do que uma compra normal.
   for (const [index, item] of kit.items.entries()) {
-    const delivery = await tx.deliveryQueue.create({
-      data: {
+    const units = expandStarterKitItemDeliveries(item);
+    for (const unit of units) {
+      const unitSuffix = unit.splitIntoUnits ? ` [${unit.unitIndex + 1}/${unit.unitCount}]` : '';
+      deliveries.push({
+        id: randomUUID(),
         purchaseId: null,
         playerId: player.id,
         steam64: player.steam64,
         serverType,
-        productName: `${prefix} ${kit.name}: ${item.label || item.classname}`,
+        productName: `${prefix} ${kit.name}: ${item.label || item.classname}${unitSuffix}`,
         classname: item.classname,
-        quantity: Number(item.quantity || 1),
+        quantity: unit.quantity,
         deliveryType: kit.deliveryType || 'drop_box',
         meta: {
           kind: adminTest ? 'starter_kit_admin_test' : 'starter_kit',
@@ -191,16 +222,39 @@ async function createStarterKitDeliveries({ tx, player, kit, serverType, adminTe
           starterKitName: kit.name,
           itemLabel: item.label || item.classname,
           sortOrder: index,
+          logicalQuantity: Number(item.quantity || 1),
+          unitIndex: unit.unitIndex,
+          unitCount: unit.unitCount,
+          splitIntoUnits: unit.splitIntoUnits,
+          v93StarterUnitDelivery: unit.splitIntoUnits,
+          v96FastStarterKit: true,
           dropBoxClassname: kit.deliveryType === 'drop_box' ? 'WoodenCrate' : null,
           dropBoxOverflowBehavior: 'DROP_OUTSIDE',
           dropOutsideIfCannotFit: true,
           oversizedItemsDropOutside: true
         }
-      }
-    });
-    deliveries.push(delivery);
+      });
+    }
+  }
+
+  if (deliveries.length) {
+    await tx.deliveryQueue.createMany({ data: deliveries });
   }
   return deliveries;
+}
+
+async function publishStarterKitToFtpNow(result, logPrefix) {
+  const steam64 = String(result?.player?.steam64 || '').trim();
+  if (!steam64) return;
+  try {
+    // V96: igual às compras normais, envia o JSON ao FTP imediatamente depois
+    // de confirmar a transação. Não espera mais o ciclo periódico de 10-20s.
+    result.fileBridgeImmediate = await publishPlayerDeliveryFilesNow([steam64]);
+  } catch (error) {
+    queueImmediatePlayerFileSync(steam64);
+    result.fileBridgeImmediate = { ok: false, error: String(error?.message || error) };
+    console.error(`[FILE_BRIDGE_NOW] ${logPrefix} salvo, mas o FTP imediato falhou:`, error.message);
+  }
 }
 
 export async function claimStarterKit({ playerId, serverType }) {
@@ -264,7 +318,8 @@ export async function claimStarterKit({ playerId, serverType }) {
     return { player: updatedPlayer, kit, serverType: deliveryServer, deliveries, bonusCoins };
   });
 
-  await logAudit({ actor: result.player.steam64, action: 'starter_kit.claimed', target: result.player.id, data: { serverType: result.serverType, deliveries: result.deliveries.length, bonusCoins: result.bonusCoins || 0 } });
+  await publishStarterKitToFtpNow(result, 'Kit Inicial');
+  await logAudit({ actor: result.player.steam64, action: 'starter_kit.claimed', target: result.player.id, data: { serverType: result.serverType, deliveries: result.deliveries.length, bonusCoins: result.bonusCoins || 0, ftpImmediate: result.fileBridgeImmediate?.ok !== false } });
   return result;
 }
 
@@ -285,6 +340,7 @@ export async function dropStarterKitForAdmin({ steam64, serverType }) {
     return { player, kit, serverType: deliveryServer, deliveries };
   });
 
-  await logAudit({ actor: 'admin', action: 'starter_kit.test_drop', target: result.player.steam64, data: { serverType: result.serverType, deliveries: result.deliveries.length, bonusCoins: result.bonusCoins || 0 } });
+  await publishStarterKitToFtpNow(result, 'Teste do Kit Inicial');
+  await logAudit({ actor: 'admin', action: 'starter_kit.test_drop', target: result.player.steam64, data: { serverType: result.serverType, deliveries: result.deliveries.length, bonusCoins: result.bonusCoins || 0, ftpImmediate: result.fileBridgeImmediate?.ok !== false } });
   return result;
 }

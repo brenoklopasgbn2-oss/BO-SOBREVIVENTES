@@ -1,0 +1,192 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<style>
+  .clan-hub-v106{display:grid;gap:22px}.clan-hero-v106{position:relative;overflow:hidden;border-radius:34px;padding:34px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(140deg,rgba(8,12,20,.96),rgba(2,6,12,.96));box-shadow:0 30px 90px rgba(0,0,0,.3)}
+  .clan-hero-v106::before{content:"";position:absolute;inset:0;background:url('/images/raidz-clans-hero.webp') center/cover no-repeat;opacity:.42;pointer-events:none}.clan-hero-inner-v106{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center}.clan-hero-v106 h1{margin:8px 0 12px;font-size:2.6rem;line-height:1.04}.clan-hero-v106 p{margin:0;color:#d2d9e4;max-width:760px}.clan-pills-v106{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.clan-pills-v106 span{padding:9px 13px;border-radius:999px;background:rgba(255,255,255,.07);font-size:.82rem;font-weight:800}
+  .clan-highlight-v106{display:grid;gap:12px}.clan-highlight-card-v106{padding:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}.clan-highlight-card-v106 strong{display:block;font-size:1.08rem}.clan-highlight-card-v106 small{color:#9eb0ca}
+  .clan-section-head-v106{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}.clan-section-head-v106 h2{margin:0 0 6px}.clan-section-head-v106 p{margin:0;color:#96a6bf}
+  .clan-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.clan-card-v106{position:relative;overflow:hidden;padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(160deg,rgba(10,14,24,.97),rgba(4,8,14,.96));box-shadow:0 18px 60px rgba(0,0,0,.26);display:grid;gap:14px;transform-style:preserve-3d;transition:.22s}.clan-card-v106:hover{transform:translateY(-5px) rotateX(2deg)}.clan-card-head-v106{display:flex;gap:14px;align-items:center}.clan-card-head-v106 img{width:78px;height:78px;object-fit:cover;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:#050913}.clan-card-head-v106 strong{display:block;font-size:1.08rem}.clan-card-head-v106 small{display:block;color:#a4b4ca;margin-top:6px}.clan-card-v106 p{margin:0;color:#d9e1eb;line-height:1.48}.clan-card-tags-v106{display:flex;gap:8px;flex-wrap:wrap}.clan-card-tags-v106 span{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.76rem;font-weight:800}.clan-card-actions-v106{display:flex;gap:10px;flex-wrap:wrap}.clan-card-actions-v106 .btn{flex:1;min-width:140px}
+  .clan-form-layout-v106{display:grid;grid-template-columns:1fr;gap:18px}.clan-form-card-v106{padding:24px;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(9,13,22,.97),rgba(3,7,12,.97));display:grid;gap:18px;box-shadow:0 22px 70px rgba(0,0,0,.24)}.clan-form-grid-v106{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clan-create-head-v114{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.clan-create-head-v114>div:first-child{max-width:720px}.clan-status-wrap-v114{padding:16px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.075)}.clan-cta-v114{display:flex;gap:10px;flex-wrap:wrap}.clan-cta-v114 .btn{min-width:220px}.clan-create-form-v114{display:grid;gap:14px;padding-top:4px}.clan-form-card-v106 textarea,.clan-form-card-v106 input{width:100%}.clan-status-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.clan-status-box-v106{padding:14px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.clan-status-box-v106 strong{display:block;font-size:1.2rem}.clan-status-box-v106 small{color:#9fb0c8}
+  @media (max-width: 980px){.clan-hero-inner-v106,.clan-form-layout-v106{grid-template-columns:1fr}.clan-form-grid-v106{grid-template-columns:1fr}.clan-hero-v106 h1{font-size:2rem}}
+</style>
+<main class="container clan-hub-v106">
+  <%- include('partials/alerts') %>
+
+  <section class="clan-hero-v106">
+    <div class="clan-hero-inner-v106">
+      <div>
+        <p class="eyebrow">Nova aba</p>
+        <h1>Clãs & <span>Recrutamento</span></h1>
+        <p>Agora o player pode criar clã com imagem, descrição, painel próprio, lista de membros, VIPs ativos e formulário de recrutamento enviado direto para o dono do clã. Para criar ou entrar em clã, a foto de perfil do player é obrigatória.</p>
+        <div class="clan-pills-v106">
+          <span>🛡 Criação de clã</span>
+          <span>👤 Perfil com foto</span>
+          <span>📨 Formulário de recrutamento</span>
+          <span>👑 Trajes VIP visíveis</span>
+        </div>
+      </div>
+      <aside class="clan-highlight-v106">
+        <div class="clan-highlight-card-v106">
+          <small>Clãs ativos</small>
+          <strong><%= (clans || []).length %></strong>
+        </div>
+        <div class="clan-highlight-card-v106">
+          <small>Recrutando agora</small>
+          <strong><%= (recruitingClans || []).length %></strong>
+        </div>
+        <div class="clan-highlight-card-v106">
+          <% if (player) { %>
+            <small>Seu status</small>
+            <strong><%= membership?.clan ? ('No clã [' + membership.clan.tag + '] ' + membership.clan.name) : 'Sem clã no momento' %></strong>
+          <% } else { %>
+            <small>Seu status</small>
+            <strong>Entre com seu Steam64 para usar</strong>
+          <% } %>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section>
+    <div class="clan-section-head-v106">
+      <div>
+        <h2>Clãs recrutando agora</h2>
+        <p>Os que estão com o recrutamento aberto aparecem primeiro na loja e aqui na aba completa.</p>
+      </div>
+    </div>
+    <div class="clan-grid-v106">
+      <% (recruitingClans || []).forEach(clan => { %>
+        <article class="clan-card-v106" style="border-color:<%= clan.accentColor %>">
+          <div class="clan-card-head-v106">
+            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+            <div>
+              <strong>[<%= clan.tag %>] <%= clan.name %></strong>
+              <small>Dono: <%= clan.ownerPlayer?.nickname || clan.ownerPlayer?.steam64 || 'Sem dono' %></small>
+              <small><%= clan.memberCount %> membro(s) • <%= clan.pendingApplications %> solicitação(ões)</small>
+            </div>
+          </div>
+          <div class="clan-card-tags-v106">
+            <span>Recrutando</span>
+            <% if ((clan.activeOutfitNames || []).length) { %><span>VIPs: <%= clan.activeOutfitNames.slice(0,2).join(', ') %></span><% } %>
+            <% if ((clan.awards || []).length) { %><span>🏆 <%= clan.awards.length %> troféu(s)</span><% } %>
+          </div>
+          <p><%= clan.recruitmentTitle || clan.recruitmentMessage || clan.description || 'Clã sem descrição pública no momento.' %></p>
+          <div class="clan-card-actions-v106">
+            <a class="btn" href="/clans/<%= clan.slug %>">Ver detalhes</a>
+            <% if (player?.hasAvatar) { %><a class="btn primary" href="/clans/<%= clan.slug %>#form-recrutamento">Quero entrar</a><% } else if (player) { %><a class="btn primary" href="/wallet#perfil-player">Enviar imagem de perfil</a><% } %>
+          </div>
+        </article>
+      <% }) %>
+      <% if (!(recruitingClans || []).length) { %>
+        <article class="clan-card-v106"><p>Nenhum clã recrutando no momento.</p></article>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="clan-form-layout-v106" id="criar-cla">
+    <article class="clan-form-card-v106">
+      <div class="clan-create-head-v114">
+        <div>
+          <p class="eyebrow">Seu espaço de clã</p>
+          <h2><%= membership?.clan ? 'Seu clã já está ativo' : 'Criar seu clã' %></h2>
+          <p><%= membership?.clan ? 'Acesse o painel para editar recrutamento, membros, imagens e traje VIP do clã.' : 'Confira seu perfil e preencha tudo abaixo. Não existe mais liberação por ticket no Discord.' %></p>
+        </div>
+        <% if (membership?.clan) { %>
+          <div class="clan-cta-v114"><a class="btn primary" href="/my-clan">Abrir painel do meu clã</a></div>
+        <% } %>
+      </div>
+
+      <div class="clan-status-wrap-v114">
+        <div class="clan-status-v106">
+          <div class="clan-status-box-v106"><small>Steam64</small><strong><%= player?.steam64 || '—' %></strong></div>
+          <div class="clan-status-box-v106"><small>Perfil</small><strong><%= player ? (player.nickname || 'Sem nome salvo') : 'Não logado' %></strong></div>
+          <div class="clan-status-box-v106"><small>Foto de perfil</small><strong><%= player ? (player.hasAvatar ? 'OK' : 'Obrigatória para clã') : 'Não logado' %></strong></div>
+          <div class="clan-status-box-v106"><small>Clã atual</small><strong><%= membership?.clan ? ('[' + membership.clan.tag + '] ' + membership.clan.name) : 'Sem clã' %></strong></div>
+        </div>
+      </div>
+
+      <% if (!player) { %>
+        <div class="clan-cta-v114">
+          <a class="btn primary" href="/shop#entrar">Entrar com Steam64</a>
+        </div>
+      <% } else if (membership?.clan) { %>
+        <p class="muted">Você já faz parte de um clã. Use o botão acima para abrir o painel completo.</p>
+      <% } else if (!player.hasAvatar) { %>
+        <div>
+          <p>Antes de criar ou entrar em um clã, envie sua imagem de perfil em Minha conta.</p>
+          <div class="clan-cta-v114"><a class="btn primary" href="/wallet#perfil-player">Enviar imagem de perfil</a></div>
+        </div>
+      <% } else { %>
+        <form method="POST" action="/clans/create" enctype="multipart/form-data" class="clan-create-form-v114">
+          <div class="clan-form-grid-v106">
+            <label>Nome do clã
+              <input name="name" maxlength="80" required placeholder="Ex: Operação Caveira">
+            </label>
+            <label>TAG
+              <input name="tag" maxlength="8" required placeholder="Ex: OCL">
+            </label>
+            <label>Cor de destaque
+              <input type="color" name="accentColor" value="#ef4444">
+            </label>
+            <label>Contato / Discord
+              <input name="recruitmentContact" maxlength="160" placeholder="Ex: falar com Ocleitin no Discord">
+            </label>
+            <label>Imagem / logo do clã
+              <input type="file" name="flagImage" accept="image/png,image/jpeg,image/webp,image/gif">
+            </label>
+            <label>Banner do clã
+              <input type="file" name="bannerImage" accept="image/png,image/jpeg,image/webp,image/gif">
+            </label>
+          </div>
+          <label>Descrição
+            <textarea name="description" rows="4" maxlength="1200" placeholder="Fale sobre o clã, foco PvP, construção, organização e etc."></textarea>
+          </label>
+          <label><input type="checkbox" name="isRecruiting" value="1" checked> Este clã está recrutando</label>
+          <label>Título do recrutamento
+            <input name="recruitmentTitle" maxlength="120" placeholder="Ex: Procuramos players ativos e fechados com o clã">
+          </label>
+          <label>Texto do recrutamento
+            <textarea name="recruitmentMessage" rows="3" maxlength="1200" placeholder="Explique o que o clã procura e o que oferece."></textarea>
+          </label>
+          <label>Requisitos
+            <textarea name="recruitmentRequirements" rows="3" maxlength="1200" placeholder="Ex: ser ativo, ter microfone, respeitar call, jogar em squad."></textarea>
+          </label>
+          <button class="btn primary" type="submit">Criar clã e abrir painel</button>
+        </form>
+      <% } %>
+    </article>
+  </section>
+
+  <section>
+    <div class="clan-section-head-v106">
+      <div>
+        <h2>Todos os clãs públicos</h2>
+        <p>Todos os clãs ativos aparecem com suas informações visíveis para a comunidade.</p>
+      </div>
+    </div>
+    <div class="clan-grid-v106">
+      <% (clans || []).forEach(clan => { %>
+        <article class="clan-card-v106" style="border-color:<%= clan.accentColor %>">
+          <div class="clan-card-head-v106">
+            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+            <div>
+              <strong>[<%= clan.tag %>] <%= clan.name %></strong>
+              <small><%= clan.serverType.toUpperCase() %> • <%= clan.memberCount %> membro(s)</small>
+            </div>
+          </div>
+          <div class="clan-card-tags-v106">
+            <% if (clan.isRecruiting) { %><span>📢 Recrutando</span><% } %>
+            <% if ((clan.activeOutfitNames || []).length) { %><span>VIPs: <%= clan.activeOutfitNames.slice(0,2).join(', ') %></span><% } %>
+            <% if ((clan.awards || []).length) { %><span>🏆 <%= clan.awards.length %> premiação(ões)</span><% } %>
+          </div>
+          <p><%= clan.description || clan.recruitmentMessage || 'Sem descrição cadastrada.' %></p>
+          <div class="clan-card-actions-v106">
+            <a class="btn" href="/clans/<%= clan.slug %>">Abrir página do clã</a>
+            <% if (clan.isRecruiting && player?.hasAvatar) { %><a class="btn primary" href="/clans/<%= clan.slug %>#form-recrutamento">Ver recrutamento</a><% } else if (clan.isRecruiting && player) { %><a class="btn primary" href="/wallet#perfil-player">Enviar imagem</a><% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

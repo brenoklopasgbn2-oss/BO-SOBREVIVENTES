@@ -64,25 +64,6 @@ function buildPavlovoBunkerPanel() {
   });
 }
 
-
-function buildAirfieldBunkerPanel() {
-  return panel({
-    title: '🔑 Bunker do Airfield',
-    description: [
-      'O bunker localizado no **Airfield** é liberado com a **Chave Prata**.',
-      '',
-      'Encontre a chave, leve-a até a entrada indicada e prepare-se antes de entrar: o local faz parte da rota de desafios e missões de raid do servidor.'
-    ].join('\n'),
-    locationImage: 'bunker-airfield.jpg',
-    itemImages: [{
-      title: '⚪ Item necessário: Chave Prata',
-      description: 'Use a **Chave Prata** para liberar a entrada do bunker do Airfield.',
-      file: 'chave-prata.png',
-      color: 0xc0c0c0
-    }]
-  });
-}
-
 function buildSolnechnyBunkerPanel() {
   return panel({
     title: '🔑 Bunker de Solnechny',
@@ -105,6 +86,5 @@ module.exports = {
   buildGorkaBunkerPanel,
   buildTisyBunkerPanel,
   buildPavlovoBunkerPanel,
-  buildAirfieldBunkerPanel,
   buildSolnechnyBunkerPanel
 };

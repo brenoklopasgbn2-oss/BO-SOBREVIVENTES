@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#080d16"/><stop offset="1" stop-color="#151e2b"/></linearGradient>
+    <linearGradient id="c" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#cbd5e1"/><stop offset=".5" stop-color="#7c8796"/><stop offset="1" stop-color="#475569"/></linearGradient>
+    <filter id="s"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".55"/></filter>
+  </defs>
+  <rect width="900" height="900" rx="80" fill="url(#bg)"/>
+  <circle cx="720" cy="160" r="170" fill="#ef4444" opacity=".08"/>
+  <g filter="url(#s)" stroke="#e2e8f0" stroke-opacity=".25" stroke-width="5">
+    <path d="M170 500l220-105 190 95-220 110z" fill="url(#c)"/><path d="M170 500v135l190 100V600z" fill="#64748b"/><path d="M360 600l220-110v135L360 735z" fill="#475569"/>
+    <path d="M320 355l210-100 180 88-210 105z" fill="url(#c)"/><path d="M320 355v125l180 95V448z" fill="#728092"/><path d="M500 448l210-105v128L500 575z" fill="#4b5563"/>
+    <path d="M125 360l165-78 145 70-170 86z" fill="url(#c)"/><path d="M125 360v105l140 75V438z" fill="#64748b"/><path d="M265 438l170-86v108l-170 80z" fill="#475569"/>
+  </g>
+  <text x="450" y="790" text-anchor="middle" fill="#f8fafc" font-family="Arial, sans-serif" font-size="58" font-weight="800">5x CONCRETO</text>
+  <text x="450" y="842" text-anchor="middle" fill="#ef4444" font-family="Arial, sans-serif" font-size="28" font-weight="700">RAID-Z • CONSTRUÇÃO</text>
+</svg>

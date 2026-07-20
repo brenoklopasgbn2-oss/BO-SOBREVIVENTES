@@ -3,11 +3,23 @@
 <main class="container">
   <%- include('_admin_nav') %>
   <%- include('../partials/alerts') %>
-  <section class="card">
+  <section class="card delivery-queue-card-v102">
     <h1>Fila de entrega DayZ</h1>
     <p class="muted">O site envia os PENDING por FTP. O mod lê somente arquivos locais, entrega e grava o resultado para o site ler pelo FTP.</p>
-    <table>
-      <thead><tr><th>Data</th><th>Steam64</th><th>Item</th><th>Classname</th><th>Qtd</th><th>Servidor</th><th>Status</th><th>Erro</th><th></th></tr></thead>
+    <div class="delivery-table-scroll-v102" role="region" aria-label="Fila de entregas" tabindex="0">
+    <table class="delivery-table-v102">
+      <colgroup>
+        <col class="delivery-col-date-v102">
+        <col class="delivery-col-steam-v102">
+        <col class="delivery-col-item-v102">
+        <col class="delivery-col-class-v102">
+        <col class="delivery-col-qty-v102">
+        <col class="delivery-col-server-v102">
+        <col class="delivery-col-status-v102">
+        <col class="delivery-col-error-v102">
+        <col class="delivery-col-action-v102">
+      </colgroup>
+      <thead><tr><th>Data</th><th>Steam64</th><th>Item</th><th>Classname</th><th>Qtd</th><th>Servidor</th><th>Status</th><th>Erro</th><th>Ação</th></tr></thead>
       <tbody>
         <% deliveries.forEach(d => { %>
           <tr>
@@ -24,6 +36,7 @@
         <% }) %>
       </tbody>
     </table>
+    </div>
   </section>
 </main>
 <%- include('../partials/footer') %>
