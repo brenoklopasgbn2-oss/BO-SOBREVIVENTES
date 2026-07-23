@@ -1,18 +1,14 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
 <main class="container streamer-panel-page support-streamer-page">
-  <% const isAdminPreview = Boolean(typeof adminPreview !== 'undefined' && adminPreview); %>
   <style>
     .streamer-request-pay-v65{margin-top:14px;border:1px solid rgba(34,197,94,.24);background:linear-gradient(135deg,rgba(20,83,45,.22),rgba(15,23,42,.70));border-radius:20px;padding:16px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.streamer-request-pay-v65 form{display:flex;gap:8px;flex-wrap:wrap}.streamer-request-pay-v65 button{min-width:210px}.streamer-money-highlight-v65 strong{color:#bbf7d0}.streamer-money-highlight-v65 b{color:#fed7aa}.streamer-payout-list-v65{display:grid;gap:8px;margin-top:12px}.streamer-payout-row-v65{display:grid;grid-template-columns:1.4fr .8fr .8fr .8fr;gap:10px;align-items:center;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.50);border-radius:14px;padding:10px}.streamer-payout-row-v65 small{color:#9fb0c5}@media(max-width:800px){.streamer-request-pay-v65,.streamer-payout-row-v65{grid-template-columns:1fr}.streamer-request-pay-v65 form{display:grid}.streamer-request-pay-v65 button{min-width:0}}
   </style>
-  <% if (isAdminPreview) { %>
-    <div class="alert success" style="margin-top:18px">Visualização do ADM: este painel abriu corretamente. Os botões de alteração ficam bloqueados nesta prévia.</div>
-  <% } %>
   <section class="shop-header support-hero-card sz-hover-card">
     <div>
-      <p class="eyebrow"><%= isAdminPreview ? 'Prévia do ADM' : 'Painel Streamer' %></p>
+      <p class="eyebrow">Painel Streamer</p>
       <h1>Apoio da comunidade</h1>
-      <p class="muted"><%= isAdminPreview ? 'Prévia segura aberta pelo painel ADM.' : 'Painel protegido aberto pelo DayZ. Seu Steam64 é recebido automaticamente ao apertar L e conferido com a liberação feita pelo ADM.' %></p>
+      <p class="muted">Entre com o seu Steam64 liberado pelo ADM. Aqui aparece seu código, quem comprou usando ele, ganhos da semana, do mês e o valor aproximado em reais.</p>
     </div>
     <div class="dm-status-stack"><span class="pill success">Apoio ativo</span><span class="pill">Saque semanal</span><span class="pill">DM bloqueado</span></div>
   </section>
@@ -20,7 +16,25 @@
   <% if (error) { %><div class="alert error"><%= error %></div><% } %>
   <% if (success) { %><div class="alert success"><%= success %></div><% } %>
 
-
+  <% if (!streamerDashboard) { %>
+    <section class="card streamer-login-card">
+      <h2>Acessar meu painel streamer</h2>
+      <p class="muted">O ADM libera seu acesso pelo <b>Steam64</b>. Depois disso você entra aqui, vê seu código de apoiador, quem comprou apoiando você e seus ganhos.</p>
+      <form method="POST" action="/streamer/login" class="form-grid streamer-login-grid-v45">
+        <label>Meu Steam64 liberado pelo ADM
+          <input name="steam64" value="<%= loginSteam64 || '' %>" placeholder="7656119..." maxlength="17" required>
+          <small class="muted">Use o mesmo Steam64 que você usa para entrar no servidor.</small>
+        </label>
+        <details class="legacy-fields streamer-code-fallback-v45">
+          <summary>Entrar pelo código antigo, se o ADM passar</summary>
+          <label>Código streamer
+            <input name="code" value="<%= loginCode || '' %>" placeholder="Ex: BRENO10">
+          </label>
+        </details>
+        <button class="btn primary" type="submit">Entrar no painel streamer</button>
+      </form>
+    </section>
+  <% } else { %>
     <% const sc = streamerDashboard.streamerCode; const stats = streamerDashboard.stats; const sales = streamerDashboard.sales; const payouts = streamerDashboard.payouts || []; const totalStats = stats.total || {}; const weekStats = stats.weekly || {}; const monthStats = stats.monthly || {}; const todayStats = stats.today || {}; const pendingStats = stats.pending || {}; const pendingWeek = stats.pendingWeekly || {}; const pendingMonth = stats.pendingMonthly || {}; %>
     <section class="card streamer-config-card">
       <div class="item-builder-top">
@@ -47,13 +61,11 @@
           <h3>Solicitar pagamento semanal</h3>
           <p class="muted">O streamer pode solicitar 1 vez por semana. O ADM confere e marca como pago usando senha no painel admin.</p>
         </div>
-        <% if (isAdminPreview) { %>
-          <a class="btn" href="/admin/streamer">Voltar ao painel ADM</a>
-        <% } else { %>
-          <form method="POST" action="/streamer/request-payout">
-            <button class="btn primary" type="submit">Solicitar saque da semana</button>
-          </form>
-        <% } %>
+        <form method="POST" action="/streamer/request-payout">
+          <input type="hidden" name="code" value="<%= sc.code %>">
+          <input type="hidden" name="steam64" value="<%= sc.streamerSteam64 || loginSteam64 || '' %>">
+          <button class="btn primary" type="submit">Solicitar saque da semana</button>
+        </form>
       </div>
     </section>
 
@@ -95,11 +107,7 @@
         </tbody>
       </table>
     </section>
-
-  <section class="shop-header support-hero-card sz-hover-card" style="margin-top:24px">
-    <div><p class="eyebrow">Traje do streamer</p><h1>Gerenciar usuários do traje</h1><p class="muted">Adicione ou remova os players autorizados. O streamer dono não paga. A bandeira é dropada separadamente pelo botão e não vem dentro do traje.</p></div>
-  </section>
-  <%- include('partials/managedOutfits', { managedOutfits, managerReturnTo, adminPreview: isAdminPreview }) %>
+  <% } %>
 
   <section class="card dm-rules-summary">
     <h2>Death Match Interativo</h2>

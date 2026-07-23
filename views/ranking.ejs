@@ -1,248 +1,139 @@
 <%- include('partials/head') %>
-<link rel="stylesheet" href="/css/ranking-v117.css?v=119">
 <%- include('partials/nav') %>
-
-<main class="rz-ranking-page">
-  <div class="rz-ranking-backdrop" aria-hidden="true"></div>
+<main class="container ranking-page-v34">
+  <div class="ranking-bg-v34" aria-hidden="true"></div>
   <%- include('partials/alerts') %>
 
-  <section class="rz-rank-hero">
-    <div class="rz-rank-emblem" aria-hidden="true">
-      <img src="/images/ranking/trophies/champion-cup.svg" alt="">
-    </div>
-    <div class="rz-rank-hero-copy">
-      <span class="rz-eyebrow">Ranking</span>
-      <h1>Dominar é evoluir</h1>
-      <p>Acompanhe os melhores players e clãs do servidor, confira confrontos e desbloqueie troféus automaticamente.</p>
-    </div>
-    <div class="rz-rank-hero-mark" aria-hidden="true">RZ</div>
-  </section>
-
-  <nav class="rz-rank-tabs" aria-label="Seções do ranking">
-    <a class="active" href="#players"><span>♙</span> Players</a>
-    <a href="#clas"><span>⬡</span> Clãs</a>
-    <a href="#confrontos"><span>⌖</span> Quem matou quem</a>
-    <a href="#trofeus"><span>♛</span> Troféus</a>
-    <a href="/clans#criar-cla"><span>⊞</span> Criar clã</a>
-    <% if (player) { %><a href="/ranking/me?server=<%= selectedServer %>"><span>◎</span> Meu perfil</a><% } %>
-  </nav>
-
-  <section class="rz-filter-strip" aria-label="Filtros do ranking">
-    <div class="rz-filter-group">
-      <span>Servidor</span>
-      <% [['global','Global'],['vanilla','Vanilla'],['bbp','BBP'],['deathmatch','Deathmatch']].forEach(([value,label]) => { %>
-        <a class="<%= selectedServer === value ? 'active' : '' %>" href="/ranking?server=<%= value %>&period=<%= selectedPeriod %>"><%= label %></a>
-      <% }) %>
-    </div>
-    <div class="rz-filter-group rz-filter-periods">
-      <span>Período</span>
-      <% [['daily','Hoje'],['weekly','7 dias'],['monthly','30 dias'],['season','Temporada'],['all','Histórico']].forEach(([value,label]) => { %>
-        <a class="<%= selectedPeriod === value ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=<%= value %>"><%= label %></a>
-      <% }) %>
-    </div>
-    <div class="rz-filter-summary">
-      <span>Período atual</span>
-      <strong><%= range.label %></strong>
-    </div>
-  </section>
-
-  <section class="rz-rank-panel" id="players">
-    <header class="rz-panel-head">
-      <div>
-        <h2>Top players</h2>
-        <p>Score = kills, headshots, distância, troféus e menos mortes.</p>
+  <section class="ranking-hero-v34 sz-hover-card">
+    <div class="ranking-hero-copy-v34">
+      <p class="v9-kicker">RAID-Z competitivo</p>
+      <h1>Ranking <span>K/D</span> & Clãs</h1>
+      <p>Veja kills, mortes, KD, headshot, quem matou quem, Steam64, ranking por servidor e ranking de clãs por temporada.</p>
+      <div class="ranking-mode-pills-v34">
+        <a class="<%= selectedServer === 'global' ? 'active' : '' %>" href="/ranking?server=global&period=<%= selectedPeriod %>">Global</a>
+        <a class="<%= selectedServer === 'vanilla' ? 'active' : '' %>" href="/ranking?server=vanilla&period=<%= selectedPeriod %>">Vanilla</a>
       </div>
-      <div class="rz-panel-period"><span>◷</span> <%= range.label %></div>
-    </header>
+      <div class="ranking-mode-pills-v34 ranking-period-pills-v34">
+        <a class="<%= selectedPeriod === 'daily' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=daily">Diário</a>
+        <a class="<%= selectedPeriod === 'weekly' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=weekly">Semanal</a>
+        <a class="<%= selectedPeriod === 'monthly' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=monthly">Mensal</a>
+        <a class="<%= selectedPeriod === 'season' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=season">Temporada</a>
+        <a class="<%= selectedPeriod === 'all' ? 'active' : '' %>" href="/ranking?server=<%= selectedServer %>&period=all">Histórico</a>
+      </div>
+    </div>
+    <div class="ranking-stats-v34">
+      <div><span>Kills</span><strong><%= coins(totals.kills) %></strong></div>
+      <div><span>Players</span><strong><%= coins(totals.players) %></strong></div>
+      <div><span>Headshots</span><strong><%= coins(totals.headshots) %></strong></div>
+      <div><span>Maior distância</span><strong><%= Math.round(totals.longestKill || 0) %>m</strong></div>
+    </div>
+  </section>
 
-    <div class="rz-rank-table-wrap">
-      <table class="rz-rank-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Player</th>
-            <th>Steam64</th>
-            <th>Kills</th>
-            <th>Mortes</th>
-            <th>KD</th>
-            <th>HS</th>
-            <th>Troféus</th>
-            <th>Arma favorita</th>
-            <th>Quem mais matou</th>
-            <th>Score</th>
-          </tr>
-        </thead>
+  <section class="ranking-tabs-v34" id="ranking-tabs">
+    <a href="#players">Players</a>
+    <a href="#clas">Clãs</a>
+    <a href="#historico">Quem matou quem</a>
+    <a href="#premios">Troféus</a>
+    <a href="#solicitar-cla">Criar clã</a>
+    <% if (player) { %><a href="/my-clan">Meu clã</a><% } %>
+  </section>
+
+  <section class="ranking-board-v34" id="players">
+    <div class="ranking-section-head-v34">
+      <div><p class="v9-kicker"><%= range.label %></p><h2>Top players</h2><small>Score = kills, KD, headshot, distância e menos mortes.</small></div>
+    </div>
+    <div class="ranking-table-card-v34">
+      <table class="ranking-table-v34">
+        <thead><tr><th>#</th><th>Player</th><th>Steam64</th><th>Kills</th><th>Mortes</th><th>KD</th><th>HS</th><th>Troféus</th><th>Pts troféu</th><th>Arma favorita</th><th>Mais matou</th><th>Quem mais matou ele</th><th>Score</th></tr></thead>
         <tbody>
           <% playerRanking.slice(0, 50).forEach((p, index) => { %>
-            <tr class="<%= index < 3 ? 'rz-podium-row rz-podium-' + (index + 1) : '' %>">
-              <td><span class="rz-rank-position"><%= index + 1 %></span></td>
-              <td>
-                <a class="rz-player-cell" href="/ranking/player/<%= p.steam64 %>?server=<%= selectedServer %>">
-                  <img src="<%= p.avatarUrl %>" alt="Avatar de <%= p.name %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
-                  <span>
-                    <strong><%= p.clan ? ('[' + p.clan.tag + '] ') : '' %><%= p.name %></strong>
-                    <small><%= p.clan ? p.clan.name : (p.profileBio || 'Sobrevivente RAID-Z') %></small>
-                  </span>
-                </a>
-              </td>
+            <tr class="<%= index < 3 ? 'top-row' : '' %>">
+              <td><b class="rank-pos-v34"><%= index + 1 %></b></td>
+              <td><strong><%= p.name %></strong></td>
               <td><code><%= p.steam64 %></code></td>
-              <td><strong><%= p.kills %></strong></td>
+              <td><%= p.kills %></td>
               <td><%= p.deaths %></td>
-              <td><strong class="<%= p.kd >= 1 ? 'rz-positive' : 'rz-negative' %>"><%= Number(p.kd).toFixed(2) %></strong></td>
+              <td><b><%= p.kd %></b></td>
               <td><%= p.headshots %></td>
-              <td>
-                <div class="rz-mini-trophies" title="<%= (p.badges || []).length %> troféu(s)">
-                  <% (p.badges || []).slice(0, 3).forEach((badge) => { %>
-                    <span style="--trophy:<%= badge.color || '#f7bd44' %>">
-                      <% if (badge.imageUrl) { %><img src="<%= badge.imageUrl %>" alt=""><% } else { %><%= badge.icon || '🏆' %><% } %>
-                    </span>
-                  <% }) %>
-                  <b><%= (p.badges || []).length %></b>
-                </div>
-              </td>
-              <td><span class="rz-weapon-name"><%= p.favoriteWeapon %></span></td>
-              <td>
-                <% const topVictimSteam64 = p.topVictim ? p.victimSteam64s[p.topVictim[0]] : null; %>
-                <% if (p.topVictim && topVictimSteam64) { %>
-                  <a class="rz-rival-link" href="/ranking/player/<%= topVictimSteam64 %>?server=<%= selectedServer %>"><%= p.topVictim[0] %> <em>x<%= p.topVictim[1] %></em></a>
-                <% } else if (p.topVictim) { %>
-                  <span class="rz-rival-link"><%= p.topVictim[0] %> <em>x<%= p.topVictim[1] %></em></span>
-                <% } else { %>—<% } %>
-              </td>
-              <td><strong class="rz-score <%= p.score < 0 ? 'negative' : '' %>"><%= coins(p.score) %></strong></td>
+              <td><div class="player-mini-trophies-v35"><% (p.badges || []).slice(0, 3).forEach(b => { %><span title="<%= b.title %>" style="--badge-color:<%= b.color %>"><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><% }) %><% if (!(p.badges || []).length) { %>-<% } %></div></td>
+              <td><%= p.badgePoints || 0 %></td>
+              <td><%= p.favoriteWeapon %></td>
+              <td><%= p.topVictim ? (p.topVictim[0] + ' x' + p.topVictim[1]) : '-' %></td>
+              <td><%= p.topNemesis ? (p.topNemesis[0] + ' x' + p.topNemesis[1]) : '-' %></td>
+              <td><strong><%= coins(p.score) %></strong></td>
             </tr>
           <% }) %>
-          <% if (!playerRanking.length) { %>
-            <tr><td colspan="11" class="rz-empty">Ainda não há kills registradas neste período. O ranking será preenchido automaticamente pelo FTP.</td></tr>
-          <% } %>
+          <% if (!playerRanking.length) { %><tr><td colspan="13" class="muted">Ainda não tem kills registradas. Quando o mod enviar as kills, esse ranking enche sozinho.</td></tr><% } %>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="rz-clan-section" id="clas">
-    <header class="rz-section-title"><span>♙</span><h2>Ranking de clãs</h2></header>
-    <div class="rz-clan-grid">
-      <% clanRanking.slice(0, 6).forEach((clan, index) => { %>
-        <a class="rz-clan-card <%= index === 0 ? 'champion' : '' %>" href="/clans/<%= clan.slug %>" style="--clan-accent:<%= clan.accentColor %>">
-          <div class="rz-clan-bg" style="background-image:url('<%= clan.bannerUrl %>')"></div>
-          <span class="rz-clan-position"><%= index + 1 %></span>
-          <div class="rz-clan-flag"><img src="<%= clan.flagUrl %>" alt="Bandeira do clã <%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'"></div>
-          <div class="rz-clan-copy">
-            <small>TAG</small>
-            <h3>[<%= clan.tag %>] <%= clan.name %></h3>
-            <p><%= clan.description || 'Clã competitivo cadastrado no RAID-Z.' %></p>
-            <div class="rz-clan-stats">
-              <span><small>Kills</small><strong><%= clan.kills %></strong></span>
-              <span><small>Mortes</small><strong><%= clan.deaths %></strong></span>
-              <span><small>KD</small><strong><%= Number(clan.kd).toFixed(2) %></strong></span>
-              <span><small>Membros</small><strong><%= clan.membersCount %></strong></span>
+  <section class="clan-ranking-v34" id="clas">
+    <div class="ranking-section-head-v34">
+      <div><p class="v9-kicker">Ranking de clãs</p><h2>Clãs dominando o servidor</h2><small>Soma as kills e mortes de todos os membros do clã.</small></div>
+    </div>
+    <div class="clan-grid-v34">
+      <% clanRanking.slice(0, 12).forEach((c, index) => { %>
+        <article class="clan-card-v34 sz-hover-card <%= index === 0 ? 'champion' : '' %>">
+          <div class="clan-flag-v34"><% if (c.flagUrl) { %><img src="<%= c.flagUrl %>" alt="Bandeira <%= c.name %>"><% } else { %><span><%= c.tag %></span><% } %></div>
+          <div class="clan-card-body-v34">
+            <small>#<%= index + 1 %> • <%= c.serverType.toUpperCase() %></small>
+            <h3>[<%= c.tag %>] <%= c.name %></h3>
+            <p><%= c.description || 'Clã cadastrado no RAID-Z.' %></p>
+            <div class="clan-mini-stats-v34">
+              <b><span>Kills</span><%= c.kills %></b>
+              <b><span>Mortes</span><%= c.deaths %></b>
+              <b><span>KD</span><%= c.kd %></b>
+              <b><span>Membros</span><%= c.membersCount %></b>
+            </div>
+            <div class="clan-awards-line-v34">
+              <% (c.awards || []).slice(0, 3).forEach(a => { %><span class="clan-trophy-chip-v35" style="--award-color:<%= a.color %>"><% if (a.imageUrl) { %><img src="<%= a.imageUrl %>" alt="Troféu"><% } else { %><%= a.icon %><% } %> <%= a.title %> <% if (a.points) { %>+<%= a.points %>pts<% } %></span><% }) %>
+              <% if (!(c.awards || []).length) { %><span>Sem troféu ainda</span><% } %>
             </div>
           </div>
-          <div class="rz-clan-trophy">
-            <img src="<%= index === 0 ? '/images/ranking/trophies/champion-cup.svg' : '/images/ranking/trophies/silver-cup.svg' %>" alt="">
-            <strong><%= (clan.awards || []).length %></strong>
-            <small><%= (clan.awards || []).length ? 'troféu(s)' : 'sem troféu ainda' %></small>
-          </div>
-        </a>
-      <% }) %>
-      <% if (!clanRanking.length) { %><div class="rz-empty-card">Nenhum clã cadastrado no ranking.</div><% } %>
-    </div>
-    <% if (clanRanking.length > 6) { %><a class="rz-wide-action" href="/clans">Ver ranking completo de clãs <span>⌄</span></a><% } %>
-  </section>
-
-  <section class="rz-bottom-grid">
-    <article class="rz-rank-panel rz-feed-panel" id="confrontos">
-      <header class="rz-panel-head compact">
-        <div><h2>Quem matou quem</h2><p>Últimos eventos recebidos do servidor.</p></div>
-      </header>
-      <div class="rz-kill-feed">
-        <% recentKills.slice(0, 12).forEach((kill) => { %>
-          <div class="rz-kill-row">
-            <span class="rz-crosshair">⌖</span>
-            <a href="/ranking/player/<%= kill.killerSteam64 %>?server=<%= selectedServer %>"><%= kill.killerName || kill.killerSteam64 %></a>
-            <span class="rz-gun">➜</span>
-            <a href="/ranking/player/<%= kill.victimSteam64 %>?server=<%= selectedServer %>"><%= kill.victimName || kill.victimSteam64 %></a>
-            <b>x1</b>
-            <time><%= dateTime(kill.occurredAt) %></time>
-            <small><%= kill.weapon || 'Arma desconhecida' %><%= kill.distanceMeters ? ' • ' + Math.round(kill.distanceMeters) + 'm' : '' %><%= kill.headshot ? ' • HEADSHOT' : '' %></small>
-          </div>
-        <% }) %>
-        <% if (!recentKills.length) { %><div class="rz-empty">Sem eventos neste período.</div><% } %>
-      </div>
-    </article>
-
-    <article class="rz-rank-panel rz-trophy-panel" id="trofeus">
-      <header class="rz-panel-head compact">
-        <div><h2>Troféus e títulos dos players</h2><p>As conquistas são liberadas automaticamente conforme o histórico.</p></div>
-        <a href="#catalogo-trofeus">Ver todos</a>
-      </header>
-      <div class="rz-trophy-showcase">
-        <% latestTrophies.slice(0, 6).forEach((badge) => { %>
-          <a class="rz-trophy-card" href="/ranking/player/<%= badge.steam64 %>?server=<%= selectedServer %>" style="--trophy:<%= badge.color || '#f7bd44' %>">
-            <div class="rz-trophy-icon"><% if (badge.imageUrl) { %><img src="<%= badge.imageUrl %>" alt=""><% } else { %><span><%= badge.icon || '🏆' %></span><% } %></div>
-            <div><strong><%= badge.title %></strong><p><%= badge.description || 'Conquista do RAID-Z.' %></p><small>Conquistado por <%= badge.playerName || badge.steam64 %></small></div>
-          </a>
-        <% }) %>
-        <% if (!latestTrophies.length) { %>
-          <% trophyCatalog.slice(0, 3).forEach((trophy) => { %>
-            <div class="rz-trophy-card locked" style="--trophy:<%= trophy.color %>">
-              <div class="rz-trophy-icon"><img src="<%= trophy.imageUrl %>" alt=""></div>
-              <div><strong><%= trophy.title %></strong><p><%= trophy.description %></p><small>Ninguém conquistou ainda</small></div>
-            </div>
-          <% }) %>
-        <% } %>
-      </div>
-    </article>
-  </section>
-
-  <section class="rz-rank-panel rz-catalog-panel" id="catalogo-trofeus">
-    <header class="rz-panel-head">
-      <div><h2>Sistema automático de troféus</h2><p>Cada regra é verificada após as kills chegarem pelo FTP. O troféu entra no perfil sem depender do ADM.</p></div>
-      <div class="rz-trophy-total"><strong><%= trophyCatalog.length %></strong><span>conquistas automáticas</span></div>
-    </header>
-    <div class="rz-trophy-filterbar" data-trophy-filters aria-label="Filtrar troféus">
-      <button type="button" class="active" data-trophy-filter="ALL">Todos <b><%= trophyCatalog.length %></b></button>
-      <% [['KILLS','Kills'],['PRECISION','Precisão'],['DISTANCE','Distância'],['SURVIVAL','KD'],['RIVALRY','Rivais'],['WEAPONS','Armas'],['LEGEND','Lendários']].forEach(([key,label]) => { %>
-        <button type="button" data-trophy-filter="<%= key %>"><%= label %> <b><%= trophyCatalog.filter(t => t.category === key).length %></b></button>
-      <% }) %>
-    </div>
-    <div class="rz-trophy-catalog" data-trophy-catalog>
-      <% trophyCatalog.forEach((trophy, trophyIndex) => { %>
-        <article style="--trophy:<%= trophy.color %>" data-trophy-category="<%= trophy.category %>">
-          <span class="rz-trophy-number"><%= String(trophyIndex + 1).padStart(2, '0') %></span>
-          <img loading="lazy" decoding="async" src="<%= trophy.imageUrl %>" alt="Troféu <%= trophy.title %>">
-          <div><small><%= trophy.rarity || ('Nível ' + trophy.tier) %> • Nível <%= trophy.tier %> • +<%= trophy.points %> pontos</small><h3><%= trophy.title %></h3><p><%= trophy.description %></p><b><%= trophy.targetLabel %></b></div>
+          <strong class="clan-score-v34"><%= coins(c.score) %></strong>
         </article>
       <% }) %>
+      <% if (!clanRanking.length) { %><div class="card wide-card center"><h2>Nenhum clã no ranking ainda</h2><p class="muted">Os clãs aparecem aqui quando o admin aprovar ou cadastrar.</p></div><% } %>
     </div>
   </section>
 
-  <section class="rz-stat-strip" aria-label="Resumo do ranking">
-    <div><span>Kills</span><strong><%= coins(totals.kills) %></strong></div>
-    <div><span>Players</span><strong><%= coins(totals.players) %></strong></div>
-    <div><span>Headshots</span><strong><%= coins(totals.headshots) %></strong></div>
-    <div><span>Maior distância</span><strong><%= Math.round(totals.longestKill || 0) %>m</strong></div>
+  <section class="split ranking-split-v34" id="historico">
+    <div class="card wide-card ranking-kill-feed-v34">
+      <h2>Quem matou quem</h2>
+      <p class="muted">Últimas kills recebidas do servidor.</p>
+      <% recentKills.slice(0, 20).forEach(k => { %>
+        <div class="kill-feed-row-v34">
+          <b><%= k.killerName || k.killerSteam64 %></b>
+          <span>matou</span>
+          <b><%= k.victimName || k.victimSteam64 %></b>
+          <small><%= k.weapon || 'arma desconhecida' %> • <%= k.distanceMeters ? Math.round(k.distanceMeters) + 'm' : '-' %> • <%= k.serverType.toUpperCase() %> • <%= dateTime(k.occurredAt) %></small>
+        </div>
+      <% }) %>
+      <% if (!recentKills.length) { %><p class="muted">Sem histórico de kills ainda.</p><% } %>
+    </div>
+    <div class="card wide-card ranking-badges-v34" id="premios">
+      <h2>Troféus e títulos dos players</h2>
+      <p class="muted">Quando o admin finalizar evento ou temporada, os campeões ficam salvos aqui para todos verem.</p>
+      <% playerBadges.slice(0, 18).forEach(b => { %>
+        <div class="badge-row-v34 trophy-animated-v35" style="--badge-color:<%= b.color %>"><span><% if (b.imageUrl) { %><img src="<%= b.imageUrl %>" alt="Troféu"><% } else { %><%= b.icon %><% } %></span><strong><%= b.title %> <% if (b.points) { %><em>+<%= b.points %> pts</em><% } %></strong><small><%= b.playerName || b.steam64 %> • <%= b.description || 'Conquista do servidor' %></small></div>
+      <% }) %>
+      <% if (!playerBadges.length) { %><p class="muted">Nenhum player recebeu badge ainda.</p><% } %>
+    </div>
+  </section>
+
+  <section class="clan-request-panel-v34 clan-ticket-only-v45 sz-hover-card" id="solicitar-cla">
+    <div>
+      <p class="v9-kicker">Clãs e bandeiras</p>
+      <h2>Abra ticket no Discord para liberar seu clã</h2>
+      <p>Para evitar bagunça e clã falso, a solicitação pelo site foi removida. O player deve abrir um ticket no Discord e pedir para o ADM cadastrar o dono do clã. Depois que o ADM liberar, o dono acessa <b>Meu Clã</b> para adicionar/remover membros, escolher sub dono e ajustar a descrição.</p>
+    </div>
+    <div class="clan-ticket-steps-v45">
+      <span>1. Abra ticket no Discord</span>
+      <span>2. Envie nome do clã, TAG, Steam64 do dono e imagem da bandeira</span>
+      <span>3. ADM libera o dono e o painel Meu Clã</span>
+    </div>
   </section>
 </main>
-
-<script>
-(() => {
-  const bar = document.querySelector('[data-trophy-filters]');
-  const catalog = document.querySelector('[data-trophy-catalog]');
-  if (!bar || !catalog) return;
-  const buttons = Array.from(bar.querySelectorAll('[data-trophy-filter]'));
-  const cards = Array.from(catalog.querySelectorAll('[data-trophy-category]'));
-  bar.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-trophy-filter]');
-    if (!button) return;
-    const filter = button.dataset.trophyFilter || 'ALL';
-    buttons.forEach((item) => item.classList.toggle('active', item === button));
-    cards.forEach((card) => {
-      card.hidden = filter !== 'ALL' && card.dataset.trophyCategory !== filter;
-    });
-  });
-})();
-</script>
-
 <%- include('partials/footer') %>

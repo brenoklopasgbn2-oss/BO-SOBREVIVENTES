@@ -15,3 +15,17 @@ ATUALIZAÇÃO RAID-Z — BUNKERS E REGRAS
 - No canal 📣・avisos, mensagens com imagem não são mais apagadas nem remandadas pelo bot.
 - /setup e o botão de atualizar não apagam, renomeiam, movem ou reconfiguram canais/categorias já existentes.
 - Mensagens manuais continuam preservadas; o bot apenas edita seus próprios painéis quando encontra o painel correspondente.
+
+ATUALIZAÇÃO 20/07/2026 — AIRFIELD E MISSÕES DE RAID
+
+- Canal novo: ⚪・bunker-airfield.
+  • Bunker localizado no Airfield.
+  • Acesso liberado com a Chave Prata.
+  • Imagens da entrada e da Chave Prata adicionadas ao painel.
+- Canal novo: 📻・missoes-de-raid.
+  • Missões dinâmicas transmitidas pelo rádio.
+  • Frequência informada: 89.5 FM.
+  • Objetivos de resgate, investigação, eliminação, entrega, invasão e outros desafios.
+  • Painel com imagem e instruções adicionado.
+- RAID-Z IA atualizada para responder sobre Airfield, Chave Prata e missões via rádio.
+- /setup e o botão /atualizarcanais criam os canais novos sem apagar canais ou mensagens manuais.

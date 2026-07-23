@@ -4,17 +4,9 @@
   <%- include('_admin_nav') %>
   <%- include('../partials/alerts') %>
 
-  <section class="card ftp-panel-v121">
-    <div class="ftp-title-row-v121">
-      <div>
-        <h1>FTP / Arquivos do servidor DayZ <small class="ftp-version-v88">V121</small></h1>
-        <p class="muted">A compra fica segura no banco e o site envia o JSON do jogador ao FTP. Esta versão aguarda até 25 segundos em hosts lentas, reutiliza uma única conexão e testa conexão, pasta, escrita, leitura e exclusão.</p>
-      </div>
-      <div class="ftp-current-path-v121">
-        <small>Pasta configurada</small>
-        <code><%= ftp.basePath || '/profiles/RAIDZ_FileBridge' %></code>
-      </div>
-    </div>
+  <section class="card">
+    <h1>FTP / Arquivos do servidor DayZ</h1>
+    <p class="muted">O mod não consulta mais API. O site grava filas, VIPs e seguros pelo FTP, e lê os resultados que o servidor salva em arquivos locais.</p>
 
     <% if (health) { %>
       <div class="notice <%= health.ok ? 'success' : 'error' %>">
@@ -22,10 +14,6 @@
         <small>
           <%= health.lastSuccessAt || health.lastFailureAt || '-' %>
           <% if (health.durationMs !== undefined) { %> • <%= health.durationMs %> ms<% } %>
-          <% if (health.basePath) { %> • Pasta: <%= health.basePath %><% } %>
-          <% if (health.pathAutoCorrected) { %> • Caminho corrigido automaticamente de <%= health.previousBasePath || '-' %><% } %>
-          <% if (health.deliveryFilesUploaded !== undefined) { %> • Entrega: <%= health.deliveryFilesUploaded || 0 %> arquivo(s) enviados; <%= health.pendingDeliveries || 0 %> item(ns) pendente(s) para <%= health.pendingDeliveryPlayers || 0 %> player(s)<% } %>
-          <% if (health.rankingFiles !== undefined) { %> • Ranking: <%= health.rankingFiles %> arquivo(s), <%= health.rankingKills || 0 %> kill(s), <%= health.rankingIgnoredDeaths || 0 %> morte(s) sem player killer<% } %>
           <% if (health.error) { %> • <%= health.error %><% } %>
         </small>
       </div>
@@ -33,105 +21,26 @@
 
     <form method="POST" action="/admin/ftp" class="form-grid">
       <label class="check"><input type="checkbox" name="enabled" <%= ftp.enabled ? 'checked' : '' %>> Ativar integração por arquivos</label>
-      <label>Host FTP<input name="host" value="<%= ftp.host || '' %>" placeholder="ftp.seuhost.com ou IP" autocomplete="off"></label>
-      <label>Porta<input name="port" type="number" min="1" max="65535" value="<%= ftp.port || 21 %>"><small>Use a porta de FTP/FTPS. Porta SFTP não funciona neste sistema.</small></label>
+      <label>Host FTP<input name="host" value="<%= ftp.host || '' %>" placeholder="ftp.seuhost.com" autocomplete="off"></label>
+      <label>Porta<input name="port" type="number" min="1" max="65535" value="<%= ftp.port || 21 %>"></label>
       <label>Usuário<input name="username" value="<%= ftp.username || '' %>" autocomplete="off"></label>
       <label>Senha<input name="password" type="password" value="" placeholder="<%= ftp.hasPassword ? 'Senha já salva — deixe vazio para manter' : 'Digite a senha FTP' %>" autocomplete="new-password"></label>
       <label class="check"><input type="checkbox" name="secure" <%= ftp.secure ? 'checked' : '' %>> FTPS/TLS</label>
-      <label>Pasta base no FTP<input name="basePath" value="<%= ftp.basePath || '/profiles/RAIDZ_FileBridge' %>" placeholder="/instance/RAIDZ_filebridge ou /profiles/RAIDZ_FileBridge"><small>Tem que ser exatamente a mesma pasta criada pelo mod, incluindo maiúsculas e minúsculas.</small></label>
-      <label>Sincronizar a cada<input name="pollSeconds" type="number" min="10" max="300" value="<%= ftp.pollSeconds || 15 %>"><small>Recuperação e leitura de resultados. A compra tenta enviar imediatamente.</small></label>
+      <label>Pasta base no FTP<input name="basePath" value="<%= ftp.basePath || '/profiles/RAIDZ_FileBridge' %>" placeholder="/profiles/RAIDZ_FileBridge"></label>
+      <label>Sincronizar a cada<input name="pollSeconds" type="number" min="10" max="300" value="<%= ftp.pollSeconds || 15 %>"><small>segundos; isso roda no site, não pesa no FPS do DayZ.</small></label>
       <div class="actions"><button class="btn primary" type="submit">Salvar FTP</button></div>
     </form>
 
-    <div class="ftp-actions-v121">
+    <div class="actions" style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
       <form method="POST" action="/admin/ftp/test">
-        <button class="btn" type="submit">🔎 Diagnóstico completo</button>
+        <button class="btn" type="submit">Testar configuração salva</button>
       </form>
-      <form method="POST" action="/admin/ftp/detect-path">
-        <button class="btn primary" type="submit">🧭 Localizar e usar pasta do mod</button>
-      </form>
-      <form method="POST" action="/admin/ftp/sync">
-        <button class="btn" type="submit">📤 Sincronizar entregas agora</button>
-      </form>
+      <form method="POST" action="/admin/ftp/sync"><button class="btn" type="submit">Sincronizar agora</button></form>
     </div>
-    <p class="muted ftp-help-v121">O botão de localização procura estruturas existentes como <code>/instance/RAIDZ_filebridge</code> e <code>/profiles/RAIDZ_FileBridge</code>. Quando encontra uma pasta válida, aplica o caminho e envia a fila pendente.</p>
   </section>
 
-  <% if (diagnostics) { %>
-    <section class="card ftp-diagnostics-v121">
-      <div class="ftp-diagnostic-header-v121">
-        <div>
-          <h2>Último diagnóstico FTP</h2>
-          <p class="muted"><%= diagnostics.testedAt || '-' %> • <%= diagnostics.durationMs || 0 %> ms</p>
-        </div>
-        <span class="ftp-status-pill-v121 <%= diagnostics.ok ? 'ok' : 'fail' %>"><%= diagnostics.ok ? 'FUNCIONANDO' : 'COM FALHA' %></span>
-      </div>
-
-      <div class="ftp-summary-grid-v121">
-        <div><small>Servidor</small><strong><%= diagnostics.endpoint || `${ftp.host || '-'}:${ftp.port || '-'}` %></strong></div>
-        <div><small>Modo</small><strong><%= diagnostics.secure ? 'FTPS/TLS' : 'FTP comum' %></strong></div>
-        <div><small>Pasta testada</small><strong><%= diagnostics.basePath || ftp.basePath || '-' %></strong></div>
-        <div><small>Fila pendente</small><strong><%= diagnostics.pendingDeliveries || 0 %> entrega(s) / <%= diagnostics.pendingPlayers || 0 %> player(s)</strong></div>
-      </div>
-
-      <% if (diagnostics.suggestedBasePath && diagnostics.suggestedBasePath !== diagnostics.basePath) { %>
-        <div class="notice error">
-          <strong>Pasta provável do mod encontrada:</strong>
-          <code><%= diagnostics.suggestedBasePath %></code><br>
-          <small>Clique em “Localizar e usar pasta do mod” para corrigir o caminho e sincronizar a fila.</small>
-        </div>
-      <% } %>
-
-      <% if (diagnostics.error) { %>
-        <div class="notice error"><strong>Motivo da falha</strong><br><small><%= diagnostics.error %></small></div>
-      <% } %>
-
-      <% if (Array.isArray(diagnostics.steps) && diagnostics.steps.length) { %>
-        <h3>Etapas verificadas</h3>
-        <div class="ftp-step-list-v121">
-          <% diagnostics.steps.forEach(step => { %>
-            <div class="ftp-step-v121 <%= step.ok ? 'ok' : 'fail' %>">
-              <span><%= step.ok ? '✓' : '✕' %></span>
-              <div><strong><%= step.label %></strong><small><%= step.detail %></small></div>
-              <em><%= step.durationMs || 0 %> ms</em>
-            </div>
-          <% }) %>
-        </div>
-      <% } %>
-
-      <% if (Array.isArray(diagnostics.folders) && diagnostics.folders.length) { %>
-        <h3>Pastas encontradas</h3>
-        <div class="ftp-folder-grid-v121">
-          <% diagnostics.folders.forEach(folder => { %>
-            <div class="ftp-folder-v121 <%= folder.found ? 'ok' : (folder.required ? 'fail' : 'optional') %>">
-              <span><%= folder.found ? '✓' : (folder.required ? '✕' : '○') %></span>
-              <code><%= folder.path %></code>
-              <small><%= folder.required ? 'obrigatória' : 'criada pelo mod / opcional no teste' %></small>
-            </div>
-          <% }) %>
-        </div>
-      <% } %>
-
-      <% if (Array.isArray(diagnostics.candidates) && diagnostics.candidates.length) { %>
-        <details class="ftp-candidates-v121">
-          <summary>Ver caminhos procurados no FTP</summary>
-          <div class="ftp-candidate-list-v121">
-            <% diagnostics.candidates.forEach(candidate => { %>
-              <div>
-                <span class="ftp-mini-status-v121 <%= candidate.exists ? (candidate.score >= 8 ? 'ok' : 'warn') : 'fail' %>"><%= candidate.exists ? (candidate.score >= 8 ? 'PASTA DO MOD' : 'EXISTE') : 'NÃO ENCONTRADA' %></span>
-                <code><%= candidate.path %></code>
-                <% if (candidate.configured) { %><b>CONFIGURADA</b><% } %>
-                <% if (candidate.folders && candidate.folders.length) { %><small><%= candidate.folders.join(', ') %></small><% } %>
-              </div>
-            <% }) %>
-          </div>
-        </details>
-      <% } %>
-    </section>
-  <% } %>
-
   <section class="card">
-    <h2>Estrutura usada pelo site e pelo mod</h2>
+    <h2>Estrutura preservada nas atualizações</h2>
     <pre><code>RAIDZ_FileBridge/
 ├── inbox/manifest.json
 ├── inbox/deliveries/STEAM64.json
@@ -139,11 +48,9 @@
 ├── inbox/insurance/STEAM64.json
 ├── outbox/results/DELIVERY_ID.json
 ├── outbox/playtime/EVENT_ID.json
-├── outbox/ranking/vanilla_death_*.json
-├── system/                  (testes do site)
-├── state/                   (criado pelo mod)
-└── backups/                 (criado pelo mod)</code></pre>
-    <p class="muted">O PostgreSQL continua sendo a fonte segura das compras. Se o FTP cair, a entrega permanece pendente para nova tentativa; o site não cobra novamente nem duplica o pedido.</p>
+├── state/                    (criado pelo mod)
+└── backups/                  (criado pelo mod)</code></pre>
+    <p class="muted">Os dados ficam no perfil do servidor e no PostgreSQL. Atualizar o PBO ou o site não apaga saldos, VIPs, seguros, entregas processadas nem pendências de reinício.</p>
   </section>
 </main>
 <%- include('../partials/footer') %>

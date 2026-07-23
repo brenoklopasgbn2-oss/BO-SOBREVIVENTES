@@ -1,69 +1,43 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
-<main class="container outfits-page-v98">
+<main class="container outfits-page-v49">
   <%- include('partials/alerts') %>
   <style>
-    .outfit-banner-v111{overflow:hidden;margin-bottom:22px;border-radius:28px;border:1px solid rgba(239,68,68,.28);box-shadow:0 28px 85px rgba(0,0,0,.34)}.outfit-banner-v111 img{display:block;width:100%;aspect-ratio:16/9;max-height:460px;object-fit:cover}.outfits-page-v98{max-width:1500px;margin:0 auto;padding:36px 32px 70px}.outfit-hero-v98{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:stretch;margin-bottom:24px}.outfit-card-v98,.outfit-panel-v98{border:1px solid rgba(255,255,255,.12);border-radius:26px;background:linear-gradient(135deg,rgba(12,18,30,.88),rgba(3,7,14,.94));box-shadow:0 30px 90px rgba(0,0,0,.35);overflow:hidden}.outfit-hero-v98>div{padding:28px}.outfit-hero-v98 h1{margin:0;font-size:clamp(2.4rem,5vw,5rem);line-height:.9;text-transform:uppercase}.outfit-hero-v98 h1 span{color:#ff5a3d}.outfit-hero-v98 p{color:#b9c4d3;line-height:1.6}.outfit-active-v98{padding:22px;border-radius:20px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.28)}.outfit-grid-v98{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.outfit-card-v98{position:relative;padding:18px;display:flex;flex-direction:column;gap:14px}.outfit-card-v98 img{width:100%;height:170px;object-fit:contain;border-radius:18px;background:radial-gradient(circle at 50% 18%,rgba(239,68,68,.18),rgba(2,6,15,.9));border:1px solid rgba(255,255,255,.08)}.outfit-card-v98 h3{margin:0;font-size:1.25rem}.outfit-card-v98 p{margin:0;color:#aeb9c9;line-height:1.45}.outfit-price-v98{display:flex;justify-content:space-between;gap:10px;align-items:center}.outfit-price-v98 b{font-size:1.18rem;color:#fed7aa}.outfit-items-v98{display:flex;gap:6px;flex-wrap:wrap;max-height:78px;overflow:auto}.outfit-items-v98 code{font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:5px 7px;color:#dbeafe}.outfit-actions-v98{display:grid;gap:9px;margin-top:auto}.outfit-actions-v98 form{display:grid;gap:8px}.outfit-actions-v98 input{width:100%;background:#050b16;border:1px solid rgba(255,255,255,.13);border-radius:12px;color:#fff;padding:12px}.streamer-boost-v98{border-color:rgba(56,189,248,.48);box-shadow:0 0 36px rgba(56,189,248,.12)}.tag-v98{position:absolute;top:14px;left:14px;background:linear-gradient(90deg,#ef4444,#fb923c);border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:1000;text-transform:uppercase}.reward-note-v98{padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);font-size:.82rem;color:#bae6fd}.reward-note-v98.normal{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.22);color:#bbf7d0}.btn.full{width:100%}.custom-vip-v99{border-color:rgba(239,68,68,.58);box-shadow:0 0 50px rgba(239,68,68,.16)}.custom-vip-v99 img{object-fit:cover}.custom-price-v99{display:grid;grid-template-columns:1fr 1fr;gap:8px}.custom-price-v99 div{padding:10px;border-radius:12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18)}.custom-ticket-v99{padding:11px;border-radius:12px;background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.25);color:#fde68a}.custom-form-v99{display:grid;gap:8px}.custom-form-v99 input{width:100%;background:#050b16;border:1px solid rgba(255,255,255,.13);border-radius:12px;color:#fff;padding:12px}@media(max-width:900px){.outfit-hero-v98{grid-template-columns:1fr}.outfits-page-v98{padding:20px 14px}}
+    .outfits-page-v49{max-width:1500px;margin:0 auto;padding:36px 32px 70px}.outfit-hero-v49{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:stretch;margin-bottom:24px}.outfit-card-v49,.outfit-panel-v49{border:1px solid rgba(255,255,255,.12);border-radius:26px;background:linear-gradient(135deg,rgba(12,18,30,.88),rgba(3,7,14,.94));box-shadow:0 30px 90px rgba(0,0,0,.35);overflow:hidden}.outfit-hero-v49>div{padding:28px}.outfit-hero-v49 h1{margin:0;font-size:clamp(2.4rem,5vw,5rem);line-height:.9;text-transform:uppercase}.outfit-hero-v49 h1 span{color:#ff5a3d}.outfit-hero-v49 p{color:#b9c4d3;line-height:1.6}.outfit-active-v49{padding:22px;border-radius:20px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.28)}.outfit-grid-v49{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.outfit-card-v49{position:relative;padding:18px;display:flex;flex-direction:column;gap:14px}.outfit-card-v49 img{width:100%;height:170px;object-fit:contain;border-radius:18px;background:radial-gradient(circle at 50% 18%,rgba(239,68,68,.18),rgba(2,6,15,.9));border:1px solid rgba(255,255,255,.08)}.outfit-card-v49 h3{margin:0;font-size:1.25rem}.outfit-card-v49 p{margin:0;color:#aeb9c9;line-height:1.45}.outfit-price-v49{display:flex;justify-content:space-between;gap:10px;align-items:center}.outfit-price-v49 b{font-size:1.28rem;color:#fed7aa}.outfit-items-v49{display:flex;gap:6px;flex-wrap:wrap;max-height:78px;overflow:auto}.outfit-items-v49 code{font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:5px 7px;color:#dbeafe}.outfit-actions-v49{display:grid;gap:9px;margin-top:auto}.outfit-actions-v49 form{display:grid;gap:8px}.outfit-actions-v49 input,.outfit-actions-v49 select{width:100%;background:#050b16;border:1px solid rgba(255,255,255,.13);border-radius:12px;color:#fff;padding:12px}.streamer-free-v49{border-color:rgba(56,189,248,.42);box-shadow:0 0 36px rgba(56,189,248,.10)}.tag-v49{position:absolute;top:14px;left:14px;background:linear-gradient(90deg,#ef4444,#fb923c);border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:1000;text-transform:uppercase}.btn.full{width:100%}@media(max-width:900px){.outfit-hero-v49{grid-template-columns:1fr}.outfits-page-v49{padding:20px 14px}}
   </style>
-  <section class="outfit-banner-v111"><img src="/images/raidz-vips-store.webp" alt="VIPS e Loja RAID-Z"></section>
-  <section class="outfit-hero-v98">
-    <div class="outfit-panel-v98">
-      <p class="v9-kicker">Trajes disponíveis para resgatar</p>
-      <h1>Escolha seu traje de <span>7 dias</span></h1>
-      <p>Depois de resgatar o Kit Inicial, você pode escolher um traje normal grátis por 7 dias, uma única vez por SteamID. O VIP Booster de 60 é o único que exige código de streamer.</p>
+  <section class="outfit-hero-v49">
+    <div class="outfit-panel-v49">
+      <p class="v9-kicker">Trajes VIP mensais</p>
+      <h1>Nasça equipado com <span>estilo</span></h1>
+      <p>Assine um traje mensal. Enquanto estiver ativo, quando você morrer e renascer o mod poderá consultar o site e montar seu inventário com o kit configurado. Se vencer, volta ao spawn padrão do servidor.</p>
     </div>
-    <div class="outfit-panel-v98">
+    <div class="outfit-panel-v49">
       <h2>Status do seu traje</h2>
       <% if (activeOutfit) { %>
-        <div class="outfit-active-v98"><strong><%= activeOutfit.outfitTemplate.name %></strong><br><small><% if (activeOutfit.outfitTemplate?.isPrivate) { %><% if (activeOutfit.source === 'STREAMER_OWNER') { %>Streamer dono • acesso gratuito e permanente<% } else if (activeOutfit.source === 'STREAMER_MANAGED') { %>Liberado pelo streamer • uso exclusivo autorizado<% } else if (activeOutfit.source === 'CLAN_CUSTOM_MEMBER') { %>Traje VIP automático do clã • ativo enquanto fizer parte do clã<% } else { %>VIP privado • compra de VIP normal bloqueada<% } %><% } else if (activeOutfit.source === 'STREAMER_REWARD') { %>Ativo até <%= activeOutfit.expiresAt.toLocaleDateString('pt-BR') %> • VIP Booster por código de streamer<% } else if (activeOutfit.source === 'FREE_7D_STARTER') { %>Ativo até <%= activeOutfit.expiresAt.toLocaleDateString('pt-BR') %> • traje normal grátis de 7 dias<% } else { %>Ativo até <%= activeOutfit.expiresAt.toLocaleDateString('pt-BR') %> • assinatura mensal<% } %></small></div>
-      <% } else if (player && rewardStatus?.starterKitClaimed) { %>
-        <p class="muted">Kit Inicial confirmado. Escolha abaixo o traje que deseja resgatar.</p>
+        <div class="outfit-active-v49"><strong><%= activeOutfit.outfitTemplate.name %></strong><br><small>Ativo até <%= activeOutfit.expiresAt.toLocaleDateString('pt-BR') %> • <%= activeOutfit.source === 'STREAMER_REWARD' ? 'Recompensa streamer 7 dias' : 'Assinatura mensal' %></small></div>
       <% } else { %>
-        <p class="muted">Resgate o Kit Inicial para liberar um traje normal grátis por 7 dias.</p>
+        <p class="muted">Você ainda não tem traje ativo. Escolha um abaixo.</p>
       <% } %>
     </div>
   </section>
 
-  <section class="outfit-grid-v98">
-    <article class="outfit-card-v98">
-      <span class="tag-v98">Temporariamente indisponível</span>
-      <img loading="lazy" decoding="async" src="/images/outfits/traje-vip-personalizado-exemplo.jpg" alt="Traje VIP personalizado">
-      <h3>Traje VIP personalizado</h3>
-      <p>A compra de novos trajes personalizados está pausada no momento. Trajes já existentes continuam funcionando normalmente.</p>
-      <div class="outfit-actions-v98"><button class="btn full" type="button" disabled>Compra temporariamente desativada</button></div>
-    </article>
-
-    <% outfits.forEach(outfit => { const items = Array.isArray(outfit.items) ? outfit.items : []; const isStreamerBoost = outfit.slug === 'traje-vip-boost-raidz'; %>
-      <article class="outfit-card-v98 <%= isStreamerBoost ? 'streamer-boost-v98' : '' %>">
-        <span class="tag-v98"><%= isStreamerBoost ? 'Código streamer' : 'Grátis 7 dias' %></span>
+  <section class="outfit-grid-v49">
+    <% outfits.forEach(outfit => { const items = Array.isArray(outfit.items) ? outfit.items : []; %>
+      <article class="outfit-card-v49 <%= outfit.streamerRewardEnabled ? 'streamer-free-v49' : '' %>">
+        <span class="tag-v49">Nível <%= outfit.level || 1 %></span>
         <img loading="lazy" decoding="async" src="<%= outfit.imageData ? '/outfit-image/' + outfit.id : (outfit.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= outfit.name %>">
         <h3><%= outfit.name %></h3>
         <p><%= outfit.description || 'Traje VIP configurável pelo ADM.' %></p>
-        <div class="outfit-price-v98"><span>Plano mensal</span><b><%= coins(outfit.priceCoins || 0) %> RZ</b></div>
-        <div class="reward-note-v98 <%= isStreamerBoost ? '' : 'normal' %>"><%= isStreamerBoost ? 'Resgate de 7 dias somente com código de streamer. Um único código por SteamID.' : 'Resgate grátis por 7 dias após o Kit Inicial. Um único traje normal por SteamID.' %></div>
-        <div class="outfit-items-v98"><% items.slice(0,10).forEach(item => { %><code><%= item.quantity || 1 %>x <%= item.label || item.classname %></code><% }) %><% if (items.length > 10) { %><code>+<%= items.length-10 %> itens</code><% } %></div>
-        <div class="outfit-actions-v98">
+        <div class="outfit-price-v49"><span><%= outfit.durationDays || 30 %> dias</span><b><%= coins(outfit.priceCoins || 0) %> RZ</b></div>
+        <div class="outfit-items-v49"><% items.slice(0,10).forEach(item => { %><code><%= item.quantity || 1 %>x <%= item.label || item.classname %></code><% }) %><% if (items.length > 10) { %><code>+<%= items.length-10 %> itens</code><% } %></div>
+        <div class="outfit-actions-v49">
           <% if (player) { %>
-            <% if (activeOutfit?.outfitTemplate?.isPrivate) { %>
-              <button class="btn full" type="button" disabled title="Seu traje privado bloqueia VIP normal">Bloqueado: você tem traje privado</button>
-            <% } else { %>
-              <form method="POST" action="/outfits/buy"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><button class="btn primary full" type="submit">Assinar por <%= outfit.durationDays || 30 %> dias</button></form>
-              <% if (isStreamerBoost) { %>
-                <% if (rewardStatus?.streamer7dClaimed) { %>
-                  <button class="btn full" type="button" disabled>Código de streamer já utilizado</button>
-                <% } else { %>
-                  <form method="POST" action="/outfits/streamer-reward"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><input name="streamerCode" value="<%= streamerCode || '' %>" placeholder="Código do streamer" required><button class="btn full" type="submit">Usar código e ganhar 7 dias</button></form>
-                <% } %>
-              <% } else if (!rewardStatus?.starterKitClaimed) { %>
-                <button class="btn full" type="button" disabled>Resgate primeiro o Kit Inicial</button>
-              <% } else if (rewardStatus?.normal7dClaimed) { %>
-                <button class="btn full" type="button" disabled>Traje grátis de 7 dias já resgatado</button>
-              <% } else { %>
-                <form method="POST" action="/outfits/free-7d"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><button class="btn full" type="submit">Resgatar grátis por 7 dias</button></form>
-              <% } %>
+            <form method="POST" action="/outfits/buy"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><button class="btn primary full" type="submit">Assinar por 30 dias</button></form>
+            <% if (outfit.streamerRewardEnabled) { %>
+              <form method="POST" action="/outfits/streamer-reward"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><input name="streamerCode" value="<%= streamerCode || '' %>" placeholder="Código do streamer"><button class="btn full" type="submit">Usar código e ganhar 7 dias</button></form>
             <% } %>
           <% } else { %>
-            <a class="btn primary full" href="/#entrar">Entrar para resgatar</a>
+            <a class="btn primary full" href="/#entrar">Entrar para assinar</a>
           <% } %>
         </div>
       </article>

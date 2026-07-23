@@ -21,7 +21,7 @@ module.exports = {
     );
 
     return interaction.reply({
-      embeds: [successEmbed('Clique no botão abaixo para **criar/atualizar** os canais oficiais RAID-Z. Ele **não apaga mensagens**, **não apaga canais manuais** e **não apaga categorias manuais**. Vai criar apenas o que estiver faltando e atualizar os painéis do bot, incluindo **🚢・container-barco**, **🟡・bunker-tisy**, **⛏️・bunker-subterraneo**, **🏗️・construcoes-vanilla-pro**, **🚙・carro-blindado**, **🛏️・saco-de-dormir** e a IA.')],
+      embeds: [successEmbed('Clique no botão abaixo para **criar/atualizar** os canais oficiais RAID-Z. Ele **não apaga mensagens**, **não apaga canais manuais** e **não apaga categorias manuais**. Vai criar apenas o que estiver faltando e atualizar os painéis do bot, incluindo **📻・missoes-de-raid**, **⚪・bunker-airfield**, **🚢・container-barco**, **🟡・bunker-tisy**, **⛏️・bunker-subterraneo**, **🏗️・construcoes-vanilla-pro**, **🚙・carro-blindado**, **🛏️・saco-de-dormir** e a IA.')],
       components: [row],
       ephemeral: true
     });

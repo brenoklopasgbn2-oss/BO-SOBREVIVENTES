@@ -173,50 +173,103 @@ const STORE_GUIDES = [
     server: 'Garagem',
     keywords: ['minha garagem','minhas garagem','garagem','meus veículos','meus veiculos','ver carro','ver veículo','veículo ativo','veiculo ativo','saldo garagem','garagem site'],
     answer: [
-      '**Minha Garagem** mostra os veículos comprados e os planos de seguro.',
+      '**Minha Garagem** é onde o player gerencia os veículos comprados/registrados.',
       '',
-      'No site o player pode:',
-      '• ver os veículos cadastrados;',
-      '• comprar, adicionar, trocar ou renovar o plano de seguro;',
-      '• conferir a validade do veículo e do seguro;',
-      '• ver o histórico da garagem.',
+      'Ela mostra:',
+      '• saldo em **RZ Coins**;',
+      '• veículos ativos;',
+      '• seguros disponíveis;',
+      '• servidor de cada veículo: **Vanilla** ou **RAID-Z**;',
+      '• status do veículo: parado, em movimento, com player dentro ou sem player dentro;',
+      '• último sinal recebido do veículo;',
+      '• plano e usos restantes;',
+      '• botões de **Detalhes**, **Rastrear**, **Acionar Seguro** e **Acionar Seguro por Roubo**.',
       '',
-      '**O site não aciona mais o seguro.** Para usar, entre no servidor, aperte **L** e abra **Seguro dos meus veículos**.'
+      'Use os filtros pequenos **Todos / Vanilla / RAID-Z** para ver os veículos por servidor.'
     ].join('\n')
   },
   {
-    title: 'Seguros — compra, renovação e uso',
-    server: 'Seguros',
-    keywords: ['seguro','seguros','como funciona seguro','acionar seguro','usar seguro','plano seguro','usos seguro','renovar seguro'],
+    title: 'Localização atual do veículo na garagem',
+    server: 'Garagem',
+    keywords: ['localização veículo','localizacao veiculo','localização atual','localizacao atual','onde está meu carro','onde esta meu carro','rastrear carro','rastreamento','rastrear veículo','rastrear veiculo','mapa veículo','mapa veiculo'],
     answer: [
-      'A compra e a renovação do seguro continuam pelo site.',
+      'A garagem pode mostrar a **localização atual** do veículo quando o veículo tem seguro ativo/rastreamento disponível.',
       '',
-      'Para **usar** o seguro:',
-      '1. Entre no servidor DayZ.',
-      '2. Aperte **L**.',
-      '3. Abra **Seguro dos meus veículos**.',
-      '4. Escolha o veículo e confirme.',
+      '**Importante:** veículo **sem seguro** não mostra localização atual e o rastreio pode ficar bloqueado.',
       '',
-      'O mod procura o veículo correto, remove o antigo quando encontrado e entrega outro. Se o carro tiver sumido, o mod entrega a reposição mesmo assim.',
-      '',
-      'O limite atual é de **5 usos por semana por SteamID**.'
+      'Se o veículo tiver seguro, o card pode mostrar o local atual ou o último local conhecido, junto com o horário do último sinal.',
+      'Se o sinal estiver antigo, vá com cuidado: o carro pode ter sido movido ou o servidor pode ainda não ter atualizado o status.'
     ].join('\n')
   },
   {
-    title: 'Quando o seguro não aparece no jogo',
+    title: 'Seguros — visão geral',
     server: 'Seguros',
-    keywords: ['seguro não aparece','seguro nao aparece','painel seguro vazio','erro seguro','não consigo usar seguro','nao consigo usar seguro','seguro vencido'],
+    keywords: ['seguro','seguros','como funciona seguro','seguro normal','seguro roubo','seguro por roubo','acionar seguro','usar seguro','plano seguro','usos seguro','seguro por uso'],
     answer: [
-      'Confira estes pontos:',
+      'Na garagem existem dois estilos de seguro:',
       '',
-      '• o seguro precisa estar ativo e dentro da validade;',
-      '• o Steam64 do arquivo precisa ser o mesmo da conta do player;',
-      '• o veículo precisa estar cadastrado nos arquivos enviados ao mod;',
-      '• o servidor precisa ter recebido a atualização do FTP;',
-      '• o player deve abrir o painel pela tecla **L** dentro do jogo;',
-      '• o limite de 5 usos semanais não pode ter sido atingido.',
+      '**1. Seguro Normal**',
+      'Usado quando você está perto do veículo e quer repor/recuperar pelo sistema normal.',
       '',
-      'Se continuar vazio, abra ticket com Steam64, nome do veículo e print do painel.'
+      '**2. Seguro por Roubo**',
+      'Usado quando o carro foi levado ou está longe, mas está parado e sem ninguém dentro.',
+      '',
+      'Quando o player clica para ativar o seguro, ele escolhe qual tipo quer executar. Todos os planos de seguro podem usar os dois estilos, respeitando os usos/limites do plano.',
+      '',
+      'O uso do seguro consome uso disponível conforme o plano contratado. Confira sempre **usos restantes** antes de acionar.'
+    ].join('\n')
+  },
+  {
+    title: 'Seguro Normal — distância 250m',
+    server: 'Seguros',
+    keywords: ['seguro normal','distância seguro normal','distancia seguro normal','250m','250 metros','perto do carro','perto do veículo','acionar seguro normal','seguro até 250m','seguro ate 250m'],
+    answer: [
+      '**Seguro Normal** exige que o player esteja perto do veículo.',
+      '',
+      '**Regra atual:** o player precisa estar até **250 metros** do veículo.',
+      '',
+      'Se estiver dentro da distância e tiver uso disponível, o sistema pode remover o veículo antigo e entregar a reposição perto do player.',
+      'Se estiver longe demais, use o **Seguro por Roubo** quando o caso for carro levado/parado/sem player dentro.',
+      '',
+      'Dica: antes de acionar, confira se você está no servidor certo e se o veículo selecionado é o correto.'
+    ].join('\n')
+  },
+  {
+    title: 'Seguro por Roubo — sem limite de distância',
+    server: 'Seguros',
+    keywords: ['seguro por roubo','roubo','carro roubado','veículo roubado','veiculo roubado','seguro longe','carro longe','veículo longe','apagar carro longe','sem limite distância','sem limite distancia','player longe','outro canto do mapa'],
+    answer: [
+      '**Seguro por Roubo** não usa limite de distância.',
+      'O player pode estar em um canto do mapa e o carro no outro: ainda assim o sistema pode funcionar.',
+      '',
+      '**Condições para apagar o carro antigo:**',
+      '• o sistema precisa encontrar o veículo correto pelo **vehicleKey/posição salva**;',
+      '• o veículo precisa estar **sem player dentro**;',
+      '• o veículo precisa estar **parado**, sem estar em movimento;',
+      '• o player precisa ter uso de seguro disponível.',
+      '',
+      'Se tiver alguém dentro do carro ou se o carro estiver andando, o sistema não deve apagar na hora. Ele fica aguardando até o veículo ficar parado e vazio.',
+      '',
+      'Depois que o carro antigo é apagado com segurança, a reposição dropa perto do player.'
+    ].join('\n')
+  },
+  {
+    title: 'Quando o seguro não funciona',
+    server: 'Seguros',
+    keywords: ['seguro não funciona','seguro nao funciona','erro seguro','não consigo acionar seguro','nao consigo acionar seguro','seguro travado','sem usos seguro','carro andando','player dentro carro'],
+    answer: [
+      'O seguro pode não acionar por alguns motivos:',
+      '',
+      '• sem usos restantes no plano;',
+      '• veículo errado selecionado;',
+      '• servidor errado selecionado;',
+      '• no **Seguro Normal**, você está a mais de **250m** do veículo;',
+      '• no **Seguro por Roubo**, tem player dentro do carro;',
+      '• no **Seguro por Roubo**, o carro está em movimento;',
+      '• o último sinal/localização ainda não atualizou;',
+      '• o mod/API não conseguiu encontrar o veículo pelo vehicleKey/posição salva.',
+      '',
+      'Se parecer bug, abra ticket com print da garagem, nome do veículo, servidor, horário e Steam64.'
     ].join('\n')
   },
   {

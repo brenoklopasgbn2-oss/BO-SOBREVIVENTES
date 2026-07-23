@@ -3,7 +3,6 @@
   <a class="admin-back-v46" href="/admin">← Voltar ao painel</a>
   <div class="admin-nav-card-v46">
     <a class="<%= adminPath === '/admin' ? 'active' : '' %>" href="/admin"><span>▦</span><b>Dashboard</b></a>
-    <a class="ftp-admin-link-v88 <%= adminPath.startsWith('/admin/ftp') ? 'active' : '' %>" href="/admin/ftp"><span>🗂️</span><b>FTP DO SERVIDOR</b><small>Configurar arquivos</small></a>
     <a class="<%= adminPath.startsWith('/admin/sales') ? 'active' : '' %>" href="/admin/sales"><span>🛒</span><b>Vendas</b></a>
     <a class="<%= adminPath.startsWith('/admin/logs') ? 'active' : '' %>" href="/admin/logs"><span>📄</span><b>Logs</b></a>
     <a class="<%= adminPath.startsWith('/admin/products') && !String(adminPath).includes('#categoriesAdmin') ? 'active' : '' %>" href="/admin/products"><span>📦</span><b>Produtos</b></a>
@@ -13,11 +12,11 @@
     <a class="<%= adminPath.startsWith('/admin/outfits') ? 'active' : '' %>" href="/admin/outfits"><span>🧥</span><b>Trajes VIP</b></a>
     <a class="<%= adminPath.startsWith('/admin/streamer') ? 'active' : '' %>" href="/admin/streamer"><span>🎥</span><b>Apoio Streamer</b></a>
     <a class="<%= adminPath.startsWith('/admin/ranking') ? 'active' : '' %>" href="/admin/ranking"><span>🏆</span><b>Ranking/Clãs</b></a>
-    <a class="<%= adminPath.startsWith('/admin/clan-recruitment-discord') ? 'active' : '' %>" href="/admin/clan-recruitment-discord"><span>📢</span><b>Recrutamento DC</b><small>2 webhooks + horários</small></a>
     <a class="<%= adminPath.startsWith('/admin/packages') ? 'active' : '' %>" href="/admin/packages"><span>💎</span><b>Pacotes Pix</b></a>
     <a class="<%= adminPath.startsWith('/admin/players') ? 'active' : '' %>" href="/admin/players"><span>👤</span><b>Players</b></a>
     <a class="<%= adminPath.startsWith('/admin/payments') ? 'active' : '' %>" href="/admin/payments"><span>💳</span><b>Pagamentos</b></a>
     <a class="<%= adminPath.startsWith('/admin/deliveries') ? 'active' : '' %>" href="/admin/deliveries"><span>🚚</span><b>Entregas</b></a>
+    <a class="<%= adminPath.startsWith('/admin/ftp') ? 'active' : '' %>" href="/admin/ftp"><span>🗂️</span><b>FTP / Arquivos</b></a>
   </div>
   <form method="POST" action="/admin/logout" class="admin-logout-v46"><button type="submit">Sair admin</button></form>
   <div class="admin-help-v46"><strong>Precisa de ajuda?</strong><small>Use o menu lateral para achar tudo sem ficar puxando barra.</small></div>

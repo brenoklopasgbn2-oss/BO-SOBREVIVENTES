@@ -64,6 +64,25 @@ function buildPavlovoBunkerPanel() {
   });
 }
 
+
+function buildAirfieldBunkerPanel() {
+  return panel({
+    title: '🔑 Bunker do Airfield',
+    description: [
+      'O bunker localizado no **Airfield** é liberado com a **Chave Prata**.',
+      '',
+      'Encontre a chave, leve-a até a entrada indicada e prepare-se antes de entrar: o local faz parte da rota de desafios e missões de raid do servidor.'
+    ].join('\n'),
+    locationImage: 'bunker-airfield.jpg',
+    itemImages: [{
+      title: '⚪ Item necessário: Chave Prata',
+      description: 'Use a **Chave Prata** para liberar a entrada do bunker do Airfield.',
+      file: 'chave-prata.png',
+      color: 0xc0c0c0
+    }]
+  });
+}
+
 function buildSolnechnyBunkerPanel() {
   return panel({
     title: '🔑 Bunker de Solnechny',
@@ -71,7 +90,9 @@ function buildSolnechnyBunkerPanel() {
       'Para acessar o bunker de **Solnechny**, são necessários o **Cartão Perfurado** e a **Chave Vermelha**.',
       '',
       'Depois de completar essa primeira etapa, uma **marreta será spawnada**.',
-      'Use a marreta para abrir o segundo local, onde fica o **loot principal**.'
+      'Use a marreta para abrir o segundo local, onde fica o **loot principal**.',
+      '',
+      'Dentro do bunker podem dropar de **1 a 4 Chaves Brancas**, além da **roupa NBC Branca** necessária para acessar a Plataforma Congelante.'
     ].join('\n'),
     locationImage: 'bunker-solnechny.jpg',
     itemImages: [
@@ -82,9 +103,51 @@ function buildSolnechnyBunkerPanel() {
   });
 }
 
+
+function buildPlataformaCongelantePanel() {
+  const payloads = panel({
+    title: '❄️ Plataforma Congelante',
+    description: [
+      'A **Plataforma Congelante** é uma área extrema e só pode ser acessada com a **roupa NBC Branca completa**.',
+      '',
+      'Sem o equipamento correto, o jogador **não consegue chegar ao local** por causa do frio extremo.',
+      '',
+      'A plataforma possui **4 portas de recompensa**. Cada porta exige **1 Chave Branca** para ser aberta.',
+      '',
+      'As Chaves Brancas dropam no **Bunker de Solnechny**. A quantidade é aleatória: podem vir de **1 até 4 chaves**. Tudo depende da sorte.'
+    ].join('\n'),
+    locationImage: 'plataforma-congelante.jpg',
+    itemImages: [
+      {
+        title: '⚪ Item necessário: Chave Branca',
+        description: [
+          'Cada uma das **4 portas** consome **1 Chave Branca**.',
+          'No Bunker de Solnechny podem dropar de **1 a 4 chaves**.'
+        ].join('\n'),
+        file: 'chave-branca.jpg',
+        color: 0xf5f5f5
+      },
+      {
+        title: '☣️ Equipamento obrigatório: NBC Branca',
+        description: [
+          'Use a **roupa NBC Branca completa** para entrar na área congelante.',
+          'A roupa NBC Branca também dropa no Bunker de Solnechny.'
+        ].join('\n'),
+        file: 'nbc-branca.jpg',
+        color: 0xdfe6e9
+      }
+    ]
+  });
+
+  payloads[0].legacyTitles = ['❄️ Plataforma', '⚪ Plataforma'];
+  return payloads;
+}
+
 module.exports = {
   buildGorkaBunkerPanel,
   buildTisyBunkerPanel,
   buildPavlovoBunkerPanel,
-  buildSolnechnyBunkerPanel
+  buildAirfieldBunkerPanel,
+  buildSolnechnyBunkerPanel,
+  buildPlataformaCongelantePanel
 };

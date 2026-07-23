@@ -14,10 +14,6 @@
         <h3>Seguro por roubo</h3>
         <p>Serve quando roubaram o carro. O player pode estar longe, até do outro lado do mapa. O mod não pode bloquear por distância; ele só apaga quando o carro estiver parado e sem nenhum player dentro. Se estiver em movimento ou ocupado, a entrega fica aguardando.</p>
       </div>
-      <div>
-        <h3>Carro sumiu sozinho</h3>
-        <p>Use <b>Restaurar sumido — mesmo ID</b>. O painel recria o veículo com o mesmo ID salvo na garagem, cancela uma solicitação de seguro travada e devolve uso/cobrança pendente. Depois o seguro continua funcionando normalmente.</p>
-      </div>
     </div>
   </section>
 
@@ -41,7 +37,7 @@
           <input name="name" value="<%= vehicle?.name || '' %>" placeholder="Offroad VIP" required>
         </label>
         <label>Descrição
-          <textarea name="description" placeholder="Veículo completo, seguro mensal incluso e reposição pelo mod."><%= vehicle?.description || '' %></textarea>
+          <textarea name="description" placeholder="Veículo completo, seguro opcional e reposição pelo site."><%= vehicle?.description || '' %></textarea>
         </label>
         <div class="inline-grid product-inline-grid">
           <label>Servidor
@@ -67,6 +63,7 @@
           <option value="TP_Apoc_M1025_Black">M1025 Apocalipse Black</option>
           <option value="TP_Apoc_M1025_Camo">M1025 Apocalipse Camo</option>
           <option value="TP_Apoc_M1025_Tan">M1025 Apocalipse Tan</option>
+          <option value="MuranoCarlock">Murano CarLock</option>
           <option value="CarKey">CarKey</option>
         </datalist>
         <div class="card mini-help-card">
@@ -123,13 +120,13 @@ Hatchback_02_Wheel_1_1|Hatchback_02_Wheel|1|Roda dianteira esquerda</pre>
         </label>
         <div class="card mini-help-card">
           <h3>Itens dentro do veículo</h3>
-          <p class="muted">Use apenas para itens que realmente precisam nascer dentro do carro. As 2 HeadlightH7 são enviadas automaticamente ao inventário do jogador. O MuranoCarlock é instalado pelo mod do veículo.</p>
+          <p class="muted">Use para chave, mapa, kit ou qualquer item que deve nascer no inventário/cargo do carro depois de montar.</p>
           <code>Slot/inventário|Classname|Quantidade|Nome opcional</code>
-          <pre>cargo|ChernarusMap|1|Mapa
+          <pre>cargo|MuranoCarlock|1|Murano CarLock
 CarKey|1|CarKey</pre>
         </div>
         <label>Itens para vir dentro/slot do veículo
-          <textarea name="cargoItemsText" class="items-textarea" placeholder="cargo|ChernarusMap|1|Mapa"><%= vehicle ? cargoItemsToText(vehicle.cargoItems) : '' %></textarea>
+          <textarea name="cargoItemsText" class="items-textarea" placeholder="cargo|MuranoCarlock|1|Murano CarLock"><%= vehicle ? cargoItemsToText(vehicle.cargoItems) : '' %></textarea>
         </label>
         <div class="inline-grid product-inline-grid">
           <label>Combustível %
@@ -163,7 +160,7 @@ CarKey|1|CarKey</pre>
 
     <div class="card wide-card">
       <h2>Planos de seguro</h2>
-      <p class="muted">Apenas seguro mensal está disponível. Você pode criar um plano global ou específico para um veículo.</p>
+      <p class="muted">Você pode criar seguro global para todos os veículos ou específico para um veículo.</p>
       <form method="POST" action="/admin/vehicle-insurance-plans" class="form-grid compact-form">
         <label>Nome do seguro
           <input name="name" placeholder="Seguro mensal 2x por semana" required>
@@ -176,8 +173,10 @@ CarKey|1|CarKey</pre>
         </label>
         <div class="inline-grid product-inline-grid two-cols">
           <label>Tipo
-            <input type="hidden" name="billingType" value="SUBSCRIPTION">
-            <input value="Mensal / por período" disabled>
+            <select name="billingType">
+              <option value="PER_USE">Paga por vez que usar</option>
+              <option value="SUBSCRIPTION">Mensal / usa X vezes na semana</option>
+            </select>
           </label>
           <label>Preço em RZ
             <input name="priceCoins" type="number" min="0" value="5000">
@@ -189,14 +188,14 @@ CarKey|1|CarKey</pre>
             <input name="durationDays" type="number" min="1" value="30">
           </label>
           <label>Usos por semana
-            <input name="maxUsesPerWeek" type="number" min="1" value="5">
+            <input name="maxUsesPerWeek" type="number" min="1" value="2">
           </label>
           <label>Ativo
             <input type="checkbox" name="active" checked>
           </label>
         </div>
         <label>Descrição
-          <textarea name="description" placeholder="Ex: seguro mensal válido por 30 dias e até 5 usos por semana."></textarea>
+          <textarea name="description" placeholder="Ex: paga mensal e pode repor 2 vezes por semana."></textarea>
         </label>
         <button class="btn primary" type="submit">Criar seguro</button>
       </form>
@@ -208,10 +207,10 @@ CarKey|1|CarKey</pre>
             <tr>
               <td><%= plan.name %></td>
               <td><%= plan.coverageType === 'THEFT' ? 'Roubo' : 'Normal' %></td>
-              <td>Mensal</td>
+              <td><%= plan.billingType %></td>
               <td><%= plan.template?.name || 'Todos' %></td>
               <td><%= coins(plan.priceCoins) %> RZ</td>
-              <td><%= plan.maxUsesPerWeek %>x/semana</td>
+              <td><%= plan.billingType === 'SUBSCRIPTION' ? `${plan.maxUsesPerWeek}x/semana` : 'paga por uso' %></td>
               <td><span class="status <%= plan.active ? 'delivered' : 'failed' %>"><%= plan.active ? 'Ativo' : 'Inativo' %></span></td>
               <td><form method="POST" action="/admin/vehicle-insurance-plans/<%= plan.id %>/toggle"><button class="btn" type="submit"><%= plan.active ? 'Desativar' : 'Ativar' %></button></form></td>
             </tr>
@@ -252,7 +251,7 @@ CarKey|1|CarKey</pre>
           <tr>
             <td><%= v.player?.nickname || v.steam64 %><br><small><%= v.steam64 %></small></td>
             <td><%= v.displayName %><br><code><%= v.vehicleClassname %></code></td>
-            <td><%= v.insurancePlan?.name || 'Sem seguro' %><br><small><%= v.insurancePlan?.coverageType === 'THEFT' ? 'Roubo' : (v.insurancePlan ? 'Normal' : '-') %> • <%= v.insurancePlan ? 'Mensal' : '-' %></small></td>
+            <td><%= v.insurancePlan?.name || 'Sem seguro' %><br><small><%= v.insurancePlan?.coverageType === 'THEFT' ? 'Roubo' : (v.insurancePlan ? 'Normal' : '-') %> • <%= v.insurancePlan?.billingType || '-' %></small></td>
             <td>
               <b><%= v.currentVehicleMoving ? 'Em movimento' : 'Parado' %></b><br>
               <small><%= v.currentVehicleOccupied ? 'Com player dentro' : 'Sem player dentro' %></small><br>
@@ -260,7 +259,7 @@ CarKey|1|CarKey</pre>
               <small><%= v.currentVehicleLastSeenAt ? dateTime(v.currentVehicleLastSeenAt) : 'sem sinal ainda' %></small>
             </td>
             <td>
-              Semana: <b><%= v.insuranceUsesThisWeek || 0 %>/<%= v.insurancePlan?.maxUsesPerWeek || '-' %></b><br>
+              Semana: <b><%= v.insuranceUsesThisWeek || 0 %>/<%= v.insurancePlan?.billingType === 'SUBSCRIPTION' ? (v.insurancePlan?.maxUsesPerWeek || '-') : 'livre' %></b><br>
               Total: <b><%= v.insuranceUsesTotal || 0 %></b><br>
               Último: <small><%= v.lastInsuranceUsedAt ? dateTime(v.lastInsuranceUsedAt) : '-' %></small>
             </td>
@@ -268,16 +267,7 @@ CarKey|1|CarKey</pre>
             <td><span class="status <%= v.status === 'ACTIVE' ? 'delivered' : 'failed' %>"><%= v.status %></span></td>
             <td><%= v.expiresAt ? dateTime(v.expiresAt) : 'Permanente' %></td>
             <td><code><%= v.currentVehicleKey || '-' %></code></td>
-            <td>
-              <div class="vehicle-admin-action-row vehicle-recovery-actions-v122">
-                <form method="POST" action="/admin/player-vehicles/<%= v.id %>/restore-missing" onsubmit="return confirm('Use somente quando o carro realmente sumiu do mapa. O veículo será restaurado com o MESMO ID da garagem, sem gastar o seguro. Continuar?');">
-                  <button class="btn primary" type="submit">Restaurar sumido — mesmo ID</button>
-                </form>
-                <form method="POST" action="/admin/player-vehicles/<%= v.id %>/reset-delivery" onsubmit="return confirm('Isso cria OUTRO ID e tenta remover o veículo antigo. Use para substituição normal, não para carro que simplesmente sumiu. Continuar?');">
-                  <button class="btn" type="submit">Substituir — novo ID</button>
-                </form>
-              </div>
-            </td>
+            <td><form method="POST" action="/admin/player-vehicles/<%= v.id %>/reset-delivery"><button class="btn primary" type="submit">Dropar novo</button></form></td>
           </tr>
         <% }) %>
         <% if (!playerVehicles.length) { %><tr><td colspan="10" class="muted">Nenhum player com veículo ainda.</td></tr><% } %>
@@ -290,7 +280,6 @@ CarKey|1|CarKey</pre>
     .vehicle-quick-picker-v55 button{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:700}
     .vehicle-quick-picker-v55 button:hover{border-color:rgba(255,122,24,.6);box-shadow:0 0 0 2px rgba(255,122,24,.12)}
     .vehicle-admin-action-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.vehicle-admin-action-row form{margin:0}
-    .vehicle-recovery-actions-v122{min-width:220px;align-items:stretch}.vehicle-recovery-actions-v122 form,.vehicle-recovery-actions-v122 button{width:100%}.vehicle-recovery-actions-v122 button{white-space:normal;line-height:1.15}
   </style>
   <script>
     (function(){

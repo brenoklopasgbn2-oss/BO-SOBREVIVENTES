@@ -2,15 +2,15 @@
 export const defaultOutfitTemplates = [
   {
     name: 'Traje VIP RAID-Z FOG', slug: 'traje-vip-fog-raidz', serverType: 'vanilla', level: 1,
-    priceCoins: 15000, durationDays: 30, streamerRewardEnabled: false, imageUrl: '/images/outfits/traje-vip-fog-raidz.png',
+    priceCoins: 15000, durationDays: 30, streamerRewardEnabled: true, imageUrl: '/images/outfits/traje-vip-fog-raidz.png',
     description: 'Traje VIP mensal FOG do RAID-Z com roupa completa. Sem remédios no inventário.',
     items: [
-      { slot: 'Headgear', classname: 'FOG_Watchcap_Black', quantity: 1, label: 'Touca FOG Black' },
+      { slot: 'headgear', classname: 'FOG_Watchcap_Black', quantity: 1, label: 'Touca FOG Black' },
       { slot: 'mask', classname: 'FOG_Arcteryx_Balaclava_Black', quantity: 1, label: 'Balaclava FOG Black' },
       { slot: 'eyewear', classname: 'FOG_Glasses_ESS_Black', quantity: 1, label: 'Óculos FOG ESS Black' },
       { slot: 'body', classname: 'FOG_Gorka_Jacket_Black', quantity: 1, label: 'Jaqueta FOG Gorka Black' },
       { slot: 'legs', classname: 'FOG_Gorka_Pants_Black', quantity: 1, label: 'Calça FOG Gorka Black' },
-      { slot: 'Gloves', classname: 'FOG_GunGloves_Black', quantity: 1, label: 'Luvas FOG Black' },
+      { slot: 'hands', classname: 'FOG_GunGloves_Black', quantity: 1, label: 'Luvas FOG Black' },
       { slot: 'feet', classname: 'FOG_Operator_Boots_Black', quantity: 1, label: 'Bota Operator Black' },
       { slot: 'vest', classname: 'FOG_Vest_SSMK4_Black', quantity: 1, label: 'Colete FOG SSMK4 Black' },
       { slot: 'back', classname: 'FOG_Bag_MRASAP_Black', quantity: 1, label: 'Mochila FOG MRASAP Black' },
@@ -18,13 +18,94 @@ export const defaultOutfitTemplates = [
       { slot: 'inventory', classname: 'ChernarusMap', quantity: 1, label: 'Mapa' },
       { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca mediana' },
       { slot: 'inventory', classname: 'BakedBeansCan', quantity: 2, label: '2 latas de comida' },
-      { slot: 'inventory', classname: 'GlassBottle', quantity: 1, label: 'Garrafa de água de vidro' }
+      { slot: 'inventory', classname: 'WaterBottle', quantity: 1, label: 'Garrafa de água' }
     ]
   },
-
-  // Os cinco trajes antigos (Básico, Explorador, Caçador, Militar e Elite Player)
-  // foram removidos do catálogo V92.
-
+  {
+    name: 'Traje VIP Básico', slug: 'traje-vip-basico', serverType: 'vanilla', level: 1,
+    priceCoins: 15000, durationDays: 30, streamerRewardEnabled: true, imageUrl: '/dayz-wiki-image?type=Hoodie_Black&name=Hoodie',
+    description: 'Traje básico mensal: roupa simples, bandagem, comida, faca e bebida. Bom para nascer sem ficar zerado.',
+    items: [
+      { slot: 'body', classname: 'Hoodie_Black', quantity: 1, label: 'Moletom preto' },
+      { slot: 'legs', classname: 'Jeans_Black', quantity: 1, label: 'Calça jeans preta' },
+      { slot: 'feet', classname: 'AthleticShoes_Black', quantity: 1, label: 'Tênis preto' },
+      { slot: 'inventory', classname: 'BandageDressing', quantity: 1, label: 'Bandagem' },
+      { slot: 'inventory', classname: 'BakedBeansCan', quantity: 1, label: 'Comida' },
+      { slot: 'inventory', classname: 'KitchenKnife', quantity: 1, label: 'Faca' },
+      { slot: 'inventory', classname: 'SodaCan_Pipsi', quantity: 1, label: 'Bebida' }
+    ]
+  },
+  {
+    name: 'Traje VIP Explorador', slug: 'traje-vip-explorador', serverType: 'vanilla', level: 2,
+    priceCoins: 30000, durationDays: 30, streamerRewardEnabled: true, imageUrl: '/dayz-wiki-image?type=HikingJacket_Black&name=Hiking%20Jacket',
+    description: 'Evolução do básico com mochila, cantil e itens de suprimentos para explorar o mapa.',
+    items: [
+      { slot: 'body', classname: 'HikingJacket_Black', quantity: 1, label: 'Jaqueta hiking' },
+      { slot: 'legs', classname: 'CargoPants_Black', quantity: 1, label: 'Calça cargo' },
+      { slot: 'feet', classname: 'HikingBootsLow_Black', quantity: 1, label: 'Bota hiking' },
+      { slot: 'back', classname: 'AssaultBag_Green', quantity: 1, label: 'Mochila assault' },
+      { slot: 'inventory', classname: 'BandageDressing', quantity: 2, label: 'Bandagens' },
+      { slot: 'inventory', classname: 'PeachesCan', quantity: 1, label: 'Comida' },
+      { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca caça' },
+      { slot: 'inventory', classname: 'Canteen', quantity: 1, label: 'Cantil' },
+      { slot: 'inventory', classname: 'Compass', quantity: 1, label: 'Bússola' }
+    ]
+  },
+  {
+    name: 'Traje VIP Caçador', slug: 'traje-vip-cacador', serverType: 'vanilla', level: 3,
+    priceCoins: 45000, durationDays: 30, streamerRewardEnabled: true, imageUrl: '/dayz-wiki-image?type=HuntingJacket_Brown&name=Hunting%20Jacket',
+    description: 'Traje de caçador com roupa hunter, binóculo, faca e suprimentos melhores.',
+    items: [
+      { slot: 'body', classname: 'HuntingJacket_Brown', quantity: 1, label: 'Jaqueta hunter' },
+      { slot: 'legs', classname: 'HuntingPants_Brown', quantity: 1, label: 'Calça hunter' },
+      { slot: 'feet', classname: 'HikingBoots_Black', quantity: 1, label: 'Bota' },
+      { slot: 'hands', classname: 'TacticalGloves_Black', quantity: 1, label: 'Luvas' },
+      { slot: 'back', classname: 'HuntingBag', quantity: 1, label: 'Mochila caça' },
+      { slot: 'inventory', classname: 'BandageDressing', quantity: 3, label: 'Bandagens' },
+      { slot: 'inventory', classname: 'TunaCan', quantity: 2, label: 'Comida' },
+      { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca caça' },
+      { slot: 'inventory', classname: 'WaterBottle', quantity: 1, label: 'Água' },
+      { slot: 'inventory', classname: 'Binoculars', quantity: 1, label: 'Binóculo' },
+      { slot: 'inventory', classname: 'Matchbox', quantity: 1, label: 'Fósforo' }
+    ]
+  },
+  {
+    name: 'Traje VIP Militar', slug: 'traje-vip-militar', serverType: 'vanilla', level: 4,
+    priceCoins: 65000, durationDays: 30, streamerRewardEnabled: false, imageUrl: '/dayz-wiki-image?type=TTsKOJacket_Camo&name=TTsKO%20Jacket',
+    description: 'Traje mensal militar com roupa tática, colete simples e mochila maior. Sem arma forte para não virar pay-to-win.',
+    items: [
+      { slot: 'body', classname: 'TTsKOJacket_Camo', quantity: 1, label: 'Jaqueta TTsKO' },
+      { slot: 'legs', classname: 'TTSKOPants', quantity: 1, label: 'Calça TTsKO' },
+      { slot: 'feet', classname: 'MilitaryBoots_Black', quantity: 1, label: 'Bota militar' },
+      { slot: 'hands', classname: 'TacticalGloves_Green', quantity: 1, label: 'Luvas táticas' },
+      { slot: 'vest', classname: 'HighCapacityVest_Olive', quantity: 1, label: 'Colete high capacity' },
+      { slot: 'back', classname: 'TacticalBag_Green', quantity: 1, label: 'Mochila tática' },
+      { slot: 'inventory', classname: 'BandageDressing', quantity: 3, label: 'Bandagens' },
+      { slot: 'inventory', classname: 'BaconCan', quantity: 2, label: 'Comida' },
+      { slot: 'inventory', classname: 'Canteen', quantity: 1, label: 'Cantil' },
+      { slot: 'inventory', classname: 'CombatKnife', quantity: 1, label: 'Faca combate' },
+      { slot: 'inventory', classname: 'PersonalRadio', quantity: 1, label: 'Rádio' }
+    ]
+  },
+  {
+    name: 'Traje VIP Elite Player', slug: 'traje-vip-elite-player', serverType: 'vanilla', level: 5,
+    priceCoins: 90000, durationDays: 30, streamerRewardEnabled: false, imageUrl: '/dayz-wiki-image?type=GorkaEJacket_Flat&name=Gorka%20Jacket',
+    description: 'Traje mais completo, focado em conveniência mensal e visual premium. O ADM pode editar os types depois.',
+    items: [
+      { slot: 'body', classname: 'GorkaEJacket_Flat', quantity: 1, label: 'Jaqueta Gorka' },
+      { slot: 'legs', classname: 'GorkaPants_Flat', quantity: 1, label: 'Calça Gorka' },
+      { slot: 'feet', classname: 'MilitaryBoots_Brown', quantity: 1, label: 'Bota militar' },
+      { slot: 'hands', classname: 'TacticalGloves_Black', quantity: 1, label: 'Luvas táticas' },
+      { slot: 'vest', classname: 'UKAssVest_Camo', quantity: 1, label: 'Colete field' },
+      { slot: 'back', classname: 'CoyoteBag_Green', quantity: 1, label: 'Mochila coyote' },
+      { slot: 'headgear', classname: 'BaseballCap_Olive', quantity: 1, label: 'Boné' },
+      { slot: 'inventory', classname: 'BandageDressing', quantity: 4, label: 'Bandagens' },
+      { slot: 'inventory', classname: 'PeachesCan', quantity: 2, label: 'Comida' },
+      { slot: 'inventory', classname: 'WaterBottle', quantity: 1, label: 'Água' },
+      { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca' },
+      { slot: 'inventory', classname: 'Compass', quantity: 1, label: 'Bússola' }
+    ]
+  },
 
   // V72 EXTRA OUTFITS START
 {
@@ -45,7 +126,7 @@ export const defaultOutfitTemplates = [
             label: "BalaclavaMask_Black"
         },
         {
-            slot: "Headgear",
+            slot: "headgear",
             classname: "BoonieHat_Black",
             quantity: 1,
             label: "BoonieHat_Black"
@@ -69,7 +150,7 @@ export const defaultOutfitTemplates = [
             label: "SportGlasses_Black"
         },
         {
-            slot: "Gloves",
+            slot: "hands",
             classname: "FOG_MechanixGloves_Black_Words",
             quantity: 1,
             label: "FOG_MechanixGloves_Black_Words"
@@ -136,7 +217,7 @@ export const defaultOutfitTemplates = [
     description: "Traje VIP Comando mensal de R$30. Visual comando M81 com mochila e itens básicos.",
     items: [
         {
-            slot: "Headgear",
+            slot: "headgear",
             classname: "BoonieHat_DPM",
             quantity: 1,
             label: "BoonieHat_DPM"
@@ -166,7 +247,7 @@ export const defaultOutfitTemplates = [
             label: "FOG_FieldPants_M81"
         },
         {
-            slot: "Gloves",
+            slot: "hands",
             classname: "FOG_PIGFDT_Gloves_M81",
             quantity: 1,
             label: "FOG_PIGFDT_Gloves_M81"
@@ -227,7 +308,7 @@ export const defaultOutfitTemplates = [
     description: "Traje VIP Esquadrão mensal de R$30. Visual tático preto com mochila e itens básicos.",
     items: [
         {
-            slot: "Headgear",
+            slot: "headgear",
             classname: "FOG_Watchcap_Black",
             quantity: 1,
             label: "FOG_Watchcap_Black"
@@ -251,7 +332,7 @@ export const defaultOutfitTemplates = [
             label: "FOG_Arcteryx_Balaclava_Black"
         },
         {
-            slot: "Gloves",
+            slot: "hands",
             classname: "FOG_GunGloves_Black",
             quantity: 1,
             label: "FOG_GunGloves_Black"
@@ -307,71 +388,4 @@ export const defaultOutfitTemplates = [
     ]
 },
   // V72 EXTRA OUTFITS END
-  {
-    name: 'Traje VIP Privado STZ',
-    slug: 'traje-vip-privado-stz',
-    serverType: 'vanilla',
-    level: 99,
-    priceCoins: 0,
-    durationDays: 365,
-    streamerRewardEnabled: false,
-    isPrivate: true,
-    imageUrl: '/images/no-real-image.svg',
-    description: 'Traje STZ gerenciado pelo streamer. O streamer adiciona e remove os players permitidos no próprio painel.',
-    managedAccessEnabled: true,
-    managedOwnerSteam64: '76561198155183501',
-    managedOwnerType: 'STREAMER',
-    maxManagedMembers: 10,
-    memberMonthlyPriceCoins: 0,
-    creationPriceCoins: 0,
-    flagClassname: 'STZ_Flag',
-    items: [
-      { slot: 'back', classname: 'STZ_TacticalBackpack', quantity: 1, label: 'STZ Tactical Backpack' },
-      { slot: 'Headgear', classname: 'STZ_TacticalBoonie', quantity: 1, label: 'STZ Tactical Boonie' },
-      { slot: 'legs', classname: 'STZ_TacticalPants', quantity: 1, label: 'STZ Tactical Pants' },
-      { slot: 'body', classname: 'STZ_TacticalShirt', quantity: 1, label: 'STZ Tactical Shirt' },
-      { slot: 'Gloves', classname: 'STZ_TacticalGloves', quantity: 1, label: 'STZ Tactical Gloves' },
-      { slot: 'feet', classname: 'STZ_TacticalBoots', quantity: 1, label: 'STZ Tactical Boots' },
-      { slot: 'mask', classname: 'STZ_TacticalBalaclava', quantity: 1, label: 'STZ Tactical Balaclava' },
-      { slot: 'eyewear', classname: 'SportGlasses_Black', quantity: 1, label: 'Óculos preto' },
-      { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca' },
-      { slot: 'inventory', classname: 'ChernarusMap', quantity: 1, label: 'Mapa' },
-      { slot: 'inventory', classname: 'BakedBeansCan', quantity: 1, label: '1 lata de comida' },
-      { slot: 'inventory', classname: 'BandageDressing', quantity: 2, label: '2 bandagens' }
-    ]
-  },
-  {
-    name: 'Traje OCL do Streamer',
-    slug: 'traje-ocl-streamer',
-    serverType: 'vanilla',
-    level: 99,
-    priceCoins: 0,
-    durationDays: 365,
-    streamerRewardEnabled: false,
-    isPrivate: true,
-    imageUrl: '/images/outfits/traje-ocl-streamer.png',
-    description: 'Traje OCL gerenciado pelo streamer. Mochila personalizada com 90 slots e acesso somente para Steam64 autorizado.',
-    managedAccessEnabled: true,
-    managedOwnerSteam64: '76561199531978123',
-    managedOwnerType: 'STREAMER',
-    maxManagedMembers: 10,
-    memberMonthlyPriceCoins: 0,
-    creationPriceCoins: 0,
-    flagClassname: 'OCL_Flag',
-    items: [
-      { slot: 'back', classname: 'OCL_TacticalBackpack', quantity: 1, label: 'Mochila OCL 90 slots' },
-      { slot: 'Headgear', classname: 'OCL_TacticalBoonie', quantity: 1, label: 'OCL Tactical Boonie' },
-      { slot: 'legs', classname: 'OCL_TacticalPants', quantity: 1, label: 'OCL Tactical Pants' },
-      { slot: 'body', classname: 'OCL_TacticalShirt', quantity: 1, label: 'OCL Tactical Shirt' },
-      { slot: 'Gloves', classname: 'OCL_TacticalGloves', quantity: 1, label: 'OCL Tactical Gloves' },
-      { slot: 'feet', classname: 'OCL_TacticalBoots', quantity: 1, label: 'OCL Tactical Boots' },
-      { slot: 'mask', classname: 'OCL_TacticalBalaclava', quantity: 1, label: 'OCL Tactical Balaclava' },
-      { slot: 'eyewear', classname: 'SportGlasses_Black', quantity: 1, label: 'Óculos preto' },
-      { slot: 'inventory', classname: 'HuntingKnife', quantity: 1, label: 'Faca' },
-      { slot: 'inventory', classname: 'ChernarusMap', quantity: 1, label: 'Mapa Chernarus' },
-      { slot: 'inventory', classname: 'BakedBeansCan', quantity: 1, label: '1 lata de comida' },
-      { slot: 'inventory', classname: 'BandageDressing', quantity: 2, label: '2 bandagens' }
-    ]
-  }
-
 ];

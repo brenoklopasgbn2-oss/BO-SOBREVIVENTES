@@ -35,14 +35,10 @@ export const env = {
   ftpConfigSecret: optional('FTP_CONFIG_SECRET', optional('COOKIE_SECRET', 'raidz-file-bridge-change-me')),
   adminUser: optional('ADMIN_USER', 'admin'),
   adminPassword: required('ADMIN_PASSWORD'),
-  // API HTTP antiga do mod. É opcional: sem chave, as rotas /api ficam fechadas, mas o site inicia normalmente.
-  apiKey: optional('API_KEY'),
+  apiKey: required('API_KEY'),
   mercadoPagoAccessToken: optional('MERCADOPAGO_ACCESS_TOKEN'),
-  // auto: tenta Orders primeiro e, se a própria transação falhar com 402/409,
-  // tenta a API de Pagamentos automaticamente com o mesmo Access Token.
-  mercadoPagoApiMode: optional('MERCADOPAGO_API_MODE', 'auto'),
   mercadoPagoWebhookSecret: optional('MERCADOPAGO_WEBHOOK_SECRET'),
-  defaultPayerEmail: optional('DEFAULT_PAYER_EMAIL'),
+  defaultPayerEmail: optional('DEFAULT_PAYER_EMAIL', 'loja@raidz.local'),
   discordWebhookUrl: optional('DISCORD_WEBHOOK_URL', DEFAULT_WEBHOOKS.sales),
   discordSalesWebhookUrl: optional('DISCORD_SALES_WEBHOOK_URL', DEFAULT_WEBHOOKS.sales),
   discordRankingPlayersVanillaWebhookUrl: optional('DISCORD_RANKING_PLAYERS_VANILLA_WEBHOOK_URL', DEFAULT_WEBHOOKS.playersVanilla),

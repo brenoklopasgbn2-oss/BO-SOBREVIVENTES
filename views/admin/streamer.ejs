@@ -104,7 +104,7 @@
               <td><%= coins(total.totalCommissionCoins || s.totalCommissionCoins || 0) %> RZ<br><small>Mov.: <%= coins(total.totalSalesCoins || s.totalSalesCoins || 0) %> RZ</small><div class="streamer-mini-history-v65"><small>Pagos recentes: <%= (s.paidPayouts || []).length %></small></div></td>
               <td><span class="status <%= s.active ? 'paid' : 'failed' %>"><%= s.active ? 'ATIVO' : 'OFF' %></span></td>
               <td class="table-actions-v43">
-                <% if (s.streamerSteam64) { %><a class="btn small" href="/admin/streamer/<%= encodeURIComponent(s.streamerSteam64) %>/panel" target="_blank" rel="noopener">Ver painel</a><% } else { %><button class="btn small" type="button" disabled>Informe o Steam64</button><% } %>
+                <a class="btn small" href="/streamer?steam64=<%= encodeURIComponent(s.streamerSteam64 || '') %>" target="_blank">Ver painel</a>
                 <form method="POST" action="/admin/streamer-support/codes/<%= s.id %>/toggle"><button class="btn small" type="submit"><%= s.active ? 'Desativar' : 'Ativar' %></button></form>
                 <form method="POST" action="/admin/streamer-support/codes/<%= s.id %>/mark-paid" class="streamer-pay-box-v65" onsubmit="return confirm('Marcar esse streamer como pago e zerar o pendente do período escolhido?')">
                   <select name="periodType" title="Período que será zerado">

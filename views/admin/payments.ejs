@@ -4,13 +4,9 @@
   <%- include('_admin_nav') %>
   <%- include('../partials/alerts') %>
   <section class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <h1>Pagamentos Pix</h1>
-      <form method="POST" action="/admin/payments/check-mercadopago"><button class="btn" type="submit">Testar conta Mercado Pago</button></form>
-    </div>
-    <p class="muted">O teste confirma se o Access Token foi aceito e se o Pix está disponível na conta atual.</p>
+    <h1>Pagamentos Pix</h1>
     <table>
-      <thead><tr><th>Data</th><th>Player</th><th>Valor</th><th>Moedas</th><th>Status</th><th>API / MP ID</th><th></th></tr></thead>
+      <thead><tr><th>Data</th><th>Player</th><th>Valor</th><th>Moedas</th><th>Status</th><th>MP ID</th><th></th></tr></thead>
       <tbody>
         <% payments.forEach(p => { %>
           <tr>
@@ -19,12 +15,9 @@
             <td><%= brl(p.amountBrl) %></td>
             <td><%= coins(p.coins) %></td>
             <td><span class="status <%= p.status.toLowerCase() %>"><%= p.status %></span></td>
-            <td><small><%= p.provider || 'mercadopago' %><br><%= p.providerPaymentId || '-' %></small></td>
+            <td><small><%= p.providerPaymentId || '-' %></small></td>
             <td>
               <% if (p.status !== 'APPROVED') { %>
-                <% if (p.providerPaymentId) { %>
-                  <form method="POST" action="/admin/payments/<%= p.id %>/sync" style="margin-bottom:6px"><button class="btn small" type="submit">Consultar Mercado Pago</button></form>
-                <% } %>
                 <form method="POST" action="/admin/payments/<%= p.id %>/approve" onsubmit="return confirm('Aprovar manualmente? Isso adiciona moedas.')"><button class="btn small">Aprovar manual</button></form>
               <% } %>
             </td>

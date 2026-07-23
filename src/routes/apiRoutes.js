@@ -334,9 +334,9 @@ apiRoutes.post('/shop/buy', async (req, res) => {
     const { steam64, productId, quantity, giftSteam64 } = req.body;
     const player = await prisma.player.findUnique({ where: { steam64: String(steam64) } });
     if (!player) return res.status(404).json({ ok: false, error: 'Player não encontrado.' });
-    const result = await buyProduct({ playerId: player.id, productId, quantity: Number(quantity || 1), source: 'api', giftSteam64, checkoutToken: req.body.checkoutToken || req.body.idempotencyKey || null });
+    const result = await buyProduct({ playerId: player.id, productId, quantity: Number(quantity || 1), source: 'api', giftSteam64 });
     res.json({ ok: true, purchaseId: result.purchase.id, deliveryId: result.delivery?.id,
-      deliveryIds: result.deliveries?.map(d => d.id) || [], duplicate: Boolean(result.duplicate), balance: result.player.coins });
+      deliveryIds: result.deliveries?.map(d => d.id) || [], balance: result.player.coins });
   } catch (err) {
     res.status(400).json({ ok: false, error: err.message });
   }
@@ -373,8 +373,7 @@ apiRoutes.post('/game/buy', async (req, res) => {
       productId,
       quantity: Number(req.body.quantity || 1),
       expectedServerType: serverType,
-      source: 'game',
-      checkoutToken: req.body.checkoutToken || req.body.idempotencyKey || null
+      source: 'game'
     });
 
     res.json({
@@ -383,7 +382,6 @@ apiRoutes.post('/game/buy', async (req, res) => {
       purchaseId: result.purchase.id,
       deliveryId: result.delivery?.id,
       deliveryIds: result.deliveries?.map(d => d.id) || [],
-      duplicate: Boolean(result.duplicate),
       delivery: result.delivery ? {
         id: result.delivery.id,
         classname: result.delivery.classname,

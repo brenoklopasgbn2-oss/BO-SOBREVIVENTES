@@ -8,11 +8,12 @@ const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
 const { buildAiPanel } = require('../panels/aiPanel');
 const { buildBunkerPanel } = require('../panels/bunkerPanel');
-const { buildGorkaBunkerPanel, buildTisyBunkerPanel, buildPavlovoBunkerPanel, buildSolnechnyBunkerPanel } = require('../panels/bunkerLocationsPanel');
+const { buildGorkaBunkerPanel, buildTisyBunkerPanel, buildPavlovoBunkerPanel, buildAirfieldBunkerPanel, buildSolnechnyBunkerPanel, buildPlataformaCongelantePanel } = require('../panels/bunkerLocationsPanel');
 const { buildBoatContainerPanel } = require('../panels/boatContainerPanel');
 const { buildVanillaProPanel } = require('../panels/vanillaProPanel');
 const { buildArmoredCarPanel } = require('../panels/armoredCarPanel');
 const { buildSleepingBagPanel } = require('../panels/sleepingBagPanel');
+const { buildRaidMissionsPanel } = require('../panels/raidMissionsPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
@@ -221,12 +222,15 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.rules), () => buildRulesPanel('geral'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesVanilla), () => buildRulesPanel('vanilla'));
     await clearAndSendPanel(findChannel(CHANNELS.rulesFlagRaid), () => buildRulesPanel('bandeira'));
+    await clearAndSendPanel(findChannel(CHANNELS.raidMissions), buildRaidMissionsPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSubterraneo), buildBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerGorka), buildGorkaBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.containerBarco), buildBoatContainerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerTisy), buildTisyBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerPavlovo), buildPavlovoBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.bunkerAirfield), buildAirfieldBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSolnechny), buildSolnechnyBunkerPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.plataformaCongelante), buildPlataformaCongelantePanel);
     await clearAndSendPanel(findChannel(CHANNELS.construcoesVanillaPro), buildVanillaProPanel);
     await clearAndSendPanel(findChannel(CHANNELS.carroBlindado), buildArmoredCarPanel);
     await clearAndSendPanel(findChannel(CHANNELS.sacoDeDormir), buildSleepingBagPanel);
@@ -248,6 +252,6 @@ module.exports = {
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo e Solnechny**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo, Airfield/Chave Prata e Solnechny**, as **missões de raid via rádio**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
   }
 };

@@ -77,15 +77,53 @@ const BUNKER_GUIDES = [
     ].join('\n')
   },
   {
+    title: 'Bunker do Airfield — Chave Prata',
+    server: 'RAID-Z',
+    keywords: ['airfield','bunker airfield','banker airfield','bunker do airfield','chave prata','prata','bunker chave prata'],
+    answer: [
+      '**Bunker do Airfield:** para liberar a entrada, você precisa encontrar e usar a **Chave Prata**.',
+      'A localização e a imagem da chave ficam no canal **⚪・bunker-airfield**.'
+    ].join('\n')
+  },
+  {
+    title: 'Missões de Raid via Rádio — 89.5 FM',
+    server: 'RAID-Z',
+    keywords: ['missao de raid','missão de raid','missoes de raid','missões de raid','missao radio','missão rádio','missoes radio','missões rádio','radio 89.5','89.5 fm','frequencia 89.5','frequência 89.5','dynamic radio mission'],
+    answer: [
+      '**Missões de Raid via Rádio:** ligue um rádio e sintonize na frequência **89.5 FM**.',
+      'As transmissões podem indicar resgates, investigações, eliminações, entregas, invasões e outros objetivos perigosos.',
+      'Complete os desafios para disputar loot e recompensas especiais. O guia fica no canal **📻・missoes-de-raid**.'
+    ].join('\n')
+  },
+
+  {
     title: 'Bunker de Solnechny — Cartão Perfurado e Chave Vermelha',
     server: 'RAID-Z',
-    keywords: ['solnechny','solnichniy','bunker solnechny','banker solnechny','cartao perfurado','cartão perfurado','chave vermelha','marreta','loot principal'],
+    keywords: ['solnechny','solnichniy','bunker solnechny','banker solnechny','cartao perfurado','cartão perfurado','chave vermelha','marreta','loot principal','chave branca','nbc branca','roupa nbc branca'],
     answer: [
       '**Bunker de Solnechny:** a primeira entrada exige o **Cartão Perfurado** e a **Chave Vermelha**.',
       '',
       'Depois dessa etapa, uma **marreta será spawnada**. Pegue a marreta e use no segundo local para abrir o acesso onde está o **loot principal**.',
       '',
+      'No bunker podem dropar de **1 a 4 Chaves Brancas** e a **roupa NBC Branca**, usadas para acessar e abrir as recompensas da Plataforma Congelante.',
+      '',
       'O passo a passo com todas as imagens fica no canal **🔴・bunker-solnechny**.'
+    ].join('\n')
+  },
+
+
+  {
+    title: 'Plataforma Congelante — Chave Branca e NBC Branca',
+    server: 'RAID-Z',
+    keywords: ['plataforma','plataforma congelante','area congelante','área congelante','chave branca','chaves brancas','nbc branca','roupa nbc branca','traje nbc branco','4 portas','quatro portas','frio extremo','congelante'],
+    answer: [
+      '**Plataforma Congelante:** para chegar ao local, é obrigatório usar a **roupa NBC Branca completa**, pois a área tem frio extremo.',
+      '',
+      'A plataforma possui **4 portas de recompensa** e cada porta precisa de **1 Chave Branca**.',
+      '',
+      'As Chaves Brancas dropam no **Bunker de Solnechny**. Podem vir de **1 até 4 chaves**, então a quantidade de portas abertas depende da sorte.',
+      '',
+      'O guia com imagens fica no canal **❄️・plataforma-congelante**.'
     ].join('\n')
   },
 
@@ -1370,7 +1408,7 @@ function isClearlyDayZOrServerQuestion(question = '') {
     'remedio','remédio','tetracycline','vitamina','charcoal','carro','veiculo','veículo','radiador','spark plug','bateria',
     'arma','municao','munição','mira','fogueira','pesca','pescar','craft','storage','mmg','keycard','airdrop','koth',
     'plane crash','expansion','navigation','codelock','workbench','bancada','vpp','cf','dabs','mod','mods','ticket','admin','adm','staff',
-    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal','gorka','tisy','troitskoe','troitskoe military','pavlovo','solnechny','container barco','barco','navio','area contaminada','área contaminada','chave verde','chave amarela','chave bronze','chave dourada','chave azul','chave vermelha','cartao perfurado','cartão perfurado','marreta'
+    'construcao vanilla pro','construção vanilla pro','construcoes vanilla pro','construções vanilla pro','vanilla pro','vanilla+','carro blindado','blindado','gunter','saco de dormir','sleeping bag','bunker','banker','subterraneo','subterrâneo','alcapao','alçapão','upgrade base','loja','store','garagem','seguro','seguros','seguro normal','seguro por roubo','kit inicial','resgatar','comprar','moedas','sz coins','saldo','skin','skins','steam64','steamid','veiculo','veículo','categoria','promoção','promocao','carro blindado','blindado','gunter','porta do gunter','chapa blindada','parafusos','saco de dormir','sleeping bag','fob','base principal','gorka','tisy','troitskoe','troitskoe military','pavlovo','airfield','solnechny','container barco','barco','navio','area contaminada','área contaminada','chave verde','chave amarela','chave bronze','chave dourada','chave azul','chave prata','chave vermelha','cartao perfurado','cartão perfurado','marreta','missao de raid','missão de raid','missoes de raid','missões de raid','radio 89.5','89.5 fm','plataforma','plataforma congelante','area congelante','área congelante','chave branca','chaves brancas','nbc branca','roupa nbc branca','traje nbc branco','4 portas','quatro portas','congelante'
   ];
 
   return words.some((word) => text.includes(normalizeText(word)));

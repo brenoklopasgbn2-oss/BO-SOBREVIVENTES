@@ -117,12 +117,11 @@
                 <button class="btn small primary">Adicionar troféu</button>
               </form>
             </details>
-            <details class="admin-details-v34 danger-details-v35"><summary>🗑️ Apagar clã</summary>
-              <form method="POST" action="/admin/clans/<%= c.id %>/delete" class="inline-grid admin-inline-stack-v34" onsubmit="return confirm('Apagar definitivamente o clã [<%= c.tag %>] <%= c.name %>?')">
-                <p class="muted"><strong>Atenção:</strong> remove o clã, membros, solicitações e troféus ligados a ele. O acesso automático ao traje VIP do clã também será retirado.</p>
-                <input name="confirmClanDelete" placeholder="Digite APAGAR <%= c.tag.toUpperCase() %>" required>
+            <details class="admin-details-v34 danger-details-v35"><summary>Apagar clã</summary>
+              <form method="POST" action="/admin/clans/<%= c.id %>/delete" class="inline-grid admin-inline-stack-v34">
+                <p class="muted">Apaga o clã, membros e troféus dele. Precisa da mesma senha do painel admin.</p>
                 <input name="adminPassword" type="password" placeholder="Senha admin" required>
-                <button class="btn small danger" type="submit">Apagar clã definitivamente</button>
+                <button class="btn small danger">Apagar clã</button>
               </form>
             </details>
           </td>

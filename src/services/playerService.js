@@ -6,22 +6,17 @@ import { logAudit } from './auditService.js';
 export async function getPlayerFromCookie(req) {
   const token = req.cookies?.sz_player_token;
   if (!token) return null;
-  const player = await prisma.player.findUnique({
-    where: { rememberToken: token },
-    omit: { avatarData: true }
-  });
-  return player ? { ...player, hasAvatar: Boolean(player.avatarMime) } : null;
+  return prisma.player.findUnique({ where: { rememberToken: token } });
 }
 
-export async function upsertPlayerBySteam64({ steam64, nickname, discordId, overwriteNickname = false }) {
+export async function upsertPlayerBySteam64({ steam64, nickname, discordId }) {
   const cleanedSteam = String(steam64 || '').trim();
   if (!steamLooksValid(cleanedSteam)) {
     throw new Error('Steam64 inválido. Ele precisa ter 17 números.');
   }
 
-  const cleanedNickname = nickname?.trim() || undefined;
   const data = {
-    nickname: cleanedNickname,
+    nickname: nickname?.trim() || undefined,
     discordId: discordId?.trim() || undefined
   };
 
@@ -30,8 +25,7 @@ export async function upsertPlayerBySteam64({ steam64, nickname, discordId, over
     const updated = await prisma.player.update({
       where: { id: existing.id },
       data: {
-        nickname: overwriteNickname ? cleanedNickname : (existing.nickname || cleanedNickname || undefined),
-        discordId: data.discordId,
+        ...data,
         rememberToken: existing.rememberToken || uuidv4()
       }
     });
@@ -65,27 +59,15 @@ export async function changePlayerCoins({ playerId, amount, reason, refType, ref
     throw new Error('Quantidade de moedas inválida.');
   }
 
-  let updatedPlayer;
-  if (amount < 0) {
-    const debit = Math.abs(amount);
-    const changed = await tx.player.updateMany({
-      where: { id: playerId, coins: { gte: debit } },
-      data: { coins: { decrement: debit } }
-    });
-    if (!changed.count) {
-      const exists = await tx.player.findUnique({ where: { id: playerId }, select: { id: true } });
-      if (!exists) throw new Error('Player não encontrado.');
-      throw new Error('Saldo insuficiente.');
-    }
-    updatedPlayer = await tx.player.findUnique({ where: { id: playerId } });
-  } else {
-    updatedPlayer = await tx.player.update({
-      where: { id: playerId },
-      data: { coins: { increment: amount } }
-    });
-  }
+  const player = await tx.player.findUnique({ where: { id: playerId } });
+  if (!player) throw new Error('Player não encontrado.');
+  const balanceAfter = player.coins + amount;
+  if (balanceAfter < 0) throw new Error('Saldo insuficiente.');
 
-  const balanceAfter = updatedPlayer.coins;
+  const updatedPlayer = await tx.player.update({
+    where: { id: playerId },
+    data: { coins: balanceAfter }
+  });
 
   await tx.coinLedger.create({
     data: {

@@ -1,0 +1,14 @@
+ATUALIZAÇÃO RAID-Z — PLATAFORMA CONGELANTE
+
+1. Novo canal automático: ❄️・plataforma-congelante
+2. Painel com as imagens da plataforma, Chave Branca e roupa NBC Branca.
+3. A plataforma possui 4 portas; cada porta usa 1 Chave Branca.
+4. No Bunker de Solnechny podem dropar de 1 a 4 Chaves Brancas.
+5. A roupa NBC Branca é obrigatória para chegar à área congelante.
+6. A RAID-Z IA foi atualizada para responder dúvidas sobre a plataforma.
+
+COMO APLICAR
+- Suba esta versão do bot.
+- Reinicie o bot.
+- Use /setup ou o botão de atualizar canais.
+- Nenhum canal ou mensagem manual será apagado.
