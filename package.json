@@ -1,6 +1,6 @@
 {
   "name": "bot-raid-z",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Bot Discord para recriar e organizar a comunidade DayZ RAID-Z Vanilla.",
   "main": "src/index.js",
   "scripts": {

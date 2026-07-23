@@ -3,6 +3,7 @@ const { config } = require('../config');
 const { readCommandFiles } = require('../utils/readFiles');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { initializeStaffStatsForGuild, setupDailyStaffStatsReport } = require('../stats/staffStats');
+const { ensureKothChannel } = require('../services/kothChannelService');
 
 function getLocalCommands() {
   return readCommandFiles()
@@ -67,6 +68,14 @@ module.exports = {
       await guild.members.fetch().catch(() => null);
       initializeStaffStatsForGuild(guild);
       await refreshTicketPanel(guild).catch(() => null);
+
+      try {
+        const result = await ensureKothChannel(guild, { updatePanel: true, skipIfNoCategory: true });
+        if (result.created) console.log(`Canal ${result.channel.name} criado automaticamente em ${guild.name}.`);
+        else if (result.moved) console.log(`Canal ${result.channel.name} movido para a CENTRAL RAID-Z em ${guild.name}.`);
+      } catch (error) {
+        console.error(`Erro ao criar/atualizar o canal KOTH em ${guild.name}:`, error);
+      }
     }
   }
 };

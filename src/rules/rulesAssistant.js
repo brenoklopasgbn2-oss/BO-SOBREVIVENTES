@@ -97,6 +97,22 @@ const BUNKER_GUIDES = [
   },
 
   {
+    title: 'KOTH RAID-Z — fumaça e loot dinâmico',
+    server: 'RAID-Z',
+    keywords: ['koth','king of the hill','king-of-the-hill','rei da colina','fumaça branca','fumaca branca','fumaça vermelha','fumaca vermelha','loot koth','recompensa koth','loot dinamico','loot dinâmico','quantos players koth','jogadores dentro koth','pvp koth'],
+    answer: [
+      '**KOTH RAID-Z:** entre na área marcada e dispute o controle do local até a conclusão do evento.',
+      '',
+      '⚪ **Fumaça branca:** não há ninguém fazendo o KOTH naquele momento; o evento está livre para ser iniciado.',
+      '🔴 **Fumaça vermelha:** o KOTH está em progresso e existem jogadores disputando a área.',
+      '',
+      'O loot é **dinâmico**: quanto mais jogadores forem detectados **dentro da área do KOTH**, melhor será a recompensa final. O objetivo é gerar mais PvP e fazer o risco do evento valer a pena.',
+      '',
+      'O guia completo com imagem fica no canal **🚩・koth**.'
+    ].join('\n')
+  },
+
+  {
     title: 'Bunker de Solnechny — Cartão Perfurado e Chave Vermelha',
     server: 'RAID-Z',
     keywords: ['solnechny','solnichniy','bunker solnechny','banker solnechny','cartao perfurado','cartão perfurado','chave vermelha','marreta','loot principal','chave branca','nbc branca','roupa nbc branca'],

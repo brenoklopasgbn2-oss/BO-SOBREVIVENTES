@@ -19,6 +19,7 @@ const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
 const { successEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
+const { ensureKothChannel } = require('../services/kothChannelService');
 
 function getCategoryOverwrites(guild, definition) {
   if (definition.visibleToEveryone) return visibleToEveryoneOverwrites(guild);
@@ -216,6 +217,15 @@ module.exports = {
       }
     }
 
+    let kothResult;
+    try {
+      kothResult = await ensureKothChannel(interaction.guild, { updatePanel: true });
+      if (kothResult.channel) ensuredChannels.set(CHANNELS.koth, kothResult.channel);
+    } catch (error) {
+      console.error('Erro ao garantir o canal KOTH:', error);
+      return interaction.editReply(`❌ Não consegui criar o canal **${CHANNELS.koth}**. Motivo: ${error.message}`);
+    }
+
     const findChannel = (name) => ensuredChannels.get(name) || interaction.guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased?.());
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel);
@@ -249,9 +259,10 @@ module.exports = {
       { name: 'Categorias novas', value: String(categories.length), inline: true },
       { name: 'BBP → Vanilla+', value: String(migration.vanillaPlusMoved), inline: true },
       { name: 'Antigos → Vanilla', value: String(migration.vanillaMoved), inline: true },
+      { name: 'Canal KOTH', value: kothResult.created ? 'Criado agora' : (kothResult.moved ? 'Movido para a CENTRAL RAID-Z' : 'Confirmado e atualizado'), inline: true },
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo, Airfield/Chave Prata e Solnechny**, as **missões de raid via rádio**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo, Airfield/Chave Prata e Solnechny**, o canal **🚩・koth** com loot dinâmico, as **missões de raid via rádio**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
   }
 };
