@@ -13,6 +13,19 @@ function buildBunkerPanel() {
     .setImage('attachment://bunker-subterraneo-2.jpg')
     .setFooter({ text: 'RAID-Z • Guia de bunker subterrâneo' });
 
+  const regras = new EmbedBuilder()
+    .setColor(0xff3131)
+    .setTitle('🚨 Regras Oficiais do Bunker Subterrâneo')
+    .setDescription([
+      '• Todo bunker sem **bandeira visível na parte externa** será considerado **FOB**.',
+      '• Bunker sem **cercado externo com bandeira** também será considerado **FOB**.',
+      '• Para ser reconhecido como **base principal**, o bunker precisa ter **cercado externo e bandeira visível do lado de fora**.',
+      '• Bunkers classificados como FOB podem sofrer **raid 24 horas por dia, todos os dias**.',
+      '• É **proibido raid por falha em bunker subterrâneo**. Não é necessário construir duas paredes, uma sobre a outra, para bloquear a entrada.',
+      '• Se o bunker estiver dentro da base principal, a entrada dele **não poderá ficar trancada com cadeado durante o horário de raid**.',
+      '• O limite continua sendo de **10 portões com CodeLock por base**, contando também os portões construídos dentro do bunker.'
+    ].join('\n'));
+
   const nivel1 = new EmbedBuilder()
     .setColor(0xa05a2c)
     .setTitle('🪵 Nível 1')
@@ -47,6 +60,7 @@ function buildBunkerPanel() {
 
   return [
     { embeds: [intro], files: [image('bunker-subterraneo-2.jpg')] },
+    { embeds: [regras] },
     { embeds: [nivel1], files: [image('bunker-subterraneo-1.jpg')] },
     { embeds: [nivel2] },
     { embeds: [nivel3], files: [image('bunker-subterraneo-3.jpg')] }

@@ -1,0 +1,15 @@
+ATUALIZAÇÃO RAID-Z — REGRAS DO BUNKER SUBTERRÂNEO
+
+- Todo bunker subterrâneo sem bandeira visível na parte externa passa a ser considerado FOB.
+- Bunker sem cercado externo com bandeira também é considerado FOB.
+- Para ser base principal, o bunker precisa ter cercado externo e bandeira visível do lado de fora.
+- Bunkers classificados como FOB podem sofrer raid 24 horas por dia.
+- Raid por falha em bunker subterrâneo é proibido.
+- Bunker dentro da base principal não pode permanecer trancado com cadeado durante o horário oficial de raid.
+- O limite de 10 portões com CodeLock inclui os portões construídos dentro do bunker.
+
+Arquivos atualizados:
+- src/data/rulesVanilla.js
+- src/panels/bunkerPanel.js
+- src/rules/rulesAssistant.js
+- src/config/constants.js

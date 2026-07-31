@@ -28,6 +28,12 @@ const BUNKER_GUIDES = [
     answer: [
       '**Bunker subterrâneo RAID-Z:** escolha um local plano e escondido para a entrada, use a **pá** para cavar e depois construa/melhore com a ferramenta certa.',
       '',
+      '**Regras do bunker:** todo bunker sem **bandeira visível na parte externa** será considerado **FOB**. Bunker sem **cercado externo com bandeira** também será FOB. Para ser base principal, precisa ter cercado externo e bandeira visível do lado de fora.',
+      '',
+      'Bunker classificado como FOB pode sofrer **raid 24 horas por dia**. É **proibido raid por falha em bunker subterrâneo**. Se o bunker estiver dentro da base principal, sua entrada não pode ficar trancada com cadeado durante o horário oficial de raid.',
+      '',
+      'A base inteira deve respeitar o limite de **10 portões com CodeLock**, incluindo os portões construídos dentro do bunker.',
+      '',
       '**Nível 1:** 6 troncos de madeira, 99 pregos e 40 tábuas. Depois coloque a **machadinha** nas mãos e construa o alçapão subterrâneo de nível 1.',
       '',
       '**Nível 2:** dentro da base, coloque a **pá** nas mãos, olhe para o chão ou parede e selecione **Upgrade Base / Melhorar Base**. Adicione 6 toras de madeira, 99 pregos, 20 chapas de metal e 40 tábuas. Depois use a **machadinha** e selecione **Upgrade Base** para o nível 2.',
@@ -231,6 +237,21 @@ const FAQS = [
     keywords: ['base','portao','portão','portoes','portões','codelock','cadeado','limite','quantos'],
     answer: 'Cada base pode ter no máximo **10 portões com CodeLock**. Todo portão que usa CodeLock conta para esse limite.',
     related: [{ set: 'vanilla', rule: 17 }]
+  },
+  {
+    title: 'Regras de raid em bunker subterrâneo',
+    server: 'Vanilla',
+    keywords: ['raid bunker','raid em bunker','bunker fob','bunker é fob','bunker sem bandeira','bunker sem cercado','bunker 24h','raid 24h bunker','falha bunker','raid por falha bunker','cadeado bunker','portao bunker','portão bunker'],
+    answer: [
+      'Todo bunker subterrâneo sem **bandeira visível na parte externa** será considerado **FOB**. Bunker sem **cercado externo com bandeira** também será FOB.',
+      '',
+      'Para ser reconhecido como **base principal**, o bunker precisa ter **cercado externo e bandeira visível do lado de fora**.',
+      '',
+      'Bunker classificado como FOB pode sofrer **raid 24 horas por dia**. É **proibido raid por falha em bunker subterrâneo**.',
+      '',
+      'Se o bunker estiver dentro da base principal, sua entrada não poderá ficar trancada com cadeado durante o horário oficial de raid. O limite total continua sendo de **10 portões com CodeLock por base**, incluindo os portões internos do bunker.'
+    ].join('\n'),
+    related: [{ set: 'vanilla', rule: 17 }, { set: 'vanilla', rule: 20 }, { set: 'vanilla', rule: 57 }, { set: 'vanilla', rule: 58 }]
   },
   {
     title: 'Base perto de militar/bunker',

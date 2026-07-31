@@ -187,7 +187,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.rulesFlagRaid, aliases: CHANNEL_ALIASES[CHANNELS.rulesFlagRaid], topic: 'Regras de bandeira no raid e bandeira branca mensal.', readOnly: true },
       { type: 'text', name: CHANNELS.raidMissions, aliases: CHANNEL_ALIASES[CHANNELS.raidMissions], topic: 'Missões dinâmicas de raid transmitidas pelo rádio na frequência 89.5 FM.', readOnly: true },
       { type: 'text', name: CHANNELS.koth, aliases: CHANNEL_ALIASES[CHANNELS.koth], topic: 'KOTH RAID-Z: fumaça branca livre, fumaça vermelha em progresso e loot dinâmico conforme a quantidade de jogadores dentro da área.', readOnly: true },
-      { type: 'text', name: CHANNELS.bunkerSubterraneo, aliases: CHANNEL_ALIASES[CHANNELS.bunkerSubterraneo], topic: 'Tutorial oficial de base subterrânea: níveis, materiais e upgrades.', readOnly: true },
+      { type: 'text', name: CHANNELS.bunkerSubterraneo, aliases: CHANNEL_ALIASES[CHANNELS.bunkerSubterraneo], topic: 'Bunker subterrâneo: construção, classificação como base/FOB, raid 24h e regras oficiais.', readOnly: true },
       { type: 'text', name: CHANNELS.bunkerGorka, aliases: CHANNEL_ALIASES[CHANNELS.bunkerGorka], topic: 'Bunker de Gorka: requer Chave Bronze.', readOnly: true },
       { type: 'text', name: CHANNELS.containerBarco, aliases: CHANNEL_ALIASES[CHANNELS.containerBarco], topic: 'Rota da Chave Verde: dropa em área contaminada, abre o container do barco e libera a Chave Amarela para Troitskoe/Tisy.', readOnly: true },
       { type: 'text', name: CHANNELS.bunkerTisy, aliases: CHANNEL_ALIASES[CHANNELS.bunkerTisy], topic: 'Bunker de Troitskoe Military / Tisy: acesso com Chave Amarela; dropa armas e Chave Vermelha.', readOnly: true },

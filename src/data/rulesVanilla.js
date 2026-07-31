@@ -134,8 +134,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Base e Construção",
     "emoji": "🏰",
-    "title": "Limite de Portões",
-    "description": "Cada base poderá possuir no máximo **10 portões com CodeLock**. Todo portão que usa CodeLock conta para esse limite."
+    "title": "Limite de Portões e Bunker",
+    "description": "Cada base poderá possuir no máximo **10 portões com CodeLock**. Todo portão com CodeLock conta para esse limite, inclusive portões do cercado externo e portões construídos dentro do bunker subterrâneo. Se o bunker estiver dentro da base principal, a entrada do bunker não poderá permanecer trancada com cadeado durante o horário oficial de raid."
   },
   {
     "number": 18,
@@ -158,8 +158,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Base e Construção",
     "emoji": "🏰",
-    "title": "FOBs",
-    "description": "Cada clã poderá possuir FOB sem limite fixo, desde que não abuse da regra e não prejudique o servidor.\n\nRegras para FOB:\n• Portões obrigatoriamente em construção Vanilla oficial;\n• Máximo de 2 portões por FOB;\n• FOB não pode bloquear área pública ou ponto militar essencial."
+    "title": "FOBs e Bunkers Subterrâneos",
+    "description": "Cada clã poderá possuir FOB sem limite fixo, desde que não abuse da regra e não prejudique o servidor.\n\nClassificação dos bunkers subterrâneos:\n• Todo bunker subterrâneo sem bandeira visível na parte externa será considerado FOB;\n• Bunker sem cercado externo com bandeira também será considerado FOB;\n• Para ser reconhecido como base principal, o bunker deverá possuir cercado externo e bandeira visível do lado de fora.\n\nRegras para FOB:\n• Portões obrigatoriamente em construção Vanilla oficial;\n• Máximo de 2 portões por FOB;\n• FOB não pode bloquear área pública ou ponto militar essencial."
   },
   {
     "number": 21,
@@ -454,8 +454,8 @@ const RULES = [
     "server": "Vanilla",
     "category": "Raid Oficial",
     "emoji": "💥",
-    "title": "Raid em FOBs",
-    "description": "FOBs poderão sofrer raid 24 horas por dia, 7 dias por semana."
+    "title": "Raid em FOBs e Bunkers Subterrâneos",
+    "description": "FOBs poderão sofrer raid 24 horas por dia, 7 dias por semana. Todo bunker subterrâneo classificado como FOB também poderá ser raideado 24 horas por dia, todos os dias."
   },
   {
     "number": 58,
@@ -463,7 +463,7 @@ const RULES = [
     "category": "Raid por Falha",
     "emoji": "⚠️",
     "title": "Raid por Falha de Construção",
-    "description": "Raid por falha será permitido 24 horas por dia, 7 dias por semana, somente quando a entrada ocorrer por falha natural da construção da base. Glitch, bug, textura, colisão ou animação irregular continuam proibidos."
+    "description": "Raid por falha será permitido 24 horas por dia, 7 dias por semana, somente quando a entrada ocorrer por falha natural da construção da base. Glitch, bug, textura, colisão ou animação irregular continuam proibidos. **Em bunkers subterrâneos, raid por falha é totalmente proibido**, evitando a necessidade de construir duas paredes, uma sobre a outra, apenas para bloquear a entrada."
   },
   {
     "number": 59,
