@@ -1,5 +1,5 @@
 const path = require('path');
-const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits } = require('discord.js');
+const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ChannelType, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } = require('discord.js');
 const { CATEGORY_NAMES, CHANNELS, ROLE_NAMES, STAFF_ROLES, TICKET_TYPES } = require('../config/constants');
 const { baseEmbed, errorEmbed, successEmbed } = require('../utils/embeds');
 const { resolveRoles, staffPermissionOverwrites } = require('../utils/permissions');
@@ -7,6 +7,7 @@ const { logEvent } = require('../utils/logger');
 const { getMainStaffRole } = require('../panels/supportStatus');
 const { createTranscriptAttachment } = require('./transcript');
 const { recordTicketAnswered } = require('../stats/staffStats');
+const { getProfile, saveGameNickname } = require('./ticketProfileStore');
 
 function buildTicketControls(channelId) {
   return new ActionRowBuilder().addComponents(
@@ -53,13 +54,90 @@ function canCloseTicket(member, ownerId) {
   return isStaffMember(member) || member.id === ownerId;
 }
 
-async function openTicket(interaction, typeKey) {
+function normalizeGameNickname(value = '') {
+  return String(value).replace(/\s+/g, ' ').trim().slice(0, 32);
+}
+
+function normalizeTicketReason(value = '') {
+  return String(value).replace(/\r\n/g, '\n').trim().slice(0, 1000);
+}
+
+async function showTicketForm(interaction, typeKey) {
   const ticketType = TICKET_TYPES[typeKey];
   if (!ticketType) return interaction.reply({ embeds: [errorEmbed('Tipo de ticket inválido.')], ephemeral: true });
 
   const existing = findOpenTicketByOwner(interaction.guild, interaction.user.id);
   if (existing) {
     return interaction.reply({ embeds: [errorEmbed(`Você já possui um ticket aberto: <#${existing.id}>`)], ephemeral: true });
+  }
+
+  const profile = getProfile(interaction.guild.id, interaction.user.id);
+  const savedNickname = normalizeGameNickname(profile?.gameNickname || '');
+  const modal = new ModalBuilder()
+    .setCustomId(`ticket_form:${typeKey}`)
+    .setTitle(`Abrir ticket: ${ticketType.label}`.slice(0, 45));
+
+  if (!savedNickname) {
+    const nicknameInput = new TextInputBuilder()
+      .setCustomId('game_nickname')
+      .setLabel('Qual é seu nick dentro do jogo?')
+      .setPlaceholder('Digite exatamente como aparece no DayZ')
+      .setStyle(TextInputStyle.Short)
+      .setMinLength(2)
+      .setMaxLength(32)
+      .setRequired(true);
+
+    modal.addComponents(new ActionRowBuilder().addComponents(nicknameInput));
+  }
+
+  const reasonInput = new TextInputBuilder()
+    .setCustomId('ticket_reason')
+    .setLabel('O que você precisa?')
+    .setPlaceholder('Explique o problema, pedido ou denúncia com detalhes')
+    .setStyle(TextInputStyle.Paragraph)
+    .setMinLength(10)
+    .setMaxLength(1000)
+    .setRequired(true);
+
+  modal.addComponents(new ActionRowBuilder().addComponents(reasonInput));
+  return interaction.showModal(modal);
+}
+
+async function submitTicketForm(interaction, typeKey) {
+  const ticketType = TICKET_TYPES[typeKey];
+  if (!ticketType) return interaction.reply({ embeds: [errorEmbed('Tipo de ticket inválido.')], ephemeral: true });
+
+  const existing = findOpenTicketByOwner(interaction.guild, interaction.user.id);
+  if (existing) {
+    return interaction.reply({ embeds: [errorEmbed(`Você já possui um ticket aberto: <#${existing.id}>`)], ephemeral: true });
+  }
+
+  const profile = getProfile(interaction.guild.id, interaction.user.id);
+  const savedNickname = normalizeGameNickname(profile?.gameNickname || '');
+  let submittedNickname = '';
+  try {
+    submittedNickname = normalizeGameNickname(interaction.fields.getTextInputValue('game_nickname'));
+  } catch {
+    submittedNickname = '';
+  }
+  const gameNickname = savedNickname || submittedNickname;
+  const ticketReason = normalizeTicketReason(interaction.fields.getTextInputValue('ticket_reason'));
+
+  if (gameNickname.length < 2) {
+    return interaction.reply({ embeds: [errorEmbed('Informe um nick válido do jogo para abrir o ticket.')], ephemeral: true });
+  }
+
+  if (ticketReason.length < 10) {
+    return interaction.reply({ embeds: [errorEmbed('Explique com mais detalhes o que você precisa.')], ephemeral: true });
+  }
+
+  await interaction.deferReply({ ephemeral: true });
+
+  if (!savedNickname) {
+    const nicknameSaved = saveGameNickname(interaction.guild.id, interaction.user.id, gameNickname);
+    if (!nicknameSaved) {
+      return interaction.editReply({ embeds: [errorEmbed('Não consegui salvar seu nick. Tente abrir o ticket novamente.') ] });
+    }
   }
 
   const category = interaction.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildCategory && channel.name === CATEGORY_NAMES.ticketsOpen)
@@ -90,14 +168,16 @@ async function openTicket(interaction, typeKey) {
       `${interaction.user}, seu ticket foi criado com sucesso e a equipe já pode acompanhar o atendimento.`,
       `${serverInfo.emoji} **Servidor detectado:** ${serverInfo.label}.`,
       '',
-      'Envie **todas as informações importantes**, como prints, vídeos, IDs, nomes, horários e detalhes do ocorrido.',
-      'Isso ajuda a equipe a responder muito mais rápido.'
+      'O seu **nick do jogo ficou salvo**. Nos próximos tickets, você só precisará explicar o que precisa.',
+      'Envie prints, vídeos, IDs, horários e outras provas neste canal quando necessário.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
     .addFields(
       { name: '👤 Autor', value: `${interaction.user} (${interaction.user.id})`, inline: false },
+      { name: '🎮 Nick no jogo', value: gameNickname, inline: true },
       { name: '📂 Categoria', value: ticketType.label, inline: true },
       { name: `${serverInfo.emoji} Servidor`, value: serverInfo.label, inline: true },
+      { name: '📝 O que o player precisa', value: ticketReason, inline: false },
       { name: '📌 Status', value: 'Aberto', inline: true }
     );
 
@@ -109,12 +189,18 @@ async function openTicket(interaction, typeKey) {
   });
 
   await logEvent(interaction.guild, 'ticket_opened', '🎫 Ticket aberto', `${interaction.user} abriu ${channel}.`, [
+    { name: 'Nick no jogo', value: gameNickname, inline: true },
     { name: 'Tipo', value: ticketType.label, inline: true },
     { name: 'Servidor', value: `${serverInfo.emoji} ${serverInfo.label}`, inline: true },
+    { name: 'Motivo informado', value: ticketReason, inline: false },
     { name: 'Canal', value: `${channel}`, inline: true }
   ]);
 
-  return interaction.reply({ embeds: [successEmbed(`Ticket criado com sucesso: ${channel}`)], ephemeral: true });
+  return interaction.editReply({ embeds: [successEmbed(`Ticket criado com sucesso: ${channel}`)] });
+}
+
+async function openTicket(interaction, typeKey) {
+  return showTicketForm(interaction, typeKey);
 }
 
 async function claimTicket(interaction, channelId) {
@@ -179,4 +265,4 @@ async function closeTicket(interaction, channelId) {
   setTimeout(() => channel.delete('Ticket fechado').catch(() => null), 10000);
 }
 
-module.exports = { openTicket, claimTicket, saveTranscript, closeTicket };
+module.exports = { openTicket, submitTicketForm, claimTicket, saveTranscript, closeTicket };

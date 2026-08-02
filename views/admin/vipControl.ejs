@@ -1,0 +1,160 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="admin-shell-v46 vip-control-v141">
+  <%- include('../partials/alerts') %>
+  <%- include('_admin_nav') %>
+  <style>
+    .vip-control-v141 .admin-main-v49{min-width:0}
+    .vip-head-actions-v141{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .vip-head-actions-v141 form{margin:0}
+    .vip-summary-v141{display:grid;grid-template-columns:repeat(8,minmax(120px,1fr));gap:10px;margin:18px 0}
+    .vip-stat-v141{display:block;padding:15px;border:1px solid rgba(148,163,184,.15);border-radius:18px;background:linear-gradient(180deg,rgba(11,18,31,.96),rgba(4,8,15,.98));color:#fff;text-decoration:none}
+    .vip-stat-v141:hover{border-color:rgba(239,68,68,.48);transform:translateY(-1px)}
+    .vip-stat-v141 small{display:block;color:#8997aa;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+    .vip-stat-v141 strong{display:block;margin-top:7px;font-size:1.65rem}.vip-stat-v141 em{display:block;margin-top:3px;color:#aeb8c8;font-size:.7rem;font-style:normal}
+    .vip-stat-v141.warn strong{color:#ffd166}.vip-stat-v141.danger strong{color:#ff6969}.vip-stat-v141.good strong{color:#58e58c}.vip-stat-v141.purple strong{color:#c99cff}
+    .vip-filter-panel-v141,.vip-table-panel-v141,.vip-history-v141,.vip-help-v141{border:1px solid rgba(148,163,184,.15);border-radius:22px;background:linear-gradient(180deg,rgba(9,16,29,.94),rgba(3,7,13,.98));padding:16px;margin-bottom:16px;box-shadow:0 25px 70px rgba(0,0,0,.24)}
+    .vip-filter-form-v141{display:grid;grid-template-columns:minmax(220px,1.4fr) 170px 210px 220px auto;gap:9px;align-items:end}
+    .vip-filter-form-v141 label{display:grid;gap:6px;color:#cbd5e1;font-size:.72rem;font-weight:900}.vip-filter-form-v141 input,.vip-filter-form-v141 select{width:100%;min-width:0;background:#050b15;border:1px solid rgba(148,163,184,.18);border-radius:11px;color:#fff;padding:11px}
+    .vip-filter-tabs-v141{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.vip-filter-tabs-v141 a{padding:8px 11px;border:1px solid rgba(148,163,184,.16);border-radius:999px;color:#b7c1cf;text-decoration:none;font-size:.7rem;font-weight:900}.vip-filter-tabs-v141 a.active{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.12);color:#fff}
+    .vip-table-scroll-v141{overflow:auto}.vip-table-v141{width:100%;min-width:1380px;border-collapse:collapse}.vip-table-v141 th{padding:10px;text-align:left;color:#8c99aa;font-size:.64rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(148,163,184,.16)}.vip-table-v141 td{padding:11px 10px;vertical-align:top;border-bottom:1px solid rgba(148,163,184,.1);font-size:.75rem}.vip-table-v141 tr:last-child td{border-bottom:0}.vip-table-v141 strong{color:#fff}.vip-table-v141 small{display:block;margin-top:3px;color:#8996a8}.vip-table-v141 code{font-size:.69rem;color:#d8e1ec}
+    .vip-status-v141{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:.63rem;font-weight:1000}.vip-status-v141.active{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.32);color:#75f0a0}.vip-status-v141.expiring{background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.34);color:#ffd676}.vip-status-v141.expired{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.35);color:#ff8585}.vip-status-v141.cancelled{background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.28);color:#b9c2cf}
+    .vip-source-v141{display:inline-flex;margin-top:5px;padding:4px 7px;border-radius:7px;background:rgba(168,85,247,.12);color:#d9b8ff;font-size:.61rem;font-weight:900}.vip-7d-v141{display:inline-flex;margin:5px 0 0 4px;padding:4px 7px;border-radius:7px;background:rgba(56,189,248,.11);color:#83d9ff;font-size:.61rem;font-weight:900}
+    .vip-mod-v141{max-width:190px}.vip-mod-v141.ok{color:#79eca2}.vip-mod-v141.wait{color:#ffd36a}.vip-mod-v141.off{color:#ff8b8b}
+    .vip-actions-v141{display:grid;gap:7px;min-width:190px}.vip-actions-v141 form{display:flex;gap:6px;margin:0}.vip-actions-v141 input{width:70px;min-width:0;background:#050b15;border:1px solid rgba(148,163,184,.2);border-radius:8px;color:#fff;padding:8px}.vip-actions-v141 button{white-space:nowrap}.vip-sync-btn-v141{background:rgba(56,189,248,.12)!important;border-color:rgba(56,189,248,.3)!important;color:#a7e4ff!important}.vip-remove-btn-v141{background:rgba(239,68,68,.12)!important;border-color:rgba(239,68,68,.3)!important;color:#ffaaaa!important}
+    .vip-empty-v141{padding:30px;text-align:center;color:#8491a3}.vip-pagination-v142{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}.vip-pagination-v142 span{color:#aeb8c8;font-size:.75rem;font-weight:850}.vip-history-list-v141{display:grid;gap:7px;max-height:440px;overflow:auto}.vip-history-row-v141{display:grid;grid-template-columns:155px minmax(180px,1fr) 180px 190px;gap:10px;padding:10px;border:1px solid rgba(148,163,184,.11);border-radius:11px;background:rgba(255,255,255,.025);font-size:.7rem}.vip-history-row-v141 small{color:#8996a7}.vip-help-v141{border-color:rgba(245,158,11,.26);background:linear-gradient(180deg,rgba(66,42,5,.18),rgba(4,8,14,.96))}.vip-help-v141 p{margin:6px 0;color:#c5cfdb}.vip-help-v141 strong{color:#ffe196}
+    @media(max-width:1450px){.vip-summary-v141{grid-template-columns:repeat(4,1fr)}.vip-filter-form-v141{grid-template-columns:1fr 1fr 1fr}.vip-filter-form-v141 .wide-v141{grid-column:span 2}}
+    @media(max-width:850px){.vip-summary-v141{grid-template-columns:1fr 1fr}.vip-filter-form-v141{grid-template-columns:1fr}.vip-filter-form-v141 .wide-v141{grid-column:auto}.vip-history-row-v141{grid-template-columns:1fr}}
+  </style>
+  <section class="admin-main-v49">
+    <% const baseQuery = (nextFilter) => { const params = new URLSearchParams(); if (nextFilter && nextFilter !== 'all') params.set('filter', nextFilter); if (q) params.set('q', q); if (source) params.set('source', source); if (outfitId) params.set('outfitId', outfitId); const text = params.toString(); return '/admin/vip-control' + (text ? '?' + text : ''); }; %>
+    <% const pageQuery = (nextPage) => { const params = new URLSearchParams(); if (filter && filter !== 'all') params.set('filter', filter); if (q) params.set('q', q); if (source) params.set('source', source); if (outfitId) params.set('outfitId', outfitId); if (nextPage > 1) params.set('page', String(nextPage)); const text = params.toString(); return '/admin/vip-control' + (text ? '?' + text : ''); }; %>
+    <% const currentReturnTo = pageQuery(page); %>
+    <div class="admin-page-head-v46">
+      <p class="eyebrow">Administração / Histórico</p>
+      <h1>Controle completo dos VIPs</h1>
+      <p class="muted">Veja quem possui VIP, quando vence, quais VIPs de 7 dias já venceram e quando o mod consultou cada cadastro. O histórico não some quando o arquivo é removido do FTP.</p>
+      <div class="vip-head-actions-v141">
+        <form method="POST" action="/admin/vip-control/sync-all" onsubmit="return confirm('Reenviar todos os VIPs ativos e remover do FTP os vencidos/cancelados?')">
+          <input type="hidden" name="returnTo" value="<%= currentReturnTo %>">
+          <button class="btn primary" type="submit">🔄 Sincronizar todos no FTP</button>
+        </form>
+        <a class="btn" href="/admin/outfits">🧥 Criar ou editar trajes</a>
+      </div>
+    </div>
+
+    <div class="vip-summary-v141">
+      <a class="vip-stat-v141" href="<%= baseQuery('all') %>"><small>Histórico total</small><strong><%= stats.total %></strong><em>Todos os registros</em></a>
+      <a class="vip-stat-v141 good" href="<%= baseQuery('active') %>"><small>VIPs ativos</small><strong><%= stats.active %></strong><em>Arquivo deve existir no FTP</em></a>
+      <a class="vip-stat-v141 warn" href="<%= baseQuery('expiring') %>"><small>Vencem em 7 dias</small><strong><%= stats.expiringSoon %></strong><em>Atenção para renovar</em></a>
+      <a class="vip-stat-v141 danger" href="<%= baseQuery('expired') %>"><small>Vencidos</small><strong><%= stats.expired %></strong><em>Arquivo removido ao vencer</em></a>
+      <a class="vip-stat-v141 purple" href="<%= baseQuery('expired7d') %>"><small>7 dias vencidos</small><strong><%= stats.expiredSevenDay %></strong><em>Inicial e streamer</em></a>
+      <a class="vip-stat-v141" href="<%= baseQuery('cancelled') %>"><small>Cancelados</small><strong><%= stats.cancelled %></strong><em>Substituídos ou removidos</em></a>
+      <a class="vip-stat-v141 warn" href="<%= baseQuery('unread') %>"><small>Mod não consultou</small><strong><%= stats.neverReadByMod %></strong><em>Ativos sem último spawn</em></a>
+      <a class="vip-stat-v141 danger" href="<%= baseQuery('conflict') %>"><small>Conflitos ativos</small><strong><%= stats.duplicateActivePlayers %></strong><em><%= stats.shadowedActive %> VIP(s) ocultado(s)</em></a>
+    </div>
+
+    <% if (stats.normalizedExpired > 0) { %>
+      <div class="alert success"><strong><%= stats.normalizedExpired %></strong> cadastro(s) que ainda estavam como ACTIVE, mas já tinham vencido, foram corrigidos para EXPIRED ao abrir este painel.</div>
+    <% } %>
+
+    <section class="vip-help-v141">
+      <h3>Por que o VIP “some”?</h3>
+      <p>Quando a validade termina ou o cadastro é cancelado, a sincronização <strong>remove automaticamente o JSON desse Steam64 da pasta inbox/vip</strong>. Antes, o painel de Trajes mostrava somente os ativos; por isso parecia que o cadastro tinha desaparecido. Aqui ele continua no histórico com a data e o motivo.</p>
+      <p><strong>“Consultado pelo mod”</strong> significa que o servidor pediu o traje pela API ao menos uma vez. Em instalações que usam somente o arquivo FTP, esse campo pode continuar vazio mesmo com o arquivo correto.</p>
+      <p>Se uma Steam64 tiver <strong>mais de um VIP ativo</strong>, o FTP envia somente o que possui o vencimento mais distante. O painel marca os outros como conflito, porque eles ficam ativos no banco, mas não são o traje escolhido pelo mod.</p>
+    </section>
+
+    <section class="vip-filter-panel-v141">
+      <form class="vip-filter-form-v141" method="GET" action="/admin/vip-control">
+        <label class="wide-v141">Buscar player, Steam64, traje ou cupom
+          <input name="q" value="<%= q %>" placeholder="Ex.: 7656119..., nome ou traje">
+        </label>
+        <label>Situação
+          <select name="filter">
+            <option value="all" <%= filter === 'all' ? 'selected' : '' %>>Todos</option>
+            <option value="active" <%= filter === 'active' ? 'selected' : '' %>>Ativos</option>
+            <option value="expiring" <%= filter === 'expiring' ? 'selected' : '' %>>Vencendo em 7 dias</option>
+            <option value="expired" <%= filter === 'expired' ? 'selected' : '' %>>Vencidos</option>
+            <option value="expired7d" <%= filter === 'expired7d' ? 'selected' : '' %>>7 dias vencidos</option>
+            <option value="cancelled" <%= filter === 'cancelled' ? 'selected' : '' %>>Cancelados</option>
+            <option value="unread" <%= filter === 'unread' ? 'selected' : '' %>>Mod não consultou</option>
+            <option value="conflict" <%= filter === 'conflict' ? 'selected' : '' %>>Conflitos ativos</option>
+          </select>
+        </label>
+        <label>Origem
+          <select name="source"><option value="">Todas</option><% sourceOptions.forEach(option => { %><option value="<%= option.value %>" <%= source === option.value ? 'selected' : '' %>><%= option.label %></option><% }) %></select>
+        </label>
+        <label>Traje
+          <select name="outfitId"><option value="">Todos os trajes</option><% outfits.forEach(outfit => { %><option value="<%= outfit.id %>" <%= outfitId === outfit.id ? 'selected' : '' %>><%= outfit.name %><%= outfit.active ? '' : ' (inativo)' %></option><% }) %></select>
+        </label>
+        <button class="btn primary" type="submit">Filtrar</button>
+      </form>
+      <div class="vip-filter-tabs-v141">
+        <a class="<%= filter === 'all' ? 'active' : '' %>" href="<%= baseQuery('all') %>">Todos</a>
+        <a class="<%= filter === 'active' ? 'active' : '' %>" href="<%= baseQuery('active') %>">Ativos</a>
+        <a class="<%= filter === 'expiring' ? 'active' : '' %>" href="<%= baseQuery('expiring') %>">Vencendo</a>
+        <a class="<%= filter === 'expired7d' ? 'active' : '' %>" href="<%= baseQuery('expired7d') %>">VIPs 7 dias vencidos</a>
+        <a class="<%= filter === 'expired' ? 'active' : '' %>" href="<%= baseQuery('expired') %>">Vencidos</a>
+        <a class="<%= filter === 'cancelled' ? 'active' : '' %>" href="<%= baseQuery('cancelled') %>">Cancelados</a>
+        <a class="<%= filter === 'conflict' ? 'active' : '' %>" href="<%= baseQuery('conflict') %>">Conflitos ativos</a>
+        <a href="/admin/vip-control">Limpar filtros</a>
+      </div>
+    </section>
+
+    <section class="vip-table-panel-v141">
+      <div class="section-head"><div><p class="eyebrow">Cadastros encontrados</p><h2><%= totalFiltered %> VIP(s)</h2></div></div>
+      <% if (!entries.length) { %><div class="vip-empty-v141">Nenhum VIP encontrado com esses filtros.</div><% } else { %>
+      <div class="vip-table-scroll-v141">
+        <table class="vip-table-v141">
+          <thead><tr><th>Player</th><th>Traje / origem</th><th>Situação</th><th>Início</th><th>Vencimento</th><th>Tempo</th><th>Leitura do mod</th><th>Cadastro</th><th>Controle</th></tr></thead>
+          <tbody>
+            <% entries.forEach(item => { const statusClass = item.state === 'ACTIVE' ? (item.expiringSoon ? 'expiring' : 'active') : item.state.toLowerCase(); const statusText = item.state === 'ACTIVE' ? (item.expiringSoon ? 'VENCENDO' : 'ATIVO') : (item.state === 'EXPIRED' ? 'VENCIDO' : 'CANCELADO'); const modClass = item.state !== 'ACTIVE' ? 'off' : (item.lastSpawnAt ? 'ok' : 'wait'); %>
+            <tr>
+              <td><strong><%= item.player?.nickname || 'Sem nome' %></strong><code><%= item.steam64 %></code><% if (item.player?.discordId) { %><small>Discord: <%= item.player.discordId %></small><% } %></td>
+              <td><strong><%= item.outfitTemplate?.name || 'Traje removido' %></strong><span class="vip-source-v141"><%= item.sourceLabel %></span><% if (item.isSevenDay) { %><span class="vip-7d-v141">7 DIAS</span><% } %><% if (item.activeConflict) { %><span class="vip-7d-v141" style="background:rgba(239,68,68,.12);color:#ff9f9f"><%= item.selectedForFtp ? 'ESCOLHIDO NO FTP' : 'OCULTO POR OUTRO VIP' %></span><% } %><% if (item.streamerCode) { %><small>Código: <%= item.streamerCode %></small><% } %></td>
+              <td><span class="vip-status-v141 <%= statusClass %>"><%= statusText %></span><small><%= item.remainingLabel %></small></td>
+              <td><%= dateTime(item.startsAt) %><small>Duração: <%= item.isPermanent ? 'permanente' : item.durationDays + ' dia(s)' %></small></td>
+              <td><strong><%= item.isPermanent ? 'Permanente' : dateTime(item.expiresAt) %></strong><% if (item.expiringSoon) { %><small style="color:#ffd166">Renovar em breve</small><% } %></td>
+              <td><%= item.remainingLabel %><small>Status banco: <%= item.status %></small></td>
+              <td class="vip-mod-v141 <%= modClass %>"><strong><%= item.modState %></strong><small><%= item.lastSpawnAt ? dateTime(item.lastSpawnAt) : 'Sem registro de consulta' %></small></td>
+              <td><small>Criado: <%= dateTime(item.createdAt) %></small><small>Atualizado: <%= dateTime(item.updatedAt) %></small><small>ID: <%= shortId(item.id) %></small></td>
+              <td>
+                <div class="vip-actions-v141">
+                  <form method="POST" action="/admin/vip-control/<%= item.id %>/sync"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-sync-btn-v141" type="submit">Atualizar FTP</button></form>
+                  <form method="POST" action="/admin/vip-control/<%= item.id %>/renew"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><input name="durationDays" type="number" min="1" max="3650" value="<%= item.isSevenDay ? 7 : 30 %>" title="Dias"><button class="btn small primary" type="submit">Renovar</button></form>
+                  <% if (item.state === 'ACTIVE') { %><form method="POST" action="/admin/vip-control/<%= item.id %>/revoke" onsubmit="return confirm('Remover este VIP agora?')"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-remove-btn-v141" type="submit">Remover</button></form><% } %>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% if (pageCount > 1) { %>
+        <nav class="vip-pagination-v142" aria-label="Paginação dos VIPs">
+          <% if (page > 1) { %><a class="btn small" href="<%= pageQuery(page - 1) %>">← Anterior</a><% } %>
+          <span>Página <%= page %> de <%= pageCount %> • até <%= perPage %> registros por página</span>
+          <% if (page < pageCount) { %><a class="btn small" href="<%= pageQuery(page + 1) %>">Próxima →</a><% } %>
+        </nav>
+      <% } %>
+      <% } %>
+    </section>
+
+    <section class="vip-history-v141">
+      <div class="section-head"><div><p class="eyebrow">Auditoria</p><h2>Últimas ações de VIP</h2></div></div>
+      <div class="vip-history-list-v141">
+        <% if (!history.length) { %><div class="vip-empty-v141">Nenhuma ação registrada.</div><% } %>
+        <% history.forEach(log => { %>
+          <div class="vip-history-row-v141">
+            <div><strong><%= log.label %></strong><small><%= dateTime(log.createdAt) %></small></div>
+            <div><strong><%= log.outfitName || 'Traje VIP' %></strong><small><%= log.action %></small></div>
+            <div><%= log.steam64 || 'Sem Steam64 na ação' %><small>Autor: <%= log.actor %></small></div>
+            <div><%= log.durationDays ? log.durationDays + ' dia(s)' : '' %><small><%= log.expiresAt && !Number.isNaN(log.expiresAt.getTime()) ? 'Vence: ' + dateTime(log.expiresAt) : '' %></small></div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  </section>
+</main>
+<%- include('../partials/footer') %>

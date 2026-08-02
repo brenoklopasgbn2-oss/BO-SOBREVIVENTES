@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs><radialGradient id="g" cx="50%" cy="35%" r="62%"><stop stop-color="#ef4444" stop-opacity=".42"/><stop offset=".55" stop-color="#111827"/><stop offset="1" stop-color="#020617"/></radialGradient><linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient></defs>
+  <rect width="800" height="500" rx="42" fill="url(#g)"/><ellipse cx="400" cy="390" rx="190" ry="42" fill="#000" opacity=".42"/>
+  <path d="M260 180h280c30 0 54 24 54 54v120c0 30-24 54-54 54H260c-30 0-54-24-54-54V234c0-30 24-54 54-54z" fill="url(#c)"/>
+  <path d="M306 180v-34c0-25 20-45 45-45h98c25 0 45 20 45 45v34" fill="none" stroke="#cbd5e1" stroke-width="26"/>
+  <rect x="368" y="228" width="64" height="132" rx="14" fill="#dc2626"/><rect x="334" y="262" width="132" height="64" rx="14" fill="#dc2626"/>
+  <path d="M226 236h348M226 354h348" stroke="#0f172a" stroke-width="8" opacity=".18"/>
+  <text x="400" y="470" text-anchor="middle" fill="#fee2e2" font-size="32" font-family="Arial" font-weight="900" letter-spacing="5">KIT MÉDICO</text>
+</svg>

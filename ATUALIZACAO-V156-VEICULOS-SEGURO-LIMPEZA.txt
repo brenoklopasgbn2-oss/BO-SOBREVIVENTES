@@ -1,0 +1,28 @@
+RAID-Z STORE V156 - VEICULOS, SEGURO E LIMPEZA TOTAL
+
+STEAM64 LIMPO UMA UNICA VEZ:
+76561198842331372
+
+O QUE E APAGADO:
+- Todos os PlayerVehicle desse Steam64, inclusive os corretos.
+- Filas PENDING/PROCESSING de veiculos e acessorios desse Steam64.
+- Vinculos globais de veiculos que pertencem a um Player, mas trazem outro Steam64.
+
+O QUE NAO E APAGADO:
+- Moedas.
+- Conta do player.
+- Compras concluidas.
+- VIPs.
+- Clas.
+
+CORRECAO DO SPAWN:
+A compra direta antes era enviada como "Veiculo comprado sem seguro".
+O mod antigo via a palavra SEGURO e ignorava o carro. Agora o site envia
+"Veiculo comprado" e republica lotes antigos no formato correto.
+
+FTP/SFTP:
+Ao iniciar, a V156 sincroniza imediatamente deliveries e insurance do Steam64
+acima, retirando JSON antigo que poderia nascer depois da limpeza.
+
+IMPORTANTE:
+A limpeza roda uma unica vez. Compras novas feitas depois do deploy permanecem.

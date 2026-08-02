@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const { errorEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
+const { submitTicketForm } = require('../tickets/ticketService');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -26,6 +27,14 @@ module.exports = {
         const button = client.buttons.get(buttonKey);
         if (!button) return;
         await button.execute(interaction, client);
+        return;
+      }
+
+      if (interaction.isModalSubmit()) {
+        const [action, value] = interaction.customId.split(':');
+        if (action === 'ticket_form') {
+          await submitTicketForm(interaction, value);
+        }
       }
     } catch (error) {
       console.error('Erro ao processar interação:', error);

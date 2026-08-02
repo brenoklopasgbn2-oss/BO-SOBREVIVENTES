@@ -1,0 +1,24 @@
+ATUALIZAÇÃO - TICKETS COM NICK SALVO E MOTIVO OBRIGATÓRIO
+
+O que mudou:
+
+1. Ao clicar em qualquer botão de ticket, agora abre um formulário antes de criar o canal.
+2. Na primeira vez, o player precisa informar obrigatoriamente:
+   - Nick usado dentro do DayZ.
+   - O que ele precisa / motivo do ticket.
+3. O nick fica salvo por Discord ID e servidor do Discord.
+4. Nos próximos tickets, o bot reutiliza o nick salvo e pede somente o motivo.
+5. O canal do ticket já abre mostrando:
+   - Autor do ticket.
+   - Nick dentro do jogo.
+   - Categoria.
+   - Servidor.
+   - Texto explicando o que o player precisa.
+6. O motivo exige pelo menos 10 caracteres, evitando tickets vazios.
+7. Continua permitido somente um ticket aberto por player.
+
+Arquivo de dados criado automaticamente:
+  data/ticketPlayerProfiles.json
+
+IMPORTANTE SOBRE HOSPEDAGEM:
+O arquivo precisa permanecer salvo entre reinicializações/deploys para manter os nicks cadastrados. Se a hospedagem apagar os arquivos a cada novo deploy, use armazenamento/volume persistente para a pasta data.

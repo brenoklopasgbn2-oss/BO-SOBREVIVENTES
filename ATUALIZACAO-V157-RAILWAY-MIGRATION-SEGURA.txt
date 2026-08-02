@@ -1,0 +1,15 @@
+RAID-Z STORE V157 - CORREÇÃO DO CRASH P3009 NO RAILWAY
+
+O que foi corrigido:
+- A migration do projeto agora usa exatamente o mesmo nome registrado como falho no banco:
+  20260730112500_v152_game_access_tokens
+- O start detecta somente essa falha conhecida, marca a tentativa anterior como revertida e tenta novamente.
+- Nenhum prisma migrate reset é executado.
+- Nenhuma tabela é apagada.
+- Nenhuma migration desconhecida é resolvida automaticamente.
+- Se surgir outro erro diferente, o deploy para com log claro para proteger os dados.
+
+Comando de start configurado:
+node src/scripts/predeploySafetyCheck.js && prisma generate && node src/scripts/safeMigrateDeploy.js && node src/index.js
+
+Basta subir este ZIP no GitHub/Railway e fazer novo deploy.
