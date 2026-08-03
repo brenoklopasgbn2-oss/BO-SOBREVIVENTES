@@ -1,0 +1,19 @@
+RAID-Z STORE V168 — LIMPEZA E DESTRAVAMENTO DO PLAYER
+
+Steam64 corrigido: 76561199549567187
+
+O que acontece automaticamente no primeiro deploy desta versão:
+- remove o histórico de Purchase desse player;
+- remove os CheckoutAttempt antigos desse player;
+- remove toda DeliveryQueue comprada por ele ou destinada ao Steam64 dele;
+- preserva saldo RZ, Pix, CoinLedger, VIP, veículos, clã e demais dados;
+- retira do inbox/deliveries o JSON antigo individual que podia manter somente esse player travado;
+- grava um marcador no AppSetting para nunca executar a exclusão novamente em deploys futuros.
+
+Causa provável encontrada:
+O File Bridge mantém um arquivo por Steam64. Se o lote anterior daquele jogador fica ativo no FTP sem resultado do mod, compras seguintes ficam atrás desse mesmo lote e não recebem um novo arquivo. Por isso somente esse Steam64 podia parar de receber enquanto os demais funcionavam.
+
+Também foi adicionado no painel ADM > Players:
+- contagem de compras e entregas;
+- botão “Limpar compras” com senha ADM + confirmação LIMPAR;
+- a limpeza manual preserva saldo, Pix, VIP e veículos e retira apenas arquivo FTP órfão.

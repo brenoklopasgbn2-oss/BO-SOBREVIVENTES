@@ -235,6 +235,14 @@ publicRoutes.post('/player/logout', (req, res) => {
 });
 
 
+publicRoutes.get('/base-vip', (req, res) => {
+  res.render('baseVip', {
+    title: 'Base VIP',
+    success: req.query.success || null,
+    error: req.query.error || null
+  });
+});
+
 publicRoutes.get('/outfits', async (req, res, next) => {
   try {
     const outfits = await listOutfitTemplates({ serverType: 'vanilla' });
