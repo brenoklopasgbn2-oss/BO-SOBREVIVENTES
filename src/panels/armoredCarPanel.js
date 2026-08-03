@@ -10,26 +10,26 @@ const TIKTOK_URL = 'https://www.tiktok.com/@sobreviventez25?_r=1&_t=ZS-97p46uKyO
 function buildArmoredCarPanel() {
   const intro = new EmbedBuilder()
     .setColor(0xff3131)
-    .setTitle('🚙 Carro Blindado RAID-Z')
+    .setTitle('🚙 Carro Semi-Blindado RAID-Z')
     .setDescription([
-      'Guia oficial do craft do carro blindado.',
+      'Guia oficial do craft do carro semi-blindado.',
       '',
-      '**Ideia do craft:** você transforma peças do Gunter e materiais de reforço em chapas/partes blindadas para montar o carro.',
+      '**Ideia do craft:** você transforma peças do Gunter e materiais de reforço em chapas/partes semi-blindadas para montar o carro.',
       '',
       `🎬 **Vídeo demonstrativo:** ${TIKTOK_URL}`
     ].join('\n'))
     .setImage('attachment://carro-blindado-pronto.jpg')
-    .setFooter({ text: 'RAID-Z • Guia de carro blindado' });
+    .setFooter({ text: 'RAID-Z • Guia de carro semi-blindado' });
 
   const craftChapa = new EmbedBuilder()
     .setColor(0xe67e22)
-    .setTitle('🔩 Como fazer a chapa blindada')
+    .setTitle('🔩 Como fazer a chapa de reforço')
     .setDescription([
       '1. Pegue uma **porta do Gunter**.',
       '2. Use a **serra** para cortar a porta.',
       '3. Tenha **chapa** dentro do inventário.',
       '4. Tenha **parafusos** dentro do inventário.',
-      '5. Com esses itens, faça o craft das partes blindadas do carro.',
+      '5. Com esses itens, faça o craft das partes semi-blindadas do carro.',
       '',
       'Se a opção de craft não aparecer, confira se os itens estão no inventário certo, se a ferramenta está em bom estado e se você está usando a peça correta.'
     ].join('\n'))
@@ -44,7 +44,7 @@ function buildArmoredCarPanel() {
       '• **Chapa**',
       '• **Parafusos**',
       '',
-      'Esses materiais são usados para criar/reforçar as peças blindadas.'
+      'Esses materiais são usados para criar/reforçar as peças semi-blindadas.'
     ].join('\n'))
     .addFields(
       { name: '🪚 Serra', value: 'Usada para serrar a porta do Gunter.', inline: true },
@@ -57,7 +57,7 @@ function buildArmoredCarPanel() {
     .setColor(0xbdc3c7)
     .setTitle('🔩 Parafusos e montagem')
     .setDescription([
-      'Os **parafusos** fazem parte do craft das peças blindadas.',
+      'Os **parafusos** fazem parte do craft das peças semi-blindadas.',
       'Guarde os materiais antes de começar, porque sem eles a opção de craft pode não aparecer.'
     ].join('\n'))
     .setImage('attachment://carro-blindado-parafusos.jpg');

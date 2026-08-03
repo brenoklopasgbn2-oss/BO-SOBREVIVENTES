@@ -164,11 +164,11 @@ const BUNKER_GUIDES = [
     ].join('\n')
   },
   {
-    title: 'Carro blindado RAID-Z',
+    title: 'Carro semi-blindado RAID-Z',
     server: 'RAID-Z',
     keywords: ['carro blindado','carros blindados','blindado','veiculo blindado','veículo blindado','gunter','porta do gunter','serra','chapa blindada','parafuso','parafusos','craft blindado','craft carro','tiktok carro blindado'],
     answer: [
-      '**Carro blindado RAID-Z:** para fazer a chapa/peça blindada, pegue uma **porta do Gunter** e use a **serra** para cortar.',
+      '**Carro semi-blindado RAID-Z:** para fazer a chapa/peça blindada, pegue uma **porta do Gunter** e use a **serra** para cortar.',
       '',
       'Você também precisa ter **chapa** dentro do inventário e **parafusos** dentro do inventário para aparecer/fazer o craft das partes blindadas.',
       '',

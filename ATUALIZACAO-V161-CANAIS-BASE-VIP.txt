@@ -1,0 +1,13 @@
+ATUALIZAÇÃO V161 — CANAIS DISCORD
+
+Ao executar /setup:
+- Cria o canal 🏗️・base-vip na CENTRAL RAID-Z.
+- Publica automaticamente a imagem e as informações da Base VIP.
+- Informa que cada base tem valor de construção combinado com a ADM.
+- Informa mensalidade equivalente a 60% do valor da construção.
+- Informa aluguel de bica de água e bomba de gasolina.
+- Remove o canal 🛏️・saco-de-dormir, inclusive versões antigas do nome.
+- Renomeia 🚙・carro-blindado para 🚙・carro-semi-blindado.
+- Atualiza os textos do painel para Carro Semi-Blindado.
+
+IMPORTANTE: depois do deploy, execute /setup uma vez no Discord.

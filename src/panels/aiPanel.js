@@ -19,7 +19,7 @@ function buildAiPanel(guild) {
     .setDescription([
       'Olá, eu sou a **RAID-Z IA**.',
       '',
-      'Pergunte aqui sobre **regras, raid, base, clã, bandeira, KOTH, construções Vanilla Pro, bunkers, Plataforma Congelante, carro blindado, saco de dormir, tickets, loja e garagem**.',
+      'Pergunte aqui sobre **regras, raid, base, clã, bandeira, KOTH, construções Vanilla Pro, bunkers, Plataforma Congelante, carro semi-blindado, Base VIP, tickets, loja e garagem**.',
       'O Discord agora trabalha com **1 servidor apenas: RAID-Z Vanilla**.',
       '',
       '**Exemplos:**',
@@ -29,7 +29,7 @@ function buildAiPanel(guild) {
       '• o que significa fumaça branca ou vermelha no KOTH?',
       '• posso solicitar bandeira branca?',
       '• qual horário de raid?',
-      '• como faz o carro blindado?',
+      '• como faz o carro semi-blindado?',
       '• onde posso colocar o saco de dormir?',
       '• quais construções tem no Vanilla Pro?',
       '• como entro na Plataforma Congelante?',

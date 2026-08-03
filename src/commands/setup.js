@@ -12,7 +12,7 @@ const { buildGorkaBunkerPanel, buildTisyBunkerPanel, buildPavlovoBunkerPanel, bu
 const { buildBoatContainerPanel } = require('../panels/boatContainerPanel');
 const { buildVanillaProPanel } = require('../panels/vanillaProPanel');
 const { buildArmoredCarPanel } = require('../panels/armoredCarPanel');
-const { buildSleepingBagPanel } = require('../panels/sleepingBagPanel');
+const { buildBaseVipPanel } = require('../panels/baseVipPanel');
 const { buildRaidMissionsPanel } = require('../panels/raidMissionsPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
@@ -90,6 +90,25 @@ async function migrateLegacyRoles(guild) {
 
   // Atualização segura: não apaga cargos antigos do servidor.
   return { vanillaPlusMoved, vanillaMoved };
+}
+
+async function applyRequestedChannelMigrations(guild) {
+  let removedSleepingChannels = 0;
+  let renamedArmoredChannel = false;
+  const sleepingNames = ['🛏️・saco-de-dormir', 'saco-de-dormir', 'saco dormir', 'sleeping-bag', 'sleepingbag'];
+  const sleepingChannels = guild.channels.cache.filter((channel) => channel.type === ChannelType.GuildText && sleepingNames.includes(channel.name));
+  for (const channel of sleepingChannels.values()) {
+    const removed = await channel.delete('Canal do saco de dormir removido por solicitação da administração RAID-Z').then(() => true).catch((error) => { console.error(`Erro ao remover ${channel.name}:`, error); return false; });
+    if (removed) removedSleepingChannels += 1;
+  }
+
+  const armoredNames = ['🚙・carro-blindado', 'carro-blindado', 'carros-blindados', 'blindado', 'veiculo-blindado', 'veículo-blindado'];
+  const armoredChannel = guild.channels.cache.find((channel) => channel.type === ChannelType.GuildText && armoredNames.includes(channel.name));
+  if (armoredChannel && armoredChannel.name !== CHANNELS.carroSemiBlindado) {
+    const renamed = await armoredChannel.setName(CHANNELS.carroSemiBlindado, 'Atualização para Carro Semi-Blindado RAID-Z').then(() => true).catch((error) => { console.error('Erro ao renomear canal do carro:', error); return false; });
+    if (renamed) renamedArmoredChannel = true;
+  }
+  return { removedSleepingChannels, renamedArmoredChannel };
 }
 
 async function preserveDiscordChannels() {
@@ -202,7 +221,8 @@ module.exports = {
     const aiRole = interaction.guild.roles.cache.find((role) => role.name === ROLE_NAMES.ai);
     if (aiRole && !botMember.roles.cache.has(aiRole.id)) await botMember.roles.add(aiRole).catch(() => null);
 
-    const deletedChannels = await preserveDiscordChannels(interaction.guild);
+    const channelMigration = await applyRequestedChannelMigrations(interaction.guild);
+    await preserveDiscordChannels(interaction.guild);
 
     const categories = [];
     const ensuredChannels = new Map();
@@ -242,8 +262,8 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.bunkerSolnechny), buildSolnechnyBunkerPanel);
     await clearAndSendPanel(findChannel(CHANNELS.plataformaCongelante), buildPlataformaCongelantePanel);
     await clearAndSendPanel(findChannel(CHANNELS.construcoesVanillaPro), buildVanillaProPanel);
-    await clearAndSendPanel(findChannel(CHANNELS.carroBlindado), buildArmoredCarPanel);
-    await clearAndSendPanel(findChannel(CHANNELS.sacoDeDormir), buildSleepingBagPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.carroSemiBlindado), buildArmoredCarPanel);
+    await clearAndSendPanel(findChannel(CHANNELS.baseVip), buildBaseVipPanel);
     const aiChannel = findChannel(CHANNELS.rulesAsk);
     await clearAndSendPanel(aiChannel, () => buildAiPanel(interaction.guild));
     await cleanupLegacyAiChannels(interaction.guild, aiChannel);
@@ -255,7 +275,8 @@ module.exports = {
     await refreshTicketPanel(interaction.guild);
 
     await logEvent(interaction.guild, 'setup_completed', '✅ Setup RAID-Z executado', `${interaction.user} atualizou os canais oficiais RAID-Z sem apagar canais ou mensagens.`, [
-      { name: 'Canais apagados', value: '0 (atualização segura)', inline: true },
+      { name: 'Canal saco de dormir removido', value: String(channelMigration.removedSleepingChannels), inline: true },
+      { name: 'Carro semi-blindado', value: channelMigration.renamedArmoredChannel ? 'Canal renomeado' : 'Canal confirmado', inline: true },
       { name: 'Categorias novas', value: String(categories.length), inline: true },
       { name: 'BBP → Vanilla+', value: String(migration.vanillaPlusMoved), inline: true },
       { name: 'Antigos → Vanilla', value: String(migration.vanillaMoved), inline: true },
@@ -263,6 +284,6 @@ module.exports = {
       { name: 'Cargos do servidor', value: SERVER_ROLES.join(', '), inline: false }
     ]);
 
-    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado com segurança. **Não apaguei canais, categorias nem mensagens antigas**. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo, Airfield/Chave Prata e Solnechny**, o canal **🚩・koth** com loot dinâmico, as **missões de raid via rádio**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro blindado** e **saco de dormir**.`)] }).catch(() => null);
+    await interaction.editReply({ embeds: [successEmbed(`RAID-Z atualizado. O canal antigo de **saco de dormir foi removido conforme solicitado**; os demais canais e mensagens foram preservados. Criei/atualizei os canais oficiais, incluindo a rota do **container do barco/Chave Verde**, os canais de **Gorka, Tisy/Troitskoe, Pavlovo, Airfield/Chave Prata e Solnechny**, o canal **🚩・koth** com loot dinâmico, as **missões de raid via rádio**, **bunker subterrâneo**, **construções Vanilla Pro**, **carro semi-blindado** e **Base VIP**.`)] }).catch(() => null);
   }
 };
