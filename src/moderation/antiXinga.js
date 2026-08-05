@@ -1,438 +1,132 @@
 const { STAFF_ROLES } = require('../config/constants');
 
 /*
-  Anti-xingamento RAID-Z
+  Filtro de ofensas graves RAID-Z
 
-  Ele não depende só da lista abaixo.
-  O filtro também:
-  - tira acento;
-  - ignora ponto, traço, espaço e símbolo no meio da palavra;
-  - converte números usados para burlar: 0=o, 1=i, 3=e, 4=a, 5=s, 7=t;
-  - reduz letras repetidas: porrrra => porra;
-  - pega variações como v.s.f, v s f, f0d@, c4r4lh0, p0rr@.
+  Objetivo desta versão:
+  - NÃO apagar palavrões comuns ou provocações leves;
+  - apagar somente ofensas realmente pesadas, discriminação, racismo,
+    ameaças e incentivo a autoagressão;
+  - reconhecer tentativas simples de burlar com acento, símbolo, espaço
+    e números, sem procurar pedaços dentro de palavras normais.
 */
 
+// Expressões pesadas e direcionadas. Palavrões soltos como "porra", "merda",
+// "caralho", "foda", "lixo", "burro" etc. não são mais removidos.
 const BAD_WORDS = [
-  // Abreviações pesadas
   'fdp',
-  'f d p',
-  'tnc',
-  't n c',
-  'vsf',
-  'v s f',
-  'pqp',
-  'p q p',
-  'krl',
-  'crl',
-  'tmnc',
-  'vtmnc',
-  'vtnc',
-  'sfder',
-  'sfd',
-  'fms',
-  'fodc',
-  'fds',
-  'fodase',
-  'foda se',
-
-  // Família / ofensas pesadas
   'filho da puta',
   'filha da puta',
   'filho de puta',
   'filha de puta',
   'fio da puta',
   'fia da puta',
-  'filho duma puta',
-  'filha duma puta',
-  'mãe é puta',
-  'mae e puta',
-  'mãe puta',
-  'mae puta',
-
-  // Mandar tomar / xingamentos sexuais
   'vai tomar no cu',
+  'vai toma no cu',
   'tomar no cu',
   'toma no cu',
-  'vai toma no cu',
-  'vai no cu',
   'vai pro cu',
   'vai pra puta que pariu',
-  'puta que pariu',
-  'puta merda',
-  'puta vida',
-  'puta',
-  'putinha',
-  'puto',
-  'putinha',
-  'piranha',
-  'vagabunda',
-  'vagabundo',
-  'vadia',
-  'vadio',
-  'cadela',
-  'cachorra',
-  'safado',
-  'safada',
-
-  // Foder e variações
-  'vai se foder',
-  'vai se fude',
-  'vai se fudê',
-  'se foder',
-  'se fude',
-  'se fudê',
-  'foder',
-  'fuder',
-  'fude',
-  'fudi',
-  'fudeu',
-  'fodido',
-  'fodida',
-  'fudido',
-  'fudida',
-  'foda',
-  'f0da',
-  'fodase',
-
-  // Palavrões comuns
-  'porra',
-  'p0rra',
-  'porr@',
-  'poha',
-  'poha',
-  'porcaria',
-  'caralho',
-  'karalho',
-  'kralho',
-  'carai',
-  'caralio',
-  'caralhinho',
-  'desgraça',
-  'desgraca',
-  'desgraçado',
-  'desgracado',
-  'desgraçada',
-  'desgracada',
-  'merda',
-  'bosta',
-  'bostinha',
-  'cagado',
-  'cagada',
-  'cagão',
-  'cagao',
-  'cagona',
-  'cu',
-  'cuzão',
-  'cuzao',
-  'cusão',
-  'cusao',
-  'cuzinho',
-  'cuzao do caralho',
   'pau no cu',
   'pau no seu cu',
   'enfia no cu',
-  'vai se lascar',
-  'vai se ferrar',
-  'se lascar',
-  'se ferrar',
+  'vai se foder',
+  'vai se fude',
+  'se foder',
+  'se fude',
+  'motherfucker',
+  'son of a bitch',
+  'asshole',
+  'cunt'
+];
 
-  // Ofensas pessoais
-  'lixo',
-  'lixo humano',
-  'lixo de pessoa',
-  'lixo de player',
-  'verme',
-  'rato',
-  'ratazana',
-  'escória',
-  'escoria',
-  'podre',
-  'nojento',
-  'nojenta',
-  'imundo',
-  'imunda',
-  'arrombado',
-  'arrombada',
-  'maldito',
-  'maldita',
-  'burro',
-  'burra',
-  'animal',
-  'jumento',
-  'jegue',
-  'anta',
-  'idiota',
-  'otário',
-  'otario',
-  'otária',
-  'otaria',
-  'imbecil',
-  'retardado',
-  'retardada',
-  'mongol',
-  'mongoloide',
-  'babaca',
-  'bocó',
-  'boco',
-  'trouxa',
-  'palhaço',
-  'palhaco',
-  'palhaça',
-  'palhaca',
-  'fracassado',
-  'fracassada',
-  'inútil',
-  'inutil',
-  'tapado',
-  'tapada',
-  'lerdo',
-  'lerda',
-  'lesado',
-  'lesada',
-  'escroto',
-  'escrota',
-  'ridículo',
-  'ridiculo',
-  'ridícula',
-  'ridicula',
-  'vergonha',
-  'chorão',
-  'chorao',
-  'chorona',
-  'bebezão',
-  'bebezao',
-  'fedido',
-  'fedida',
-  'fedelho',
-  'fedelha',
-  'sem cérebro',
-  'sem cerebro',
-  'sem neurônio',
-  'sem neuronio',
-  'doente',
-  'doentão',
-  'doentao',
-  'retardado mental',
-  'débil',
-  'debil',
-  'débil mental',
-  'debil mental',
+// Abreviações de ofensas fortes. O regex aceita "f.d.p", "f d p", "v5f" etc.
+const SEVERE_ABBREVIATIONS = ['fdp', 'tnc', 'tmnc', 'vtnc', 'vtmnc', 'vsf', 'pnc'];
 
-  // Provocação de jogo
-  'noob lixo',
-  'nob lixo',
-  'bot lixo',
-  'player lixo',
-  'adm lixo',
-  'staff lixo',
-  'serve lixo',
-  'server lixo',
-  'servidor lixo',
-  'comunidade lixo',
-  'morre lixo',
-  'morre seu lixo',
-  'morre verme',
-  'morre praga',
-  'nojo de player',
-  'nojo desse server',
-  'nojo desse servidor',
-  'desinstala',
-  'desinstala o jogo',
-  'apaga o jogo',
-  'aprende jogar',
-  'aprende a jogar',
-  'sem dedo',
-  'sem mão',
-  'sem mao',
-  'mão de alface',
-  'mao de alface',
-  'ruim demais',
-  'horrível',
-  'horrivel',
-  'horrível demais',
-  'horrivel demais',
-  'mlk lixo',
-  'moleque lixo',
-  'kid lixo',
-  'camp lixo',
-  'camper lixo',
-  'camper nojento',
-  'base lixo',
-  'time lixo',
-  'clan lixo',
-  'clã lixo',
-  'squad lixo',
-  'joga nada',
-  'não joga nada',
-  'nao joga nada',
-  'mira lixo',
-  'mira horrivel',
-  'mira horrível',
-
-  // Relação / provocação
-  'corno',
-  'corna',
-  'corninho',
-  'cornão',
-  'cornao',
-  'boi',
-  'chifrudo',
-  'chifruda',
-  'frouxo',
-  'frouxa',
-  'covarde',
-  'arrego',
-  'arregão',
-  'arregao',
-  'arregona',
-  'mamador',
-  'mamadora',
-  'puxa saco',
-  'lambe saco',
-
-  // Termos preconceituosos comuns para bloquear
-  'racista',
-  'nazista',
-  'nazismo',
-  'hitler',
-  'macaco',
-  'macaca',
+// Termos discriminatórios usados como insulto. Mantidos com limite de palavra
+// para não apagar uma palavra maior que apenas contenha essas letras.
+const DISCRIMINATORY_SLURS = [
   'viado',
   'veado',
   'bicha',
   'boiola',
   'baitola',
   'traveco',
+  'mongoloide',
+  'retardado mental',
+  'debil mental',
   'aleijado',
   'aleijada',
-  'preto lixo',
-  'preta lixo',
-  'gay lixo',
-  'gayzinho',
-  'gorda',
-  'gordo',
-  'baleia',
-  'anão',
-  'anao',
-  'nanico',
-  'nanica',
+  'nigger',
+  'nigga'
+];
 
-  // Ameaças e incentivo de autoextermínio usados como ofensa
+// Racismo com contexto ofensivo. "Macaco" sozinho não é bloqueado para evitar
+// apagar conversa normal sobre animal, jogo, mapa ou meme sem ataque a alguém.
+const RAW_RACISM_PATTERNS = [
+  /<@!?\d+>\s*(?:seu|sua)?\s*(?:macaco|macaca)\b/i,
+  /\b(?:macaco|macaca)\s*<@!?\d+>/i
+];
+
+const RACISM_PATTERNS = [
+  /\b(?:seu|sua|esse|essa|aquele|aquela|voce|vc|tu)\s+(?:macaco|macaca)\b/i,
+  /\b(?:macaco|macaca)\s+(?:imundo|imunda|lixo|preto|preta|de merda)\b/i,
+  /\b(?:preto|preta|negro|negra)\s+(?:lixo|imundo|imunda|de merda)\b/i,
+  /\b(?:seu|sua|esse|essa|voce|vc|tu)\s+(?:preto|preta|negro|negra)\s+(?:lixo|imundo|imunda|de merda)\b/i
+];
+
+const DIRECTED_SEVERE_INSULT_PATTERNS = [
+  /\b(?:seu|sua|esse|essa|aquele|aquela|voce|vc|tu)\s+(?:arrombado|arrombada|cuzao|cusao)\b/i,
+  /^(?:arrombado|arrombada|cuzao|cusao)$/i
+];
+
+const RAW_DIRECTED_SEVERE_INSULT_PATTERNS = [
+  /<@!?\d+>\s*(?:seu|sua)?\s*(?:arrombado|arrombada|cuzao|cusao)\b/i,
+  /\b(?:arrombado|arrombada|cuzao|cusao)\s*<@!?\d+>/i
+];
+
+const THREAT_AND_SELF_HARM_PHRASES = [
   'se mata',
   'se mate',
   'vai se matar',
-  'vai morrer',
   'morre logo',
   'tomara que morra',
   'vou te matar',
-  'te matar',
+  'vou matar voce',
+  'vou matar vc',
   'vou te quebrar',
   'quebrar tua cara',
   'quebrar sua cara',
-  'vou te pegar',
-  'vou te caçar',
   'vou te cacar',
   'vai apanhar',
   'vai levar porrada',
-
-  // Inglês comum em Discord/jogos
-  'fuck',
-  'fucking',
-  'fucker',
-  'motherfucker',
-  'shit',
-  'bullshit',
-  'bitch',
-  'son of a bitch',
-  'asshole',
-  'dick',
-  'pussy',
-  'cunt',
-  'retard',
-  'idiot',
-  'moron',
-  'trash',
-  'garbage',
-  'loser',
-  'noob trash',
   'kill yourself',
   'kys'
 ];
 
-// Termos curtinhos que só bloqueiam quando a mensagem inteira compactada bate.
-// Isso evita falso positivo com palavras normais que contêm "cu", "boi", etc.
-const SHORT_EXACT_WORDS = ['cu', 'boi'];
-
-// Nestes canais/conteúdos o bot não remove palavrão automaticamente.
-// Pedido do dono: TikTok/clipes podem ter fala/legenda ofensiva do vídeo; o filtro continua ativo nos outros chats.
+// Nestes canais/conteúdos o bot não remove automaticamente. Tickets continuam
+// livres para que denúncias e provas não sejam apagadas pelo próprio filtro.
 const ANTI_XINGA_EXEMPT_CHANNEL_KEYWORDS = ['tiktok', 'tik-tok', 'tik_tok', 'clips', 'clipes'];
 const ANTI_XINGA_EXEMPT_CONTENT_KEYWORDS = ['tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com'];
 
 const ROAST_MESSAGES = [
-  '😂 {user}, sua mensagem foi removida por excesso de QI negativo.',
-  '🧼 {user}, o bot leu isso e foi escovar os olhos com cândida.',
-  '🧟 {user}, até zumbi sem cérebro escreve com mais respeito.',
-  '🚮 {user}, sua mensagem foi direto pro lixo radioativo de Chernarus.',
-  '💀 {user}, essa frase tomou headshot antes de aparecer.',
-  '🤡 {user}, palhaçada detectada. Mensagem removida com sucesso.',
-  '🧂 {user}, nível de sal acima do permitido. Mensagem evaporada.',
-  '🪦 {user}, sua mensagem morreu de vergonha.',
-  '🚫 {user}, xingamento detectado. Volte duas casas e respawn com educação.',
-  '🧠 {user}, cérebro não encontrado. Mensagem removida por segurança.',
-  '🪓 {user}, sua frase foi lootada, julgada e enterrada.',
-  '☢️ {user}, radiação verbal detectada. Limpamos antes de contaminar geral.',
-  '🤐 {user}, modo boca fechada ativado por 10 segundos.',
-  '🧹 {user}, passei o rodo nessa mensagem fedendo a tilt.',
-  '📦 {user}, loot ruim detectado: xingamento comum, sem valor, descartado.',
-  '🧟‍♂️ {user}, até infectado gritando em Berezino tem mais classe.',
-  '😂 {user}, tentou xingar, mas só dropou vergonha.',
-  '🐔 {user}, mensagem removida por cacarejo ofensivo.',
-  '🚁 {user}, sua mensagem foi evacuada da zona de vergonha.',
-  '🔨 {user}, construção de frase falhou. Base raidade pela gramática.',
-  '💩 {user}, detector de chorume apitou. Mensagem apagada.',
-  '🧯 {user}, incêndio de burrice controlado com sucesso.',
-  '🎒 {user}, sua mochila tá cheia de raiva. Joga isso fora e tenta de novo.',
-  '⚰️ {user}, essa mensagem foi de F no chat.',
-  '🧃 {user}, toma um suquinho, respira e volta quando virar gente.',
-  '🛑 {user}, parada obrigatória: sua boca passou do limite de velocidade.',
-  '🐺 {user}, calma lobo solitário, aqui não é matilha de xingamento.',
-  '🧻 {user}, sua mensagem serviu só pra limpar a tela. Apagada.',
-  '👮 {user}, polícia da educação chegou e levou sua frase presa.',
-  '🤡 {user}, parabéns, conseguiu perder discussão contra o próprio teclado.',
-  '💀 {user}, sua mensagem foi tão ruim que o bot pediu demissão por 3 segundos.',
-  '🧟 {user}, nível de cérebro: zombie fresh spawn.',
-  '🚮 {user}, isso aí não era mensagem, era entulho digital.',
-  '🪦 {user}, enterramos sua frase no cemitério dos sem argumento.',
-  '😂 {user}, xingar é fácil, difícil é ter argumento, né campeão?',
-  '🐟 {user}, pescamos sua mensagem e devolvemos pro esgoto.',
-  '🧂 {user}, tanto sal que dava pra temperar um servidor inteiro.',
-  '🤏 {user}, argumento pequeno, xingamento grande. Clássico.',
-  '📉 {user}, respeito caiu igual FPS em cidade lotada.',
-  '🧠 {user}, erro 404: educação não encontrada.',
-  '☢️ {user}, fala tóxica detectada. Bot colocou máscara NBC e apagou.',
-  '🚨 {user}, alerta de vergonha pública. Mensagem removida.',
-  '🧽 {user}, limpamos essa tentativa de comunicação primitiva.',
-  '🛠️ {user}, sua frase precisa de mod, patch e hotfix urgente.',
-  '🐀 {user}, esse rato verbal foi removido da safe zone.',
-  '🦴 {user}, só sobrou o osso do argumento.',
-  '🧃 {user}, vai tomar uma água, porque o choro veio seco.',
-  '🧯 {user}, tilt em chamas apagado com sucesso.',
-  '🎯 {user}, errou o respeito com precisão profissional.'
+  '🚫 {user}, sua mensagem foi removida por conter ofensa grave ou discriminatória.',
+  '🛡️ {user}, mantenha o respeito. Ofensas graves, racismo e ameaças não são permitidos.',
+  '⚠️ {user}, conteúdo ofensivo grave detectado e removido.'
 ];
 
 function normalizeText(text = '') {
-  return text
+  return String(text)
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[@ªáàãâä]/g, 'a')
-    .replace(/[4]/g, 'a')
+    .replace(/[@ª]/g, 'a')
+    .replace(/4/g, 'a')
     .replace(/[3€]/g, 'e')
-    .replace(/[1!íìîï|]/g, 'i')
-    .replace(/[0óòõôö]/g, 'o')
+    .replace(/[1!|]/g, 'i')
+    .replace(/0/g, 'o')
     .replace(/[5$]/g, 's')
-    .replace(/[7]/g, 't')
-    .replace(/[ç]/g, 'c')
+    .replace(/7/g, 't')
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -442,12 +136,24 @@ function removeRepeatedLetters(text = '') {
   return text.replace(/([a-z])\1{2,}/g, '$1$1');
 }
 
-function compactText(text = '') {
-  return removeRepeatedLetters(normalizeText(text).replace(/\s+/g, ''));
+function normalizedForMatch(text = '') {
+  return removeRepeatedLetters(normalizeText(text));
 }
 
-function spacedText(text = '') {
-  return removeRepeatedLetters(normalizeText(text));
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function phraseRegex(phrase) {
+  const normalizedPhrase = normalizedForMatch(phrase);
+  const words = normalizedPhrase.split(/\s+/).filter(Boolean).map(escapeRegExp);
+  if (!words.length) return null;
+  return new RegExp(`(?:^|\\s)${words.join('\\s+')}(?=\\s|$)`, 'i');
+}
+
+function abbreviationRegex(term) {
+  const letters = normalizedForMatch(term).split('').map(escapeRegExp);
+  return new RegExp(`(?:^|\\s)${letters.join('\\s*')}(?=\\s|$)`, 'i');
 }
 
 function isStaffMember(member) {
@@ -458,7 +164,6 @@ function isStaffMember(member) {
 function isAntiXingaExempt(message) {
   const channelName = normalizeText(message.channel?.name || '');
   const content = String(message.content || '').toLowerCase();
-
   const topic = String(message.channel?.topic || '');
   const parentName = normalizeText(message.channel?.parent?.name || '');
   const isTicket = topic.includes('RAIDZ_TICKET') || channelName.includes('ticket-') || parentName.includes('tickets abertos');
@@ -468,34 +173,27 @@ function isAntiXingaExempt(message) {
   return isTicket || channelExempt || contentExempt;
 }
 
-function escapeRegExp(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 function hasBadWord(content = '') {
-  const normalized = spacedText(content);
-  const compact = compactText(content);
+  const rawContent = String(content);
+  if (RAW_RACISM_PATTERNS.some((pattern) => pattern.test(rawContent))) return true;
+  if (RAW_DIRECTED_SEVERE_INSULT_PATTERNS.some((pattern) => pattern.test(rawContent))) return true;
 
-  if (!normalized && !compact) return false;
+  const normalized = normalizedForMatch(rawContent);
+  if (!normalized) return false;
 
-  return BAD_WORDS.some((word) => {
-    const normalizedWord = spacedText(word);
-    const compactWord = compactText(word);
+  const hasSeverePhrase = BAD_WORDS.some((phrase) => phraseRegex(phrase)?.test(normalized));
+  if (hasSeverePhrase) return true;
 
-    if (!normalizedWord || !compactWord) return false;
+  const hasSevereAbbreviation = SEVERE_ABBREVIATIONS.some((term) => abbreviationRegex(term).test(normalized));
+  if (hasSevereAbbreviation) return true;
 
-    if (SHORT_EXACT_WORDS.includes(compactWord)) {
-      const exactShort = new RegExp(`(^|\\s)${escapeRegExp(normalizedWord)}(\\s|$)`, 'i').test(normalized);
-      return exactShort || compact === compactWord;
-    }
+  const hasDiscriminatorySlur = DISCRIMINATORY_SLURS.some((term) => phraseRegex(term)?.test(normalized));
+  if (hasDiscriminatorySlur) return true;
 
-    const spacedMatch = new RegExp(`(^|\\s)${escapeRegExp(normalizedWord)}(\\s|$)`, 'i').test(normalized);
+  if (RACISM_PATTERNS.some((pattern) => pattern.test(normalized))) return true;
+  if (DIRECTED_SEVERE_INSULT_PATTERNS.some((pattern) => pattern.test(normalized))) return true;
 
-    // Pega tentativas de burlar com ponto, espaço, número ou símbolo: v.s.f, v s f, f0d@, c4r4lh0.
-    const compactMatch = compactWord.length >= 3 && compact.includes(compactWord);
-
-    return spacedMatch || compactMatch;
-  });
+  return THREAT_AND_SELF_HARM_PHRASES.some((phrase) => phraseRegex(phrase)?.test(normalized));
 }
 
 function pickRoast(userMention) {
@@ -509,10 +207,14 @@ async function handleAntiXinga(message) {
   if (isAntiXingaExempt(message)) return false;
   if (!hasBadWord(message.content)) return false;
 
-  const response = pickRoast(`${message.author}`);
   await message.delete().catch(() => null);
-  // Mensagem normal no canal: todos que têm acesso ao canal conseguem ver.
-  await message.channel.send({ content: response }).catch(() => null);
+  const warning = await message.channel.send({
+    content: pickRoast(`${message.author}`),
+    allowedMentions: { users: [message.author.id], roles: [], repliedUser: false }
+  }).catch(() => null);
+
+  // O aviso some sozinho para não poluir o chat.
+  if (warning) setTimeout(() => warning.delete().catch(() => null), 10000);
 
   return true;
 }

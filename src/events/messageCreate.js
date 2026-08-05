@@ -8,6 +8,10 @@ const { handleAntiXinga } = require('../moderation/antiXinga');
 const { recordTicketAnswered, recordTicketMessage } = require('../stats/staffStats');
 const { handleRulesQuestion } = require('../rules/rulesAssistant');
 
+// Evita duas mensagens simultâneas assumirem e anunciarem o mesmo ticket.
+const autoClaimLocks = new Set();
+const knownClaimedTickets = new Set();
+
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
@@ -44,7 +48,18 @@ function channelMode(channelName) {
 }
 
 function parseClaimedBy(topic = '') {
-  return topic.match(/CLAIMED_BY:(\d+)/)?.[1] || null;
+  return topic.match(/(?:^|\|)CLAIMED_BY:(\d+)/)?.[1] || null;
+}
+
+function setTopicField(topic = '', key, value) {
+  const cleanParts = String(topic)
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .filter((part) => !part.startsWith(`${key}:`));
+
+  cleanParts.push(`${key}:${value}`);
+  return cleanParts.join('|').slice(0, 1024);
 }
 
 function isTicketChannel(channel) {
@@ -55,42 +70,50 @@ async function autoClaimTicket(message) {
   if (!isTicketChannel(message.channel)) return false;
   if (!isStaffMember(message.member)) return false;
 
-  recordTicketAnswered(message.member, message.channel.id);
   recordTicketMessage(message.member, message.channel.id);
 
-  const claimedBy = parseClaimedBy(message.channel.topic || '');
-  const roleName = getMainStaffRole(message.member);
+  // Depois que o ticket já foi assumido, outras mensagens da equipe não geram
+  // mais embeds de "apoio" ou "ticket assumido".
+  if (knownClaimedTickets.has(message.channel.id)) return false;
+  if (autoClaimLocks.has(message.channel.id)) return false;
 
-  if (claimedBy) {
-    if (claimedBy === message.author.id) return false;
+  autoClaimLocks.add(message.channel.id);
 
+  try {
+    const freshChannel = await message.guild.channels.fetch(message.channel.id).catch(() => message.channel);
+    const claimedBy = parseClaimedBy(freshChannel?.topic || message.channel.topic || '');
+
+    if (claimedBy) {
+      knownClaimedTickets.add(message.channel.id);
+      return false;
+    }
+
+    const newTopic = setTopicField(freshChannel?.topic || message.channel.topic || '', 'CLAIMED_BY', message.author.id);
+    const topicUpdated = await freshChannel.setTopic(newTopic).then(() => true).catch(() => false);
+    if (!topicUpdated) return false;
+
+    knownClaimedTickets.add(message.channel.id);
+    recordTicketAnswered(message.member, message.channel.id);
+
+    const roleName = getMainStaffRole(message.member);
     const embed = baseEmbed()
-      .setColor(0x3498db)
-      .setTitle('👥 Apoio no atendimento')
-      .setDescription(`${message.author} entrou para ajudar neste ticket.`)
-      .addFields({ name: '🛡️ Cargo em destaque', value: `**${roleName}**`, inline: true });
+      .setColor(0x2ecc71)
+      .setTitle('🙋 Ticket assumido')
+      .setDescription(`${message.author} assumiu este atendimento automaticamente.`)
+      .addFields(
+        { name: '👤 Atendente', value: `${message.author}`, inline: true },
+        { name: '🛡️ Cargo em destaque', value: `**${roleName}**`, inline: true }
+      );
 
-    await message.channel.send({ embeds: [embed] }).catch(() => null);
-    return false;
+    await freshChannel.send({ embeds: [embed] }).catch(() => null);
+    await logEvent(message.guild, 'ticket_auto_claimed', '🙋 Ticket assumido automaticamente', `${message.author} assumiu ${freshChannel}.`, [
+      { name: 'Cargo', value: roleName, inline: true }
+    ]);
+
+    return true;
+  } finally {
+    autoClaimLocks.delete(message.channel.id);
   }
-
-  await message.channel.setTopic(`${message.channel.topic || ''}|CLAIMED_BY:${message.author.id}`.slice(0, 1024)).catch(() => null);
-
-  const embed = baseEmbed()
-    .setColor(0x2ecc71)
-    .setTitle('🙋 Ticket assumido')
-    .setDescription(`${message.author} assumiu este atendimento automaticamente.`)
-    .addFields(
-      { name: '👤 Atendente', value: `${message.author}`, inline: true },
-      { name: '🛡️ Cargo em destaque', value: `**${roleName}**`, inline: true }
-    );
-
-  await message.channel.send({ embeds: [embed] }).catch(() => null);
-  await logEvent(message.guild, 'ticket_auto_claimed', '🙋 Ticket assumido automaticamente', `${message.author} assumiu ${message.channel}.`, [
-    { name: 'Cargo', value: roleName, inline: true }
-  ]);
-
-  return true;
 }
 
 module.exports = {

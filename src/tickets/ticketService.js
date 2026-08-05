@@ -37,8 +37,19 @@ function getMemberServerInfo(member) {
 function parseTicketTopic(topic = '') {
   const ownerId = topic.match(/OWNER_ID:(\d+)/)?.[1] || null;
   const type = topic.match(/TYPE:([a-z_]+)/)?.[1] || null;
-  const claimedById = topic.match(/CLAIMED_BY:(\d+)/)?.[1] || null;
+  const claimedById = topic.match(/(?:^|\|)CLAIMED_BY:(\d+)/)?.[1] || null;
   return { ownerId, type, claimedById };
+}
+
+function setTopicField(topic = '', key, value) {
+  const cleanParts = String(topic)
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .filter((part) => !part.startsWith(`${key}:`));
+
+  cleanParts.push(`${key}:${value}`);
+  return cleanParts.join('|').slice(0, 1024);
 }
 
 function findOpenTicketByOwner(guild, ownerId) {
@@ -60,6 +71,97 @@ function normalizeGameNickname(value = '') {
 
 function normalizeTicketReason(value = '') {
   return String(value).replace(/\r\n/g, '\n').trim().slice(0, 1000);
+}
+
+
+function formatDateTime(date) {
+  try {
+    return new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  } catch {
+    return date?.toLocaleString?.('pt-BR') || 'Horário não disponível';
+  }
+}
+
+function truncateText(value = '', maxLength = 950) {
+  const text = String(value).trim();
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(0, maxLength - 3))}...`;
+}
+
+async function getLastStaffReplies(channel, limit = 5) {
+  const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+  if (!messages) return [];
+
+  return [...messages.values()]
+    .filter((message) => {
+      if (!message.author || message.author.bot) return false;
+      const member = message.member || channel.guild.members.cache.get(message.author.id);
+      return isStaffMember(member);
+    })
+    .sort((a, b) => a.createdTimestamp - b.createdTimestamp)
+    .slice(-limit);
+}
+
+function replyFieldValue(message) {
+  const parts = [];
+  const content = String(message.content || '').trim();
+  if (content) parts.push(content);
+
+  const attachmentLinks = [...message.attachments.values()].map((attachment) => attachment.url).filter(Boolean);
+  if (attachmentLinks.length) {
+    parts.push(`📎 ${attachmentLinks.join('\n📎 ')}`);
+  }
+
+  if (!parts.length && message.embeds?.length) {
+    const embedTexts = message.embeds
+      .flatMap((embed) => [embed.title, embed.description])
+      .filter(Boolean)
+      .join('\n');
+    if (embedTexts) parts.push(embedTexts);
+  }
+
+  return truncateText(parts.join('\n') || 'Mensagem sem texto.', 1000);
+}
+
+async function sendLastStaffRepliesToOwner(channel, ownerId, closedBy) {
+  const owner = await channel.client.users.fetch(ownerId).catch(() => null);
+  if (!owner) return { sent: false, reason: 'owner_not_found' };
+
+  const replies = await getLastStaffReplies(channel, 5);
+  const embed = baseEmbed()
+    .setColor(0x3498db)
+    .setTitle('📩 Resumo do seu ticket')
+    .setDescription([
+      `O ticket **#${channel.name}** foi fechado por **${closedBy.displayName || closedBy.user?.username || 'um membro da equipe'}**.`,
+      '',
+      replies.length
+        ? 'Abaixo estão as últimas respostas enviadas pela administração:'
+        : 'Não foi encontrada nenhuma resposta da administração nas últimas mensagens do ticket.'
+    ].join('\n'))
+    .setTimestamp();
+
+  replies.forEach((message, index) => {
+    const staffName = message.member?.displayName || message.author.globalName || message.author.username;
+    embed.addFields({
+      name: `${index + 1}. ${staffName} • ${formatDateTime(message.createdAt)}`,
+      value: replyFieldValue(message),
+      inline: false
+    });
+  });
+
+  const sent = await owner.send({
+    embeds: [embed],
+    allowedMentions: { parse: [], users: [], roles: [], repliedUser: false }
+  }).then(() => true).catch(() => false);
+
+  return { sent, reason: sent ? null : 'dm_closed' };
 }
 
 async function showTicketForm(interaction, typeKey) {
@@ -213,7 +315,7 @@ async function claimTicket(interaction, channelId) {
     return interaction.reply({ embeds: [errorEmbed(`Esse ticket já foi assumido por <@${data.claimedById}>.`)], ephemeral: true });
   }
 
-  await channel.setTopic(`${channel.topic || ''}|CLAIMED_BY:${interaction.user.id}`.slice(0, 1024)).catch(() => null);
+  await channel.setTopic(setTopicField(channel.topic || '', 'CLAIMED_BY', interaction.user.id)).catch(() => null);
   recordTicketAnswered(interaction.member, channel.id);
   const roleName = getMainStaffRole(interaction.member);
   await interaction.reply({ embeds: [successEmbed(`${interaction.user} assumiu este ticket como **${roleName.toUpperCase()}**.`)] });
@@ -260,8 +362,20 @@ async function closeTicket(interaction, channelId) {
     await interaction.editReply({ embeds: [successEmbed('Ticket fechado. A equipe ainda poderá consultar os logs do canal se necessário.')] });
   }
 
-  await logEvent(interaction.guild, 'ticket_closed', '🔒 Ticket fechado', `${interaction.user} fechou ${channel}.`, [{ name: 'Autor', value: `<@${ticketData.ownerId}>`, inline: true }]);
-  await channel.send({ embeds: [successEmbed('Ticket fechado. Este canal será removido em 10 segundos.')] }).catch(() => null);
+  // Antes de apagar o canal, envia por DM ao dono as 5 últimas respostas da equipe.
+  const dmResult = await sendLastStaffRepliesToOwner(channel, ticketData.ownerId, interaction.member);
+
+  await logEvent(interaction.guild, 'ticket_closed', '🔒 Ticket fechado', `${interaction.user} fechou ${channel}.`, [
+    { name: 'Autor', value: `<@${ticketData.ownerId}>`, inline: true },
+    { name: 'Resumo enviado por DM', value: dmResult.sent ? 'Sim' : 'Não foi possível (DM fechada ou usuário indisponível)', inline: true }
+  ]);
+
+  await channel.send({
+    embeds: [successEmbed(dmResult.sent
+      ? 'Ticket fechado. As últimas respostas da administração foram enviadas ao player por mensagem privada. Este canal será removido em 10 segundos.'
+      : 'Ticket fechado. Não foi possível enviar mensagem privada ao player. Este canal será removido em 10 segundos.')]
+  }).catch(() => null);
+
   setTimeout(() => channel.delete('Ticket fechado').catch(() => null), 10000);
 }
 
