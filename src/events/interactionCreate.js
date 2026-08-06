@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const { errorEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
-const { submitTicketForm } = require('../tickets/ticketService');
+const { submitTicketForm, handleTicketLanguageSelect } = require('../tickets/ticketService');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -30,10 +30,18 @@ module.exports = {
         return;
       }
 
+      if (interaction.isStringSelectMenu()) {
+        const action = interaction.customId.split(':')[0];
+        if (action === 'ticket_language_select') {
+          await handleTicketLanguageSelect(interaction);
+        }
+        return;
+      }
+
       if (interaction.isModalSubmit()) {
-        const [action, value] = interaction.customId.split(':');
+        const [action, value, language] = interaction.customId.split(':');
         if (action === 'ticket_form') {
-          await submitTicketForm(interaction, value);
+          await submitTicketForm(interaction, value, language);
         }
       }
     } catch (error) {

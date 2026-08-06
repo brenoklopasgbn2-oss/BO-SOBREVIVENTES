@@ -7,6 +7,7 @@ const { logEvent } = require('../utils/logger');
 const { handleAntiXinga } = require('../moderation/antiXinga');
 const { recordTicketAnswered, recordTicketMessage } = require('../stats/staffStats');
 const { handleRulesQuestion } = require('../rules/rulesAssistant');
+const { handleTicketTranslation } = require('../services/ticketTranslationService');
 
 // Evita duas mensagens simultâneas assumirem e anunciarem o mesmo ticket.
 const autoClaimLocks = new Set();
@@ -126,6 +127,7 @@ module.exports = {
     if (await handleRulesQuestion(message)) return;
 
     await autoClaimTicket(message);
+    await handleTicketTranslation(message);
 
     const mode = channelMode(message.channel.name);
     if (!mode) return;

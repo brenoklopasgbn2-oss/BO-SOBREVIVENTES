@@ -197,7 +197,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.plataformaCongelante, aliases: CHANNEL_ALIASES[CHANNELS.plataformaCongelante], topic: 'Plataforma Congelante: exige traje NBC Branco e até 4 Chaves Brancas, uma para cada porta de recompensa.', readOnly: true },
       { type: 'text', name: CHANNELS.construcoesVanillaPro, aliases: CHANNEL_ALIASES[CHANNELS.construcoesVanillaPro], topic: 'Guia oficial de construções Vanilla Pro / Vanilla+: janelas, portas, garagem, teto, Hesco e barreira militar.', readOnly: true },
       { type: 'text', name: CHANNELS.carroSemiBlindado, aliases: CHANNEL_ALIASES[CHANNELS.carroSemiBlindado], topic: 'Guia oficial do carro semi-blindado: craft da chapa, porta do Gunter, serra, chapa e parafusos.', readOnly: true },
-      { type: 'text', name: CHANNELS.baseVip, aliases: CHANNEL_ALIASES[CHANNELS.baseVip], topic: 'Base VIP com estruturas do próprio jogo. Pisos, muros, cercas e portões permanecem vanilla. Valores combinados com a ADM.', readOnly: true },
+      { type: 'text', name: CHANNELS.baseVip, aliases: CHANNEL_ALIASES[CHANNELS.baseVip], topic: 'Base VIP completa com muros, feita somente com itens, objetos e estruturas existentes no mapa. Valores combinados com a ADM.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IPs e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Comunicados de banimentos e punições da equipe.', readOnly: true },
       { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar o RAID-Z.', readOnly: false },
