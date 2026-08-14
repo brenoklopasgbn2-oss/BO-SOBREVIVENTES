@@ -1,0 +1,32 @@
+ZONA-Z — REGRAS BASEADAS NO RAID-Z ANTIGO
+
+Atualização aplicada:
+- Grupo/clã normal: até 15 jogadores.
+- Em raid: máximo 10 jogadores por clã.
+- Base principal: máximo 10 portões com CodeLock (internos + externos + bunker contam juntos).
+- Raid oficial: sábado das 18h às 23h, salvo aviso diferente da staff.
+- Raid somente por portão.
+- Às 23h nenhum invasor pode permanecer dentro da base inimiga.
+- Proibido wipe/griefing da base.
+- FOB sem bandeira: raid 24h.
+- No Raid: solo ou grupo até 4, aprovação da staff, bandeira visível e sem FOB.
+- Bandeira Branca/No Raid: 1 solicitação por mês.
+- Sleeping Bag: até 5; usou um, todos entram em cooldown global de 1 hora; sem presentes/transferências.
+- Sleeping Bag pode ficar dentro da própria base principal; não existe mais punição nem obrigação de deixá-lo fora.
+- No Raid continua sem poder manter FOB.
+- Bunker sem cercado/bandeira externa visível = FOB e raid 24h.
+- Entrada de bunker dentro da base principal não pode ficar cadeada durante o horário de raid.
+- Cheat, glitch, dupe, combat log, stream sniping e contas alternativas para burlar regras são proibidos.
+- Denúncias devem ser feitas por ticket com prova.
+
+Também foi atualizado:
+- /regras
+- /regra
+- ZONA-Z IA
+- Bem-vindo
+- Como jogar
+- Painel Sleeping Bag
+- Painel Bunker
+- Painel Vanilla Pro
+
+Validação: todos os 120 arquivos JavaScript em src/ passaram em node --check.

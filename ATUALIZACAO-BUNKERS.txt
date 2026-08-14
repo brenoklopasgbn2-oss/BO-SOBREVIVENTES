@@ -10,8 +10,8 @@ ATUALIZAÇÃO RAID-Z — BUNKERS E REGRAS
 - Canal novo: 🚢・container-barco.
 - Canal 🟡・bunker-tisy atualizado sem apagar mensagens manuais.
 - Regra do saco de dormir corrigida:
-  • No Raid: saco somente na base principal e sem FOB.
-  • Quem participa de raid: saco em FOB ou fora da base principal.
+  • Sleeping Bag pode ficar dentro da própria base principal.
+  • Não existe mais obrigação de manter saco fora da base; No Raid continua sem FOB.
 - No canal 📣・avisos, mensagens com imagem não são mais apagadas nem remandadas pelo bot.
 - /setup e o botão de atualizar não apagam, renomeiam, movem ou reconfiguram canais/categorias já existentes.
 - Mensagens manuais continuam preservadas; o bot apenas edita seus próprios painéis quando encontra o painel correspondente.

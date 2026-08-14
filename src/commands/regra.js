@@ -1,19 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { baseEmbed } = require('../utils/embeds');
-const { getRuleByNumber, getRuleSet, inferRuleSetFromChannel } = require('../data/rulesRepository');
+const { getRuleByNumber, getRuleSet } = require('../data/rulesRepository');
 const { rulesImageAttachment } = require('../panels/rulesPanel');
-
-function addServerOption(option) {
-  return option
-    .setName('lista')
-    .setDescription('De qual lista é a regra?')
-    .setRequired(false)
-    .addChoices(
-      { name: 'Gerais / Discord', value: 'geral' },
-      { name: 'RAID-Z Vanilla', value: 'vanilla' },
-      { name: 'Bandeira no Raid', value: 'bandeira' }
-    );
-}
 
 function cleanDescription(description = '') {
   return String(description).replace(/\n{3,}/g, '\n\n').trim();
@@ -22,14 +10,12 @@ function cleanDescription(description = '') {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('regra')
-    .setDescription('Mostra uma regra pelo número.')
-    .addIntegerOption((option) => option.setName('numero').setDescription('Número da regra.').setRequired(true).setMinValue(1).setMaxValue(300))
-    .addStringOption(addServerOption),
+    .setDescription('Mostra uma regra oficial da ZONA-Z pelo número.')
+    .addIntegerOption((option) => option.setName('numero').setDescription('Número da regra.').setRequired(true).setMinValue(1).setMaxValue(300)),
 
   async execute(interaction) {
     const number = interaction.options.getInteger('numero', true);
-    const selected = interaction.options.getString('lista') || inferRuleSetFromChannel(interaction.channel?.name || '');
-    const set = getRuleSet(selected);
+    const set = getRuleSet();
     const rule = getRuleByNumber(set.key, number);
 
     if (!rule) {
@@ -40,10 +26,10 @@ module.exports = {
     const embed = baseEmbed()
       .setColor(set.color)
       .setTitle(`${rule.emoji} Regra ${String(rule.number).padStart(2, '0')} — ${rule.title}`)
-      .setDescription(['```', `${set.label.toUpperCase()} • RAID-Z`, '```', cleanDescription(rule.description)].join('\n'))
+      .setDescription(['```', `${set.label.toUpperCase()} • ZONA-Z`, '```', cleanDescription(rule.description)].join('\n'))
       .setImage(`attachment://${set.image}`)
       .addFields({ name: '🎮 Servidor', value: rule.server || set.server, inline: true }, { name: '📌 Parte', value: rule.category, inline: true });
 
-    await interaction.reply({ embeds: [embed], files: [rulesImageAttachment(set.key)] });
+    await interaction.reply({ embeds: [embed], files: [rulesImageAttachment()] });
   }
 };

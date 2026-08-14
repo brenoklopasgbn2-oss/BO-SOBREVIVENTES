@@ -8,10 +8,10 @@ function image(fileName) {
 function buildBunkerPanel() {
   const intro = new EmbedBuilder()
     .setColor(0x8b4513)
-    .setTitle('⛏️ Bunker Subterrâneo RAID-Z')
+    .setTitle('⛏️ Bunker Subterrâneo ZONA-Z')
     .setDescription('Guia rápido para criar e melhorar sua base subterrânea no servidor. Escolha um local escondido, separe os materiais e siga os níveis abaixo.')
     .setImage('attachment://bunker-subterraneo-2.jpg')
-    .setFooter({ text: 'RAID-Z • Guia de bunker subterrâneo' });
+    .setFooter({ text: 'ZONA-Z • Guia de bunker subterrâneo' });
 
   const regras = new EmbedBuilder()
     .setColor(0xff3131)
@@ -21,7 +21,7 @@ function buildBunkerPanel() {
       '• Bunker sem **cercado externo com bandeira** também será considerado **FOB**.',
       '• Para ser reconhecido como **base principal**, o bunker precisa ter **cercado externo e bandeira visível do lado de fora**.',
       '• Bunkers classificados como FOB podem sofrer **raid 24 horas por dia, todos os dias**.',
-      '• É **proibido raid por falha em bunker subterrâneo**. Não é necessário construir duas paredes, uma sobre a outra, para bloquear a entrada.',
+      '• É **proibido raid por falha/glitch em bunker subterrâneo**. A progressão da raid deve acontecer somente pelos **portões** permitidos.',
       '• Se o bunker estiver dentro da base principal, a entrada dele **não poderá ficar trancada com cadeado durante o horário de raid**.',
       '• O limite continua sendo de **10 portões com CodeLock por base**, contando também os portões construídos dentro do bunker.'
     ].join('\n'));

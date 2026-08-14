@@ -13,7 +13,7 @@ Perguntas principais que a IA responde:
 - construções Vanilla Pro: janela, porta de giro modelo 1 e 2, porta de garagem, teto, Hesco Box/barragem de barro e barreira militar de ferro/Hesco militar;
 - carro blindado: craft da chapa usando porta do Gunter + serra, com chapa e parafusos no inventário;
 - vídeo demonstrativo do carro blindado: https://www.tiktok.com/@sobreviventez25?_r=1&_t=ZS-97p46uKyOBN;
-- saco de dormir: permitido em FOB ou fora da base principal; proibido dentro da base principal; ban de 1 dia e, se continuar, permanente;
+- saco de dormir: permitido dentro da própria base principal; não existe mais obrigação de deixá-lo fora; limite/cooldown continuam valendo;
 - tickets, suporte, denúncias e bugs continuam no painel oficial.
 
 Atualização segura:

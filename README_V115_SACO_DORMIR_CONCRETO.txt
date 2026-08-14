@@ -7,7 +7,7 @@ ADICIONADO:
 - Sem limite/espera de 15 dias para comprar.
 - Painel de regras visível na categoria.
 - Máximo de 1 saco ativo por player.
-- Base normal: usar fora da base principal.
+- Regra atual ZONA-Z: Sleeping Bag pode ficar dentro da própria base principal; não existe obrigação de deixá-lo fora.
 - Base No Raid: pode usar na base principal, sem FOB.
 - Player encontrado com 2 sacos recebe ban.
 - Aviso de sacos gratuitos nos bunkers.

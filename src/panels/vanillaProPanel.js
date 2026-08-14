@@ -10,7 +10,7 @@ function buildVanillaProPanel() {
     .setColor(0xff3131)
     .setTitle('🏗️ Construções Vanilla Pro')
     .setDescription([
-      'Canal oficial para orientar os jogadores sobre construções do **Vanilla Pro / Vanilla+** no RAID-Z.',
+      'Canal oficial para orientar os jogadores sobre construções do **Vanilla Pro / Vanilla+** na ZONA-Z.',
       '',
       '**Estruturas disponíveis:**',
       '• 🪟 **Janela**',
@@ -24,7 +24,7 @@ function buildVanillaProPanel() {
       'Use as imagens abaixo como exemplo de montagem e organização da base.'
     ].join('\n'))
     .setImage('attachment://vanilla-pro-torres-portao.jpg')
-    .setFooter({ text: 'RAID-Z • Guia de construções Vanilla Pro' });
+    .setFooter({ text: 'ZONA-Z • Guia de construções Vanilla Pro' });
 
   const modelos = new EmbedBuilder()
     .setColor(0x8b0000)

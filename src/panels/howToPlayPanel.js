@@ -18,6 +18,12 @@ function buildHowToPlayPanel() {
       '🚗 **Veículos** — foco em veículos compatíveis com a proposta do servidor.',
       '🚩 **KOTH + Airdrop** — pontos de risco para quem busca PvP e recompensa.',
       '👥 **Grupo/clã** — até 15 jogadores.',
+      '🔥 **Raid** — sábado 18h–23h; máximo 10 participantes por clã; entrada e progressão somente por portões.',
+      '🔐 **Base** — máximo 10 portões com CodeLock por base principal.',
+      '🏕️ **FOB** — sem bandeira pode sofrer raid 24h; No Raid não pode ter FOB.',
+      '🛏️ **Sleeping Bag** — até 5; usou um, todos bloqueiam por 1h. **Pode ficar dentro da própria base principal**; sem presentes/transferências e sem abuso para burlar raid.',
+      '',
+      '⚠️ **Jogue limpo:** sem combat log, stream sniping, exploit, dupe, glitch, griefing ou conta alternativa para burlar regras.',
       '',
       'Acompanhe **avisos** para mudanças de balanceamento, wipe, manutenção ou eventos.'
     ].join('\n'))

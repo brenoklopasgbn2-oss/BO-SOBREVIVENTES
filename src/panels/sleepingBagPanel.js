@@ -8,52 +8,51 @@ function image(fileName) {
 function buildSleepingBagPanel() {
   const intro = new EmbedBuilder()
     .setColor(0x2ecc71)
-    .setTitle('🛏️ Saco de Dormir RAID-Z')
+    .setTitle('🛏️ Saco de Dormir • ZONA-Z')
     .setDescription([
-      'O **saco de dormir** é usado como ponto de apoio/respawn conforme a configuração do servidor.',
+      'O **Sleeping Bag** funciona como ponto pessoal de respawn.',
       '',
-      'A regra muda conforme a base seja **No Raid** ou uma base normal que participa de raid.'
+      'Na ZONA-Z, o Sleeping Bag **pode ficar dentro da própria base principal**. Não existe mais obrigação de deixar o saco fora da base.'
     ].join('\n'))
     .setImage('attachment://saco-de-dormir.png')
-    .setFooter({ text: 'RAID-Z • Regra do saco de dormir' });
+    .setFooter({ text: 'ZONA-Z • Regras oficiais do Sleeping Bag' });
 
-  const regra = new EmbedBuilder()
+  const limites = new EmbedBuilder()
     .setColor(0xf1c40f)
-    .setTitle('🏳️ Regras por tipo de base')
+    .setTitle('⏱️ Limite e cooldown')
     .setDescription([
-      '**Jogador ou grupo No Raid:**',
-      '• Pode ter saco de dormir **somente na base principal**.',
-      '• **Não pode ter FOB**.',
-      '• Não pode manter saco de dormir em base secundária ou posto avançado.',
-      '',
-      '**Jogador ou grupo que participa de raid:**',
-      '• Pode colocar saco de dormir em **FOB** ou **fora da base principal**.',
-      '• Não pode colocar saco de dormir dentro da base principal.'
+      '• Cada jogador pode ter até **5 sacos reivindicados**.',
+      '• Usou **qualquer 1 saco** para respawn? Todos os seus sacos entram em cooldown.',
+      '• O cooldown global é de **1 hora (60 minutos)**.',
+      '• Exemplo: usou às **20:00** → nenhum Sleeping Bag poderá ser usado antes das **21:00**.',
+      '• É proibido **presentear, emprestar ou transferir** saco para burlar limite/cooldown.'
     ].join('\n'));
 
-  const punicao = new EmbedBuilder()
+  const local = new EmbedBuilder()
+    .setColor(0xe67e22)
+    .setTitle('🏠 Onde pode colocar')
+    .setDescription([
+      '• **Pode manter Sleeping Bag dentro da própria base principal.**',
+      '• Não existe mais punição nem obrigação de deixar o saco fora da base.',
+      '• Também pode usar fora da base ou em FOB quando as demais regras permitirem.',
+      '• Grupo **No Raid continua sem poder manter FOB**, mas pode usar o saco dentro da própria base.'
+    ].join('\n'));
+
+  const proibido = new EmbedBuilder()
     .setColor(0xe74c3c)
-    .setTitle('🚫 Uso irregular e punição')
+    .setTitle('🚫 Proibido em qualquer situação')
     .setDescription([
-      'A exceção de usar dentro da base principal vale apenas para quem está oficialmente como **No Raid**.',
-      '',
-      'Para os demais jogadores:',
-      '• Saco dentro da base principal: **ban de 1 dia**.',
-      '• Reincidência: **ban permanente**.',
-      '',
-      'Quem é No Raid e criar FOB ou usar saco fora da única base principal também estará descumprindo a regra.'
+      '• Usar outro jogador ou conta alternativa para contornar cooldown/limite.',
+      '• Nascer **dentro de base inimiga** ou atravessar estrutura.',
+      '• Usar saco para **pular portões**, contornar a rota de raid ou explorar bug/glitch.',
+      '• Tentar resetar artificialmente o cooldown.'
     ].join('\n'));
-
-  const dicas = new EmbedBuilder()
-    .setColor(0x3498db)
-    .setTitle('📌 Antes de posicionar')
-    .setDescription('Na dúvida, abra um ticket e mande um print do local para a staff confirmar antes de colocar o saco de dormir.');
 
   return [
     { embeds: [intro], files: [image('saco-de-dormir.png')] },
-    { embeds: [regra], legacyTitles: ['🚫 Proibido dentro da base principal'] },
-    { embeds: [punicao] },
-    { embeds: [dicas], legacyTitles: ['📌 Dicas para evitar punição'] }
+    { embeds: [limites] },
+    { embeds: [local] },
+    { embeds: [proibido] }
   ];
 }
 

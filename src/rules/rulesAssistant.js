@@ -11,7 +11,22 @@ const FAQS = [
   {
     title: 'Limite de grupo',
     keywords: ['grupo','cla','clã','party','limite','quantos','players','jogadores'],
-    answer: 'O limite é de **até 15 jogadores no mesmo grupo/clã**. Não use grupos paralelos para ultrapassar esse limite em ações conjuntas.'
+    answer: 'O limite normal é de **até 15 jogadores no mesmo grupo/clã**. Em **dia/ação de raid**, participam no máximo **10 jogadores por clã**. Aliança, segundo grupo ou jogador de fora não pode ser usado para ultrapassar o limite da raid.'
+  },
+  {
+    title: 'Sleeping Bag',
+    keywords: ['sleeping bag','sleepingbag','saco','saco de dormir','respawn','cooldown'],
+    answer: 'Cada jogador pode ter até **5 Sleeping Bags**. Usou qualquer um para respawn? **Todos entram em cooldown por 1 hora**. Não pode presentear/transferir. **Pode manter o saco dentro da própria base principal**; não existe mais punição nem obrigação de deixar o saco fora. É proibido usar Sleeping Bag para nascer em base inimiga, atravessar estrutura ou burlar raid. Grupo No Raid continua sem poder manter FOB.'
+  },
+  {
+    title: 'Portões e CodeLock',
+    keywords: ['portao','portão','portoes','portões','codelock','code lock','limite base'],
+    answer: 'Cada base principal pode ter no máximo **10 portões com CodeLock**. A contagem inclui portões externos, internos e os construídos dentro de bunker/subterrâneo.'
+  },
+  {
+    title: 'No Raid e FOB',
+    keywords: ['no raid','noraid','bandeira branca','fob','bandeira','protecao','proteção'],
+    answer: 'No Raid é para **solo ou grupo de até 4**, com aprovação da staff e bandeira visível. No Raid não pode raidar e não pode ter FOB. O Sleeping Bag pode ficar dentro da própria base principal. **FOB sem bandeira pode sofrer raid 24h**.'
   },
   {
     title: 'KOTH',
@@ -31,7 +46,7 @@ const FAQS = [
   {
     title: 'Base e construção',
     keywords: ['base','construcao','construção','construir','bloquear','loot','passagem'],
-    answer: 'Não bloqueie loot essencial, passagem pública, evento, spawn importante ou área que prejudique o mapa. Construção abusiva pode ser removida pela staff.'
+    answer: 'A base principal pode ter no máximo **10 portões com CodeLock**, contando portões internos/externos e os do bunker. Não bloqueie loot essencial, passagem pública, evento, spawn ou área importante com construção abusiva.'
   },
   {
     title: 'Denúncia e ticket',
@@ -41,7 +56,7 @@ const FAQS = [
   {
     title: 'Regras de raid e eventos',
     keywords: ['raid','raide','evento','eventos','regra especial'],
-    answer: 'Raid e eventos podem receber regras próprias. Quando houver comunicado oficial, **a regra daquele evento/ação prevalece**. Acompanhe avisos e eventos.'
+    answer: 'Raid oficial segue o formato do RAID-Z antigo: **sábado, 18h–23h**, salvo aviso da staff. Máximo **10 jogadores por clã**, raid **somente por portões** e máximo **10 portões com CodeLock por base**. Às 23h nenhum invasor pode permanecer dentro da base inimiga. FOB sem bandeira pode sofrer raid 24h.'
   }
 ];
 

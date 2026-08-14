@@ -21,6 +21,9 @@ function buildWelcomePanel() {
       '🚩 **Eventos:** KOTH + Airdrop',
       '🔫 **Estilo:** armas e veículos coerentes com a proposta do servidor',
       '👥 **Grupo/clã:** até 15 jogadores',
+      '🔥 **Raid:** sábado 18h–23h • máximo 10 jogadores por clã • somente por portões',
+      '🔐 **Base:** máximo 10 portões com CodeLock',
+      '🛏️ **Sleeping Bag:** até 5; usou 1, todos ficam 1 hora em cooldown',
       '',
       'Leia as regras resumidas, acompanhe os avisos e use ticket quando precisar da staff.'
     ].join('\n'))
