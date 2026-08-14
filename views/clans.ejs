@@ -2,7 +2,7 @@
 <%- include('partials/nav') %>
 <style>
   .clan-hub-v106{display:grid;gap:22px}.clan-hero-v106{position:relative;overflow:hidden;border-radius:34px;padding:34px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(140deg,rgba(8,12,20,.96),rgba(2,6,12,.96));box-shadow:0 30px 90px rgba(0,0,0,.3)}
-  .clan-hero-v106::before{content:"";position:absolute;inset:0;background:url('/images/raidz-clans-hero.webp') center/cover no-repeat;opacity:.42;pointer-events:none}.clan-hero-inner-v106{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center}.clan-hero-v106 h1{margin:8px 0 12px;font-size:2.6rem;line-height:1.04}.clan-hero-v106 p{margin:0;color:#d2d9e4;max-width:760px}.clan-pills-v106{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.clan-pills-v106 span{padding:9px 13px;border-radius:999px;background:rgba(255,255,255,.07);font-size:.82rem;font-weight:800}
+  .clan-hero-v106::before{content:"";position:absolute;inset:0;background:url('/images/zona-z-clans-hero.webp') center/cover no-repeat;opacity:.42;pointer-events:none}.clan-hero-inner-v106{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center}.clan-hero-v106 h1{margin:8px 0 12px;font-size:2.6rem;line-height:1.04}.clan-hero-v106 p{margin:0;color:#d2d9e4;max-width:760px}.clan-pills-v106{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.clan-pills-v106 span{padding:9px 13px;border-radius:999px;background:rgba(255,255,255,.07);font-size:.82rem;font-weight:800}
   .clan-highlight-v106{display:grid;gap:12px}.clan-highlight-card-v106{padding:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}.clan-highlight-card-v106 strong{display:block;font-size:1.08rem}.clan-highlight-card-v106 small{color:#9eb0ca}
   .clan-section-head-v106{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}.clan-section-head-v106 h2{margin:0 0 6px}.clan-section-head-v106 p{margin:0;color:#96a6bf}
   .clan-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.clan-card-v106{position:relative;overflow:hidden;padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(160deg,rgba(10,14,24,.97),rgba(4,8,14,.96));box-shadow:0 18px 60px rgba(0,0,0,.26);display:grid;gap:14px;transform-style:preserve-3d;transition:.22s}.clan-card-v106:hover{transform:translateY(-5px) rotateX(2deg)}.clan-card-head-v106{display:flex;gap:14px;align-items:center}.clan-card-head-v106 img{width:78px;height:78px;object-fit:cover;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:#050913}.clan-card-head-v106 strong{display:block;font-size:1.08rem}.clan-card-head-v106 small{display:block;color:#a4b4ca;margin-top:6px}.clan-card-v106 p{margin:0;color:#d9e1eb;line-height:1.48}.clan-card-tags-v106{display:flex;gap:8px;flex-wrap:wrap}.clan-card-tags-v106 span{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.76rem;font-weight:800}.clan-card-actions-v106{display:flex;gap:10px;flex-wrap:wrap}.clan-card-actions-v106 .btn{flex:1;min-width:140px}
@@ -58,7 +58,7 @@
       <% (recruitingClans || []).forEach(clan => { %>
         <article class="clan-card-v106" style="border-color:<%= clan.accentColor %>">
           <div class="clan-card-head-v106">
-            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z-clan-default.webp'">
             <div>
               <strong>[<%= clan.tag %>] <%= clan.name %></strong>
               <small>Dono: <%= clan.ownerPlayer?.nickname || clan.ownerPlayer?.steam64 || 'Sem dono' %></small>
@@ -168,7 +168,7 @@
       <% (clans || []).forEach(clan => { %>
         <article class="clan-card-v106" style="border-color:<%= clan.accentColor %>">
           <div class="clan-card-head-v106">
-            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+            <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z-clan-default.webp'">
             <div>
               <strong>[<%= clan.tag %>] <%= clan.name %></strong>
               <small><%= clan.serverType.toUpperCase() %> • <%= clan.memberCount %> membro(s)</small>

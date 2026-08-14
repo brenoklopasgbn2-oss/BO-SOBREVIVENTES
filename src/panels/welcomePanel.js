@@ -10,23 +10,24 @@ function panelImage(fileName) {
 function buildWelcomePanel() {
   const imageName = PANEL_IMAGES.welcome;
   const embed = baseEmbed()
-    .setColor(0xff3131)
-    .setTitle('🔴 Bem-vindo ao RAID-Z')
+    .setColor(0xe3263e)
+    .setTitle('🔴 Bem-vindo à ZONA-Z')
     .setDescription([
-      'O Discord foi reconstruído para **1 servidor apenas: RAID-Z Vanilla**.',
+      '**DayZ no mapa Alteria**, com progressão direta e sem exagero.',
       '',
-      'Não existe mais escolha de servidor. Tudo agora é focado no Vanilla.',
+      '🗺️ **Mapa:** Alteria',
+      '👁️ **Visão:** 1PP',
+      '📦 **Loot:** 1.3x equilibrado',
+      '🚩 **Eventos:** KOTH + Airdrop',
+      '🔫 **Estilo:** armas e veículos coerentes com a proposta do servidor',
+      '👥 **Grupo/clã:** até 15 jogadores',
       '',
-      '⚔️ **Clã:** máximo de **10 jogadores**.',
-      '🏳️ **Bandeira no raid:** precisa solicitar para a administração.',
-      '🤍 **Bandeira branca:** pode ser solicitada **1 vez por mês**.',
-      '',
-      'Leia as regras, abra ticket quando precisar e boa sobrevivência.'
+      'Leia as regras resumidas, acompanhe os avisos e use ticket quando precisar da staff.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
-    .addFields({ name: 'RAID-Z', value: 'Sobreviva, construa, defenda e respeite as regras do servidor.' });
+    .addFields({ name: 'ZONA-Z', value: 'Sobreviva. Evolua. Dispute território. Faça seu nome em Alteria.' });
 
-  return { embeds: [embed], files: [panelImage(imageName)] };
+  return { embeds: [embed], files: [panelImage(imageName)], legacyTitles: ['🔴 Bem-vindo ao ZONA-Z', '🔴 Bem-vindo ao ZONA-Z!'] };
 }
 
 module.exports = { buildWelcomePanel };

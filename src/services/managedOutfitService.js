@@ -309,7 +309,7 @@ function cleanClanNameFromOutfit(outfitName = '', ownerName = '') {
     .replace(/[\[\](){}_|]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  return (cleaned || String(ownerName || '').trim() || 'Clã RAID-Z').slice(0, 80);
+  return (cleaned || String(ownerName || '').trim() || 'Clã ZONA-Z').slice(0, 80);
 }
 
 function cleanClanTag(value = '') {

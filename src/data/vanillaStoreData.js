@@ -442,7 +442,7 @@ const vehicle = (data) => ({
 });
 
 export const defaultVehicles = [
-  // V69: RAID-Z usa Land Rover MSFZ com MuranoCarlock e M1025 Apocalypse com CarKey.
+  // V69: ZONA-Z usa Land Rover MSFZ com MuranoCarlock e M1025 Apocalypse com CarKey.
   // Todos os veículos ficam no valor das Land Rover: 70.000 RZ.
   vehicle({
     name: 'Land Rover Normal',

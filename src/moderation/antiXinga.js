@@ -1,7 +1,7 @@
 const { STAFF_ROLES } = require('../config/constants');
 
 /*
-  Filtro de ofensas graves RAID-Z
+  Filtro de ofensas graves ZONA-Z
 
   Objetivo desta versão:
   - NÃO apagar palavrões comuns ou provocações leves;

@@ -15,13 +15,13 @@
   <section class="rz-profile-hero">
     <div class="rz-profile-cover"></div>
     <div class="rz-profile-avatar-wrap">
-      <img src="<%= profilePlayer.avatarUrl %>" alt="Avatar de <%= profilePlayer.nickname %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
+      <img src="<%= profilePlayer.avatarUrl %>" alt="Avatar de <%= profilePlayer.nickname %>" onerror="this.onerror=null;this.src='/images/zona-z-profile-default.webp'">
       <span>#<%= ranks.allTime || '—' %></span>
     </div>
     <div class="rz-profile-identity">
-      <span class="rz-eyebrow">Perfil competitivo RAID-Z</span>
+      <span class="rz-eyebrow">Perfil competitivo ZONA-Z</span>
       <h1><%= membership?.clan ? ('[' + membership.clan.tag + '] ') : '' %><%= profilePlayer.nickname %></h1>
-      <p><%= profilePlayer.profileBio || 'Sobrevivente competitivo do RAID-Z.' %></p>
+      <p><%= profilePlayer.profileBio || 'Sobrevivente competitivo do ZONA-Z.' %></p>
       <div class="rz-profile-meta">
         <code><%= profilePlayer.steam64 %></code>
         <% if (membership?.clan) { %><a href="/clans/<%= membership.clan.slug %>">Clã [<%= membership.clan.tag %>] <%= membership.clan.name %></a><% } %>
@@ -159,8 +159,8 @@
   <% if (membership?.clan) { %>
   <section class="rz-rank-panel rz-profile-clan-panel">
     <div class="rz-profile-clan-banner" style="background-image:url('/clan-banner/<%= membership.clan.id %>')"></div>
-    <img src="/clan-flag/<%= membership.clan.id %>" alt="Bandeira do clã" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
-    <div><span class="rz-eyebrow">Clã atual</span><h2>[<%= membership.clan.tag %>] <%= membership.clan.name %></h2><p><%= membership.clan.description || 'Clã competitivo do RAID-Z.' %></p><a class="rz-inline-action" href="/clans/<%= membership.clan.slug %>">Abrir perfil do clã</a></div>
+    <img src="/clan-flag/<%= membership.clan.id %>" alt="Bandeira do clã" onerror="this.onerror=null;this.src='/images/zona-z-clan-default.webp'">
+    <div><span class="rz-eyebrow">Clã atual</span><h2>[<%= membership.clan.tag %>] <%= membership.clan.name %></h2><p><%= membership.clan.description || 'Clã competitivo do ZONA-Z.' %></p><a class="rz-inline-action" href="/clans/<%= membership.clan.slug %>">Abrir perfil do clã</a></div>
     <div class="rz-profile-clan-score"><small>Score do clã</small><strong><%= clanRank ? coins(clanRank.score) : 0 %></strong><span><%= membership.clan.members.length %> membros</span></div>
   </section>
   <% } %>

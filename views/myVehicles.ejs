@@ -8,7 +8,7 @@
   const insuredVehicleCount = allVehicles.filter(v => !!v.insurancePlanId || !!v.insurancePlan).length;
   const vanillaCount = allVehicles.filter(v => v.serverType === 'vanilla').length;
   const selectedLabel = selectedGarageServer === 'vanilla' ? 'Vanilla' : 'Todos os veículos';
-  const vehicleImage = (v) => { const base = v?.template?.imageData ? ('/vehicle-image/' + v.template.id) : (v?.template?.imageUrl || '/images/vanilla-card.png?v=68'); return base + (base.includes('?') ? '&' : '?') + 'v=' + (v?.template?.updatedAt ? new Date(v.template.updatedAt).getTime() : Date.now()); };
+  const vehicleImage = (v) => { const base = v?.template?.imageData ? ('/vehicle-image/' + v.template.id) : (v?.template?.imageUrl || '/images/zona-z-alteria-card.png?v=68'); return base + (base.includes('?') ? '&' : '?') + 'v=' + (v?.template?.updatedAt ? new Date(v.template.updatedAt).getTime() : Date.now()); };
   const serverLabel = (v) => String(v?.serverType || 'vanilla').toUpperCase();
   const planLabel = (v) => v?.insurancePlan ? v.insurancePlan.name : 'Sem seguro';
   const planModeLabel = (v) => {
@@ -64,7 +64,7 @@
     <section class="garage-main-v29">
       <section class="garage-hero-v29">
         <div class="garage-title-v29">
-          <p class="v9-kicker">RAID-Z Store</p>
+          <p class="v9-kicker">ZONA-Z Store</p>
           <h1>MINHA GARAGEM</h1>
           <p>Gerencie seus veículos, veja o servidor de cada carro, acione seguro normal ou seguro por roubo e controle suas reposições.</p>
           <div class="garage-server-tabs-v29" aria-label="Filtro de servidor da garagem">

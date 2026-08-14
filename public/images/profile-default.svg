@@ -8,5 +8,5 @@
   <rect width="320" height="320" rx="56" fill="#050913"/>
   <circle cx="160" cy="118" r="58" fill="url(#g)"/>
   <path d="M72 278c12-54 56-86 88-86s76 32 88 86" fill="none" stroke="#e9edf5" stroke-width="28" stroke-linecap="round"/>
-  <text x="160" y="304" font-size="24" fill="#e9edf5" text-anchor="middle" font-family="Arial, sans-serif">RAID-Z</text>
+  <text x="160" y="304" font-size="24" fill="#e9edf5" text-anchor="middle" font-family="Arial, sans-serif">ZONA-Z</text>
 </svg>

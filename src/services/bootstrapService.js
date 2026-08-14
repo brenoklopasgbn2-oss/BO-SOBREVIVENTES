@@ -172,20 +172,20 @@ async function applyRaidZBrandingCleanup() {
     await prisma.product.updateMany({ where: { category: oldSupplyCategory }, data: { category: 'Suprimentos' } });
     await prisma.appSetting.upsert({
       where: { key: 'brand.raidz.v67' },
-      update: { value: { name: 'RAID-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } },
-      create: { key: 'brand.raidz.v67', value: { name: 'RAID-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } }
+      update: { value: { name: 'ZONA-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } },
+      create: { key: 'brand.raidz.v67', value: { name: 'ZONA-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } }
     });
     const categorySetting = await prisma.appSetting.findUnique({ where: { key: 'store_categories_v1' } });
     const categories = Array.isArray(categorySetting?.value?.categories) ? categorySetting.value.categories : null;
     if (categories) {
       const cleaned = categories.map((cat) => ({
         ...cat,
-        name: String(cat.name || '').replace(new RegExp(oldSupplyCategory, 'gi'), 'Suprimentos').replace(new RegExp(oldBrandPlural + '\\s*Z', 'gi'), 'RAID-Z').replace(new RegExp(oldBrandPlural, 'gi'), 'Players')
+        name: String(cat.name || '').replace(new RegExp(oldSupplyCategory, 'gi'), 'Suprimentos').replace(new RegExp(oldBrandPlural + '\\s*Z', 'gi'), 'ZONA-Z').replace(new RegExp(oldBrandPlural, 'gi'), 'Players')
       }));
       await prisma.appSetting.update({ where: { key: 'store_categories_v1' }, data: { value: { ...categorySetting.value, categories: cleaned } } });
     }
   } catch (err) {
-    console.warn('Aviso: limpeza de marca RAID-Z não aplicada:', err.message);
+    console.warn('Aviso: limpeza de marca ZONA-Z não aplicada:', err.message);
   }
 }
 

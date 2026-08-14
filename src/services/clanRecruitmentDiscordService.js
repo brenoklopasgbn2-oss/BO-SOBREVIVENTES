@@ -137,8 +137,8 @@ function buildRecruitmentPayload(clan, config) {
   const clanUrl = absolute(`/clans/${encodeURIComponent(clan.slug)}`);
   const clanFlag = absolute(`/clan-flag/${clan.id}`);
   const clanBanner = absolute(`/clan-banner/${clan.id}`);
-  const raidzLogo = absolute('/images/sz-logo-main.png');
-  const hero = absolute('/images/raidz-discord-community.webp');
+  const raidzLogo = absolute('/images/zona-z-logo.png');
+  const hero = absolute('/images/zona-z-discord-community.webp');
   const vipText = (clan.activeOutfitNames || []).length
     ? clan.activeOutfitNames.join(', ')
     : 'Nenhum traje VIP ativo registrado no momento';
@@ -146,27 +146,27 @@ function buildRecruitmentPayload(clan, config) {
 
   const mainEmbed = {
     author: {
-      name: 'RAID-Z • CLÃ RECRUTANDO',
+      name: 'ZONA-Z • CLÃ RECRUTANDO',
       ...(raidzLogo ? { icon_url: raidzLogo } : {})
     },
     title: `🛡️ [${clan.tag}] ${clan.name} ESTÁ RECRUTANDO`,
     url: clanUrl || undefined,
-    description: trimField(clan.recruitmentMessage || clan.description || 'O clã abriu vagas para novos sobreviventes no RAID-Z.', 1200),
+    description: trimField(clan.recruitmentMessage || clan.description || 'O clã abriu vagas para novos sobreviventes no ZONA-Z.', 1200),
     color: colorToInt(clan.accentColor),
     ...(clanFlag ? { thumbnail: { url: clanFlag } } : {}),
     ...((clanBanner || hero) ? { image: { url: clanBanner || hero } } : {}),
     fields: [
       { name: '👑 Líder do clã', value: trimField(leader, 200), inline: true },
       { name: '👥 Membros atuais', value: `**${clan.memberCount || 0}** membro(s)`, inline: true },
-      { name: '🎮 Servidor', value: `**${String(clan.serverType || 'vanilla').toUpperCase()}**`, inline: true },
+      { name: '🎮 Servidor', value: '**ALTERIA**', inline: true },
       { name: '📢 O que o clã procura', value: trimField(clan.recruitmentTitle || 'Players ativos e comprometidos com o clã', 400), inline: false },
       { name: '📋 Requisitos', value: trimField(clan.recruitmentRequirements || 'Leia a descrição do clã e envie seu formulário pelo site.', 700), inline: false },
       { name: '👕 Traje VIP personalizado / ativo', value: trimField(vipText, 500), inline: false },
       { name: '💬 Contato', value: trimField(clan.recruitmentContact || 'Fale com o líder depois de enviar o formulário.', 250), inline: true },
-      { name: '🔗 Página do clã', value: clanUrl ? `[Ver dados e enviar formulário](${clanUrl})` : 'Abra a aba Clãs & Recrutamento na loja RAID-Z.', inline: true }
+      { name: '🔗 Página do clã', value: clanUrl ? `[Ver dados e enviar formulário](${clanUrl})` : 'Abra a aba Clãs & Recrutamento na loja ZONA-Z.', inline: true }
     ],
     footer: {
-      text: 'RAID-Z • Recrutamento oficial de clãs',
+      text: 'ZONA-Z • Recrutamento oficial de clãs',
       ...(raidzLogo ? { icon_url: raidzLogo } : {})
     },
     timestamp: new Date().toISOString()
@@ -192,17 +192,17 @@ function buildRecruitmentPayload(clan, config) {
       ...((hero || clanFlag) ? { image: { url: hero || clanFlag } } : {}),
       fields: [
         { name: '⚠️ Importante', value: 'O Steam64 aparece automaticamente. Um player não pode fazer parte de dois clãs ao mesmo tempo.', inline: false },
-        { name: '🌐 Abrir recrutamento', value: clanUrl ? `[CLIQUE AQUI PARA SE CANDIDATAR](${clanUrl}#form-recrutamento)` : 'Abra a loja RAID-Z e acesse a aba Clãs.', inline: false }
+        { name: '🌐 Abrir recrutamento', value: clanUrl ? `[CLIQUE AQUI PARA SE CANDIDATAR](${clanUrl}#form-recrutamento)` : 'Abra a loja ZONA-Z e acesse a aba Clãs.', inline: false }
       ],
       footer: {
-        text: 'Sistema automático RAID-Z Store',
+        text: 'Sistema automático ZONA-Z Store',
         ...(raidzLogo ? { icon_url: raidzLogo } : {})
       }
     });
   }
 
   return {
-    content: `🔥 **RAID-Z RECRUTAMENTO:** o clã **[${clan.tag}] ${clan.name}** abriu vagas agora.`,
+    content: `🔥 **ZONA-Z RECRUTAMENTO:** o clã **[${clan.tag}] ${clan.name}** abriu vagas agora.`,
     embeds
   };
 }
@@ -220,25 +220,25 @@ async function persistStatus(patch = {}) {
 
 export async function sendClanRecruitmentWebhookTest(webhookUrl, slot = '1') {
   const targetUrl = cleanWebhookUrl(webhookUrl);
-  const raidzLogo = absolute('/images/sz-logo-main.png');
-  const hero = absolute('/images/raidz-discord-community.webp') || absolute('/images/store-hero-main.png');
+  const raidzLogo = absolute('/images/zona-z-logo.png');
+  const hero = absolute('/images/zona-z-discord-community.webp') || absolute('/images/store-hero-main.png');
   const result = await sendDiscord({
-    content: `✅ Teste do Webhook ${slot} de recrutamento RAID-Z.`,
+    content: `✅ Teste do Webhook ${slot} de recrutamento ZONA-Z.`,
     embeds: [{
-      author: { name: 'RAID-Z • TESTE DE RECRUTAMENTO', ...(raidzLogo ? { icon_url: raidzLogo } : {}) },
+      author: { name: 'ZONA-Z • TESTE DE RECRUTAMENTO', ...(raidzLogo ? { icon_url: raidzLogo } : {}) },
       title: '🛡️ WEBHOOK CONFIGURADO COM SUCESSO',
       description: 'Quando houver clãs recrutando, este canal receberá os cards completos com imagem do clã, banner, VIPs, requisitos e instruções de candidatura.',
       color: 0xef4444,
       ...(hero ? { image: { url: hero } } : {}),
       fields: [
         { name: '🔁 Automático', value: 'O intervalo é controlado em horas pelo painel ADM.', inline: true },
-        { name: '🖼️ Visual', value: 'Logo RAID-Z + imagem e banner do clã.', inline: true },
+        { name: '🖼️ Visual', value: 'Logo ZONA-Z + imagem e banner do clã.', inline: true },
         { name: '📝 Recrutamento', value: 'O player abre a aba Clãs, informa o nick e envia o formulário ao dono.', inline: false }
       ],
-      footer: { text: 'RAID-Z Store • Sistema de recrutamento', ...(raidzLogo ? { icon_url: raidzLogo } : {}) },
+      footer: { text: 'ZONA-Z Store • Sistema de recrutamento', ...(raidzLogo ? { icon_url: raidzLogo } : {}) },
       timestamp: new Date().toISOString()
     }]
-  }, { webhookUrl: targetUrl, username: '🛡️ RAID-Z • Recrutamento de Clãs' });
+  }, { webhookUrl: targetUrl, username: '🛡️ ZONA-Z • Recrutamento de Clãs' });
   if (!result.ok) throw new Error(result.error || 'O Discord recusou o webhook. Confira o endereço e as permissões do canal.');
   return result;
 }
@@ -307,7 +307,7 @@ async function sendOneClan(clan, config, targets) {
   for (const targetUrl of targets) {
     const result = await sendDiscord(buildRecruitmentPayload(clan, config), {
       webhookUrl: targetUrl,
-      username: '🛡️ RAID-Z • Recrutamento de Clãs'
+      username: '🛡️ ZONA-Z • Recrutamento de Clãs'
     });
     if (result.ok) successfulMessages += 1;
     else errors.push(result.error || 'Discord recusou o webhook.');

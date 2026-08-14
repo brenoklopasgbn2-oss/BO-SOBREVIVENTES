@@ -62,7 +62,7 @@ export async function createPixPayment({ playerId, packageId, customAmountBrl = 
 
   const payload = {
     transaction_amount: amount,
-    description: `${label} - RAID-Z Store`,
+    description: `${label} - ZONA-Z Store`,
     payment_method_id: 'pix',
     external_reference: externalReference,
     notification_url: `${env.publicUrl}/webhooks/mercadopago`,

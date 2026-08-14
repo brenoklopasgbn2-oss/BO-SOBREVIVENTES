@@ -12,7 +12,7 @@
 
   <section class="clan-banner-v106" style="box-shadow:0 30px 90px rgba(0,0,0,.35), inset 0 0 0 1px <%= clan.accentColor %>33">
     <div class="clan-banner-inner-v106">
-      <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/raidz-clan-default.webp'">
+      <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z-clan-default.webp'">
       <div class="clan-banner-copy-v106">
         <p class="eyebrow">Página pública do clã</p>
         <h1>[<%= clan.tag %>] <%= clan.name %></h1>
@@ -29,7 +29,7 @@
 
   <% if (clan.clanVipOutfit) { const clanVipPaid = clan.clanVipOutfit.billingMode === 'PAID'; const viewerIsOwner = viewerMembership?.clan?.id === clan.id && viewerClanMember?.role === 'OWNER'; %>
     <section class="clan-public-vip-v111">
-      <img src="<%= clan.clanVipOutfit.imageSrc %>" onerror="this.src='/images/raidz-vips-store.webp'" alt="<%= clan.clanVipOutfit.name %>">
+      <img src="<%= clan.clanVipOutfit.imageSrc %>" onerror="this.src='/images/zona-z-vips-store.webp'" alt="<%= clan.clanVipOutfit.name %>">
       <div>
         <p class="eyebrow">Traje VIP personalizado do clã</p>
         <h2><%= clan.clanVipOutfit.name %></h2>
@@ -84,7 +84,7 @@
         <% clan.members.forEach(member => { %>
           <article class="clan-member-card-v106">
             <div class="clan-member-head-v106">
-              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/raidz-profile-default.webp'">
+              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/zona-z-profile-default.webp'">
               <div>
                 <strong><%= member.displayName %></strong>
                 <small><%= member.role === 'OWNER' ? 'Dono' : (member.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></small>

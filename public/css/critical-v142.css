@@ -82,7 +82,7 @@
     .v9-cart-pill{font-size:1.05rem!important;}
     .v9-bg{inset:58px 0 0 0!important;}
     @media(max-width:1280px){.topbar.v9-topbar{grid-template-columns:230px minmax(0,1fr) 74px!important;padding:0 14px!important}.v9-main-nav{gap:9px!important}.v9-nav-item{font-size:.58rem!important;letter-spacing:.06em!important}.v9-nav-item span{display:none!important}.v9-brand small{display:none!important}}
-    /* Painel antigo removido no RAID-Z. */
+    /* Painel antigo removido no ZONA-Z. */
 
 
 

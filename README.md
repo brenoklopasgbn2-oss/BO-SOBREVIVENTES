@@ -1,30 +1,43 @@
-# Bot RAID-Z Vanilla
+# ZONA-Z Bot • Alteria
 
-Bot Discord oficial do **RAID-Z**.
+Versão repaginada do bot da comunidade **ZONA-Z**.
 
-## Atualização atual
+## Estrutura do Discord
 
-- Canal **📻・missoes-de-raid** com o painel das missões dinâmicas transmitidas no rádio em **89.5 FM**.
-- Canal **⚪・bunker-airfield** com a entrada do bunker do Airfield e a **Chave Prata**.
-- RAID-Z IA atualizada para responder dúvidas sobre o Airfield, a Chave Prata e as missões de raid via rádio.
-- O `/setup` cria o que estiver faltando e atualiza apenas os painéis do próprio bot.
-- Canais, categorias e mensagens manuais existentes são preservados.
+- 🚪 ENTRADA ZONA-Z
+- 📢 CENTRAL ZONA-Z
+  - avisos
+  - regras resumidas
+  - como jogar
+  - eventos
+  - KOTH
+  - Airdrop
+  - informações
+  - banimentos
+  - sugestões
+  - ZONA-Z IA
+- 🤝 COMUNIDADE
+- 🟡/🟢/🔴 SUPORTE
+- 📂 TICKETS
+- 🚀 IMPULSIONADORES
+- 👑 STAFF
+- 🤖 BOT
 
-## Como usar
+## O que foi removido
 
-1. Coloque o token no `.env`.
-2. Instale as dependências:
+O `/setup` remove os canais conhecidos do servidor anterior, incluindo guias de bunkers/chaves, plataforma congelante, missões de rádio antigas, regra de bandeira antiga, Vanilla Pro, carro blindado, base VIP e saco de dormir.
 
-```bash
-npm install
-```
+A migração preserva canais manuais que não fazem parte da lista de limpeza e reaproveita canais úteis (chat, clips, entrada etc.) renomeando e movendo para a estrutura nova.
 
-3. Inicie o bot:
+## Regras
 
-```bash
-npm start
-```
+As regras foram reduzidas para **8 regras principais**, deixando detalhes específicos de raid/eventos para comunicados oficiais quando necessário.
 
-4. No Discord, use `/setup` ou `/atualizarcanais` e clique no botão de atualização.
+## Comandos ativos
 
-O bot criará os canais novos sem apagar os canais e mensagens manuais do servidor.
+- `/setup` — aplica diretamente a nova estrutura ZONA-Z.
+- `/atualizarcanais` — mostra um botão de confirmação para executar a mesma atualização.
+
+## Tema
+
+Painéis novos em `assets/painels`, todos em 1600×500, com identidade visual ZONA-Z e foco em **Alteria • 1PP • Loot 1.3x • KOTH • Airdrop**.

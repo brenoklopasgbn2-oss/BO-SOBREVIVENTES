@@ -1,136 +1,46 @@
 const path = require('path');
 const { AttachmentBuilder } = require('discord.js');
 const { baseEmbed } = require('../utils/embeds');
-const { getCategories, getCategorySummary, getRuleSet } = require('../data/rulesRepository');
+const { getCategories, getRuleSet } = require('../data/rulesRepository');
 
-const RULES_PER_CARD = 6;
-const DESCRIPTION_LIMIT = 3800;
-
-function rulesImageAttachment(ruleSetKey = 'geral') {
-  const set = getRuleSet(ruleSetKey);
+function rulesImageAttachment() {
+  const set = getRuleSet();
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', set.image));
 }
 
-function cleanDescription(description = '') {
-  return String(description)
-    .replace(/\n{3,}/g, '\n\n')
-    .replace(/\s+$/g, '')
-    .trim();
-}
-
 function compactText(text = '') {
-  return cleanDescription(text)
-    .replace(/\n•\s*/g, '; • ')
-    .replace(/\n-\s*/g, '; - ')
-    .replace(/\n/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  return String(text).replace(/\s+/g, ' ').trim();
 }
 
-function formatRuleBlock(rule) {
-  const desc = compactText(rule.description);
-  return `**${rule.number}. ${rule.title}** — ${desc}`;
-}
-
-function splitCategoryRules(rules) {
-  const chunks = [];
-  let current = [];
-  let currentLength = 0;
-
-  for (const rule of rules) {
-    const block = formatRuleBlock(rule);
-    const extra = block.length + (current.length > 0 ? 2 : 0);
-    const reachedCount = current.length >= RULES_PER_CARD;
-    const reachedLimit = current.length > 0 && currentLength + extra > DESCRIPTION_LIMIT;
-
-    if (reachedCount || reachedLimit) {
-      chunks.push(current);
-      current = [];
-      currentLength = 0;
-    }
-
-    current.push(rule);
-    currentLength += extra;
-  }
-
-  if (current.length > 0) chunks.push(current);
-  return chunks;
-}
-
-function buildRulesHeaderPayload(ruleSetKey = 'geral') {
-  const set = getRuleSet(ruleSetKey);
-  const hasRules = set.rules.length > 0;
-
-  const description = hasRules
-    ? [
-        `🎮 **Servidor:** ${set.server}`,
-        `📊 **Total:** ${set.rules.length} regras`,
-        '',
-        '🔎 **Consultar regra específica:** use **/regra numero servidor**',
-        `Exemplo: **/regra numero: 1 servidor: ${set.server}**`,
-        '',
-        '🧭 **Partes:**',
-        getCategorySummary(set.key)
-      ].join('\n')
-    : [
-        `⚠️ **${set.emptyMessage}**`,
-        '',
-        'Quando as regras forem cadastradas, este canal será preenchido automaticamente pelo **/setup**.'
-      ].join('\n');
-
-  const embed = baseEmbed()
+function buildRulesPanel() {
+  const set = getRuleSet();
+  const header = baseEmbed()
     .setColor(set.color)
-    .setTitle(`${set.emoji} ${set.label}`)
-    .setDescription(description)
+    .setTitle('📜 Regras oficiais • ZONA-Z')
+    .setDescription([
+      '**Regras diretas, sem texto gigante.** Leia antes de jogar.',
+      '',
+      'A ideia é simples: jogue limpo, respeite a comunidade e não use falhas para ganhar vantagem.',
+      '',
+      `📊 **${set.rules.length} regras principais** • ${getCategories().map((c) => c.name).join(' • ')}`,
+      '',
+      '⚠️ Eventos e raids podem receber regras específicas nos avisos oficiais.'
+    ].join('\n'))
     .setImage(`attachment://${set.image}`);
 
-  return {
-    embeds: [embed],
-    files: [rulesImageAttachment(set.key)]
-  };
+  const body = set.rules.map((rule) => `**${rule.number}. ${rule.title}**\n${compactText(rule.description)}`).join('\n\n');
+  const rulesEmbed = baseEmbed()
+    .setColor(set.color)
+    .setTitle('🔴 Resumo completo')
+    .setDescription(body);
+
+  return [
+    { embeds: [header], files: [rulesImageAttachment()], legacyTitles: ['📜 Regras Gerais', '🔴 Regras ZONA-Z Vanilla', '🏳️ Regra de Bandeira no Raid'] },
+    { embeds: [rulesEmbed] }
+  ];
 }
 
-function buildRulesMessages(ruleSetKey = 'geral') {
-  const set = getRuleSet(ruleSetKey);
-  const payloads = [buildRulesHeaderPayload(set.key)];
+function buildRulesMessages() { return buildRulesPanel(); }
+function buildRulesHeaderPayload() { return buildRulesPanel()[0]; }
 
-  if (set.rules.length === 0) return payloads;
-
-  const categories = getCategories(set.key);
-
-  for (const category of categories) {
-    const chunks = splitCategoryRules(category.rules);
-
-    for (const chunk of chunks) {
-      const first = chunk[0].number;
-      const last = chunk[chunk.length - 1].number;
-      const body = chunk.map(formatRuleBlock).join('\n\n');
-
-      const title = chunks.length > 1
-        ? `${category.emoji} ${category.name} • ${first}-${last}`
-        : `${category.emoji} ${category.name}`;
-
-      payloads.push({
-        embeds: [
-          baseEmbed()
-            .setColor(set.color)
-            .setTitle(title)
-            .setDescription(body)
-        ]
-      });
-    }
-  }
-
-  return payloads;
-}
-
-function buildRulesPanel(ruleSetKey = 'geral') {
-  return buildRulesMessages(ruleSetKey);
-}
-
-module.exports = {
-  buildRulesHeaderPayload,
-  buildRulesMessages,
-  buildRulesPanel,
-  rulesImageAttachment
-};
+module.exports = { buildRulesHeaderPayload, buildRulesMessages, buildRulesPanel, rulesImageAttachment };

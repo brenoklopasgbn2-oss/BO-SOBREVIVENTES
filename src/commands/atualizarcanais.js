@@ -5,7 +5,7 @@ const { successEmbed, errorEmbed } = require('../utils/embeds');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('atualizarcanais')
-    .setDescription('Mostra o botão para atualizar os canais oficiais sem apagar nada.'),
+    .setDescription('Aplica a estrutura oficial e a nova identidade da ZONA-Z.'),
 
   async execute(interaction) {
     if (!OWNER_IDS.includes(interaction.user.id)) {
@@ -15,13 +15,23 @@ module.exports = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('update_channels:run')
-        .setLabel('Atualizar canais RAID-Z')
+        .setLabel('Aplicar nova ZONA-Z')
         .setEmoji('🔄')
         .setStyle(ButtonStyle.Primary)
     );
 
     return interaction.reply({
-      embeds: [successEmbed('Clique no botão abaixo para **criar/atualizar** os canais oficiais RAID-Z. Ele **não apaga mensagens**, **não apaga canais manuais** e **não apaga categorias manuais**. Vai criar apenas o que estiver faltando e atualizar os painéis do bot, incluindo **🚩・koth**, **📻・missoes-de-raid**, **⚪・bunker-airfield**, **🚢・container-barco**, **🟡・bunker-tisy**, **⛏️・bunker-subterraneo**, **🏗️・construcoes-vanilla-pro**, **🚙・carro-blindado**, **🛏️・saco-de-dormir** e a IA.')],
+      embeds: [successEmbed([
+        'O botão abaixo aplica a **repaginação ZONA-Z**.',
+        '',
+        '✅ Renomeia e reorganiza os canais principais.',
+        '✅ Troca os painéis pelas novas imagens.',
+        '✅ Resume as regras.',
+        '✅ Mantém KOTH e adiciona Airdrop/Eventos.',
+        '🧹 Remove canais antigos de bunker, chaves, plataforma, Vanilla Pro, carro blindado, bandeira e outros guias do servidor anterior.',
+        '',
+        'Canais manuais que não fazem parte da lista antiga continuam preservados.'
+      ].join('\n'))],
       components: [row],
       ephemeral: true
     });

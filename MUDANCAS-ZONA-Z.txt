@@ -1,0 +1,23 @@
+ZONA-Z BOT • REPAGINAÇÃO 2026
+
+PRINCIPAIS ALTERAÇÕES
+- Identidade do Discord refeita para ZONA-Z / Alteria.
+- Painéis antigos removidos e 18 imagens novas adicionadas.
+- Regras reduzidas para 8 regras principais.
+- Canais de bunker, chaves, plataforma, Vanilla Pro, carro blindado, bandeira antiga e guias antigos removidos pelo setup.
+- Estrutura nova: Entrada, Central ZONA-Z, Comunidade, Suporte, Tickets, Impulsionadores, Staff e Bot.
+- Central nova com Regras, Como Jogar, Eventos, KOTH, Airdrop, Informações, Banimentos, Sugestões e ZONA-Z IA.
+- Grupo/voz de clã configurado para até 15 membros.
+- Assistente de regras refeito sem informações antigas de bunker/servidor anterior.
+- Boas-vindas, saída, tickets e presença do bot atualizados.
+- Imagens públicas antigas da marca anterior substituídas por assets ZONA-Z.
+- Branding visível RAID-Z removido; referências RAID-Z restantes no código existem somente para localizar/migrar/apagar itens antigos durante o setup.
+
+COMO APLICAR NO DISCORD
+1. Suba esta versão do bot e reinicie o processo.
+2. Garanta que o bot tenha permissão de Administrador durante a migração.
+3. Execute /atualizarcanais e clique em “Aplicar nova ZONA-Z”, ou execute /setup diretamente.
+4. Confira as categorias/canais e depois remova Administrador se sua política de permissões exigir.
+
+OBSERVAÇÃO
+Valores técnicos internos como serverType=vanilla foram mantidos onde fazem parte da lógica de loja/entrega para evitar quebrar compatibilidade. A identidade exibida ao usuário foi atualizada para ZONA-Z / Alteria onde foi alterada nesta repaginação.

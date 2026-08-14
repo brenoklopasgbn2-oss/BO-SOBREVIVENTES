@@ -31,7 +31,7 @@ function failedMigrationFrom(output) {
   return match?.[1] || null;
 }
 
-console.log('🔒 Aplicando migrations no modo seguro RAID-Z...');
+console.log('🔒 Aplicando migrations no modo seguro ZONA-Z...');
 let deploy = runPrisma(['migrate', 'deploy']);
 
 if (deploy.status === 0) {

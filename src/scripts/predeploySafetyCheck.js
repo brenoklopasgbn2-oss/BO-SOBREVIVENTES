@@ -50,7 +50,7 @@ for (const file of files) {
 }
 
 if (problems.length && !allowDestructive) {
-  console.error('\n🚫 DEPLOY BLOQUEADO PELO MODO SEGURO DO RAID-Z');
+  console.error('\n🚫 DEPLOY BLOQUEADO PELO MODO SEGURO DO ZONA-Z');
   console.error('Encontrei migration com comando que pode apagar dados de players/saldos/seguros.');
   console.error('Isso evita perder saldo, garagem, quantas vezes usou seguro e histórico em atualização normal.\n');
   for (const p of problems) console.error(`- ${p.file}: ${p.check}`);

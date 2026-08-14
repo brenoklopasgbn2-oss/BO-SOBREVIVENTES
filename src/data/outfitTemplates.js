@@ -1,9 +1,9 @@
 
 export const defaultOutfitTemplates = [
   {
-    name: 'Traje VIP RAID-Z FOG', slug: 'traje-vip-fog-raidz', serverType: 'vanilla', level: 1,
+    name: 'Traje VIP ZONA-Z FOG', slug: 'traje-vip-fog-raidz', serverType: 'vanilla', level: 1,
     priceCoins: 15000, durationDays: 30, streamerRewardEnabled: true, imageUrl: '/images/outfits/traje-vip-fog-raidz.png',
-    description: 'Traje VIP mensal FOG do RAID-Z com roupa completa. Sem remédios no inventário.',
+    description: 'Traje VIP mensal FOG do ZONA-Z com roupa completa. Sem remédios no inventário.',
     items: [
       { slot: 'headgear', classname: 'FOG_Watchcap_Black', quantity: 1, label: 'Touca FOG Black' },
       { slot: 'mask', classname: 'FOG_Arcteryx_Balaclava_Black', quantity: 1, label: 'Balaclava FOG Black' },

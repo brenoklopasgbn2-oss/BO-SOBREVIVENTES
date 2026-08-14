@@ -6,7 +6,6 @@ const { logEvent } = require('../utils/logger');
 function findTextChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased());
 }
-
 function panelImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
@@ -21,13 +20,9 @@ module.exports = {
       const imageName = PANEL_IMAGES.leaveMember;
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
-        .setAuthor({ name: `RAID-Z saiu: ${user.tag}`, iconURL: user.displayAvatarURL({ size: 128 }) })
+        .setAuthor({ name: `ZONA-Z • saída: ${user.tag}`, iconURL: user.displayAvatarURL({ size: 128 }) })
         .setTitle('📤 Um sobrevivente deixou a comunidade')
-        .setDescription([
-          `**${user.tag}** saiu da **RAID-Z**.`,
-          '',
-          'Foi embora... mas a gente sabe que uma hora volta 😏'
-        ].join('\n'))
+        .setDescription([`**${user.tag}** saiu da **ZONA-Z**.`, '', 'Alteria continua por aqui caso queira voltar.'].join('\n'))
         .setThumbnail(user.displayAvatarURL({ size: 256 }))
         .setImage(`attachment://${imageName}`)
         .addFields(
@@ -35,7 +30,7 @@ module.exports = {
           { name: '🆔 ID', value: member.id, inline: true },
           { name: '🌎 Membros agora', value: `${member.guild.memberCount}`, inline: true }
         )
-        .setFooter({ text: 'RAID-Z • Registro de saída' })
+        .setFooter({ text: 'ZONA-Z • Registro de saída' })
         .setTimestamp();
 
       await leaveChannel.send({ embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);

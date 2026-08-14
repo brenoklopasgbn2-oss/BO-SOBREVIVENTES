@@ -217,7 +217,7 @@ async function requestGoogleTranslation(text, targetLanguage, sourceLanguage = '
 
     const response = await fetch(url, {
       method: 'GET',
-      headers: { 'User-Agent': 'RAID-Z-Discord-Bot/1.0' },
+      headers: { 'User-Agent': 'ZONA-Z-Discord-Bot/1.0' },
       signal: controller.signal
     });
 
@@ -303,7 +303,7 @@ async function handleTicketTranslation(message) {
       })
       .setTitle(fromOwner ? '🇧🇷 Tradução automática para a equipe' : (USER_TRANSLATION_TITLES[data.language] || `🌐 Tradução para ${language.nativeLabel}`))
       .setDescription(result.translatedText.slice(0, 4096))
-      .setFooter({ text: `RAID-Z • Tradução automática • ${language.emoji} ${language.nativeLabel}` })
+      .setFooter({ text: `ZONA-Z • Tradução automática • ${language.emoji} ${language.nativeLabel}` })
       .setTimestamp();
 
     if (fromOwner) {

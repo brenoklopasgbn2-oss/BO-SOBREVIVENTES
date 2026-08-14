@@ -1,6 +1,6 @@
 import { prisma } from '../db/prisma.js';
 
-// Dono principal do RAID-Z. Mantido no código para não depender de variável do Railway
+// Dono principal do ZONA-Z. Mantido no código para não depender de variável do Railway
 // nem de um primeiro vínculo pelo /admin/login.
 const BUILTIN_ADMIN_STEAM64S = Object.freeze(['76561198842331372']);
 const ADMIN_OWNER_SETTING_KEYS = Object.freeze([

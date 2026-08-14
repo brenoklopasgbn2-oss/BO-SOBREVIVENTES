@@ -38,7 +38,7 @@ async function getClanVipOutfitMap(clans = []) {
     if (!map.has(outfit.managedOwnerSteam64)) {
       map.set(outfit.managedOwnerSteam64, {
         ...outfit,
-        imageSrc: outfit.imageMime ? `/outfit-image/${outfit.id}` : (outfit.imageUrl || '/images/raidz-vips-store.webp')
+        imageSrc: outfit.imageMime ? `/outfit-image/${outfit.id}` : (outfit.imageUrl || '/images/zona-z-vips-store.webp')
       });
     }
   }
@@ -77,7 +77,7 @@ function decorateMember(member, outfitMap) {
     ...member,
     displayName: member.player?.nickname || member.steam64,
     activeOutfit,
-    avatarUrl: member.player?.avatarMime ? `/player-avatar/${member.playerId}?v=${member.player.updatedAt ? new Date(member.player.updatedAt).getTime() : ''}` : '/images/raidz-profile-default.webp'
+    avatarUrl: member.player?.avatarMime ? `/player-avatar/${member.playerId}?v=${member.player.updatedAt ? new Date(member.player.updatedAt).getTime() : ''}` : '/images/zona-z-profile-default.webp'
   };
 }
 
@@ -108,8 +108,8 @@ function decorateClan(clan, outfitMap, clanVipOutfitMap = new Map()) {
     clanVipOutfit,
     pendingApplications: (clan.joinApplications || []).filter(app => app.status === 'PENDING').length,
     accentColor: normalizeAccentColor(clan.accentColor),
-    flagImage: clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/raidz-clan-default.webp'),
-    bannerImage: clan.bannerData ? `/clan-banner/${clan.id}` : '/images/raidz-clans-hero.webp'
+    flagImage: clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/zona-z-clan-default.webp'),
+    bannerImage: clan.bannerData ? `/clan-banner/${clan.id}` : '/images/zona-z-clans-hero.webp'
   };
 }
 

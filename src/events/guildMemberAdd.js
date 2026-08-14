@@ -6,7 +6,6 @@ const { logEvent } = require('../utils/logger');
 function findTextChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased());
 }
-
 function panelImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
@@ -14,29 +13,24 @@ function panelImage(fileName) {
 module.exports = {
   name: Events.GuildMemberAdd,
   async execute(member) {
-    const vanillaRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.vanilla);
-    if (vanillaRole) await member.roles.add(vanillaRole, 'Entrada automática RAID-Z Vanilla').catch(() => null);
+    const survivorRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
+    if (survivorRole) await member.roles.add(survivorRole, 'Entrada automática ZONA-Z').catch(() => null);
 
     const welcomeChannel = findTextChannel(member.guild, CHANNELS.memberWelcome);
-
     if (welcomeChannel) {
       const accountCreated = Math.floor(member.user.createdTimestamp / 1000);
       const imageName = PANEL_IMAGES.welcomeMember;
       const embed = new EmbedBuilder()
-        .setColor(0xff3131)
-        .setAuthor({ name: `Novo raider: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
-        .setTitle('🔴 Bem-vindo ao RAID-Z!')
+        .setColor(0xe3263e)
+        .setAuthor({ name: `Novo sobrevivente: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
+        .setTitle('🔴 Bem-vindo à ZONA-Z!')
         .setDescription([
-          `${member}, você acabou de entrar na nossa comunidade DayZ PC.`,
+          `${member}, bem-vindo à nossa comunidade DayZ PC.`,
           '',
-          'Agora temos **1 servidor apenas: RAID-Z Vanilla**.',
-          'Seu acesso ao Vanilla é liberado automaticamente.',
+          '🗺️ **Alteria** • 👁️ **1PP** • 📦 **Loot 1.3x**',
+          '🚩 **KOTH** • 🪂 **Airdrop** • 👥 **Grupo até 15**',
           '',
-          '⚔️ Clã com máximo de **10 jogadores**.',
-          '🏳️ Bandeira no raid precisa de solicitação para ADM.',
-          '🤍 Bandeira branca pode ser solicitada **1 vez por mês**.',
-          '',
-          'Leia as regras, respeite a comunidade e boa sobrevivência!'
+          'Seu cargo de **Sobrevivente** foi liberado automaticamente. Leia as regras resumidas e boa jornada.'
         ].join('\n'))
         .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
         .setImage(`attachment://${imageName}`)
@@ -46,7 +40,7 @@ module.exports = {
           { name: '📅 Conta criada', value: `<t:${accountCreated}:R>`, inline: true },
           { name: '🌎 Membro número', value: `${member.guild.memberCount}`, inline: true }
         )
-        .setFooter({ text: 'RAID-Z • Seja bem-vindo ao apocalipse' })
+        .setFooter({ text: 'ZONA-Z • Bem-vindo a Alteria' })
         .setTimestamp();
 
       await welcomeChannel.send({ content: `👋 Bem-vindo, ${member}!`, embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);
