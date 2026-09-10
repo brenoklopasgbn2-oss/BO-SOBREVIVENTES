@@ -1,0 +1,14 @@
+Olá. Meu site está hospedado na Railway e usa estes três IPs IPv4 estáticos de saída:
+
+35.212.78.110
+35.212.79.89
+35.212.72.78
+
+O login do FTP em 188-255-171-147.flamehost.com.br:8821 é aceito, porém a conexão de dados é encerrada com “read ECONNRESET (data socket)”.
+
+Favor liberar TODOS os três IPs:
+1. Na porta de controle FTP 8821.
+2. Em toda a faixa de portas passivas/PASV configurada no servidor FTP.
+3. Sem limite que encerre a segunda conexão usada para LIST, upload e download.
+
+Também peço que confirmem qual modo deve ser usado nessa porta: FTP comum ou FTPS explícito/TLS.

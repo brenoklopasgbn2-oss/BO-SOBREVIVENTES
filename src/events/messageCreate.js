@@ -6,7 +6,6 @@ const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
 const { handleAntiXinga } = require('../moderation/antiXinga');
 const { recordTicketAnswered, recordTicketMessage } = require('../stats/staffStats');
-const { handleRulesQuestion } = require('../rules/rulesAssistant');
 const { handleTicketTranslation } = require('../services/ticketTranslationService');
 
 // Evita duas mensagens simultâneas assumirem e anunciarem o mesmo ticket.
@@ -23,7 +22,7 @@ function channelMode(channelName) {
       color: 0xf39c12,
       title: '📣 Comunicado Oficial',
       fallbackImage: PANEL_IMAGES.announcement,
-      footer: 'CHAMPIONS Z • Aviso da Administração'
+      footer: 'CHAMPIONS Z • Comunicado Oficial'
     };
   }
 
@@ -64,7 +63,7 @@ function setTopicField(topic = '', key, value) {
 }
 
 function isTicketChannel(channel) {
-  return Boolean((channel?.topic?.includes('CHAMPIONSZ_TICKET') || channel?.topic?.includes('ZONAZ_TICKET') || channel?.topic?.includes('RAIDZ_TICKET')) || channel?.name?.includes('ticket-'));
+  return Boolean((channel?.topic?.includes('ZONAZ_TICKET') || channel?.topic?.includes('RAIDZ_TICKET')) || channel?.name?.includes('ticket-'));
 }
 
 async function autoClaimTicket(message) {
@@ -123,8 +122,6 @@ module.exports = {
     if (!message.guild || !message.channel || message.author.bot) return;
 
     if (await handleAntiXinga(message)) return;
-
-    if (await handleRulesQuestion(message)) return;
 
     await autoClaimTicket(message);
     await handleTicketTranslation(message);

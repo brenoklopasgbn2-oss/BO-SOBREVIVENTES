@@ -1,0 +1,10 @@
+ATUALIZAÇÃO V160 - BASE VIP
+
+- Aba Base VIP atualizada.
+- Utiliza estruturas existentes no jogo: prédios, galpões, casas e outras aprovadas.
+- Pisos, muros, cercas e portões continuam totalmente vanilla.
+- Removidos todos os preços fixos da página.
+- Valor da construção combinado com a administração.
+- Mensalidade definida em 60% do valor da construção.
+- Mantidos aluguel de bica de água e bomba de gasolina.
+- Imagem promocional atualizada.

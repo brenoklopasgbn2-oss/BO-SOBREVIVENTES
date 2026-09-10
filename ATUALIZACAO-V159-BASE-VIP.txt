@@ -1,0 +1,11 @@
+ATUALIZAÇÃO V159 - ABA BASE VIP
+
+- Nova aba "Base VIP" no menu principal.
+- Nova página /base-vip com imagem, descrição, regras e botão para abrir ticket.
+- Explica que o mod é usado apenas em piso e estruturas.
+- Muros modificados não são incluídos; cercas e portões permanecem vanilla.
+- Cada base recebe orçamento individual.
+- Valor da construção e valor mensal são separados.
+- Incluído aluguel de bica de água e bomba de gasolina.
+- Aviso claro de que não são aceitas construções exageradas ou que prejudiquem o servidor.
+- Imagem adicionada em public/images/base-vip-banner.png.

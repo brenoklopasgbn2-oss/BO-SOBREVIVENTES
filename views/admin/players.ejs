@@ -1,0 +1,34 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="shop-header">
+    <div><p class="eyebrow">Banco de dados</p><h1>Players salvos</h1></div>
+    <form method="GET" action="/admin/players" class="search"><input name="q" value="<%= q || '' %>" placeholder="Steam64, nick ou Discord"><button class="btn">Buscar</button></form>
+  </section>
+  <section class="card">
+    <table>
+      <thead><tr><th>Player</th><th>Steam64</th><th>Discord</th><th>Saldo</th><th>Ajustar saldo</th><th>Criado</th></tr></thead>
+      <tbody>
+        <% players.forEach(p => { %>
+          <tr>
+            <td><%= p.nickname || '-' %></td>
+            <td><code><%= p.steam64 %></code></td>
+            <td><%= p.discordId || '-' %></td>
+            <td><strong><%= coins(p.coins) %></strong></td>
+            <td>
+              <form method="POST" action="/admin/players/<%= p.id %>/coins" class="inline-grid mini">
+                <input name="amount" type="number" placeholder="+1000 ou -500" required>
+                <input name="reason" placeholder="Motivo">
+                <button class="btn small">Aplicar</button>
+              </form>
+            </td>
+            <td><%= dateTime(p.createdAt) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+<%- include('../partials/footer') %>

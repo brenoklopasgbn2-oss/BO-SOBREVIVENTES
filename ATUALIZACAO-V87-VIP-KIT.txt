@@ -1,0 +1,30 @@
+RAID-Z V87 - VIP PRIVADO E KIT INICIAL
+
+ALTERAÇÕES
+1. Removidos da loja:
+   - Traje VIP Básico
+   - Traje VIP Explorador
+   - Traje VIP Caçador
+   - Traje VIP Militar
+   - Traje VIP Elite Player
+
+2. Kit Inicial corrigido para entregar exatamente:
+   Barrel_Red|1|Barril vermelho
+   NailBox|1|Caixa de pregos
+   Shovel|1|Pá
+   CodeLock|1|Code Lock
+   Rope|1|Corda
+   Hatchet|1|Machadinha
+   WoodenPlank|20|Tábuas (20)
+   WoodenLog|5|Troncos (5)
+
+3. Painel ADM de VIP vitalício privado:
+   - Cria um traje personalizado.
+   - Aceita um ou vários Steam64.
+   - Não aparece na loja pública.
+   - Não pode ser comprado.
+   - Não vence.
+   - Permite editar a lista de Steam64 e revogar o VIP.
+   - Funciona pela API e pelo FileBridge/FTP.
+
+4. Filas pendentes do Kit Inicial são atualizadas automaticamente no próximo início do site.

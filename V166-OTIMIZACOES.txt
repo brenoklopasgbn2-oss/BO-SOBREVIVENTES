@@ -1,0 +1,21 @@
+RAID-Z STORE V166 — OTIMIZAÇÃO REAL DE VELOCIDADE
+
+Correções aplicadas:
+- Abrir a loja não espera mais a consulta pesada da vitrine de clãs.
+- Todas as categorias compartilham um catálogo em cache; trocar de aba não consulta novamente todos os produtos.
+- Imagens da Wiki DayZ nunca bloqueiam a página; usam cache/placeholder e resolvem em segundo plano.
+- Login aberto pelo link do mod grava player + sessão em uma única consulta ao PostgreSQL.
+- Sessão do player, acesso streamer, categorias, promoções e catálogo possuem cache curto e seguro.
+- Compra de item/kit cria todas as entregas em lote.
+- Carrinho cria compras e entregas em lote.
+- Compra comum, carrinho, veículo, seguro e renovação não aguardam FTP/SFTP.
+- Discord e auditorias pós-compra rodam em segundo plano.
+- Novos índices de banco para catálogo, filas, histórico e streamer.
+- EJS usa cache de templates em produção.
+- Rotas acima de 900 ms aparecem no Railway como [SLOW_HTTP], sem expor Steam64 ou token.
+
+Segurança preservada:
+- Sem wipe.
+- Sem zerar saldo.
+- Sem apagar compras, entregas, veículos, VIPs ou clãs.
+- Checkout continua atômico e protegido contra clique duplo.

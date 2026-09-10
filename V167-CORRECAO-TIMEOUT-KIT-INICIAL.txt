@@ -1,0 +1,11 @@
+RAID-Z STORE V167 — CORREÇÃO DO ERRO “TRANSACTION ALREADY CLOSED”
+
+CORRIGIDO:
+- O resgate do Kit Inicial não consulta mais AppSetting dentro da transação.
+- A configuração do kit é carregada antes da transação e reutilizada com cache.
+- A transação do resgate agora possui maxWait de 15 segundos e timeout de 60 segundos.
+- O teste de drop do Kit Inicial pelo painel ADM recebeu a mesma correção.
+- Nenhuma compra, saldo, veículo, VIP, entrega ou resgate existente é apagado.
+
+MOTIVO DO ERRO:
+O Prisma usa 5 segundos por padrão para transações interativas. Em picos de latência do PostgreSQL, a consulta AppSetting.findUnique passava desse limite e a transação expirava.

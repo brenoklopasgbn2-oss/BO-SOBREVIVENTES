@@ -1,0 +1,110 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container admin-products-page starter-kit-admin-page">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+
+  <section class="shop-header">
+    <div>
+      <p class="eyebrow">Pacote grátis</p>
+      <h1>Kit Inicial</h1>
+      <p class="muted">Configure o pacote que cada conta pode resgatar apenas uma vez. Também dá para dropar para um Steam64 de teste do admin.</p>
+    </div>
+    <a class="btn" href="/shop">Ver loja</a>
+  </section>
+
+  <section class="split align-start admin-product-grid">
+    <div class="card admin-product-form-card starter-kit-admin-card-v32">
+      <h2>Configurar Kit Inicial</h2>
+      <form method="POST" action="/admin/starter-kit" enctype="multipart/form-data" class="form-grid">
+        <label class="admin-feature-check">
+          <input type="checkbox" name="enabled" <%= kit.enabled ? 'checked' : '' %>> Ativo na loja
+        </label>
+        <div class="inline-grid product-inline-grid two-cols">
+          <label>Nome do pacote
+            <input name="name" value="<%= kit.name || 'Kit Inicial' %>" required>
+          </label>
+          <label>Servidor do drop
+            <select name="serverType">
+              <option value="current" <%= kit.serverType === 'current' ? 'selected' : '' %>>Servidor que o player está vendo</option>
+              <option value="vanilla" <%= kit.serverType === 'vanilla' ? 'selected' : '' %>>Sempre Vanilla</option>
+              <option value="bbp" <%= kit.serverType === 'bbp' ? 'selected' : '' %>>Sempre BBP</option>
+            </select>
+          </label>
+        </div>
+        <label>Descrição
+          <textarea name="description" placeholder="Resgate grátis uma vez por conta."><%= kit.description || '' %></textarea>
+        </label>
+        <div class="inline-grid product-inline-grid two-cols">
+          <label>Tipo de entrega
+            <select name="deliveryType">
+              <option value="drop_box" <%= kit.deliveryType === 'drop_box' ? 'selected' : '' %>>Dentro de caixa temporária</option>
+              <option value="drop_at_feet" <%= kit.deliveryType === 'drop_at_feet' ? 'selected' : '' %>>Dropar no pé</option>
+            </select>
+          </label>
+          <label>Bônus de moedas ao resgatar
+            <input type="number" name="bonusCoins" min="0" max="1000000" step="100" value="<%= kit.bonusCoins || 0 %>" placeholder="5000">
+          </label>
+        </div>
+        <label>URL da imagem do card
+          <input name="imageUrl" value="<%= kit.imageUrl || '' %>" placeholder="/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel">
+        </label>
+        <label>Enviar imagem do seu PC
+          <input name="image" type="file" accept="image/*"><small>Agora aceita imagem até 15MB. Se trocar e não aparecer, use CTRL+F5.</small>
+        </label>
+
+        <div class="card mini-help-card item-builder-card">
+          <div class="item-builder-top">
+            <div>
+              <h3>Itens do pacote</h3>
+              <p class="muted">Cada linha vira uma entrega. Formato: <b>Classname|Quantidade|Nome visível</b>.</p>
+            </div>
+          </div>
+          <label>Itens do Kit Inicial
+            <textarea name="itemsText" class="items-textarea" placeholder="BandageDressing|2|Bandagens"><%= starterKitItemsToText(kit.items) %></textarea>
+          </label>
+          <div class="item-builder-note">
+            <strong>Exemplo:</strong>
+            <p><b>BandageDressing|2|Bandagens</b> • <b>WaterBottle|1|Água</b> • <b>TacticalBaconCan|2|Comida</b></p>
+          </div>
+        </div>
+        <button class="btn primary" type="submit">Salvar Kit Inicial</button>
+      </form>
+    </div>
+
+    <div class="card wide-card starter-kit-test-card-v32">
+      <h2>Testar drop do pacote</h2>
+      <p class="muted">Use isso para conferir se o pacote vai chegar certo no DayZ. Esse teste não marca o player como resgatado.</p>
+      <form method="POST" action="/admin/starter-kit/test-drop" class="form-grid compact-form">
+        <label>Steam64 para teste
+          <input name="steam64" placeholder="7656119..." maxlength="17" required>
+        </label>
+        <label>Servidor de teste
+          <select name="serverType">
+            <option value="vanilla">Vanilla</option>
+            <option value="bbp">Vanilla+</option>
+          </select>
+        </label>
+        <button class="btn primary" type="submit">Dropar para testar</button>
+      </form>
+
+      <div class="starter-kit-preview-admin-v32">
+        <h3>Preview do card</h3>
+        <div class="starter-kit-card-v32 admin-preview">
+          <div class="starter-kit-glow-v32"></div>
+          <div class="starter-kit-art-v32"><img src="<%= kit.imageData ? ('/starter-kit-image?v=' + (kit.imageUpdatedAt || Date.now())) : (kit.imageUrl || '/dayz-wiki-image?type=Barrel_Red&name=Oil%20Barrel') %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= kit.name %>"></div>
+          <div class="starter-kit-copy-v32">
+            <span>🎁 Resgate único</span>
+            <h2><%= kit.name %></h2>
+            <p><%= kit.description %></p>
+            <% if (kit.bonusCoins) { %><div class="starter-kit-items-v32"><b>+<%= coins(kit.bonusCoins) %> RZ no saldo</b></div><% } %>
+            <div class="starter-kit-items-v32">
+              <% (kit.items || []).slice(0, 5).forEach(item => { %><b><%= item.quantity %>x <%= item.label || item.classname %></b><% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>

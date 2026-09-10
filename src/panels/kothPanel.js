@@ -9,20 +9,21 @@ function imageAttachment() {
 
 function buildKothPanel() {
   const embed = baseEmbed()
-    .setColor(0xd4af37)
+    .setColor(0xe3263e)
     .setTitle('🚩 KOTH • CHAMPIONS Z')
     .setDescription([
-      'O **King of the Hill** será uma das disputas competitivas do servidor.',
+      'O **King of the Hill** é uma área de disputa PvP com recompensa para quem assumir o risco.',
       '',
-      '⚔️ Entre preparado para PvP.',
-      '🏆 Controle a área e lute pela recompensa.',
-      '🚫 Exploit, bug ou qualquer vantagem irregular resultará em punição.',
+      '• Entre preparado para combate.',
+      '• Controle a área conforme o evento indicar.',
+      '• O loot e a dificuldade podem variar conforme a configuração ativa.',
+      '• Não use bug, render ou exploit para obter vantagem.',
       '',
-      'Configuração, horários e recompensas serão publicados aqui.'
+      '📣 Mudanças de funcionamento ou regras especiais serão publicadas em **avisos**.'
     ].join('\n'))
     .setImage(`attachment://${PANEL_IMAGES.koth}`);
 
-  return { embeds: [embed], files: [imageAttachment()] };
+  return { embeds: [embed], files: [imageAttachment()], legacyTitles: ['🚩 KOTH ZONA-Z — PvP e loot dinâmico', '🚩 KOTH ZONA-Z'] };
 }
 
 module.exports = { buildKothPanel };

@@ -5,7 +5,7 @@ const { successEmbed, errorEmbed } = require('../utils/embeds');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('atualizarcanais')
-    .setDescription('Aplica a estrutura oficial do CHAMPIONS Z.'),
+    .setDescription('Aplica a estrutura oficial e a nova identidade do CHAMPIONS Z.'),
 
   async execute(interaction) {
     if (!OWNER_IDS.includes(interaction.user.id)) {
@@ -25,10 +25,10 @@ module.exports = {
         'O botão abaixo aplica a **estrutura CHAMPIONS Z**.',
         '',
         '✅ Renomeia e reorganiza os canais principais.',
-        '✅ Aplica a nova identidade e o banner de boas-vindas.',
-        '✅ Remove informações antigas de regras.',
-        '✅ Mantém KOTH, Airdrop, Eventos, comunidade e suporte.',
-        '🧹 Remove canais antigos de bunker, chaves, plataforma, Vanilla Pro, carro blindado, bandeira e outros guias do servidor anterior.',
+        '✅ Troca os painéis pelas novas imagens.',
+        '✅ Atualiza o painel de regras.',
+        '✅ Mantém KOTH e Airdrop.',
+        '🧹 Cria os novos guias de Bunker 1, Bunker 2, áreas militares e infectado NBC amarelo, removendo estruturas antigas conhecidas.',
         '',
         'Canais manuais que não fazem parte da lista antiga continuam preservados.'
       ].join('\n'))],

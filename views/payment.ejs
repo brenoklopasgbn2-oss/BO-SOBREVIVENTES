@@ -1,0 +1,59 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container narrow pix-page-v42 theme-vanilla">
+  <section class="pix-card-v42 <%= payment.status === 'APPROVED' ? 'is-approved' : 'is-processing' %>" data-payment-id="<%= payment.id %>" data-payment-status="<%= payment.status %>" data-return-url="/shop?serverType=vanilla&success=Pix%20aprovado!%20Moedas%20creditadas%20com%20sucesso.">
+    <div class="pix-glow-v42"></div>
+    <header class="pix-head-v42">
+      <div>
+        <p class="eyebrow">Doação Pix</p>
+        <h1><%= payment.coinPackage?.name || 'Doação de moedas' %></h1>
+        <p>Apoie o servidor e receba suas moedas automaticamente quando o Pix aprovar.</p>
+      </div>
+      <div class="pix-status-pill-v42" id="pixStatusBox">
+        <span class="pix-spinner" id="pixSpinner" aria-hidden="true"></span>
+        <b id="pixStatusText" class="status <%= payment.status.toLowerCase() %>"><%= payment.status %></b>
+      </div>
+    </header>
+
+    <section class="pix-grid-v42">
+      <article class="pix-info-v42">
+        <div class="pix-metric-v42"><span>Valor da doação</span><strong><%= brl(payment.amountBrl) %></strong></div>
+        <div class="pix-metric-v42"><span>Você recebe</span><strong><%= coins(payment.coins) %> RZ</strong></div>
+        <% if (payment.supportStreamerCode) { %>
+          <div class="pix-streamer-v42">❤️ Apoiando streamer <b><%= payment.supportStreamerCode %></b> • comissão <%= payment.supportCommissionPercent %>%</div>
+        <% } %>
+        <div class="pix-processing-copy-v42" id="pixProcessingText"><%= payment.status === 'APPROVED' ? 'Aprovado' : 'Aguardando pagamento via Pix...' %></div>
+      </article>
+
+      <article class="pix-qr-box-v42">
+        <h2>Escaneie o QR Code</h2>
+        <% if (payment.qrCodeBase64) { %>
+          <div class="qr-frame-v42"><img class="qr" src="<%= payment.qrCodeBase64.startsWith('data:') ? payment.qrCodeBase64 : 'data:image/png;base64,' + payment.qrCodeBase64 %>" alt="QR Code Pix"></div>
+        <% } else { %>
+          <div class="qr-frame-v42 empty">QR Code ainda não gerado</div>
+        <% } %>
+      </article>
+    </section>
+
+    <% if (payment.qrCode) { %>
+      <label class="pix-copy-v42">Pix copia e cola
+        <textarea readonly onclick="this.select()"><%= payment.qrCode %></textarea>
+        <button class="btn primary" type="button" onclick="navigator.clipboard?.writeText(this.previousElementSibling.value); this.textContent='Pix copiado ✅';">Copiar Pix</button>
+      </label>
+    <% } %>
+
+    <div class="pix-approved-banner-v42" id="pixApprovedBanner" hidden>
+      <div class="pix-approved-icon-v42">✅</div>
+      <strong>Pix aprovado!</strong>
+      <span>Suas RZ Coins já entraram na conta. Voltando para a loja em <b id="pixRedirectCountdown">4</b>s...</span>
+    </div>
+
+    <p class="muted" id="pixHelpText">Assim que o Mercado Pago confirmar, o site credita as moedas e volta sozinho para a loja.</p>
+    <div class="pix-actions-v42">
+      <a class="btn" href="/wallet">Minha conta</a>
+      <a class="btn ghost-btn" href="/shop?serverType=vanilla">Voltar para loja</a>
+    </div>
+  </section>
+</main>
+<audio id="pixProcessingAudio" src="/audio/pix-processing.mp3" preload="auto"></audio>
+<%- include('partials/footer') %>

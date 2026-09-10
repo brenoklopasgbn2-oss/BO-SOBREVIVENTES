@@ -1,0 +1,19 @@
+RAID-Z STORE V169 - KIT INICIAL COM 5.000 RZ
+
+ALTERAÇÃO
+- Novos resgates do Kit Inicial passam a receber exatamente 5.000 RZ.
+- A configuração antiga de 50.000 RZ salva no banco é corrigida automaticamente no primeiro deploy desta versão.
+
+IMPORTANTE
+- Não remove moedas de nenhum jogador.
+- Quem já recebeu 50.000 RZ continua com o saldo atual.
+- Não altera históricos do CoinLedger.
+- Não altera StarterKitClaim de quem já resgatou.
+- A mudança vale somente para os próximos resgates do Kit Inicial.
+
+COMO APLICAR
+1. Envie esta versão para o GitHub/Railway.
+2. Faça o deploy normalmente.
+3. No log aparecerá: Correção V169: bônus do Kit Inicial alterado de 50000 para 5000 RZ; saldos existentes preservados.
+
+A correção roda uma única vez e grava o marcador raidz.catalog.v169.starter_bonus_5000.

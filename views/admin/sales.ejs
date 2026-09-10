@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="shop-header">
+    <div>
+      <p class="eyebrow">Financeiro da loja</p>
+      <h1>Vendas e histórico mensal</h1>
+      <p class="muted">Veja quanto entrou no mês atual e consulte meses anteriores.</p>
+    </div>
+    <form method="GET" action="/admin/sales" class="month-filter">
+      <label>Mês
+        <input type="month" name="month" value="<%= selectedMonth %>">
+      </label>
+      <button class="btn primary" type="submit">Filtrar</button>
+    </form>
+  </section>
+
+  <section class="stats-grid">
+    <div class="stat"><span>Mês selecionado</span><strong><%= stats.monthLabel %></strong></div>
+    <div class="stat"><span>Reais recebidos</span><strong><%= brl(stats.totalBrl) %></strong></div>
+    <div class="stat"><span>Pix aprovados</span><strong><%= stats.approvedPayments %></strong></div>
+    <div class="stat"><span>Moedas vendidas</span><strong><%= coins(stats.coinsSold) %> RZ</strong></div>
+    <div class="stat"><span>Compras de itens</span><strong><%= stats.purchases %></strong></div>
+    <div class="stat"><span>Players novos</span><strong><%= stats.playersCreated %></strong></div>
+  </section>
+
+  <section class="card wide-card">
+    <h2>Histórico dos últimos meses</h2>
+    <table>
+      <thead><tr><th>Mês</th><th>Reais recebidos</th><th>Pix aprovados</th><th>Moedas vendidas</th><th>Compras</th><th>Players novos</th></tr></thead>
+      <tbody>
+        <% history.forEach(item => { %>
+          <tr>
+            <td><a href="/admin/sales?month=<%= item.monthKey %>"><%= item.monthLabel %></a></td>
+            <td><%= brl(item.totalBrl) %></td>
+            <td><%= item.approvedPayments %></td>
+            <td><%= coins(item.coinsSold) %></td>
+            <td><%= item.purchases %></td>
+            <td><%= item.playersCreated %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="split">
+    <div class="card wide-card">
+      <h2>Pix aprovados do mês</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Player</th><th>Valor</th><th>Moedas</th><th>Pacote</th><th>ID</th></tr></thead>
+        <tbody>
+          <% payments.forEach(p => { %>
+            <tr>
+              <td><%= dateTime(p.approvedAt || p.createdAt) %></td>
+              <td><%= p.player.nickname || p.player.steam64 %></td>
+              <td><%= brl(p.amountBrl) %></td>
+              <td><%= coins(p.coins) %></td>
+              <td><%= p.coinPackage?.name || '-' %></td>
+              <td><small><%= p.providerPaymentId || shortId(p.id) %></small></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <div class="card wide-card">
+      <h2>Compras de itens do mês</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Player</th><th>Item</th><th>Qtd</th><th>Total</th><th>Servidor</th></tr></thead>
+        <tbody>
+          <% purchases.forEach(p => { %>
+            <tr>
+              <td><%= dateTime(p.createdAt) %></td>
+              <td><%= p.player.nickname || p.player.steam64 %></td>
+              <td><%= p.product.name %></td>
+              <td><%= p.quantity %></td>
+              <td><%= coins(p.totalCoins) %> RZ</td>
+              <td><%= p.product.serverType %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>

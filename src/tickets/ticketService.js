@@ -29,7 +29,7 @@ function panelImage(fileName) {
 
 function getMemberServerInfo(member) {
   const hasSurvivor = member.roles.cache.some((role) => role.name === ROLE_NAMES.survivor);
-  return { roleName: hasSurvivor ? ROLE_NAMES.survivor : null, emoji: '🏆', prefix: '🏆', label: 'CHAMPIONS Z • Chernarus' };
+  return { roleName: hasSurvivor ? ROLE_NAMES.survivor : null, emoji: '🔴', prefix: '🔴', label: 'CHAMPIONS Z • Chernarus' };
 }
 
 function parseTicketTopic(topic = '') {
@@ -275,7 +275,7 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
     name: `${serverInfo.prefix}-ticket-${ticketType.name}-${safeName}`,
     type: ChannelType.GuildText,
     parent: category?.id,
-    topic: `CHAMPIONSZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|LANG:${language}|TRANSLATE:ON|STATUS:OPEN`,
+    topic: `ZONAZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|LANG:${language}|TRANSLATE:ON|STATUS:OPEN`,
     permissionOverwrites: [
       { id: interaction.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
       {

@@ -1,0 +1,95 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container territory-event-page-v158">
+  <% const activeEvent = eventDashboard.activeEvent; const leaderboard = eventDashboard.leaderboard || []; const recentKills = eventDashboard.recentKills || []; const totals = eventDashboard.totals || {}; %>
+  <style>
+    .territory-hero-v158{margin-top:22px;border:1px solid rgba(239,68,68,.25);background:radial-gradient(circle at top right,rgba(239,68,68,.20),transparent 38%),linear-gradient(135deg,rgba(15,23,42,.98),rgba(4,10,22,.98));border-radius:26px;padding:26px;overflow:hidden}.territory-hero-v158 h1{font-size:clamp(30px,5vw,58px);margin:4px 0 10px}.territory-status-v158{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.territory-grid-v158{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:18px}.territory-rules-v158{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.territory-rule-v158{border:1px solid rgba(148,163,184,.15);background:rgba(15,23,42,.58);padding:13px;border-radius:15px}.territory-rule-v158 span{display:block;color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.08em}.territory-rule-v158 strong{display:block;margin-top:4px}.territory-place-v158{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#fca5a5}.territory-podium-v158{display:grid;gap:10px}.territory-podium-row-v158{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;border:1px solid rgba(148,163,184,.14);border-radius:16px;padding:12px;background:rgba(15,23,42,.55)}.territory-position-v158{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(239,68,68,.14);font-weight:900}.territory-kills-v158{font-size:20px;font-weight:900;text-align:right}.territory-kills-v158 small{display:block;font-size:11px;color:#94a3b8;font-weight:600}.territory-my-v158{border-color:rgba(34,197,94,.28);background:linear-gradient(135deg,rgba(20,83,45,.25),rgba(15,23,42,.72))}.territory-history-v158{margin-top:18px}.territory-empty-v158{text-align:center;padding:42px 18px}.territory-recent-events-v158{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:900px){.territory-grid-v158{grid-template-columns:1fr}.territory-recent-events-v158{grid-template-columns:1fr}.territory-rules-v158{grid-template-columns:1fr}}
+  </style>
+
+  <% if (!activeEvent) { %>
+    <section class="territory-hero-v158 territory-empty-v158">
+      <p class="eyebrow">Evento de Kills</p>
+      <h1>Nenhum evento ativo agora</h1>
+      <p class="muted">Quando o ADM ativar uma cidade ou território, as regras, o valor de cada kill e o ranking aparecerão aqui automaticamente.</p>
+    </section>
+    <% if ((eventDashboard.recentEvents || []).length) { %>
+      <section class="card wide-card territory-history-v158">
+        <div class="item-builder-top"><h2>Eventos cadastrados</h2><span class="pill"><%= eventDashboard.recentEvents.length %></span></div>
+        <div class="territory-recent-events-v158">
+          <% eventDashboard.recentEvents.forEach(event => { %>
+            <article class="territory-rule-v158"><span><%= event.displayStatus %></span><strong><%= event.name %></strong><small><%= coins(event.rewardCoins) %> RZ por kill • raio <%= Math.round(event.radiusMeters) %> m</small></article>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
+  <% } else { %>
+    <section class="territory-hero-v158">
+      <p class="eyebrow">Evento de Kills • <%= activeEvent.serverType.toUpperCase() %></p>
+      <h1><%= activeEvent.name %></h1>
+      <p class="muted"><%= activeEvent.description || 'Entre no território, elimine adversários válidos e receba a premiação automaticamente.' %></p>
+      <div class="territory-status-v158"><span class="pill <%= activeEvent.displayStatus === 'ATIVO' ? 'success' : '' %>">● <%= activeEvent.displayStatus %></span><span class="pill"><%= coins(activeEvent.rewardCoins) %> RZ por kill válida</span><span class="pill"><%= totals.players || 0 %> participantes</span><span class="pill"><%= totals.kills || 0 %> kills válidas</span></div>
+    </section>
+
+    <section class="territory-grid-v158">
+      <div class="card wide-card">
+        <div class="item-builder-top"><h2>Área e regras</h2><span class="pill">Anti-farm ativo</span></div>
+        <div class="territory-rules-v158">
+          <div class="territory-rule-v158"><span>Centro da área</span><strong class="territory-place-v158">X <%= Number(activeEvent.centerX).toFixed(1) %> • Z <%= Number(activeEvent.centerZ).toFixed(1) %></strong></div>
+          <div class="territory-rule-v158"><span>Raio</span><strong><%= Math.round(activeEvent.radiusMeters) %> metros</strong></div>
+          <div class="territory-rule-v158"><span>Quem precisa estar dentro</span><strong><%= activeEvent.positionRule === 'BOTH' ? 'Killer e vítima' : activeEvent.positionRule === 'KILLER' ? 'Killer' : activeEvent.positionRule === 'EITHER' ? 'Killer ou vítima' : 'Vítima' %></strong></div>
+          <div class="territory-rule-v158"><span>Tempo anti-farm da dupla</span><strong><%= activeEvent.pairCooldownSeconds ? Math.round(activeEvent.pairCooldownSeconds / 60) + ' minutos' : 'Desativado' %></strong></div>
+          <div class="territory-rule-v158"><span>Mesmo clã</span><strong><%= activeEvent.blockSameClan ? 'Não contabiliza' : 'Permitido pelo ADM' %></strong></div>
+          <div class="territory-rule-v158"><span>Suicídio</span><strong><%= activeEvent.blockSuicide ? 'Não contabiliza' : 'Permitido pelo ADM' %></strong></div>
+          <div class="territory-rule-v158"><span>ADM</span><strong><%= activeEvent.blockAdmins ? 'Kills envolvendo ADM bloqueadas' : 'Conta normalmente' %></strong></div>
+          <div class="territory-rule-v158"><span>Limite por player</span><strong><%= activeEvent.maxRewardsPerPlayer ? activeEvent.maxRewardsPerPlayer + ' kills premiadas' : 'Sem limite' %></strong></div>
+          <% if (activeEvent.startsAt) { %><div class="territory-rule-v158"><span>Início</span><strong><%= dateTime(activeEvent.startsAt) %></strong></div><% } %>
+          <% if (activeEvent.endsAt) { %><div class="territory-rule-v158"><span>Encerramento</span><strong><%= dateTime(activeEvent.endsAt) %></strong></div><% } %>
+        </div>
+        <% if (activeEvent.placeKeyword) { %><p class="muted" style="margin-top:12px">Plano B por nome do local: <strong><%= activeEvent.placeKeyword %></strong>, usado somente quando o mod não enviar coordenadas suficientes.</p><% } %>
+      </div>
+
+      <div class="card wide-card <%= eventDashboard.playerStats ? 'territory-my-v158' : '' %>">
+        <h2>Minha participação</h2>
+        <% if (!player) { %>
+          <p class="muted">Abra o site pelo L dentro do DayZ para ver suas kills e moedas recebidas.</p>
+        <% } else { %>
+          <div class="stats-grid">
+            <div class="stat"><span>Kills válidas</span><strong><%= eventDashboard.playerStats?.kills || 0 %></strong></div>
+            <div class="stat"><span>Recebido</span><strong><%= coins(eventDashboard.playerStats?.rewardCoins || 0) %> RZ</strong></div>
+          </div>
+          <p class="muted">As moedas entram automaticamente no saldo quando a kill passa por todas as travas.</p>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="territory-grid-v158">
+      <div class="card wide-card">
+        <div class="item-builder-top"><h2>Ranking do evento</h2><span class="pill"><%= leaderboard.length %> players</span></div>
+        <div class="territory-podium-v158">
+          <% if (!leaderboard.length) { %><p class="muted">Ainda não houve kill válida nesse evento.</p><% } %>
+          <% leaderboard.slice(0, 30).forEach((row, index) => { %>
+            <div class="territory-podium-row-v158">
+              <div class="territory-position-v158"><%= index + 1 %>º</div>
+              <div><strong><%= row.playerName || 'Player' %></strong><br><small><%= row.steam64 %></small></div>
+              <div class="territory-kills-v158"><%= row.kills %><small><%= coins(row.rewardCoins) %> RZ</small></div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="card wide-card">
+        <div class="item-builder-top"><h2>Últimas kills válidas</h2><span class="pill"><%= recentKills.length %></span></div>
+        <div class="territory-podium-v158">
+          <% if (!recentKills.length) { %><p class="muted">Aguardando a primeira kill válida.</p><% } %>
+          <% recentKills.slice(0, 20).forEach(kill => { %>
+            <div class="territory-podium-row-v158" style="grid-template-columns:1fr auto">
+              <div><strong><%= kill.killerName || 'Player' %></strong> eliminou <strong><%= kill.victimName || 'Player' %></strong><br><small><%= dateTime(kill.occurredAt) %></small></div>
+              <div class="territory-kills-v158">+<%= coins(kill.rewardCoins) %><small>RZ</small></div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

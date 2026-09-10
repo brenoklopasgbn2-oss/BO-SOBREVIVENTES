@@ -1,0 +1,16 @@
+ATUALIZAÇÃO RAID-Z — KOTH V104
+
+Foi adicionado ao bot o canal oficial 🚩・koth com painel completo e a imagem enviada.
+
+O painel explica:
+- Fumaça branca: ninguém está fazendo o KOTH; evento livre.
+- Fumaça vermelha: KOTH em progresso; há jogadores disputando a área.
+- Loot dinâmico: quanto mais jogadores detectados dentro da área, melhor a recompensa.
+- Objetivo do sistema: gerar mais PvP e fazer o loot valer o risco.
+
+Também foi atualizado:
+- Comando /setup para criar/atualizar o canal sem apagar canais ou mensagens manuais.
+- RAID-Z IA para responder dúvidas sobre o KOTH.
+- Comando de atualização de canais.
+
+Para aplicar no Discord, publique esta versão e execute /setup com a conta do dono do bot.

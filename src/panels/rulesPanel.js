@@ -10,22 +10,21 @@ function rulesImageAttachment() {
 function buildRulesPanel() {
   const embed = baseEmbed()
     .setColor(0xd4af37)
-    .setTitle('📜 Regras oficiais • CHAMPIONS Z')
+    .setTitle('📜 REGRAS OFICIAIS — CHAMPIONS Z')
     .setDescription([
-      '**As regras do novo servidor estão sendo organizadas para esta temporada.**',
+      'O **CHAMPIONS Z** está sendo montado para uma experiência competitiva, justa e organizada.',
       '',
-      '✅ Jogue limpo e respeite a comunidade.',
-      '🚫 Cheat, exploit, dupe, abuso de bug e qualquer vantagem externa são proibidos.',
-      '🎥 Denúncias devem ser acompanhadas de provas sempre que possível.',
-      '🏆 Regras competitivas, raid, clãs, bunkers e eventos serão publicadas aqui conforme forem fechadas.',
+      '👁️ **1PP:** servidor focado em primeira pessoa.',
+      '🏷️ **TAG obrigatória:** jogadores e clãs devem manter identificação clara.',
+      '🚫 **Sem Pay-to-Win:** não serão vendidas vantagens competitivas.',
+      '🛡️ **Anti-cheat:** tolerância zero com cheats, exploits e abuso de falhas.',
+      '🤝 **Respeito:** mantenha o ambiente competitivo sem racismo, preconceito ou assédio.',
       '',
-      '⚠️ **Nenhuma regra antiga da RAID-Z/ZONA-Z deve ser considerada válida no Champions Z.**',
-      '',
-      'Em caso de dúvida, abra um ticket e confirme com a staff.'
+      '⚠️ **As regras detalhadas ainda serão adicionadas aqui conforme você for definindo cada parte do novo servidor.**'
     ].join('\n'))
     .setImage(`attachment://${PANEL_IMAGES.rules}`);
 
-  return [{ embeds: [embed], files: [rulesImageAttachment()] }];
+  return [{ embeds: [embed], files: [rulesImageAttachment()], legacyTitles: ['📜 Regras oficiais • ZONA-Z', '📜 Regras Gerais', '🔴 Regras ZONA-Z Vanilla'] }];
 }
 
 function buildRulesMessages() { return buildRulesPanel(); }

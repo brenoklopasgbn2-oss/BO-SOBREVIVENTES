@@ -13,23 +13,22 @@ function buildWelcomePanel() {
     .setColor(0xd4af37)
     .setTitle('🏆 Bem-vindo ao CHAMPIONS Z')
     .setDescription([
-      '**Aqui, sobreviver é só o começo.**',
+      '**Sua jornada começa aqui.**',
       '',
       '🗺️ **Mapa:** Chernarus',
-      '👁️ **Perspectiva:** 1PP',
-      '⚔️ **Foco:** competitivo, sobrevivência e PvP',
-      '🎯 **Eventos:** disputas, eventos especiais e premiações',
-      '🏆 **Temporadas:** competição entre jogadores e clãs',
-      '🚫 **Sem Pay-to-Win:** vantagem competitiva não está à venda',
+      '👁️ **Visão:** 1PP',
+      '⚔️ **Proposta:** competitivo com essência vanilla',
+      '🔐 **Bunkers:** 2 experiências exclusivas',
+      '🪖 **Exploração:** 10 novas áreas militares com loot valioso',
+      '☣️ **Perigo extra:** infectado NBC amarelo com POX letal',
+      '🚫 **Sem Pay-to-Win**',
       '',
-      'Leia as regras, acompanhe os avisos e entre na comunidade.',
-      '',
-      '**SOBREVIVA. DOMINE. SEJA CAMPEÃO.**'
+      'Leia as regras, acompanhe os avisos e confira os guias antes de encarar Chernarus.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
-    .addFields({ name: 'CHAMPIONS Z', value: 'Uma nova disputa começa em Chernarus.' });
+    .addFields({ name: 'CHAMPIONS Z', value: '**Sobreviva. Domine. Seja campeão.**' });
 
-  return { embeds: [embed], files: [panelImage(imageName)], legacyTitles: ['🔴 Bem-vindo à ZONA-Z', '🔴 Bem-vindo ao ZONA-Z'] };
+  return { embeds: [embed], files: [panelImage(imageName)], legacyTitles: ['🔴 Bem-vindo à ZONA-Z', '🔴 Bem-vindo ao ZONA-Z', '🔴 Bem-vindo ao ZONA-Z!'] };
 }
 
 module.exports = { buildWelcomePanel };

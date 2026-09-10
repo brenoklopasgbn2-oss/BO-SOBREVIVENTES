@@ -1,0 +1,14 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container" style="max-width:1450px;padding:34px 22px 70px">
+  <%- include('partials/alerts') %>
+  <section class="shop-header support-hero-card sz-hover-card">
+    <div><p class="eyebrow">Traje VIP personalizado</p><h1>Painel do líder do clã</h1><p class="muted">Aqui o líder acompanha o traje personalizado e dropa a bandeira. No modo gratuito, todos os membros recebem automaticamente. No modo pago, cada membro usa o próprio saldo para pagar 20.000 RZ por 30 dias.</p></div>
+    <a class="btn" href="/outfits">Voltar aos trajes</a>
+  </section>
+  <% if ((customOrders || []).length) { %>
+    <section class="card" style="margin-top:18px"><h2>Seus pedidos</h2><% customOrders.forEach(order => { %><div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)"><strong><%= order.clanTag ? '[' + order.clanTag + '] ' : '' %><%= order.clanName || 'Traje personalizado' %></strong> • <span class="pill"><%= order.status %></span><br><small><%= order.note || 'Abra ticket no Discord para continuar.' %></small></div><% }) %></section>
+  <% } %>
+  <%- include('partials/managedOutfits', { managedOutfits, managerReturnTo }) %>
+</main>
+<%- include('partials/footer') %>

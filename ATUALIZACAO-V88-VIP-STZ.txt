@@ -1,0 +1,41 @@
+RAID-Z V88 - VIP PRIVADO EQUIPE STZ
+
+CRIADO AUTOMATICAMENTE NO PRIMEIRO INÍCIO DO SITE
+Nome: VIP Vitalício Equipe STZ
+Tipo: privado, vitalício e fora da loja pública
+Servidor: Vanilla
+
+ITENS
+back|STZ_TacticalBackpack|1|Mochila Tática STZ
+headgear|STZ_TacticalBoonie|1|Boonie Tático STZ
+legs|STZ_TacticalPants|1|Calça Tática STZ
+body|STZ_TacticalShirt|1|Camisa Tática STZ
+hands|STZ_TacticalGloves|1|Luvas Táticas STZ
+feet|STZ_TacticalBoots|1|Botas Táticas STZ
+mask|STZ_TacticalBalaclava|1|Balaclava Tática STZ
+inventory|STZ_Flag|1|Bandeira STZ
+eyewear|SportGlasses_Black|1|Óculos preto
+inventory|HuntingKnife|1|Faca
+inventory|ChernarusMap|1|Mapa
+inventory|BandageDressing|1|Bandagem
+inventory|BakedBeansCan|2|2 comidas
+
+STEAM64 LIBERADOS
+ChoraNaum - 76561199498211298
+Naksu - 76561199815970767
+PeDeCoelho - 76561198298054615
+CapTowers - 76561198859200077
+Xiqui Xiqui - 76561199328121792
+Barba - 76561198155183501
+DEXX1 - 76561198116435991
+
+ATENÇÃO SOBRE HIGOR
+O número enviado para Higor foi: 76561199180202004429
+Ele possui 20 dígitos e não é um Steam64 válido. Steam64 precisa ter 17 dígitos.
+Por segurança, Higor não foi cadastrado automaticamente. Corrija o Steam64 dele no painel ADM em Trajes VIP > VIP vitalício por Steam64.
+
+PROTEÇÃO VIP
+- O arquivo VIP é criado somente para cada Steam64 liberado.
+- Não aparece na loja e não pode ser comprado.
+- API e FileBridge enviam ownerSteam64, privateSteam64Only, deleteOnDeath e deleteIfUnauthorized.
+- Usa o mesmo fluxo de traje VIP da loja; o mod deve remover os itens VIP do corpo quando o player morrer e montar o traje novamente no respawn.

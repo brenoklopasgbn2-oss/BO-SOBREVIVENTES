@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#04070d"/>
+      <stop offset="50%" stop-color="#101a2c"/>
+      <stop offset="100%" stop-color="#420b0b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="18%" r="55%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shield" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff7a7a"/>
+      <stop offset="100%" stop-color="#8b1111"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <g opacity=".08" stroke="#fff">
+    <path d="M0 720h1600"/><path d="M0 620h1600"/><path d="M0 520h1600"/><path d="M0 420h1600"/>
+    <path d="M180 0v900"/><path d="M380 0v900"/><path d="M580 0v900"/><path d="M780 0v900"/><path d="M980 0v900"/><path d="M1180 0v900"/>
+  </g>
+  <g transform="translate(170 160)">
+    <path d="M300 0l190 68v160c0 172-94 278-190 338-96-60-190-166-190-338V68z" fill="#0a1220" stroke="#ffffff" stroke-opacity=".14" stroke-width="8"/>
+    <path d="M300 56l132 46v126c0 130-71 211-132 250-61-39-132-120-132-250V102z" fill="url(#shield)"/>
+    <path d="M238 220l48 48 110-110" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#f8fafc" font-family="Arial, Helvetica, sans-serif">
+    <text x="780" y="250" font-size="46" font-weight="700">RAID-Z • CLÃS RECRUTANDO</text>
+    <text x="780" y="320" font-size="26" opacity=".95">Aviso automático do Discord com imagem, banner, requisitos e link de candidatura.</text>
+    <text x="780" y="365" font-size="26" opacity=".95">Um clã por rodada, no intervalo em horas definido no painel ADM.</text>
+    <text x="780" y="490" font-size="28" font-weight="700" fill="#ff8b8b">Como participar</text>
+    <text x="780" y="540" font-size="24">1. Abra a loja pelo L no DayZ</text>
+    <text x="780" y="580" font-size="24">2. Vá em Clãs &amp; Recrutamento</text>
+    <text x="780" y="620" font-size="24">3. Escolha o clã e envie o formulário</text>
+    <text x="780" y="660" font-size="24">4. O dono do clã aprova direto no painel</text>
+    <text x="780" y="770" font-size="30" font-weight="700">RAID-Z</text>
+  </g>
+</svg>

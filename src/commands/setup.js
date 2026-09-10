@@ -18,11 +18,13 @@ const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
-const { buildAiPanel } = require('../panels/aiPanel');
 const { buildKothPanel } = require('../panels/kothPanel');
 const { buildAirdropPanel } = require('../panels/airdropPanel');
-const { buildEventsPanel } = require('../panels/eventsPanel');
 const { buildHowToPlayPanel } = require('../panels/howToPlayPanel');
+const { buildBunker1AirfieldPanel } = require('../panels/bunker1AirfieldPanel');
+const { buildBunker2FrozenPanel } = require('../panels/bunker2FrozenPanel');
+const { buildMilitaryAreasPanel } = require('../panels/militaryAreasPanel');
+const { buildNbcYellowPanel } = require('../panels/nbcYellowPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
@@ -79,50 +81,37 @@ async function ensureRole(guild, roleDefinition) {
 
 async function migrateLegacyRoles(guild) {
   await guild.members.fetch().catch(() => null);
-
-  const championRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
-  const vipRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.vip);
-  const ownerRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.founder);
-
-  const playerLegacyRoles = (LEGACY_ROLE_NAMES.player || [])
-    .map((name) => guild.roles.cache.find((role) => role.name === name))
-    .filter(Boolean);
-  const vipLegacyRoles = (LEGACY_ROLE_NAMES.vip || [])
-    .map((name) => guild.roles.cache.find((role) => role.name === name))
-    .filter(Boolean);
-
+  const survivorRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
+  const legacyNames = [...new Set([
+    ...LEGACY_ROLE_NAMES.vanilla,
+    ...LEGACY_ROLE_NAMES.bbp,
+    ...LEGACY_ROLE_NAMES.deathmatch,
+    'RAID-Z IA',
+    'ZONA-Z IA',
+    'CHAMPIONS Z IA',
+    'Champions Z IA'
+  ])];
+  const legacyRoles = legacyNames.map((name) => guild.roles.cache.find((role) => role.name === name)).filter(Boolean);
   let moved = 0;
-  let vipMigrated = 0;
 
-  for (const member of guild.members.cache.values()) {
-    if (member.user.bot) continue;
-
-    if (championRole && !member.roles.cache.has(championRole.id)) {
-      await member.roles.add(championRole, 'Migração para CHAMPIONS Z').catch(() => null);
-      moved += 1;
-    }
-
-    if (vipRole && vipLegacyRoles.some((role) => member.roles.cache.has(role.id)) && !member.roles.cache.has(vipRole.id)) {
-      await member.roles.add(vipRole, 'Migração de VIP para CHAMPIONS Z').catch(() => null);
-      vipMigrated += 1;
-    }
-
-    if (ownerRole && OWNER_IDS.includes(member.id) && !member.roles.cache.has(ownerRole.id)) {
-      await member.roles.add(ownerRole, 'Dono oficial CHAMPIONS Z').catch(() => null);
+  if (survivorRole) {
+    for (const member of guild.members.cache.values()) {
+      if (member.user.bot) continue;
+      if (legacyRoles.some((role) => member.roles.cache.has(role.id)) && !member.roles.cache.has(survivorRole.id)) {
+        await member.roles.add(survivorRole, 'Migração para CHAMPIONS Z').catch(() => null);
+        moved += 1;
+      }
     }
   }
 
-  const protectedNames = new Set(ROLE_DEFINITIONS.map((role) => role.name));
-  const cleanupNames = new Set(LEGACY_ROLE_NAMES.cleanup || []);
   let removedRoles = 0;
-
-  for (const role of [...guild.roles.cache.values()]) {
-    if (role.managed || protectedNames.has(role.name) || !cleanupNames.has(role.name)) continue;
-    const deleted = await role.delete('Limpeza de cargos antigos na migração CHAMPIONS Z').then(() => true).catch(() => false);
+  for (const role of legacyRoles) {
+    if (role.managed || role.name === ROLE_NAMES.survivor) continue;
+    const deleted = await role.delete('Limpeza de cargos do servidor antigo na migração CHAMPIONS Z').then(() => true).catch(() => false);
     if (deleted) removedRoles += 1;
   }
 
-  return { moved, vipMigrated, removedRoles };
+  return { moved, removedRoles };
 }
 
 function allNames(definition) {
@@ -212,10 +201,10 @@ async function removeLegacyChannels(guild, protectedIds = new Set()) {
     if (protectedIds.has(channel.id)) continue;
     if (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.GuildVoice) continue;
     const low = String(channel.name || '').toLowerCase();
-    const isLegacy = names.has(low);
+    const isLegacy = names.has(low) || low.includes('bunker') || low.includes('banker');
     if (!isLegacy) continue;
 
-    const ok = await channel.delete('Remoção de canal antigo na repaginação CHAMPIONS Z').then(() => true).catch(() => false);
+    const ok = await channel.delete('Remoção de canal do servidor antigo na repaginação CHAMPIONS Z').then(() => true).catch(() => false);
     if (ok) removed += 1;
   }
 
@@ -224,11 +213,16 @@ async function removeLegacyChannels(guild, protectedIds = new Set()) {
 
 async function removeLegacyServerCategories(guild, protectedIds = new Set()) {
   const oldNames = new Set([
+    CATEGORY_NAMES.vanilla,
+    ...(CATEGORY_ALIASES[CATEGORY_NAMES.vanilla] || []),
+    CATEGORY_NAMES.vip,
+    ...(CATEGORY_ALIASES[CATEGORY_NAMES.vip] || []),
+    CATEGORY_NAMES.staff,
+    ...(CATEGORY_ALIASES[CATEGORY_NAMES.staff] || []),
+    CATEGORY_NAMES.bot,
+    ...(CATEGORY_ALIASES[CATEGORY_NAMES.bot] || []),
     '🔴・RAID-Z VANILLA',
-    '🔴・SOBREVIVENTES Z VANILLA',
-    '🔴・VANILLA',
-    '🧟 VANILLA',
-    'VANILLA'
+    '🔴・SOBREVIVENTES Z VANILLA'
   ].map((name) => String(name).toLowerCase()));
 
   let removed = 0;
@@ -236,9 +230,14 @@ async function removeLegacyServerCategories(guild, protectedIds = new Set()) {
     if (category.type !== ChannelType.GuildCategory || protectedIds.has(category.id)) continue;
     if (!oldNames.has(String(category.name || '').toLowerCase())) continue;
 
-    // Só apaga a categoria antiga se não restarem canais dentro dela.
-    const hasChildren = guild.channels.cache.some((channel) => channel.parentId === category.id);
-    if (hasChildren) continue;
+    // Limpa tudo que ainda estiver dentro de categorias antigas (STAFF/BOT/VIP e estruturas legadas).
+    const children = [...guild.channels.cache.values()].filter((channel) => channel.parentId === category.id && !protectedIds.has(channel.id));
+    for (const child of children) {
+      await child.delete('Canal de categoria antiga removido na migração CHAMPIONS Z').catch(() => null);
+    }
+
+    const hasProtectedChildren = guild.channels.cache.some((channel) => channel.parentId === category.id && protectedIds.has(channel.id));
+    if (hasProtectedChildren) continue;
     const ok = await category.delete('Categoria antiga removida na migração CHAMPIONS Z').then(() => true).catch(() => false);
     if (ok) removed += 1;
   }
@@ -285,7 +284,7 @@ async function clearAndSendPanel(channel, panelBuilder, { replaceBotMessages = f
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setup')
-    .setDescription('Organiza e atualiza o Discord oficial do CHAMPIONS Z.'),
+    .setDescription('Monta e atualiza o Discord oficial do CHAMPIONS Z.'),
 
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
@@ -305,9 +304,6 @@ module.exports = {
 
     for (const roleDefinition of ROLE_DEFINITIONS) await ensureRole(guild, roleDefinition);
     const migration = await migrateLegacyRoles(guild);
-
-    const aiRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.ai);
-    if (aiRole && !botMember.roles.cache.has(aiRole.id)) await botMember.roles.add(aiRole).catch(() => null);
 
     const ensuredChannels = new Map();
     const ensuredCategories = [];
@@ -333,10 +329,12 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.rules), buildRulesPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.howToPlay), buildHowToPlayPanel, { replaceBotMessages: true });
-    await clearAndSendPanel(findChannel(CHANNELS.events), buildEventsPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.koth), buildKothPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.airdrop), buildAirdropPanel, { replaceBotMessages: true });
-    await clearAndSendPanel(findChannel(CHANNELS.rulesAsk), () => buildAiPanel(guild), { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.bunker1Airfield), buildBunker1AirfieldPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.bunker2Frozen), buildBunker2FrozenPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.militaryAreas), buildMilitaryAreasPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.nbcYellow), buildNbcYellowPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(guild), { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bugPanel), buildBugPanel, { replaceBotMessages: true });
@@ -349,21 +347,20 @@ module.exports = {
       { name: 'Canais antigos removidos', value: String(removedLegacyChannels), inline: true },
       { name: 'Categorias antigas removidas', value: String(removedLegacyCategories), inline: true },
       { name: 'Cargos antigos removidos', value: String(migration.removedRoles), inline: true },
-      { name: 'Jogadores com Champion', value: String(migration.moved), inline: true },
-      { name: 'VIPs migrados', value: String(migration.vipMigrated || 0), inline: true },
+      { name: 'Jogadores migrados', value: String(migration.moved), inline: true },
       { name: 'Cargos ativos', value: SERVER_ROLES.join(', '), inline: false },
       { name: 'Staff', value: STAFF_ROLES.join(', '), inline: false }
     ]);
 
     return interaction.editReply({
       embeds: [successEmbed([
-        '**CHAMPIONS Z configurado com sucesso.**',
+        '**CHAMPIONS Z montado com sucesso.**',
         '',
         `🧹 ${removedLegacyChannels} canal(is) antigo(s) removido(s).`,
         `📁 ${removedLegacyCategories} categoria(s) antiga(s) removida(s).`,
         `🎭 ${migration.removedRoles} cargo(s) antigo(s) removido(s).`,
         '',
-        'A estrutura agora está focada em **Chernarus, competição, eventos, comunidade e suporte**.'
+        'A estrutura agora está focada em **Chernarus, Bunker 1, Bunker 2, 10 novas áreas militares, NBC amarelo, comunidade e suporte**.'
       ].join('\n'))]
     });
   }

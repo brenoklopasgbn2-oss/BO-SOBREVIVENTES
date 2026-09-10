@@ -1,0 +1,29 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="card">
+    <h1>Fila de entrega DayZ</h1>
+    <p class="muted">O site envia os PENDING por FTP. O mod lê somente arquivos locais, entrega e grava o resultado para o site ler pelo FTP.</p>
+    <table>
+      <thead><tr><th>Data</th><th>Steam64</th><th>Item</th><th>Classname</th><th>Qtd</th><th>Servidor</th><th>Status</th><th>Erro</th><th></th></tr></thead>
+      <tbody>
+        <% deliveries.forEach(d => { %>
+          <tr>
+            <td><%= dateTime(d.createdAt) %></td>
+            <td><code><%= d.steam64 %></code></td>
+            <td><%= d.productName %></td>
+            <td><code><%= d.classname %></code></td>
+            <td><%= d.quantity %></td>
+            <td><%= d.serverType %></td>
+            <td><span class="status <%= d.status.toLowerCase() %>"><%= d.status %></span></td>
+            <td><small><%= d.error || '-' %></small></td>
+            <td><form method="POST" action="/admin/deliveries/<%= d.id %>/reset"><button class="btn small">Reenviar</button></form></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+<%- include('../partials/footer') %>

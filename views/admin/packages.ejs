@@ -1,0 +1,34 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="card">
+    <h1>Pacotes de moedas por Pix</h1>
+    <form method="POST" action="/admin/packages" class="inline-grid">
+      <input name="name" placeholder="R$10 - Básico" required>
+      <input name="amountBrl" placeholder="10.00" required>
+      <input name="coins" type="number" placeholder="1000" required>
+      <input name="bonusText" placeholder="Bônus opcional">
+      <label class="check"><input type="checkbox" name="active" checked> Ativo</label>
+      <button class="btn primary">Criar</button>
+    </form>
+  </section>
+  <section class="card">
+    <table><thead><tr><th>Nome</th><th>Valor</th><th>Moedas</th><th>Bônus</th><th>Ativo</th><th></th></tr></thead><tbody>
+    <% packages.forEach(pack => { %>
+      <tr>
+        <form method="POST" action="/admin/packages/<%= pack.id %>">
+          <td><input name="name" value="<%= pack.name %>"></td>
+          <td><input name="amountBrl" value="<%= pack.amountBrl %>"></td>
+          <td><input name="coins" type="number" value="<%= pack.coins %>"></td>
+          <td><input name="bonusText" value="<%= pack.bonusText || '' %>"></td>
+          <td><input type="checkbox" name="active" <%= pack.active ? 'checked' : '' %>></td>
+          <td><button class="btn small">Salvar</button></td>
+        </form>
+      </tr>
+    <% }) %>
+    </tbody></table>
+  </section>
+</main>
+<%- include('../partials/footer') %>

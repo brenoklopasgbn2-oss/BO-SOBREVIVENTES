@@ -1,0 +1,7 @@
+ATUALIZAÇÃO V175 - BASE VIP COM MUROS
+
+- A Base VIP agora inclui a montagem dos muros.
+- A equipe pode montar estrutura, pisos, muros, cercas e portões conforme o projeto aprovado.
+- São usados somente itens, objetos e estruturas que já existem no mapa do DayZ.
+- Não são utilizadas peças exclusivas, modificadas ou criadas para dar vantagem.
+- Texto atualizado no site, no painel do Discord e no tópico do canal Base VIP.

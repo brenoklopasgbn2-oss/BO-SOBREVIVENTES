@@ -1,0 +1,59 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="shop-header">
+    <div><p class="eyebrow">Controle da loja</p><h1>Dashboard</h1><p class="muted">Resumo rápido do mês atual, atalhos de vendas e logs.</p></div>
+    <div class="admin-actions"><a class="btn" href="/admin/sales">Ver vendas</a><a class="btn" href="/admin/logs">Ver logs</a><form method="POST" action="/admin/send-monthly-report"><button class="btn primary">Mandar resumo mensal no Discord</button></form></div>
+  </section>
+  <section class="stats-grid">
+    <div class="stat"><span>Reais este mês</span><strong><%= brl(stats.totalBrl) %></strong></div>
+    <div class="stat"><span>Pix aprovados</span><strong><%= stats.approvedPayments %></strong></div>
+    <div class="stat"><span>Moedas vendidas</span><strong><%= coins(stats.coinsSold) %></strong></div>
+    <div class="stat"><span>Compras de itens</span><strong><%= stats.purchases %></strong></div>
+    <div class="stat"><span>Players</span><strong><%= playerCount %></strong></div>
+    <div class="stat"><span>Entregas pendentes/falhas</span><strong><%= pendingDeliveries %></strong></div>
+    <div class="stat"><span>Produtos</span><strong><%= productsCount %></strong></div>
+  </section>
+
+  <section class="card safe-deploy-card-v44">
+    <div class="safe-deploy-title-v44">
+      <div>
+        <p class="eyebrow">Proteção de atualização</p>
+        <h2>Dados que ficam salvos quando atualizar o site</h2>
+        <p class="muted">Deploy normal não apaga saldo, garagem, uso de seguro, compras, entregas nem apoio streamer. Só o botão <b>WIPE GERAL</b> limpa esses dados.</p>
+      </div>
+      <span class="status approved">SEGURO ATIVO</span>
+    </div>
+    <div class="stats-grid mini-safe-grid-v44">
+      <div class="stat"><span>Saldo total dos players</span><strong><%= coins(safeDataStats.totalPlayerCoins) %> RZ</strong></div>
+      <div class="stat"><span>Veículos dos players</span><strong><%= safeDataStats.playerVehiclesCount %></strong></div>
+      <div class="stat"><span>Seguros usados esta semana</span><strong><%= safeDataStats.insuranceUsesThisWeek %></strong></div>
+      <div class="stat"><span>Seguros usados total</span><strong><%= safeDataStats.insuranceUsesTotal %></strong></div>
+      <div class="stat"><span>Drops/respawns de veículos</span><strong><%= safeDataStats.vehicleRespawnLogs %></strong></div>
+      <div class="stat"><span>Apoios streamer salvos</span><strong><%= safeDataStats.supportSalesCount %></strong></div>
+    </div>
+    <div class="info-strip-v44">Atualização normal roda em modo seguro: bloqueia migration destrutiva e o seed só cria o que estiver faltando. Ele não zera dados dos players.</div>
+  </section>
+
+  <section class="split">
+    <div class="card"><h2>Últimos Pix</h2><table><thead><tr><th>Player</th><th>Valor</th><th>Status</th><th>Data</th></tr></thead><tbody>
+      <% lastPayments.forEach(p => { %><tr><td><%= p.player.nickname || p.player.steam64 %></td><td><%= brl(p.amountBrl) %></td><td><span class="status <%= p.status.toLowerCase() %>"><%= p.status %></span></td><td><%= dateTime(p.createdAt) %></td></tr><% }) %>
+    </tbody></table></div>
+    <div class="card"><h2>Últimas compras</h2><table><thead><tr><th>Player</th><th>Item</th><th>Moedas</th><th>Data</th></tr></thead><tbody>
+      <% lastPurchases.forEach(p => { %><tr><td><%= p.player.nickname || p.player.steam64 %></td><td><%= p.product.name %></td><td><%= coins(p.totalCoins) %></td><td><%= dateTime(p.createdAt) %></td></tr><% }) %>
+    </tbody></table></div>
+  </section>
+
+  <section class="card danger-zone-card">
+    <p class="eyebrow">Wipe Geral / Lançamento</p>
+    <h2>WIPE GERAL do painel</h2>
+    <p class="muted">Use antes de liberar o servidor de verdade. Ele deixa o painel limpo como novo: apaga players, saldos, Pix, compras, entregas, garagem, veículos dos players, ranking, clãs, estatísticas, histórico de apoio e logs. Mantém somente a estrutura da loja: produtos, itens, pacotes de moedas, veículos cadastrados, seguros, cupons, códigos streamer e configurações.</p>
+    <form method="POST" action="/admin/wipe/reset-store-stats" class="inline-grid" onsubmit="return confirm('WIPE GERAL: vai apagar players, saldos, compras, Pix, entregas, garagem, ranking, clãs e estatísticas. Produtos e itens ficam. Confirmar?');">
+      <input type="password" name="adminPassword" placeholder="Senha admin" required>
+      <button class="btn danger" type="submit">WIPE GERAL - limpar painel</button>
+    </form>
+  </section>
+</main>
+<%- include('../partials/footer') %>

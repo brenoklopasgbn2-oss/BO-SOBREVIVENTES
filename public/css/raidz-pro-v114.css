@@ -1,0 +1,230 @@
+:root{
+  --rz-bg:#040914;
+  --rz-card:rgba(7,12,22,.78);
+  --rz-card-strong:rgba(7,12,22,.92);
+  --rz-line:rgba(255,255,255,.10);
+  --rz-soft:rgba(255,255,255,.06);
+  --rz-text:#eef2f8;
+  --rz-muted:#a8b5c8;
+  --rz-red:#ef4444;
+  --rz-blue:#39b7ff;
+  --rz-gold:#f6c15a;
+  --rz-shadow:0 28px 90px rgba(0,0,0,.42);
+}
+body{
+  background:
+    radial-gradient(circle at top left, rgba(57,183,255,.10), transparent 28%),
+    radial-gradient(circle at top right, rgba(239,68,68,.12), transparent 26%),
+    linear-gradient(180deg, #050914 0%, #040710 100%) !important;
+  color:var(--rz-text);
+}
+body::before{opacity:.9 !important}
+body::after{background:linear-gradient(180deg,rgba(3,7,13,.34),rgba(3,7,13,.18)) !important}
+main.container,
+main.container.v9-store-page{
+  position:relative;
+  z-index:1;
+}
+main.container:not(.v9-store-page){
+  max-width:1600px !important;
+  padding:28px 34px 38px !important;
+}
+.topbar.v9-topbar{
+  background:linear-gradient(180deg,rgba(4,9,16,.88),rgba(4,9,16,.72)) !important;
+  border-bottom:1px solid rgba(255,255,255,.07) !important;
+  box-shadow:0 18px 60px rgba(0,0,0,.34) !important;
+}
+.v9-logo-wrap,
+.v9-logo-wrap img{box-shadow:0 10px 28px rgba(0,0,0,.45) !important}
+.v9-nav-item,
+.v9-account-pill,
+.btn{
+  transition:transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease;
+}
+.v9-nav-item:hover,
+.v9-nav-item.active{color:#fff !important}
+.v9-account-pill:hover,
+.btn:hover{box-shadow:0 18px 40px rgba(0,0,0,.26)}
+.footer{
+  max-width:1600px !important;
+  padding:22px 34px 34px !important;
+  color:#8ea0b8 !important;
+}
+.card,
+.ranking-table-card-v34,
+.clan-card-v34,
+.clan-card-v106,
+.clan-form-card-v106,
+.clan-highlight-card-v106,
+.stat,
+.v9-wallet-hud,
+.v10-login-panel,
+.clan-request-panel-v34,
+.products-table-card,
+.admin-product-form-card,
+.safe-deploy-card-v44,
+.ftp-dashboard-card-v88,
+.ranking-kill-feed-v34,
+.ranking-badges-v34{
+  background:linear-gradient(180deg, rgba(10,16,28,.88), rgba(6,10,18,.94)) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:var(--rz-shadow) !important;
+  backdrop-filter:blur(16px);
+}
+.status.approved{background:rgba(34,197,94,.12); color:#8ef0b0}
+.status.failed,.status.rejected{background:rgba(239,68,68,.14); color:#ffb4b4}
+.status.pending{background:rgba(246,193,90,.14); color:#ffe1a4}
+.table,table{border-collapse:separate;border-spacing:0}
+.table th, .table td, table th, table td{border-bottom:1px solid rgba(255,255,255,.06)}
+
+/* Store */
+.page-store .v9-bg,
+.page-home .v9-bg{
+  background:url('/images/raidz-v114/site-hero-store.png') center top/cover no-repeat !important;
+  opacity:.52 !important;
+  filter:saturate(1.05) contrast(1.04);
+}
+.page-store .v9-bg::before,
+.page-home .v9-bg::before{
+  background:linear-gradient(90deg,rgba(3,7,13,.80) 0%,rgba(3,7,13,.52) 45%,rgba(3,7,13,.88) 100%),linear-gradient(180deg,rgba(3,7,13,.14),#040710 72%) !important;
+}
+.page-store .v9-hero-zone{padding-top:42px !important}
+.page-store .v9-hero-copy h1{font-size:clamp(3.3rem,5vw,5.8rem); line-height:.9}
+.page-store .v9-wallet-hud{box-shadow:0 28px 90px rgba(0,0,0,.52), inset 0 0 50px rgba(246,193,90,.05) !important}
+.page-store .playtime-reward-alert-v78,
+.page-store .v9-category-panel,
+.page-store .v9-trust-strip,
+.page-store .v9-server-card,
+.page-store .v9-product-card{box-shadow:var(--rz-shadow) !important}
+
+/* Shared hero shell */
+.rz-pro-hero,
+.ranking-hero-v34,
+.clan-hero-v106,
+.admin-hero-v114{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  border-radius:32px;
+  min-height:300px;
+}
+.rz-pro-hero::before,
+.ranking-hero-v34::before,
+.clan-hero-v106::before,
+.admin-hero-v114::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, rgba(4,9,16,.84) 0%, rgba(4,9,16,.58) 38%, rgba(4,9,16,.90) 100%);
+  z-index:-1;
+}
+.rz-pro-hero::after,
+.ranking-hero-v34::after,
+.clan-hero-v106::after,
+.admin-hero-v114::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 18% 24%, rgba(57,183,255,.14), transparent 24%),radial-gradient(circle at 82% 22%, rgba(239,68,68,.14), transparent 26%);
+  z-index:-1;
+}
+
+/* Ranking page */
+.page-ranking .ranking-page-v34{max-width:1600px !important; padding:24px 34px 38px !important}
+.page-ranking .ranking-bg-v34{
+  position:absolute;
+  inset:0 0 auto 0;
+  height:420px;
+  border-radius:36px;
+  background:url('/images/raidz-v114/site-hero-ranking.png') center/cover no-repeat;
+  opacity:.28;
+  filter:saturate(1.05) contrast(1.04);
+  pointer-events:none;
+}
+.page-ranking .ranking-hero-v34{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);
+  gap:18px;
+  padding:34px;
+  background:transparent !important;
+  border:1px solid rgba(255,255,255,.08);
+}
+.page-ranking .ranking-hero-copy-v34 h1{font-size:clamp(2.8rem,4vw,4.7rem); margin:.2rem 0 1rem; line-height:.92}
+.page-ranking .ranking-stats-v34{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-self:end}
+.page-ranking .ranking-stats-v34 > div{padding:18px;border-radius:22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+.page-ranking .ranking-stats-v34 span{display:block;color:var(--rz-muted);text-transform:uppercase;letter-spacing:.09em;font-size:.76rem;font-weight:900}
+.page-ranking .ranking-stats-v34 strong{display:block;margin-top:8px;font-size:1.75rem}
+.page-ranking .ranking-tabs-v34{position:sticky;top:72px;z-index:80;background:rgba(6,10,18,.86);backdrop-filter:blur(16px);padding:12px 16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:var(--rz-shadow)}
+.page-ranking .ranking-tabs-v34 a{padding:11px 15px;border-radius:999px;color:#c9d4e1;font-weight:900;text-transform:uppercase;letter-spacing:.05em;font-size:.75rem}
+.page-ranking .ranking-tabs-v34 a:hover{background:rgba(255,255,255,.07);color:#fff}
+.page-ranking .ranking-section-head-v34 h2,
+.page-ranking .ranking-badges-v34 h2,
+.page-ranking .ranking-kill-feed-v34 h2{font-size:2rem}
+.page-ranking .ranking-table-v34 th{position:sticky;top:0;background:rgba(8,12,22,.96);z-index:2}
+.page-ranking .ranking-table-v34 td,
+.page-ranking .ranking-table-v34 th{padding:14px 12px}
+.page-ranking .ranking-table-v34 tbody tr:hover{background:rgba(255,255,255,.03)}
+.page-ranking .kill-feed-row-v34{display:grid;grid-template-columns:auto auto auto 1fr;gap:10px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.page-ranking .kill-feed-row-v34:last-child{border-bottom:0}
+.page-ranking .kill-feed-row-v34 .feed-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.page-ranking .kill-feed-row-v34 .feed-badge.kill{background:rgba(239,68,68,.12);color:#ffb4b4}
+.page-ranking .kill-feed-row-v34 .feed-badge.death{background:rgba(57,183,255,.12);color:#9dddff}
+.page-ranking .kill-feed-row-v34 .feed-badge.koth{background:rgba(246,193,90,.16);color:#ffe7a9}
+.page-ranking .kill-feed-row-v34 small{display:block;color:#9db0c7}
+.page-ranking .clan-card-v34{border-radius:28px}
+.page-ranking .clan-score-v34{color:#fff;background:linear-gradient(135deg, rgba(239,68,68,.16), rgba(57,183,255,.14));padding:12px 16px;border-radius:18px;margin:0 18px 18px;display:inline-flex;align-self:flex-start}
+.page-ranking .badge-row-v34{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+
+/* Clans page */
+.page-clans .clan-hero-v106::before{background:url('/images/raidz-v114/site-hero-clans.png') center/cover no-repeat !important; opacity:.34}
+.page-clans .clan-hub-v106{gap:26px}
+.page-clans .clan-grid-v106{gap:18px}
+.page-clans .clan-card-v106,
+.page-clans .clan-form-card-v106{border-radius:28px}
+.page-clans .clan-card-v106:hover{box-shadow:0 32px 88px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.06) !important}
+
+/* Admin */
+.page-admin main.container{max-width:1680px !important}
+.page-admin .admin-hero-v114{
+  padding:34px;
+  margin-bottom:22px;
+  background:transparent !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+}
+.page-admin .admin-hero-v114::before{background:url('/images/raidz-v114/site-hero-admin.png') center/cover no-repeat; opacity:.32}
+.page-admin .admin-hero-grid-v114{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:18px}
+.page-admin .admin-hero-copy-v114 h1{font-size:clamp(2.9rem,4vw,4.8rem); margin:.25rem 0 .8rem; line-height:.92}
+.page-admin .admin-hero-copy-v114 p{max-width:720px;color:#d7e0ec}
+.page-admin .admin-health-grid-v114{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-self:end}
+.page-admin .admin-health-card-v114{padding:18px;border-radius:22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.page-admin .admin-health-card-v114 span{display:block;font-size:.74rem;color:var(--rz-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.page-admin .admin-health-card-v114 strong{display:block;margin-top:8px;font-size:1.5rem}
+.page-admin .shop-header{padding:4px 2px 6px}
+.page-admin .stats-grid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:16px}
+.page-admin .stat{border-radius:22px;padding:18px}
+.page-admin .stat span{display:block;color:var(--rz-muted);text-transform:uppercase;letter-spacing:.08em;font-size:.74rem;font-weight:900}
+.page-admin .stat strong{display:block;margin-top:9px;font-size:1.65rem}
+.page-admin .split{gap:18px}
+.page-admin .card table{width:100%}
+.page-admin .card table th{background:rgba(255,255,255,.03)}
+.page-admin .danger-zone-card{border:1px solid rgba(239,68,68,.28) !important}
+
+/* Generic responsive */
+@media (max-width: 1100px){
+  main.container:not(.v9-store-page),
+  .page-ranking .ranking-page-v34,
+  .page-admin main.container{padding:18px !important}
+  .page-ranking .ranking-hero-v34,
+  .page-admin .admin-hero-grid-v114{grid-template-columns:1fr}
+  .page-admin .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .page-ranking .kill-feed-row-v34{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width: 780px){
+  .page-admin .stats-grid,
+  .page-admin .admin-health-grid-v114,
+  .page-ranking .ranking-stats-v34{grid-template-columns:1fr}
+  .page-ranking .ranking-tabs-v34{top:62px;overflow:auto;white-space:nowrap}
+  .page-ranking .ranking-hero-v34,
+  .page-admin .admin-hero-v114,
+  .page-clans .clan-hero-v106{padding:22px}
+}

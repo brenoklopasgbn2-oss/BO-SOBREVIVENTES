@@ -1,0 +1,296 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container admin-vehicles-page">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+  <section class="card insurance-player-explain-admin">
+    <p class="eyebrow">Como os seguros funcionam para os players</p>
+    <div class="insurance-explain-grid">
+      <div>
+        <h3>Seguro normal</h3>
+        <p>O player precisa estar perto do veículo antigo, até 250 metros. O mod só apaga o veículo dele pelo ID correto e depois dropa outro.</p>
+      </div>
+      <div>
+        <h3>Seguro por roubo</h3>
+        <p>Serve quando roubaram o carro. O player pode estar longe, até do outro lado do mapa. O mod não pode bloquear por distância; ele só apaga quando o carro estiver parado e sem nenhum player dentro. Se estiver em movimento ou ocupado, a entrega fica aguardando.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="card danger-zone-v56">
+    <p class="eyebrow">Limpeza solicitada</p>
+    <h2>Zerar veículos e seguros da loja</h2>
+    <p class="muted">Use para recriar tudo do zero. Isso limpa os modelos de veículos e planos de seguro da loja. Dados de players, saldos, compras e histórico são preservados.</p>
+    <form method="POST" action="/admin/vehicles/reset-store" onsubmit="return confirm('Confirmar limpeza dos veículos e seguros da loja? Os saldos/compras dos players serão preservados.');">
+      <button class="btn danger" type="submit">Zerar veículos/seguros da loja</button>
+    </form>
+  </section>
+
+  <section class="split align-start admin-vehicle-grid">
+    <div class="card admin-product-form-card">
+      <p class="eyebrow"><%= vehicle ? 'Editar veículo' : 'Novo veículo' %></p>
+      <h1>Veículos de doação/seguro</h1>
+      <p class="muted">Cadastre qualquer veículo vanilla ou modado. O mod vai receber o classname, peças, fluidos e ID para remover o antigo e dropar outro montado.</p>
+      <form method="POST" action="<%= vehicle ? '/admin/vehicles/' + vehicle.id : '/admin/vehicles' %>" enctype="multipart/form-data" class="form-grid">
+        <label>Nome do veículo
+          <input name="name" value="<%= vehicle?.name || '' %>" placeholder="Offroad VIP" required>
+        </label>
+        <label>Descrição
+          <textarea name="description" placeholder="Veículo completo, seguro opcional e reposição pelo site."><%= vehicle?.description || '' %></textarea>
+        </label>
+        <div class="inline-grid product-inline-grid">
+          <label>Servidor
+            <select name="serverType">
+              <% ['vanilla','bbp'].forEach(s => { %><option value="<%= s %>" <%= vehicle?.serverType === s ? 'selected' : '' %>><%= s %></option><% }) %>
+            </select>
+          </label>
+          <label>Classname do veículo
+            <input id="vehicleClassnameInputV55" name="vehicleClassname" value="<%= vehicle?.vehicleClassname || '' %>" placeholder="OffroadHatchback" list="vehicleClassnameListV55" required>
+          </label>
+          <label>Ativo
+            <input type="checkbox" name="active" <%= !vehicle || vehicle.active ? 'checked' : '' %>>
+          </label>
+        </div>
+        <datalist id="vehicleClassnameListV55">
+          <option value="MSFZ_LandRover">Land Rover Normal</option>
+          <option value="MSFZ_LandRover_camo1">Land Rover Camo 1</option>
+          <option value="MSFZ_LandRover_ind">Land Rover IND</option>
+          <option value="MSFZ_LandRover_red">Land Rover Red</option>
+          <option value="MSFZ_LandRover_black">Land Rover Black</option>
+          <option value="MSFZ_LandRover_Winter">Land Rover Winter</option>
+          <option value="TP_Apoc_M1025">M1025 Apocalipse</option>
+          <option value="TP_Apoc_M1025_Black">M1025 Apocalipse Black</option>
+          <option value="TP_Apoc_M1025_Camo">M1025 Apocalipse Camo</option>
+          <option value="TP_Apoc_M1025_Tan">M1025 Apocalipse Tan</option>
+          <option value="MuranoCarlock">Murano CarLock</option>
+          <option value="CarKey">CarKey</option>
+        </datalist>
+        <div class="card mini-help-card">
+          <h3>Lista rápida de veículos</h3>
+          <p class="muted">Clique no veículo para preencher nome e classname automaticamente.</p>
+          <div class="vehicle-quick-picker-v55" id="vehicleQuickPickerV55">
+            <button type="button" data-name="Land Rover Normal" data-class="MSFZ_LandRover" data-img="/images/vehicles/land-rover-normal-real.png">Land Rover Normal</button>
+            <button type="button" data-name="Land Rover Camo 1" data-class="MSFZ_LandRover_camo1" data-img="/images/vehicles/land-rover-camo1-real.png">Land Rover Camo 1</button>
+            <button type="button" data-name="Land Rover IND" data-class="MSFZ_LandRover_ind" data-img="/images/vehicles/land-rover-ind-real.png">Land Rover IND</button>
+            <button type="button" data-name="Land Rover Red" data-class="MSFZ_LandRover_red" data-img="/images/vehicles/land-rover-red-real.png">Land Rover Red</button>
+            <button type="button" data-name="Land Rover Black" data-class="MSFZ_LandRover_black" data-img="/images/vehicles/land-rover-black-real.png">Land Rover Black</button>
+            <button type="button" data-name="Land Rover Winter" data-class="MSFZ_LandRover_Winter" data-img="/images/vehicles/land-rover-winter-real.png">Land Rover Winter</button>
+            <button type="button" data-name="M1025 Apocalipse" data-class="TP_Apoc_M1025" data-img="/images/vehicles/m1025-apoc-real.png">M1025 Apocalipse</button>
+            <button type="button" data-name="M1025 Apocalipse Black" data-class="TP_Apoc_M1025_Black" data-img="/images/vehicles/m1025-apoc-black-real.png">M1025 Black</button>
+            <button type="button" data-name="M1025 Apocalipse Camo" data-class="TP_Apoc_M1025_Camo" data-img="/images/vehicles/m1025-apoc-camo-real.png">M1025 Camo</button>
+            <button type="button" data-name="M1025 Apocalipse Tan" data-class="TP_Apoc_M1025_Tan" data-img="/images/vehicles/m1025-apoc-tan-real.png">M1025 Tan</button>
+          </div>
+        </div>
+        <div class="card mini-help-card vehicle-variant-admin-card">
+          <h3>Skins / opções do mesmo veículo</h3>
+          <p class="muted">Coloque mais de 1 linha para o player poder trocar a skin/opção na loja. Se deixar vazio, aparece só o veículo principal.</p>
+          <code>Nome visível|Classname do veículo|URL imagem opcional</code>
+          <pre>Verde militar|OffroadHatchback
+Azul enferrujado|OffroadHatchback_Blue|https://site/imagem.png
+Preto VIP|OffroadHatchback_Black</pre>
+          <label>Opções de skin / type do veículo
+            <textarea name="variantsText" class="items-textarea" placeholder="Verde militar|OffroadHatchback"><%= vehicle ? variantsToText(vehicle.variants) : '' %></textarea>
+          </label>
+        </div>
+        <div class="inline-grid product-inline-grid two-cols">
+          <label>Valor da doação do veículo — RZ
+            <input name="buyPriceCoins" type="number" min="0" value="<%= vehicle?.buyPriceCoins || 70000 %>">
+          </label>
+          <label>Seguro mensal recomendado — RZ
+            <input type="number" min="0" value="<%= Math.floor((vehicle?.buyPriceCoins || 70000) / 2) %>" disabled>
+          </label>
+        </div>
+        <input type="hidden" name="rent1DayCoins" value="0">
+        <input type="hidden" name="rent7DaysCoins" value="0">
+        <input type="hidden" name="rent30DaysCoins" value="0">
+        <div class="card mini-help-card">
+          <h3>Peças montadas automaticamente</h3>
+          <p class="muted">Use uma linha por peça. Para veículos modados, coloque os slots e classnames do mod.</p>
+          <code>Slot|Classname|Quantidade|Nome opcional</code>
+          <pre>Reflector_1_1|Hatchback_02_LeftHeadlight|1|Farol esquerdo
+Reflector_2_1|Hatchback_02_RightHeadlight|1|Farol direito
+CarBattery|CarBattery|1|Bateria
+SparkPlug|SparkPlug|1|Vela
+CarRadiator|CarRadiator|1|Radiador
+Hatchback_02_Wheel_1_1|Hatchback_02_Wheel|1|Roda dianteira esquerda</pre>
+        </div>
+        <label>Peças / slots do veículo
+          <textarea name="partsText" class="items-textarea" placeholder="CarBattery|CarBattery|1|Bateria"><%= vehicle ? partsToText(vehicle.parts) : '' %></textarea>
+        </label>
+        <div class="card mini-help-card">
+          <h3>Itens dentro do veículo</h3>
+          <p class="muted">Use para chave, mapa, kit ou qualquer item que deve nascer no inventário/cargo do carro depois de montar.</p>
+          <code>Slot/inventário|Classname|Quantidade|Nome opcional</code>
+          <pre>cargo|MuranoCarlock|1|Murano CarLock
+CarKey|1|CarKey</pre>
+        </div>
+        <label>Itens para vir dentro/slot do veículo
+          <textarea name="cargoItemsText" class="items-textarea" placeholder="cargo|MuranoCarlock|1|Murano CarLock"><%= vehicle ? cargoItemsToText(vehicle.cargoItems) : '' %></textarea>
+        </label>
+        <div class="inline-grid product-inline-grid">
+          <label>Combustível %
+            <input name="fuelPercent" type="number" min="0" max="100" value="<%= vehicle?.fluids?.fuelPercent ?? 80 %>">
+          </label>
+          <label>Água/Radiador %
+            <input name="waterPercent" type="number" min="0" max="100" value="<%= vehicle?.fluids?.waterPercent ?? 100 %>">
+          </label>
+          <label>Óleo %
+            <input name="oilPercent" type="number" min="0" max="100" value="<%= vehicle?.fluids?.oilPercent ?? 100 %>">
+          </label>
+        </div>
+        <label>URL de imagem opcional
+          <input id="vehicleImageUrlInputV55" name="imageUrl" value="<%= vehicle?.imageUrl || '' %>" placeholder="https://...">
+        </label>
+        <label>Enviar imagem do veículo
+          <input name="image" type="file" accept="image/*">
+        </label>
+        <% if (vehicle && (vehicle.imageData || vehicle.imageUrl)) { %>
+          <div class="current-product-image"><span>Imagem atual:</span><img class="thumb" src="<%= vehicle.imageData ? ('/vehicle-image/' + vehicle.id + '?v=' + (vehicle.updatedAt ? new Date(vehicle.updatedAt).getTime() : Date.now())) : (vehicle.imageUrl + (String(vehicle.imageUrl || '').includes('?') ? '&' : '?') + 'v=' + (vehicle.updatedAt ? new Date(vehicle.updatedAt).getTime() : Date.now())) %>" /></div>
+        <% } %>
+        <button class="btn primary" type="submit"><%= vehicle ? 'Salvar veículo' : 'Criar veículo' %></button>
+      </form>
+      <% if (vehicle) { %>
+        <div class="vehicle-admin-action-row mt">
+          <form method="POST" action="/admin/vehicles/<%= vehicle.id %>/delete-image"><button class="btn danger" type="submit">Remover imagem</button></form>
+          <form method="POST" action="/admin/vehicles/<%= vehicle.id %>/delete" onsubmit="return confirm('Excluir/remover este veículo da loja? Se algum player já usa, ele será só desativado para preservar histórico.');"><button class="btn danger" type="submit">Excluir veículo</button></form>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="card wide-card">
+      <h2>Planos de seguro</h2>
+      <p class="muted">Você pode criar seguro global para todos os veículos ou específico para um veículo.</p>
+      <form method="POST" action="/admin/vehicle-insurance-plans" class="form-grid compact-form">
+        <label>Nome do seguro
+          <input name="name" placeholder="Seguro mensal 2x por semana" required>
+        </label>
+        <label>Veículo específico
+          <select name="templateId">
+            <option value="">Todos os veículos</option>
+            <% templates.forEach(v => { %><option value="<%= v.id %>"><%= v.name %></option><% }) %>
+          </select>
+        </label>
+        <div class="inline-grid product-inline-grid two-cols">
+          <label>Tipo
+            <select name="billingType">
+              <option value="PER_USE">Paga por vez que usar</option>
+              <option value="SUBSCRIPTION">Mensal / usa X vezes na semana</option>
+            </select>
+          </label>
+          <label>Preço em RZ
+            <input name="priceCoins" type="number" min="0" value="5000">
+          </label>
+          <label>Taxa por reposição na assinatura
+            <input name="respawnFeeCoins" type="number" min="0" value="0">
+          </label>
+          <label>Duração dias
+            <input name="durationDays" type="number" min="1" value="30">
+          </label>
+          <label>Usos por semana
+            <input name="maxUsesPerWeek" type="number" min="1" value="2">
+          </label>
+          <label>Ativo
+            <input type="checkbox" name="active" checked>
+          </label>
+        </div>
+        <label>Descrição
+          <textarea name="description" placeholder="Ex: paga mensal e pode repor 2 vezes por semana."></textarea>
+        </label>
+        <button class="btn primary" type="submit">Criar seguro</button>
+      </form>
+
+      <table class="mt">
+        <thead><tr><th>Plano</th><th>Seguro</th><th>Cobrança</th><th>Veículo</th><th>Preço</th><th>Uso</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <% plans.forEach(plan => { %>
+            <tr>
+              <td><%= plan.name %></td>
+              <td><%= plan.coverageType === 'THEFT' ? 'Roubo' : 'Normal' %></td>
+              <td><%= plan.billingType %></td>
+              <td><%= plan.template?.name || 'Todos' %></td>
+              <td><%= coins(plan.priceCoins) %> RZ</td>
+              <td><%= plan.billingType === 'SUBSCRIPTION' ? `${plan.maxUsesPerWeek}x/semana` : 'paga por uso' %></td>
+              <td><span class="status <%= plan.active ? 'delivered' : 'failed' %>"><%= plan.active ? 'Ativo' : 'Inativo' %></span></td>
+              <td><form method="POST" action="/admin/vehicle-insurance-plans/<%= plan.id %>/toggle"><button class="btn" type="submit"><%= plan.active ? 'Desativar' : 'Ativar' %></button></form></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card wide-card">
+    <h2>Veículos cadastrados</h2>
+    <table>
+      <thead><tr><th>Nome</th><th>Servidor</th><th>Classname</th><th>Skins</th><th>Doação</th><th>Seguro 50%</th><th>Peças</th><th>Itens dentro</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>
+        <% templates.forEach(v => { %>
+          <tr>
+            <td><%= v.name %></td><td><%= v.serverType %></td><td><code><%= v.vehicleClassname %></code></td>
+            <td><%= Array.isArray(v.variants) && v.variants.length > 1 ? v.variants.length + ' opções' : 'Padrão' %></td>
+            <td><%= coins(v.buyPriceCoins) %></td>
+            <td><%= coins(Math.floor((v.buyPriceCoins || 0) / 2)) %></td>
+            <td><%= Array.isArray(v.parts) ? v.parts.length : 0 %></td>
+            <td><%= Array.isArray(v.cargoItems) ? v.cargoItems.length : 0 %></td>
+            <td><span class="status <%= v.active ? 'delivered' : 'failed' %>"><%= v.active ? 'Ativo' : 'Inativo' %></span></td>
+            <td><div class="vehicle-admin-action-row"><a class="btn" href="/admin/vehicles/<%= v.id %>/edit">Editar</a><form method="POST" action="/admin/vehicles/<%= v.id %>/delete" onsubmit="return confirm('Excluir/remover este veículo da loja?');"><button class="btn danger" type="submit">Excluir</button></form></div></td>
+          </tr>
+        <% }) %>
+        <% if (!templates.length) { %><tr><td colspan="10" class="muted">Nenhum veículo cadastrado.</td></tr><% } %>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card wide-card">
+    <h2>Veículos dos players</h2>
+    <table>
+      <thead><tr><th>Player</th><th>Veículo</th><th>Plano</th><th>Status no mapa</th><th>Uso seguro</th><th>Entregas</th><th>Status</th><th>Vence</th><th>Atual ID</th><th></th></tr></thead>
+      <tbody>
+        <% playerVehicles.forEach(v => { %>
+          <tr>
+            <td><%= v.player?.nickname || v.steam64 %><br><small><%= v.steam64 %></small></td>
+            <td><%= v.displayName %><br><code><%= v.vehicleClassname %></code></td>
+            <td><%= v.insurancePlan?.name || 'Sem seguro' %><br><small><%= v.insurancePlan?.coverageType === 'THEFT' ? 'Roubo' : (v.insurancePlan ? 'Normal' : '-') %> • <%= v.insurancePlan?.billingType || '-' %></small></td>
+            <td>
+              <b><%= v.currentVehicleMoving ? 'Em movimento' : 'Parado' %></b><br>
+              <small><%= v.currentVehicleOccupied ? 'Com player dentro' : 'Sem player dentro' %></small><br>
+              <small>Roubo: <%= v.currentVehicleCanTheftClaim ? 'pode usar' : 'aguardando' %></small><br>
+              <small><%= v.currentVehicleLastSeenAt ? dateTime(v.currentVehicleLastSeenAt) : 'sem sinal ainda' %></small>
+            </td>
+            <td>
+              Semana: <b><%= v.insuranceUsesThisWeek || 0 %>/<%= v.insurancePlan?.billingType === 'SUBSCRIPTION' ? (v.insurancePlan?.maxUsesPerWeek || '-') : 'livre' %></b><br>
+              Total: <b><%= v.insuranceUsesTotal || 0 %></b><br>
+              Último: <small><%= v.lastInsuranceUsedAt ? dateTime(v.lastInsuranceUsedAt) : '-' %></small>
+            </td>
+            <td><%= v.deliveriesCreated || 0 %></td>
+            <td><span class="status <%= v.status === 'ACTIVE' ? 'delivered' : 'failed' %>"><%= v.status %></span></td>
+            <td><%= v.expiresAt ? dateTime(v.expiresAt) : 'Permanente' %></td>
+            <td><code><%= v.currentVehicleKey || '-' %></code></td>
+            <td><form method="POST" action="/admin/player-vehicles/<%= v.id %>/reset-delivery"><button class="btn primary" type="submit">Dropar novo</button></form></td>
+          </tr>
+        <% }) %>
+        <% if (!playerVehicles.length) { %><tr><td colspan="10" class="muted">Nenhum player com veículo ainda.</td></tr><% } %>
+      </tbody>
+    </table>
+  </section>
+
+  <style>
+    .vehicle-quick-picker-v55{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .vehicle-quick-picker-v55 button{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:700}
+    .vehicle-quick-picker-v55 button:hover{border-color:rgba(255,122,24,.6);box-shadow:0 0 0 2px rgba(255,122,24,.12)}
+    .vehicle-admin-action-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.vehicle-admin-action-row form{margin:0}
+  </style>
+  <script>
+    (function(){
+      const nameInput=document.querySelector('input[name="name"]');
+      const classInput=document.getElementById('vehicleClassnameInputV55');
+      const imageInput=document.getElementById('vehicleImageUrlInputV55');
+      document.querySelectorAll('#vehicleQuickPickerV55 button[data-class]').forEach(btn=>{
+        btn.addEventListener('click',()=>{ if(nameInput && !nameInput.value) nameInput.value=btn.dataset.name||''; if(classInput) classInput.value=btn.dataset.class||''; if(imageInput && btn.dataset.img) imageInput.value=btn.dataset.img; classInput?.focus(); });
+      });
+    })();
+  </script>
+
+</main>
+<%- include('../partials/footer') %>

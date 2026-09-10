@@ -7,16 +7,16 @@ function buildAirdropPanel() {
   const image = PANEL_IMAGES.airdrop;
   const file = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', image));
   const embed = baseEmbed()
-    .setColor(0xd4af37)
+    .setColor(0xe3263e)
     .setTitle('🪂 Airdrop • CHAMPIONS Z')
     .setDescription([
-      'Os Airdrops criam pontos de disputa e risco em Chernarus.',
+      'Airdrops espalham pontos de disputa e loot pelo mapa.',
       '',
-      '📦 Loot disputado',
-      '⚔️ Alto risco de PvP',
-      '🎯 Local e configuração definidos pelo servidor',
+      '📦 Vá preparado: um drop pode atrair vários grupos.',
+      '⚔️ A área é de risco e pode virar PvP rapidamente.',
+      '🎯 Local, frequência e conteúdo podem mudar conforme o balanceamento.',
       '',
-      'Frequência, conteúdo e regras serão publicados aqui quando fecharmos a configuração final.'
+      'Qualquer regra especial será anunciada pela staff antes do evento.'
     ].join('\n'))
     .setImage(`attachment://${image}`);
   return { embeds: [embed], files: [file] };

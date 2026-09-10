@@ -1,0 +1,24 @@
+RAID-Z BOT — V176 — TRADUÇÃO AUTOMÁTICA NOS TICKETS
+
+O que foi adicionado:
+- Ao clicar para abrir um ticket, o jogador escolhe o idioma antes de preencher o formulário.
+- Idiomas disponíveis: Português, Inglês, Espanhol, Francês, Alemão, Italiano e Russo.
+- O formulário de abertura aparece no idioma selecionado.
+- Mensagens do jogador estrangeiro são traduzidas automaticamente para português.
+- Respostas da staff em português são traduzidas automaticamente para o idioma do jogador.
+- O motivo inicial do ticket já aparece traduzido para a equipe.
+- Novo botão "Idioma" dentro do ticket para alterar a língua durante o atendimento.
+- Steam64, links, menções, comandos, códigos e nomes técnicos são protegidos da tradução.
+- O transcript mantém a mensagem original e a tradução.
+- Ao fechar o ticket, as últimas respostas da staff são traduzidas antes de serem enviadas por DM ao jogador.
+- Se o serviço de tradução estiver temporariamente indisponível, o ticket continua funcionando normalmente e a mensagem original permanece visível.
+
+Configuração:
+- Funciona por padrão sem chave adicional, usando acesso externo ao serviço de tradução.
+- O Railway/host precisa permitir conexão com a internet.
+- Variáveis opcionais estão documentadas no arquivo .env.example.
+
+Após atualizar:
+1. Reinicie/republique o bot.
+2. Não é necessário apagar os canais.
+3. O painel de tickets existente continua funcionando; o seletor aparece ao clicar em qualquer botão de abertura.

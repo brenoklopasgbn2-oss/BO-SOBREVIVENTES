@@ -21,12 +21,13 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
         .setAuthor({ name: `CHAMPIONS Z • saída: ${user.tag}`, iconURL: user.displayAvatarURL({ size: 128 }) })
-        .setTitle('📤 Um Champion deixou a comunidade')
-        .setDescription([`**${user.tag}** saiu do **CHAMPIONS Z**.`, '', 'As portas de Chernarus continuam abertas caso queira voltar.'].join('\n'))
+        .setTitle('📤 Um sobrevivente deixou a comunidade')
+        .setDescription([`**${user.tag}** saiu do **CHAMPIONS Z**.`, '', 'Chernarus continua por aqui caso queira voltar.'].join('\n'))
         .setThumbnail(user.displayAvatarURL({ size: 256 }))
         .setImage(`attachment://${imageName}`)
         .addFields(
           { name: '👤 Usuário', value: `${user.tag}`, inline: true },
+          { name: '🆔 ID', value: member.id, inline: true },
           { name: '🌎 Membros agora', value: `${member.guild.memberCount}`, inline: true }
         )
         .setFooter({ text: 'CHAMPIONS Z • Registro de saída' })
@@ -35,7 +36,7 @@ module.exports = {
       await leaveChannel.send({ embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);
     }
 
-    await logEvent(member.guild, 'member_leave', '📤 Saída de usuário', `${user?.tag || member.id} saiu do CHAMPIONS Z.`, [
+    await logEvent(member.guild, 'member_leave', '📤 Saída de usuário', `${user?.tag || member.id} saiu do servidor.`, [
       { name: 'ID', value: member.id, inline: true }
     ]);
   }

@@ -1,0 +1,123 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container streamer-panel-page support-streamer-page">
+  <style>
+    .streamer-request-pay-v65{margin-top:14px;border:1px solid rgba(34,197,94,.24);background:linear-gradient(135deg,rgba(20,83,45,.22),rgba(15,23,42,.70));border-radius:20px;padding:16px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.streamer-request-pay-v65 form{display:flex;gap:8px;flex-wrap:wrap}.streamer-request-pay-v65 button{min-width:210px}.streamer-money-highlight-v65 strong{color:#bbf7d0}.streamer-money-highlight-v65 b{color:#fed7aa}.streamer-payout-list-v65{display:grid;gap:8px;margin-top:12px}.streamer-payout-row-v65{display:grid;grid-template-columns:1.4fr .8fr .8fr .8fr;gap:10px;align-items:center;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.50);border-radius:14px;padding:10px}.streamer-payout-row-v65 small{color:#9fb0c5}@media(max-width:800px){.streamer-request-pay-v65,.streamer-payout-row-v65{grid-template-columns:1fr}.streamer-request-pay-v65 form{display:grid}.streamer-request-pay-v65 button{min-width:0}}
+  </style>
+  <section class="shop-header support-hero-card sz-hover-card">
+    <div>
+      <p class="eyebrow">Painel Streamer</p>
+      <h1>Apoio da comunidade</h1>
+      <p class="muted">Entre com o seu Steam64 liberado pelo ADM. Aqui aparece seu código, quem comprou usando ele, ganhos da semana, do mês e o valor aproximado em reais.</p>
+    </div>
+    <div class="dm-status-stack"><span class="pill success">Apoio ativo</span><span class="pill">Saque semanal</span><span class="pill">DM bloqueado</span></div>
+  </section>
+
+  <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+  <% if (success) { %><div class="alert success"><%= success %></div><% } %>
+
+  <% if (!streamerDashboard) { %>
+    <section class="card streamer-login-card">
+      <h2>Acessar meu painel streamer</h2>
+      <p class="muted">O ADM libera seu acesso pelo <b>Steam64</b>. Depois disso você entra aqui, vê seu código de apoiador, quem comprou apoiando você e seus ganhos.</p>
+      <form method="POST" action="/streamer/login" class="form-grid streamer-login-grid-v45">
+        <label>Meu Steam64 liberado pelo ADM
+          <input name="steam64" value="<%= loginSteam64 || '' %>" placeholder="7656119..." maxlength="17" required>
+          <small class="muted">Use o mesmo Steam64 que você usa para entrar no servidor.</small>
+        </label>
+        <details class="legacy-fields streamer-code-fallback-v45">
+          <summary>Entrar pelo código antigo, se o ADM passar</summary>
+          <label>Código streamer
+            <input name="code" value="<%= loginCode || '' %>" placeholder="Ex: BRENO10">
+          </label>
+        </details>
+        <button class="btn primary" type="submit">Entrar no painel streamer</button>
+      </form>
+    </section>
+  <% } else { %>
+    <% const sc = streamerDashboard.streamerCode; const stats = streamerDashboard.stats; const sales = streamerDashboard.sales; const payouts = streamerDashboard.payouts || []; const totalStats = stats.total || {}; const weekStats = stats.weekly || {}; const monthStats = stats.monthly || {}; const todayStats = stats.today || {}; const pendingStats = stats.pending || {}; const pendingWeek = stats.pendingWeekly || {}; const pendingMonth = stats.pendingMonthly || {}; %>
+    <section class="card streamer-config-card">
+      <div class="item-builder-top">
+        <div>
+          <p class="eyebrow">Logado como streamer</p>
+          <h2><%= sc.streamerName %></h2>
+          <p class="muted">Seu código de apoiador: <code class="streamer-code-big-v43"><%= sc.code %></code> • Steam64 liberado: <strong><%= sc.streamerSteam64 || 'Não informado' %></strong> • Comissão: <strong><%= sc.percent %>%</strong><% if (sc.pixKey) { %> • Chave Pix: <%= sc.pixKey %><% } %></p>
+        </div>
+        <span class="pill success">Ativo</span>
+      </div>
+      <div class="stats-grid streamer-stats-v43">
+        <div class="stat premium-stat-v43"><span>Hoje</span><strong><%= coins(todayStats.totalCommissionCoins || 0) %> RZ</strong><small><%= todayStats.saleCount || 0 %> apoios • ≈ <%= brl(todayStats.totalCommissionBrl || 0) %></small></div>
+        <div class="stat premium-stat-v43"><span>Semana</span><strong><%= coins(weekStats.totalCommissionCoins || 0) %> RZ</strong><small><%= weekStats.saleCount || 0 %> apoios • ≈ <%= brl(weekStats.totalCommissionBrl || 0) %></small></div>
+        <div class="stat premium-stat-v43"><span>Mês</span><strong><%= coins(monthStats.totalCommissionCoins || 0) %> RZ</strong><small><%= monthStats.saleCount || 0 %> apoios • ≈ <%= brl(monthStats.totalCommissionBrl || 0) %></small></div>
+        <div class="stat premium-stat-v43 streamer-money-highlight-v65"><span>A receber agora</span><strong><%= coins(pendingStats.totalCommissionCoins || 0) %> RZ</strong><small>≈ <%= brl(pendingStats.totalCommissionBrl || 0) %> pendente</small></div>
+      </div>
+      <div class="streamer-public-summary-v43">
+        <div><span>Pendente semana</span><strong><%= coins(pendingWeek.totalCommissionCoins || 0) %> RZ</strong><small>≈ <%= brl(pendingWeek.totalCommissionBrl || 0) %></small></div>
+        <div><span>Pendente mês</span><strong><%= coins(pendingMonth.totalCommissionCoins || 0) %> RZ</strong><small>≈ <%= brl(pendingMonth.totalCommissionBrl || 0) %></small></div>
+        <div><span>Total histórico</span><strong><%= coins(totalStats.totalCommissionCoins || 0) %> RZ</strong><small>≈ <%= brl(totalStats.totalCommissionBrl || 0) %> desde o começo.</small></div>
+      </div>
+      <div class="streamer-request-pay-v65">
+        <div>
+          <h3>Solicitar pagamento semanal</h3>
+          <p class="muted">O streamer pode solicitar 1 vez por semana. O ADM confere e marca como pago usando senha no painel admin.</p>
+        </div>
+        <form method="POST" action="/streamer/request-payout">
+          <input type="hidden" name="code" value="<%= sc.code %>">
+          <input type="hidden" name="steam64" value="<%= sc.streamerSteam64 || loginSteam64 || '' %>">
+          <button class="btn primary" type="submit">Solicitar saque da semana</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card wide-card">
+      <div class="item-builder-top"><h2>Pagamentos / solicitações</h2><span class="pill"><%= payouts.length %> registros</span></div>
+      <% if (!payouts.length) { %>
+        <p class="muted">Ainda não tem pagamento marcado nem solicitação aberta.</p>
+      <% } else { %>
+        <div class="streamer-payout-list-v65">
+          <% payouts.slice(0, 20).forEach(p => { %>
+            <div class="streamer-payout-row-v65">
+              <div><strong><%= p.periodType === 'WEEKLY' ? 'Saque semanal' : p.periodType %></strong><br><small><%= p.requestedByStreamer ? 'Solicitado pelo streamer' : 'Criado pelo ADM' %></small></div>
+              <div><span class="status <%= p.status === 'PAID' ? 'paid' : 'pending' %>"><%= p.status === 'PAID' ? 'PAGO' : 'PENDENTE' %></span><br><small><%= dateTime(p.paidAt || p.requestedAt || p.createdAt) %></small></div>
+              <div><%= coins(p.amountCoins || 0) %> RZ<br><small>≈ <%= brl(p.amountBrl || 0) %></small></div>
+              <div><%= p.saleCount || 0 %> apoios<br><small><%= p.supporters || 0 %> apoiadores únicos</small></div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+
+    <section class="card wide-card">
+      <div class="item-builder-top"><h2>Histórico de apoio</h2><span class="pill"><%= sales.length %> registros</span></div>
+      <table>
+        <thead><tr><th>Data</th><th>Player</th><th>Tipo</th><th>Total</th><th>Comissão</th><th>Status</th><th>Cupom</th></tr></thead>
+        <tbody>
+          <% if (!sales.length) { %><tr><td colspan="7" class="muted">Ainda não teve compra usando seu código.</td></tr><% } %>
+          <% sales.forEach(s => { %>
+            <tr>
+              <td><%= dateTime(s.createdAt) %></td>
+              <td><%= s.playerName || 'Player' %><br><small><%= s.playerSteam64 || '-' %></small></td>
+              <td><span class="pill"><%= s.source === 'DONATION' ? 'Doação Pix' : 'Produto' %></span></td>
+              <td><%= coins(s.totalCoins || 0) %> RZ<br><small>≈ <%= brl((s.totalCoins || 0) / 1000) %></small></td>
+              <td><%= s.commissionPercent %>% = <%= coins(s.commissionCoins || 0) %> RZ<br><small>≈ <%= brl((s.commissionCoins || 0) / 1000) %></small></td>
+              <td><span class="status <%= s.paidAt ? 'paid' : 'pending' %>"><%= s.paidAt ? 'PAGO' : 'PENDENTE' %></span></td>
+              <td><%= s.couponCode || '-' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+  <% } %>
+
+  <section class="card dm-rules-summary">
+    <h2>Death Match Interativo</h2>
+    <p class="muted">Esse painel está bloqueado por enquanto porque ainda está em desenvolvimento. Quando liberar, essa área vai mostrar as configurações de presentes da live.</p>
+    <div class="stats-grid">
+      <div class="stat"><span>Status</span><strong>Bloqueado</strong><small>Em desenvolvimento</small></div>
+      <div class="stat"><span>Loja DM</span><strong>Bloqueada</strong><small>Sem acesso para players</small></div>
+      <div class="stat"><span>Chamado ADM</span><strong>Bloqueado</strong><small>Sem mexer por enquanto</small></div>
+      <div class="stat"><span>Apoio</span><strong>Ativo</strong><small>Use código streamer nas doações</small></div>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

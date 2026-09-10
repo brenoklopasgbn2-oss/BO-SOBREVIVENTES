@@ -1,0 +1,19 @@
+ZONA-Z - CORREÇÃO DOS COMANDOS SLASH
+
+Agora /setup e /atualizarcanais são registrados automaticamente quando o bot fica online.
+
+Você NÃO precisa preencher CLIENT_ID nem GUILD_ID para os comandos aparecerem.
+É obrigatório apenas o TOKEN correto do bot.
+
+Depois de substituir os arquivos no host:
+1. Reinicie o bot.
+2. Aguarde ele ficar online.
+3. Veja no log uma linha parecida com:
+   [NOME DO SERVIDOR] 2 comando(s) slash registrado(s): /setup, /atualizarcanais
+4. No Discord, digite /setup ou /atualizarcanais.
+
+O convite do bot deve ter os escopos:
+- bot
+- applications.commands
+
+Para esse bot de administração/setup, a permissão Administrador pode permanecer marcada.

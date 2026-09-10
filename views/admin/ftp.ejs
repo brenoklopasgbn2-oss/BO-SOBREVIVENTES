@@ -1,0 +1,56 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container">
+  <%- include('_admin_nav') %>
+  <%- include('../partials/alerts') %>
+
+  <section class="card">
+    <h1>FTP / Arquivos do servidor DayZ</h1>
+    <p class="muted">O mod não consulta mais API. O site grava filas, VIPs e seguros pelo FTP, e lê os resultados que o servidor salva em arquivos locais.</p>
+
+    <% if (health) { %>
+      <div class="notice <%= health.ok ? 'success' : 'error' %>">
+        <strong><%= health.ok ? 'Última sincronização concluída' : 'Última sincronização falhou' %></strong><br>
+        <small>
+          <%= health.lastSuccessAt || health.lastFailureAt || '-' %>
+          <% if (health.durationMs !== undefined) { %> • <%= health.durationMs %> ms<% } %>
+          <% if (health.error) { %> • <%= health.error %><% } %>
+        </small>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/admin/ftp" class="form-grid">
+      <label class="check"><input type="checkbox" name="enabled" <%= ftp.enabled ? 'checked' : '' %>> Ativar integração por arquivos</label>
+      <label>Host FTP<input name="host" value="<%= ftp.host || '' %>" placeholder="ftp.seuhost.com" autocomplete="off"></label>
+      <label>Porta<input name="port" type="number" min="1" max="65535" value="<%= ftp.port || 21 %>"></label>
+      <label>Usuário<input name="username" value="<%= ftp.username || '' %>" autocomplete="off"></label>
+      <label>Senha<input name="password" type="password" value="" placeholder="<%= ftp.hasPassword ? 'Senha já salva — deixe vazio para manter' : 'Digite a senha FTP' %>" autocomplete="new-password"></label>
+      <label class="check"><input type="checkbox" name="secure" <%= ftp.secure ? 'checked' : '' %>> FTPS/TLS</label>
+      <label>Pasta base no FTP<input name="basePath" value="<%= ftp.basePath || '/profiles/RAIDZ_FileBridge' %>" placeholder="/profiles/RAIDZ_FileBridge"></label>
+      <label>Sincronizar a cada<input name="pollSeconds" type="number" min="10" max="300" value="<%= ftp.pollSeconds || 15 %>"><small>segundos; isso roda no site, não pesa no FPS do DayZ.</small></label>
+      <div class="actions"><button class="btn primary" type="submit">Salvar FTP</button></div>
+    </form>
+
+    <div class="actions" style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
+      <form method="POST" action="/admin/ftp/test">
+        <button class="btn" type="submit">Testar configuração salva</button>
+      </form>
+      <form method="POST" action="/admin/ftp/sync"><button class="btn" type="submit">Sincronizar agora</button></form>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Estrutura preservada nas atualizações</h2>
+    <pre><code>RAIDZ_FileBridge/
+├── inbox/manifest.json
+├── inbox/deliveries/STEAM64.json
+├── inbox/vip/STEAM64.json
+├── inbox/insurance/STEAM64.json
+├── outbox/results/DELIVERY_ID.json
+├── outbox/playtime/EVENT_ID.json
+├── state/                    (criado pelo mod)
+└── backups/                  (criado pelo mod)</code></pre>
+    <p class="muted">Os dados ficam no perfil do servidor e no PostgreSQL. Atualizar o PBO ou o site não apaga saldos, VIPs, seguros, entregas processadas nem pendências de reinício.</p>
+  </section>
+</main>
+<%- include('../partials/footer') %>

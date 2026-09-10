@@ -1,0 +1,22 @@
+ZONA-Z - ATUALIZACAO DE REGRAS
+
+Atualizado:
+- Sleeping Bag: maximo 5 por jogador.
+- Usou 1 Sleeping Bag: todos entram em cooldown por 1 hora.
+- Proibido presentear, emprestar ou transferir para burlar limite/cooldown.
+- Proibido usar Sleeping Bag para atravessar base, pular portao ou burlar raid.
+- Limite normal do cla: 15 jogadores.
+- Em dia/acao de raid: maximo 10 participantes por cla.
+- Proibido usar alianca, segundo grupo, jogador externo ou conta alternativa para passar de 10 na raid.
+- Raid somente por portao.
+- Raid somente em dia/horario oficial.
+- Combat logging proibido.
+- Stream sniping/informacao externa proibidos.
+- Cheat, exploit, dupe, glitch e abuso de bug proibidos.
+- Griefing/destruicao gratuita apos invasao proibidos.
+- Contas alternativas nao podem burlar cooldown, raid, grupo ou punicao.
+- Construcoes abusivas/bloqueio de loot, evento, passagem ou spawn proibidos.
+- Denuncias devem ser feitas por ticket com provas.
+- Evasao de punicao e falsa identidade de staff proibidas.
+
+As regras aparecem no painel principal /regras e a IA do bot foi atualizada para responder sobre raid, limite de grupo e Sleeping Bag.

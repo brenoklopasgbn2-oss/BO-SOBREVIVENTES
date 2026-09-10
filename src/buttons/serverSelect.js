@@ -8,14 +8,14 @@ module.exports = {
   async execute(interaction) {
     const targetRole = findRole(interaction.guild, ROLE_NAMES.survivor);
     if (!targetRole) {
-      return interaction.reply({ embeds: [errorEmbed('O cargo **Champion** ainda não existe. Peça para a staff executar /setup.')], ephemeral: true });
+      return interaction.reply({ embeds: [errorEmbed('O cargo **Sobrevivente** ainda não existe. Peça para a staff executar /setup.')], ephemeral: true });
     }
 
     await interaction.member.roles.add(targetRole, 'Entrada CHAMPIONS Z via painel');
-    await logEvent(interaction.guild, 'server_role_changed', '🏆 Acesso CHAMPIONS Z liberado', `${interaction.user} recebeu o cargo **Champion**.`, [
+    await logEvent(interaction.guild, 'server_role_changed', '🏆 Acesso CHAMPIONS Z liberado', `${interaction.user} recebeu o cargo **Sobrevivente**.`, [
       { name: 'Cargo aplicado', value: targetRole.name, inline: true }
     ]);
 
-    return interaction.reply({ embeds: [successEmbed('Acesso ao **CHAMPIONS Z** liberado. Cargo **Champion** aplicado.')], ephemeral: true });
+    return interaction.reply({ embeds: [successEmbed('Acesso ao **CHAMPIONS Z** liberado. Cargo **Sobrevivente** aplicado.')], ephemeral: true });
   }
 };

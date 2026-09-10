@@ -1,0 +1,792 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  REFUNDED
+  ERROR
+}
+
+enum LedgerType {
+  CREDIT
+  DEBIT
+  ADJUST
+}
+
+enum PurchaseStatus {
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum DeliveryStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  FAILED
+}
+
+enum CheckoutStatus {
+  PROCESSING
+  COMPLETED
+}
+
+model Player {
+  id                  String                     @id @default(uuid())
+  steam64             String                     @unique
+  discordId           String?
+  nickname            String?
+  avatarData          String?                    @db.Text
+  avatarMime          String?
+  profileBio          String?                    @db.Text
+  rememberToken       String?                    @unique
+  coins               Int                        @default(0)
+  cash                Int                        @default(0)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  payments            Payment[]
+  purchases           Purchase[]
+  ledgers             CoinLedger[]
+  deliveries          DeliveryQueue[]
+  ownedVehicles       PlayerVehicle[]
+  vehicleRespawns     VehicleRespawnLog[]
+  outfitSubscriptions PlayerOutfitSubscription[]
+  starterKitClaims    StarterKitClaim[]
+  couponUses          CouponUse[]
+  customOutfitOrders  CustomOutfitOrder[]
+  checkoutAttempts    CheckoutAttempt[]
+
+  ownedClans      Clan[]       @relation("ClanOwner")
+  subOwnedClans   Clan[]       @relation("ClanSubOwner")
+  clanMemberships     ClanMember[]
+  clanApplications    ClanJoinApplication[]
+
+  @@index([createdAt])
+}
+
+model StarterKitClaim {
+  id                String   @id @default(uuid())
+  playerId          String
+  player            Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64           String
+  serverType        String   @default("vanilla")
+  kitName           String?
+  deliveriesCreated Int      @default(0)
+  bonusCoins        Int      @default(0)
+  claimedAt         DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([playerId])
+  @@unique([steam64])
+  @@index([serverType])
+  @@index([claimedAt])
+}
+
+model Product {
+  id               String        @id @default(uuid())
+  name             String
+  slug             String        @unique
+  description      String?
+  category         String        @default("Geral")
+  serverType       String        @default("all")
+  classname        String
+  quantity         Int           @default(1)
+  priceCoins       Int
+  stock            Int? // null = ilimitado
+  imageUrl         String?
+  imageData        String?       @db.Text // base64; fica salvo no banco para não se perder no Railway
+  imageMime        String?
+  deliveryType     String        @default("drop_at_feet")
+  dropBoxClassname String?
+  featured         Boolean       @default(false)
+  highlightColor   String        @default("#ef4444")
+  status           ProductStatus @default(ACTIVE)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  purchases        Purchase[]
+  items            ProductItem[]
+  promoActive      Boolean       @default(false)
+  promoPercent     Int           @default(0)
+  promoLabel       String?
+  promoColor       String        @default("#ff7a18")
+
+  @@index([category])
+  @@index([serverType])
+  @@index([status])
+}
+
+model ProductItem {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String?
+  classname String
+  quantity  Int      @default(1)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model CoinPackage {
+  id        String    @id @default(uuid())
+  name      String
+  amountBrl Decimal   @db.Decimal(10, 2)
+  coins     Int
+  bonusText String?
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  payments  Payment[]
+}
+
+model Payment {
+  id                       String        @id @default(uuid())
+  playerId                 String
+  player                   Player        @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  packageId                String?
+  coinPackage              CoinPackage?  @relation(fields: [packageId], references: [id])
+  provider                 String        @default("mercadopago")
+  providerPaymentId        String?       @unique
+  externalReference        String        @unique
+  status                   PaymentStatus @default(PENDING)
+  amountBrl                Decimal       @db.Decimal(10, 2)
+  coins                    Int
+  qrCode                   String?       @db.Text
+  qrCodeBase64             String?       @db.Text
+  payerEmail               String?
+  rawProviderData          Json?
+  supportStreamerCode      String?
+  supportStreamerCodeId    String?
+  supportCommissionPercent Int           @default(0)
+  approvedAt               DateTime?
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Purchase {
+  id                String           @id @default(uuid())
+  playerId          String
+  player            Player           @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  productId         String
+  product           Product          @relation(fields: [productId], references: [id])
+  quantity          Int              @default(1)
+  totalCoins        Int
+  status            PurchaseStatus   @default(PAID)
+  createdAt         DateTime         @default(now())
+  deliveries        DeliveryQueue[]
+  checkoutAttemptId String?
+  checkoutAttempt   CheckoutAttempt? @relation(fields: [checkoutAttemptId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([checkoutAttemptId])
+}
+
+model CheckoutAttempt {
+  id         String         @id @default(uuid())
+  token      String         @unique
+  playerId   String
+  player     Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  kind       String
+  status     CheckoutStatus @default(PROCESSING)
+  totalCoins Int            @default(0)
+  purchases  Purchase[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([playerId, createdAt])
+  @@index([status, createdAt])
+}
+
+model DeliveryQueue {
+  id           String         @id @default(uuid())
+  purchaseId   String?
+  purchase     Purchase?      @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  playerId     String
+  player       Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64      String
+  serverType   String
+  productName  String
+  classname    String
+  quantity     Int
+  deliveryType String         @default("drop_at_feet")
+  status       DeliveryStatus @default(PENDING)
+  claimedAt    DateTime?
+  deliveredAt  DateTime?
+  error        String?
+  meta         Json?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([steam64])
+  @@index([status])
+  @@index([serverType])
+}
+
+model CoinLedger {
+  id           String     @id @default(uuid())
+  playerId     String
+  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  type         LedgerType
+  amount       Int
+  balanceAfter Int
+  reason       String
+  refType      String?
+  refId        String?
+  createdAt    DateTime   @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actor     String
+  action    String
+  target    String?
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model AppSetting {
+  key       String   @id
+  value     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VehicleTemplate {
+  id               String                 @id @default(uuid())
+  name             String
+  slug             String                 @unique
+  description      String?
+  serverType       String                 @default("vanilla")
+  vehicleClassname String
+  buyPriceCoins    Int                    @default(0)
+  rent1DayCoins    Int                    @default(0)
+  rent7DaysCoins   Int                    @default(0)
+  rent30DaysCoins  Int                    @default(0)
+  imageUrl         String?
+  imageData        String?                @db.Text
+  imageMime        String?
+  parts            Json?
+  cargoItems       Json?
+  fluids           Json?
+  variants         Json?
+  active           Boolean                @default(true)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  insurancePlans   VehicleInsurancePlan[]
+  playerVehicles   PlayerVehicle[]
+
+  @@index([serverType])
+  @@index([active])
+}
+
+model VehicleInsurancePlan {
+  id              String           @id @default(uuid())
+  templateId      String?
+  template        VehicleTemplate? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  name            String
+  billingType     String           @default("SUBSCRIPTION") // somente SUBSCRIPTION
+  coverageType    String           @default("NORMAL") // NORMAL ou THEFT/ROUBO
+  priceCoins      Int              @default(0) // preço cadastrado do plano; renovação mensal usa a regra da loja
+  respawnFeeCoins Int              @default(0) // taxa extra por respawn quando assinatura permitir
+  durationDays    Int              @default(30)
+  maxUsesPerWeek  Int              @default(1)
+  description     String?
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  playerVehicles  PlayerVehicle[]
+
+  @@index([billingType])
+  @@index([active])
+}
+
+model PlayerVehicle {
+  id                          String                @id @default(uuid())
+  playerId                    String
+  player                      Player                @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64                     String
+  templateId                  String
+  template                    VehicleTemplate       @relation(fields: [templateId], references: [id])
+  insurancePlanId             String?
+  insurancePlan               VehicleInsurancePlan? @relation(fields: [insurancePlanId], references: [id])
+  serverType                  String                @default("vanilla")
+  displayName                 String
+  vehicleClassname            String
+  ownershipType               String                @default("OWNED") // OWNED, RENT_1D, RENT_7D, RENT_30D
+  status                      String                @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+  expiresAt                   DateTime?
+  insuranceExpiresAt          DateTime?
+  insuranceUsesWeekStart      DateTime?
+  insuranceUsesThisWeek       Int                   @default(0)
+  insuranceUsesTotal          Int                   @default(0)
+  deliveriesCreated           Int                   @default(0)
+  lastInsuranceUsedAt         DateTime?
+  currentVehicleKey           String?               @unique
+  lastRespawnAt               DateTime?
+  nextRespawnAt               DateTime?
+  currentVehicleMoving        Boolean               @default(false)
+  currentVehicleOccupied      Boolean               @default(false)
+  currentVehicleCanTheftClaim Boolean               @default(true)
+  currentVehicleSpeedKmh      Float                 @default(0)
+  currentVehiclePosition      String?
+  currentVehicleLastSeenAt    DateTime?
+  createdAt                   DateTime              @default(now())
+  updatedAt                   DateTime              @updatedAt
+  respawnLogs                 VehicleRespawnLog[]
+
+  @@index([playerId])
+  @@index([steam64])
+  @@index([serverType])
+  @@index([status])
+}
+
+model VehicleRespawnLog {
+  id              String        @id @default(uuid())
+  playerVehicleId String
+  playerVehicle   PlayerVehicle @relation(fields: [playerVehicleId], references: [id], onDelete: Cascade)
+  playerId        String
+  player          Player        @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  deliveryId      String?
+  action          String        @default("SPAWN") // BUY, RESPAWN, RENEW_VEHICLE, RENEW_INSURANCE
+  oldVehicleKey   String?
+  newVehicleKey   String?
+  costCoins       Int           @default(0)
+  status          String        @default("PENDING")
+  error           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([playerVehicleId])
+  @@index([playerId])
+  @@index([status])
+}
+
+model Clan {
+  id               String       @id @default(uuid())
+  name             String
+  tag              String
+  slug             String       @unique
+  serverType       String       @default("all")
+  description      String?
+  flagUrl          String?
+  flagData         String?      @db.Text
+  flagMime         String?
+  bannerData       String?      @db.Text
+  bannerMime       String?
+  ownerPlayerId    String?
+  ownerPlayer      Player?      @relation("ClanOwner", fields: [ownerPlayerId], references: [id], onDelete: SetNull)
+  subOwnerPlayerId String?
+  subOwnerPlayer   Player?      @relation("ClanSubOwner", fields: [subOwnerPlayerId], references: [id], onDelete: SetNull)
+  status           String       @default("ACTIVE")
+  isRecruiting     Boolean      @default(false)
+  recruitmentTitle String?
+  recruitmentMessage String?    @db.Text
+  recruitmentRequirements String? @db.Text
+  recruitmentContact String?
+  accentColor      String       @default("#ef4444")
+  eventWins        Int          @default(0)
+  pointsBonus      Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  members          ClanMember[]
+  awards           ClanAward[]
+  joinApplications ClanJoinApplication[]
+
+  @@unique([tag, serverType])
+  @@index([serverType])
+  @@index([status])
+}
+
+model ClanMember {
+  id        String   @id @default(uuid())
+  clanId    String
+  clan      Clan     @relation(fields: [clanId], references: [id], onDelete: Cascade)
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64   String
+  role      String   @default("MEMBER") // OWNER, SUB_OWNER, MEMBER
+  status    String   @default("ACTIVE") // ACTIVE, REMOVED
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([clanId, playerId])
+  @@index([steam64])
+  @@index([status])
+}
+
+model ClanRequest {
+  id                String   @id @default(uuid())
+  requesterPlayerId String?
+  requesterSteam64  String
+  requesterName     String?
+  clanName          String
+  clanTag           String
+  serverType        String   @default("all")
+  description       String?
+  flagUrl           String?
+  status            String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  adminNote         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([requesterSteam64])
+  @@index([status])
+  @@index([serverType])
+}
+
+model ClanJoinApplication {
+  id               String   @id @default(uuid())
+  clanId           String
+  clan             Clan     @relation(fields: [clanId], references: [id], onDelete: Cascade)
+  playerId         String?
+  player           Player?  @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  requesterSteam64 String
+  requesterName    String?
+  inGameName       String?
+  message          String?  @db.Text
+  status           String   @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  ownerNote        String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([clanId, status])
+  @@index([requesterSteam64])
+  @@index([playerId])
+  @@index([createdAt])
+}
+
+model KillEvent {
+  id             String   @id @default(uuid())
+  serverType     String   @default("vanilla")
+  killerSteam64  String
+  killerName     String?
+  victimSteam64  String
+  victimName     String?
+  killerClanId   String?
+  victimClanId   String?
+  weapon         String?
+  distanceMeters Float?
+  place          String?
+  headshot       Boolean  @default(false)
+  occurredAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
+  raw            Json?
+
+  @@index([serverType])
+  @@index([killerSteam64])
+  @@index([victimSteam64])
+  @@index([killerClanId])
+  @@index([victimClanId])
+  @@index([occurredAt])
+}
+
+model Season {
+  id                    String      @id @default(uuid())
+  name                  String
+  slug                  String      @unique
+  startsAt              DateTime    @default(now())
+  endsAt                DateTime?
+  status                String      @default("ACTIVE") // ACTIVE, CLOSED
+  championClanId        String?
+  championPlayerSteam64 String?
+  championTitle         String?
+  note                  String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  awards                ClanAward[]
+
+  @@index([status])
+  @@index([startsAt])
+}
+
+model ClanAward {
+  id          String   @id @default(uuid())
+  clanId      String
+  clan        Clan     @relation(fields: [clanId], references: [id], onDelete: Cascade)
+  seasonId    String?
+  season      Season?  @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  title       String
+  description String?
+  eventName   String?
+  icon        String   @default("🏆")
+  imageUrl    String?
+  color       String   @default("#f7bd44")
+  points      Int      @default(0)
+  visible     Boolean  @default(true)
+  awardedAt   DateTime @default(now())
+
+  @@index([clanId])
+  @@index([seasonId])
+  @@index([visible])
+}
+
+model PlayerBadge {
+  id          String   @id @default(uuid())
+  steam64     String
+  playerName  String?
+  seasonId    String?
+  title       String
+  description String?
+  icon        String   @default("⭐")
+  imageUrl    String?
+  color       String   @default("#38bdf8")
+  points      Int      @default(0)
+  source       String   @default("MANUAL") // MANUAL, AUTOMATIC, SEASON, EVENT
+  automaticKey String?  @unique
+  ruleKey      String?
+  tier        Int      @default(0)
+  serverType  String   @default("global")
+  metadata    Json?
+  visible     Boolean  @default(true)
+  awardedAt   DateTime @default(now())
+
+  @@index([steam64])
+  @@index([seasonId])
+  @@index([source])
+  @@index([ruleKey])
+  @@index([serverType])
+  @@index([visible])
+}
+
+model CouponCode {
+  id              String      @id @default(uuid())
+  code            String      @unique
+  label           String?
+  percent         Int         @default(0)
+  active          Boolean     @default(true)
+  maxUses         Int?
+  usedCount       Int         @default(0)
+  maxUsesPerSteam Int         @default(0) // 0 = ilimitado por Steam64; 1 = só 1 vez por Steam64
+  minCoins        Int         @default(0)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  uses            CouponUse[]
+
+  @@index([active])
+  @@index([createdAt])
+}
+
+model CouponUse {
+  id            String     @id @default(uuid())
+  couponId      String
+  coupon        CouponCode @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  code          String
+  playerId      String?
+  player        Player?    @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  playerSteam64 String?
+  source        String     @default("PRODUCT")
+  purchaseId    String?
+  totalCoins    Int        @default(0)
+  discountCoins Int        @default(0)
+  createdAt     DateTime   @default(now())
+
+  @@index([couponId])
+  @@index([code])
+  @@index([playerSteam64])
+  @@index([createdAt])
+}
+
+model StreamerCode {
+  id                   String           @id @default(uuid())
+  code                 String           @unique
+  streamerName         String
+  streamerSteam64      String?
+  pixKey               String?
+  percent              Int              @default(10)
+  active               Boolean          @default(true)
+  totalSalesCoins      Int              @default(0)
+  totalCommissionCoins Int              @default(0)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  payouts              StreamerPayout[]
+
+  @@index([active])
+  @@index([streamerSteam64])
+}
+
+model StreamerSupportSale {
+  id                String          @id @default(uuid())
+  streamerCodeId    String?
+  code              String
+  streamerName      String
+  playerId          String?
+  playerSteam64     String?
+  playerName        String?
+  purchaseId        String?
+  paymentId         String?
+  source            String          @default("PRODUCT")
+  totalCoins        Int             @default(0)
+  commissionPercent Int             @default(0)
+  commissionCoins   Int             @default(0)
+  couponCode        String?
+  payoutId          String?
+  payout            StreamerPayout? @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+  paidAt            DateTime?
+  createdAt         DateTime        @default(now())
+
+  @@index([streamerCodeId])
+  @@index([code])
+  @@index([playerSteam64])
+  @@index([source])
+  @@index([payoutId])
+  @@index([paidAt])
+  @@index([createdAt])
+}
+
+model StreamerPayout {
+  id                  String                @id @default(uuid())
+  streamerCodeId      String?
+  streamerCode        StreamerCode?         @relation(fields: [streamerCodeId], references: [id], onDelete: SetNull)
+  code                String
+  streamerName        String
+  status              String                @default("PENDING") // PENDING, PAID, CANCELLED
+  periodType          String                @default("ALL") // WEEKLY, MONTHLY, ALL, MANUAL
+  periodStart         DateTime?
+  periodEnd           DateTime?
+  saleCount           Int                   @default(0)
+  supporters          Int                   @default(0)
+  salesCoins          Int                   @default(0)
+  amountCoins         Int                   @default(0)
+  amountBrl           Decimal               @default(0) @db.Decimal(10, 2)
+  requestedByStreamer Boolean               @default(false)
+  requestedAt         DateTime?
+  paidAt              DateTime?
+  paidBy              String?
+  note                String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  sales               StreamerSupportSale[]
+
+  @@index([streamerCodeId])
+  @@index([code])
+  @@index([status])
+  @@index([periodType])
+  @@index([createdAt])
+}
+
+model OutfitTemplate {
+  id                      String                     @id @default(uuid())
+  name                    String
+  slug                    String                     @unique
+  description             String?
+  serverType              String                     @default("vanilla")
+  level                   Int                        @default(1)
+  priceCoins              Int                        @default(0)
+  durationDays            Int                        @default(30)
+  imageUrl                String?
+  imageData               String?                    @db.Text
+  imageMime               String?
+  items                   Json?
+  active                  Boolean                    @default(true)
+  streamerRewardEnabled   Boolean                    @default(false)
+  isPrivate               Boolean                    @default(false)
+  managedAccessEnabled    Boolean                    @default(false)
+  managedOwnerSteam64     String?
+  managedOwnerType        String? // STREAMER ou CLAN
+  maxManagedMembers       Int                        @default(10)
+  memberMonthlyPriceCoins Int                        @default(0)
+  creationPriceCoins      Int                        @default(0)
+  flagClassname           String?
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+  subscriptions           PlayerOutfitSubscription[]
+  flagRequests            OutfitFlagRequest[]
+
+  @@index([serverType])
+  @@index([active])
+  @@index([streamerRewardEnabled])
+  @@index([isPrivate])
+  @@index([managedAccessEnabled])
+  @@index([managedOwnerSteam64])
+}
+
+model CustomOutfitOrder {
+  id                      String   @id @default(uuid())
+  playerId                String
+  player                  Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64                 String
+  leaderName              String?
+  clanName                String?
+  clanTag                 String?
+  status                  String   @default("AWAITING_TICKET") // AWAITING_TICKET, IN_PRODUCTION, READY, CANCELLED
+  creationPriceCoins      Int      @default(50000)
+  monthlyMemberPriceCoins Int      @default(20000)
+  maxMembers              Int      @default(10)
+  outfitTemplateId        String?
+  note                    String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([playerId])
+  @@index([steam64])
+  @@index([status])
+}
+
+model OutfitFlagRequest {
+  id               String         @id @default(uuid())
+  outfitTemplateId String
+  outfitTemplate   OutfitTemplate @relation(fields: [outfitTemplateId], references: [id], onDelete: Cascade)
+  requesterSteam64 String
+  requesterName    String?
+  ownerType        String?
+  flagClassname    String?
+  status           String         @default("PENDING") // PENDING, APPROVED, REJECTED, DELIVERED
+  adminNote        String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([outfitTemplateId])
+  @@index([requesterSteam64])
+  @@index([status])
+}
+
+model PlayerOutfitSubscription {
+  id               String         @id @default(uuid())
+  playerId         String
+  player           Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  steam64          String
+  outfitTemplateId String
+  outfitTemplate   OutfitTemplate @relation(fields: [outfitTemplateId], references: [id])
+  serverType       String         @default("vanilla")
+  source           String         @default("PURCHASE") // PURCHASE, STREAMER_REWARD, ADMIN, CLAN_CUSTOM_MEMBER, CLAN_CUSTOM_PAID
+  streamerCodeId   String?
+  streamerCode     String?
+  status           String         @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+  startsAt         DateTime       @default(now())
+  expiresAt        DateTime
+  lastSpawnAt      DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([playerId])
+  @@index([steam64])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([streamerCode])
+}

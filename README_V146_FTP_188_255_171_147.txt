@@ -1,0 +1,5 @@
+RAID-Z STORE V146 — ARQUIVO HISTÓRICO
+
+Esta versão foi substituída pela V147.
+A V147 não mantém usuário ou senha FTP gravados no código-fonte e preserva a configuração já salva no PostgreSQL.
+Consulte README_V147_FTP_LOG_AO_VIVO_CORRECAO_AUTOMATICA.txt.

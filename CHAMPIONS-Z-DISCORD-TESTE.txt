@@ -1,0 +1,86 @@
+CHAMPIONS Z - DISCORD / TESTE
+============================
+
+Esta versão monta a estrutura nova do Discord do CHAMPIONS Z.
+
+COMO TESTAR
+-----------
+1. Suba esta versão do bot.
+2. Garanta que o bot tenha permissão Administrador.
+3. Reinicie o bot.
+4. No Discord, use /setup (ou /atualizarcanais e confirme no botão).
+
+O SETUP VAI CRIAR/ATUALIZAR
+---------------------------
+- 🚪 ENTRADA CHAMPIONS Z
+  - 🚪・entrada-champions-z
+  - 👋・boas-vindas
+  - 📤・saidas
+
+- 📢 CENTRAL CHAMPIONS Z
+  - 📣・avisos
+  - 📜・regras
+  - 🧭・como-jogar
+  - 🚩・koth
+  - 🪂・airdrop
+  - 📘・informacoes
+  - 🚫・banimentos
+  - 💡・sugestoes
+
+- 🗺️ GUIAS CHAMPIONS Z
+  - 🔐・bunker-1-airfield
+  - ❄️・bunker-2-congelante
+  - 🪖・novas-areas-militares
+  - ☣️・infectado-nbc-amarelo
+
+- 🤝 COMUNIDADE
+- 🟡 SUPORTE
+- 📂 TICKETS-ABERTOS
+
+CONTEÚDO NOVO AUTOMÁTICO
+------------------------
+Bunker 1 Airfield:
+- chave da maleta científica nos Helicrash
+- traje NBC e área tóxica TERMINUS
+- maleta do cientista
+- cartão/chave NWAF01
+- imagens do bunker
+- aviso da saída secreta
+
+Bunker 2 Congelante:
+- NBC White completo
+- Gas Mask obrigatória
+- cartão NWAF02 em áreas militares
+- aviso de morte por frio sem o traje correto
+- imagens externas do bunker congelante
+
+Novas áreas militares:
+- aviso de 10 novas áreas
+- loot muito bom
+- 4 imagens enviadas para apresentação
+
+Infectado NBC Amarelo:
+- POX no infectado
+- ao morrer, a POX libera gás letal
+- imagem do infectado e imagem do gás
+
+IMAGENS DE IDENTIDADE
+---------------------
+- Bem-vindo: nova imagem CHAMPIONS Z escolhida
+- Regras: nova arte de REGRAS OFICIAIS
+- Avisos: COMUNICADO OFICIAL CHAMPIONS Z é usado automaticamente quando a staff envia texto em 📣・avisos sem anexar imagem
+- Logo genérica C.Z usada em painéis ainda sem arte nova própria
+
+LIMPEZA
+-------
+O /setup mantém removidos os canais/categorias antigos conhecidos, incluindo:
+- EVENTOS
+- CHAMPIONS Z IA / ZONA-Z IA / RAID-Z IA
+- categoria STAFF e seus canais
+- categoria BOT e seus canais
+- categoria VIP/IMPULSIONADORES e seus canais
+- bunkers/guias antigos conhecidos do servidor anterior
+
+IMPORTANTE
+----------
+As regras completas do novo servidor ainda não foram fechadas. O canal de regras ficou com um painel base do CHAMPIONS Z e poderá ser atualizado depois, sem reaproveitar as regras detalhadas antigas.

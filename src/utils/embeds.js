@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 
-const BRAND_COLOR = 0xd4af37;
+const BRAND_COLOR = 0xe3263e;
 
 function baseEmbed() {
   return new EmbedBuilder()

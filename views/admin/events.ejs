@@ -1,0 +1,95 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="container admin-layout-v46 territory-admin-v158">
+  <%- include('_admin_nav') %>
+  <% const editing = selectedEvent || null; const localDate = value => value ? new Intl.DateTimeFormat('sv-SE', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(value)).replace(' ', 'T') : ''; %>
+  <style>
+    .territory-admin-v158 .admin-content-v46{min-width:0}.territory-admin-grid-v158{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:18px}.territory-form-grid-v158{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.territory-form-grid-v158 .full{grid-column:1/-1}.territory-checks-v158{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.territory-check-v158{display:flex;gap:9px;align-items:flex-start;border:1px solid rgba(148,163,184,.15);padding:12px;border-radius:14px;background:rgba(15,23,42,.48)}.territory-event-card-v158{border:1px solid rgba(148,163,184,.15);border-radius:17px;padding:14px;background:rgba(15,23,42,.52);display:grid;gap:10px}.territory-event-card-v158.active{border-color:rgba(34,197,94,.35);box-shadow:0 0 0 1px rgba(34,197,94,.08)}.territory-event-actions-v158{display:flex;gap:8px;flex-wrap:wrap}.territory-event-actions-v158 form{display:inline-flex}.territory-attempt-valid-v158{color:#86efac}.territory-attempt-blocked-v158{color:#fca5a5}.territory-warning-v158{border:1px solid rgba(245,158,11,.25);background:rgba(120,53,15,.18);padding:14px;border-radius:15px}@media(max-width:1100px){.territory-admin-grid-v158{grid-template-columns:1fr}}@media(max-width:700px){.territory-form-grid-v158,.territory-checks-v158{grid-template-columns:1fr}.territory-form-grid-v158 .full{grid-column:auto}}
+  </style>
+  <section class="admin-content-v46">
+    <section class="shop-header support-hero-card sz-hover-card">
+      <div><p class="eyebrow">Painel ADM</p><h1>Evento de kills por território</h1><p class="muted">Configure centro, raio, prêmio por kill e travas. Apenas um evento por servidor fica ativo por vez.</p></div>
+      <div class="dm-status-stack"><span class="pill success">Crédito automático</span><span class="pill">Anti-clã</span><span class="pill">Anti-farm</span></div>
+    </section>
+
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert success"><%= success %></div><% } %>
+
+    <div class="territory-admin-grid-v158">
+      <section class="card wide-card">
+        <div class="item-builder-top"><h2><%= editing ? 'Editar evento' : 'Criar evento' %></h2><% if (editing) { %><a class="btn small" href="/admin/eventos">Novo evento</a><% } %></div>
+        <form method="POST" action="/admin/eventos/save">
+          <% if (editing) { %><input type="hidden" name="id" value="<%= editing.id %>"><% } %>
+          <div class="territory-form-grid-v158">
+            <label class="full">Nome<input name="name" maxlength="120" required value="<%= editing?.name || '' %>" placeholder="Ex.: Guerra em Zelenogorsk"></label>
+            <label class="full">Descrição<textarea name="description" rows="3" maxlength="2000" placeholder="Explique o objetivo e as regras para os players"><%= editing?.description || '' %></textarea></label>
+            <label>Servidor<select name="serverType"><% ['vanilla','bbp','deathmatch'].forEach(server => { %><option value="<%= server %>" <%= editing?.serverType === server ? 'selected' : '' %>><%= server.toUpperCase() %></option><% }) %></select></label>
+            <label>Regra de posição<select name="positionRule">
+              <option value="VICTIM" <%= !editing || editing.positionRule === 'VICTIM' ? 'selected' : '' %>>Vítima dentro da área</option>
+              <option value="KILLER" <%= editing?.positionRule === 'KILLER' ? 'selected' : '' %>>Killer dentro da área</option>
+              <option value="BOTH" <%= editing?.positionRule === 'BOTH' ? 'selected' : '' %>>Killer e vítima dentro</option>
+              <option value="EITHER" <%= editing?.positionRule === 'EITHER' ? 'selected' : '' %>>Killer ou vítima dentro</option>
+            </select></label>
+            <label>Centro X<input type="number" step="0.01" name="centerX" required value="<%= editing?.centerX ?? '' %>" placeholder="4569.07"></label>
+            <label>Centro Z<input type="number" step="0.01" name="centerZ" required value="<%= editing?.centerZ ?? '' %>" placeholder="10042.91"></label>
+            <label>Raio em metros<input type="number" min="25" max="10000" step="1" name="radiusMeters" required value="<%= editing?.radiusMeters ?? 300 %>"></label>
+            <label>RZ por kill válida<input type="number" min="1" max="1000000" step="1" name="rewardCoins" required value="<%= editing?.rewardCoins ?? 1000 %>"></label>
+            <label>Nome do local (plano B)<input name="placeKeyword" maxlength="100" value="<%= editing?.placeKeyword || '' %>" placeholder="Ex.: Zelenogorsk"></label>
+            <label>Cooldown da mesma dupla (segundos)<input type="number" min="0" max="86400" name="pairCooldownSeconds" value="<%= editing?.pairCooldownSeconds ?? 1800 %>"></label>
+            <label>Máximo de kills premiadas por player<input type="number" min="0" max="100000" name="maxRewardsPerPlayer" value="<%= editing?.maxRewardsPerPlayer ?? 0 %>"><small>0 = ilimitado</small></label>
+            <label>Orçamento total em RZ<input type="number" min="0" max="2000000000" name="totalRewardBudgetCoins" value="<%= editing?.totalRewardBudgetCoins ?? 0 %>"><small>0 = ilimitado</small></label>
+            <label>Início opcional<input type="datetime-local" name="startsAt" value="<%= localDate(editing?.startsAt) %>"></label>
+            <label>Fim opcional<input type="datetime-local" name="endsAt" value="<%= localDate(editing?.endsAt) %>"></label>
+          </div>
+          <h3 style="margin-top:18px">Travas</h3>
+          <div class="territory-checks-v158">
+            <input type="hidden" name="blockSameClan" value="on"><input type="hidden" name="blockSuicide" value="on">
+            <label class="territory-check-v158"><input type="checkbox" checked disabled><span><strong>Mesmo clã bloqueado</strong><small>Trava permanente: aliado contra aliado nunca conta.</small></span></label>
+            <label class="territory-check-v158"><input type="checkbox" checked disabled><span><strong>Suicídio bloqueado</strong><small>Trava permanente: mesma Steam64 nunca pontua.</small></span></label>
+            <label class="territory-check-v158"><input type="checkbox" name="blockAdmins" <%= !editing || editing.blockAdmins ? 'checked' : '' %>><span><strong>Bloquear ADM</strong><small>Kills envolvendo ADM não dão moeda.</small></span></label>
+            <label class="territory-check-v158"><input type="checkbox" name="active" <%= editing?.active ? 'checked' : '' %>><span><strong>Salvar ativo</strong><small>Pausa outro evento ativo do mesmo servidor.</small></span></label>
+          </div>
+          <div class="territory-warning-v158" style="margin-top:14px"><strong>Importante sobre localização</strong><p class="muted">Para usar o círculo exato, o JSON de kill precisa enviar a posição da vítima e/ou killer. O site aceita objetos, listas e campos como victimPosition, killerPosition, position, victimX/victimZ e killerX/killerZ. Sem coordenada, só contará pelo nome do local quando o campo “plano B” estiver preenchido.</p></div>
+          <button class="btn primary" type="submit" style="margin-top:14px"><%= editing ? 'Salvar alterações' : 'Criar evento' %></button>
+        </form>
+      </section>
+
+      <section class="card wide-card">
+        <div class="item-builder-top"><h2>Eventos cadastrados</h2><span class="pill"><%= events.length %></span></div>
+        <div style="display:grid;gap:10px">
+          <% if (!events.length) { %><p class="muted">Nenhum evento criado.</p><% } %>
+          <% events.forEach(event => { %>
+            <article class="territory-event-card-v158 <%= event.active ? 'active' : '' %>">
+              <div class="item-builder-top"><div><strong><%= event.name %></strong><br><small><%= event.serverType.toUpperCase() %> • X <%= Number(event.centerX).toFixed(0) %> / Z <%= Number(event.centerZ).toFixed(0) %> • <%= Math.round(event.radiusMeters) %> m</small></div><span class="status <%= event.active ? 'paid' : 'failed' %>"><%= event.displayStatus %></span></div>
+              <div class="stats-grid"><div class="stat"><span>Válidas</span><strong><%= event.acceptedCount %></strong></div><div class="stat"><span>Bloqueadas</span><strong><%= event.rejectedCount %></strong></div><div class="stat"><span>Pago</span><strong><%= coins(event.rewardTotal) %> RZ</strong></div></div>
+              <div class="territory-event-actions-v158">
+                <a class="btn small" href="/admin/eventos?edit=<%= encodeURIComponent(event.id) %>">Editar / ver</a>
+                <form method="POST" action="/admin/eventos/<%= event.id %>/toggle"><input type="hidden" name="active" value="<%= event.active ? 'false' : 'true' %>"><button class="btn small <%= event.active ? '' : 'primary' %>" type="submit"><%= event.active ? 'Desativar' : 'Ativar' %></button></form>
+                <form method="POST" action="/admin/eventos/<%= event.id %>/reprocess" onsubmit="return confirm('Reprocessar kills ainda não avaliadas deste evento? Kills válidas receberão moedas automaticamente.')"><input type="hidden" name="limit" value="10000"><button class="btn small" type="submit">Reprocessar kills</button></form>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      </section>
+    </div>
+
+    <% if (selectedEvent) { %>
+      <section class="card wide-card" style="margin-top:18px">
+        <div class="item-builder-top"><h2>Ranking — <%= selectedEvent.name %></h2><span class="pill"><%= leaderboard.length %> players</span></div>
+        <table><thead><tr><th>#</th><th>Player</th><th>Kills válidas</th><th>RZ recebido</th><th>Última kill</th></tr></thead><tbody>
+          <% if (!leaderboard.length) { %><tr><td colspan="5" class="muted">Ainda não há kill válida.</td></tr><% } %>
+          <% leaderboard.forEach((row,index) => { %><tr><td><%= index + 1 %>º</td><td><strong><%= row.playerName %></strong><br><small><%= row.steam64 %></small></td><td><%= row.kills %></td><td><%= coins(row.rewardCoins) %> RZ</td><td><%= dateTime(row.lastKillAt) %></td></tr><% }) %>
+        </tbody></table>
+      </section>
+
+      <section class="card wide-card" style="margin-top:18px">
+        <div class="item-builder-top"><h2>Auditoria das kills</h2><span class="pill"><%= recentAttempts.length %> recentes</span></div>
+        <table><thead><tr><th>Data</th><th>Killer</th><th>Vítima</th><th>Resultado</th><th>Localização</th><th>Prêmio</th></tr></thead><tbody>
+          <% if (!recentAttempts.length) { %><tr><td colspan="6" class="muted">Nenhuma kill processada nesse evento.</td></tr><% } %>
+          <% recentAttempts.forEach(row => { %><tr><td><%= dateTime(row.occurredAt) %></td><td><%= row.killerName || 'Player' %><br><small><%= row.killerSteam64 %></small></td><td><%= row.victimName || 'Player' %><br><small><%= row.victimSteam64 %></small></td><td class="<%= row.qualified ? 'territory-attempt-valid-v158' : 'territory-attempt-blocked-v158' %>"><strong><%= row.qualified ? 'VÁLIDA' : 'BLOQUEADA' %></strong><% if (!row.qualified) { %><br><small><%= rejectionLabels[row.rejectionReason] || row.rejectionReason || 'Motivo não informado' %></small><% } %></td><td><small>K: <%= row.killerPosX != null ? Number(row.killerPosX).toFixed(0) + '/' + Number(row.killerPosZ).toFixed(0) : '-' %><br>V: <%= row.victimPosX != null ? Number(row.victimPosX).toFixed(0) + '/' + Number(row.victimPosZ).toFixed(0) : '-' %></small></td><td><%= row.qualified ? '+' + coins(row.rewardCoins) + ' RZ' : '-' %></td></tr><% }) %>
+        </tbody></table>
+      </section>
+    <% } %>
+  </section>
+</main>
+<%- include('../partials/footer') %>

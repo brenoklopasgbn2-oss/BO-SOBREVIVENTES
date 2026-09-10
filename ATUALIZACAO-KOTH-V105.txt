@@ -1,0 +1,10 @@
+RAID-Z BOT — CORREÇÃO KOTH V105
+
+- Corrigido o problema em que um canal antigo/oculto chamado "koth" impedia a criação do canal oficial.
+- O bot agora procura especificamente pelo canal oficial 🚩・koth.
+- Se não existir, ele cria automaticamente dentro da categoria CENTRAL RAID-Z.
+- Se existir em outra categoria, ele é movido para a CENTRAL RAID-Z.
+- As permissões são refeitas para o canal ficar visível aos jogadores do servidor.
+- O painel com a imagem, fumaça branca/vermelha e loot dinâmico é enviado automaticamente.
+- A correção roda ao iniciar o bot e também ao executar /setup ou /atualizarcanais.
+- Nenhum canal ou mensagem manual é apagado.

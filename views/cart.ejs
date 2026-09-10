@@ -1,0 +1,136 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container cart-page-v42 theme-vanilla">
+  <%- include('partials/alerts') %>
+
+  <section class="cart-hero-v42">
+    <div>
+      <p class="eyebrow">Carrinho da loja</p>
+      <h1>Finalizar vários itens de uma vez</h1>
+      <p>Revise os itens, aplique cupom de desconto e código de apoio streamer antes de confirmar.</p>
+    </div>
+    <div class="cart-wallet-v42">
+      <span>Seu saldo</span>
+      <strong><%= coins(player?.coins || 0) %> RZ</strong>
+      <a class="btn small" href="/wallet">Fazer doação Pix</a>
+    </div>
+  </section>
+
+  <section class="cart-layout-v42">
+    <article class="card cart-list-card-v42">
+      <div class="cart-list-head-v42">
+        <div>
+          <p class="eyebrow">Itens escolhidos</p>
+          <h2>Seu carrinho</h2>
+        </div>
+        <a href="/shop?serverType=vanilla" class="btn ghost-btn">+ Continuar na loja</a>
+      </div>
+      <div id="cartPageItems" class="cart-page-items-v42"></div>
+      <div id="cartEmptyState" class="cart-empty-v42" hidden>
+        <div>🧺</div>
+        <h2>Carrinho vazio</h2>
+        <p>Volte para a loja e clique em “Adicionar ao carrinho”.</p>
+        <a class="btn primary" href="/shop?serverType=vanilla">Abrir loja</a>
+      </div>
+    </article>
+
+    <aside class="card cart-checkout-v42">
+      <p class="eyebrow">Resumo seguro</p>
+      <h2>Total do carrinho</h2>
+      <div class="cart-total-v42"><span>RZ</span><strong id="cartPageTotal">0</strong></div>
+      <div class="cart-row-v42"><span>Produtos</span><b id="cartPageCount">0</b></div>
+      <div class="cart-row-v42"><span>Saldo atual</span><b><%= coins(player?.coins || 0) %> RZ</b></div>
+
+      <form method="POST" action="/cart/buy" id="cartCheckoutForm" class="form-grid">
+        <input type="hidden" name="cartItemsJson" id="cartItemsJson" value="[]">
+        <label>Cupom de desconto
+          <input name="couponCode" placeholder="EX: WIPE10" maxlength="32" style="text-transform:uppercase">
+        </label>
+        <label>Código de apoio streamer
+          <input name="streamerCode" placeholder="EX: BRENO" maxlength="32" style="text-transform:uppercase">
+        </label>
+        <label class="check confirm-check">
+          <input type="checkbox" required>
+          Confirmo que quero comprar todos os itens do carrinho com meu saldo RZ.
+        </label>
+        <button class="btn primary buy-pulse" type="submit" id="cartCheckoutButton">Finalizar carrinho</button>
+        <button class="btn danger" type="button" id="cartClearButton">Limpar carrinho</button>
+      </form>
+      <p class="muted">O preço final é recalculado no servidor na hora da compra. Assim ninguém consegue burlar valor pelo navegador.</p>
+    </aside>
+  </section>
+</main>
+<script>
+  (() => {
+    const KEY = 'sz_store_cart_v42';
+    const itemsBox = document.getElementById('cartPageItems');
+    const empty = document.getElementById('cartEmptyState');
+    const totalEl = document.getElementById('cartPageTotal');
+    const countEl = document.getElementById('cartPageCount');
+    const jsonInput = document.getElementById('cartItemsJson');
+    const form = document.getElementById('cartCheckoutForm');
+    const clearBtn = document.getElementById('cartClearButton');
+    const checkoutBtn = document.getElementById('cartCheckoutButton');
+
+    function money(n) { return new Intl.NumberFormat('pt-BR').format(Math.max(0, Math.floor(Number(n || 0)))); }
+    function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { return []; } }
+    function write(items) { localStorage.setItem(KEY, JSON.stringify(items)); }
+
+    function sync() {
+      const items = read().filter(i => i && i.productId);
+      write(items);
+      const total = items.reduce((sum, item) => sum + Number(item.priceCoins || 0) * Number(item.quantity || 1), 0);
+      const count = items.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+      totalEl.textContent = money(total);
+      countEl.textContent = String(count);
+      jsonInput.value = JSON.stringify(items.map(i => ({ productId: i.productId, quantity: Number(i.quantity || 1) })));
+      empty.hidden = items.length > 0;
+      itemsBox.hidden = items.length === 0;
+      checkoutBtn.disabled = items.length === 0;
+      itemsBox.innerHTML = items.map((item, index) => `
+        <div class="cart-item-v42" data-index="${index}">
+          <img src="${item.imageUrl || '/images/no-real-image.svg'}" alt="">
+          <div>
+            <strong>${item.name || 'Produto'}</strong>
+            <small>${item.category || 'Loja'} • ${item.serverType || 'vanilla'}</small>
+          </div>
+          <div class="cart-qty-v42">
+            <button type="button" data-dec="${index}">−</button>
+            <b>${Number(item.quantity || 1)}</b>
+            <button type="button" data-inc="${index}">+</button>
+          </div>
+          <span><b>RZ ${money(Number(item.priceCoins || 0) * Number(item.quantity || 1))}</b></span>
+          <button class="btn danger small" type="button" data-remove="${index}">Remover</button>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('click', (ev) => {
+      const inc = ev.target.closest('[data-inc]');
+      const dec = ev.target.closest('[data-dec]');
+      const remove = ev.target.closest('[data-remove]');
+      if (!inc && !dec && !remove) return;
+      const items = read();
+      const index = Number((inc || dec || remove).dataset.inc ?? (inc || dec || remove).dataset.dec ?? (inc || dec || remove).dataset.remove);
+      if (!items[index]) return;
+      if (inc) items[index].quantity = Math.min(10, Number(items[index].quantity || 1) + 1);
+      if (dec) items[index].quantity = Math.max(1, Number(items[index].quantity || 1) - 1);
+      if (remove) items.splice(index, 1);
+      write(items);
+      sync();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('Limpar todos os itens do carrinho?')) return;
+      write([]);
+      sync();
+    });
+
+    form.addEventListener('submit', () => {
+      setTimeout(() => write([]), 600);
+    });
+
+    sync();
+  })();
+</script>
+<%- include('partials/footer') %>
