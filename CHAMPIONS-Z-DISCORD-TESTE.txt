@@ -84,3 +84,9 @@ O /setup mantém removidos os canais/categorias antigos conhecidos, incluindo:
 IMPORTANTE
 ----------
 As regras completas do novo servidor ainda não foram fechadas. O canal de regras ficou com um painel base do CHAMPIONS Z e poderá ser atualizado depois, sem reaproveitar as regras detalhadas antigas.
+
+
+FLIP DE VEÍCULOS:
+- canal: 🚗・flip-de-veiculos
+- para desvirar: sentar no banco do motorista e apertar F6
+- painel com imagem do veículo capotado e imagem do veículo recuperado

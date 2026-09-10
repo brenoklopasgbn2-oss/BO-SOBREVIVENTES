@@ -25,6 +25,8 @@ const { buildBunker1AirfieldPanel } = require('../panels/bunker1AirfieldPanel');
 const { buildBunker2FrozenPanel } = require('../panels/bunker2FrozenPanel');
 const { buildMilitaryAreasPanel } = require('../panels/militaryAreasPanel');
 const { buildNbcYellowPanel } = require('../panels/nbcYellowPanel');
+const { buildVehicleFlipPanel } = require('../panels/vehicleFlipPanel');
+const { buildPlaneCrashPanel } = require('../panels/planeCrashPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
@@ -335,6 +337,8 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.bunker2Frozen), buildBunker2FrozenPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.militaryAreas), buildMilitaryAreasPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.nbcYellow), buildNbcYellowPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.vehicleFlip), buildVehicleFlipPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.planeCrash), buildPlaneCrashPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(guild), { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bugPanel), buildBugPanel, { replaceBotMessages: true });
@@ -360,7 +364,7 @@ module.exports = {
         `📁 ${removedLegacyCategories} categoria(s) antiga(s) removida(s).`,
         `🎭 ${migration.removedRoles} cargo(s) antigo(s) removido(s).`,
         '',
-        'A estrutura agora está focada em **Chernarus, Bunker 1, Bunker 2, 10 novas áreas militares, NBC amarelo, comunidade e suporte**.'
+        'A estrutura agora está focada em **Chernarus, Bunker 1, Bunker 2, 10 novas áreas militares, NBC amarelo, Plane Crash, Flip de veículos, comunidade e suporte**.'
       ].join('\n'))]
     });
   }

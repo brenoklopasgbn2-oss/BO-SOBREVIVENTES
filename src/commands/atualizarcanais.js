@@ -28,7 +28,7 @@ module.exports = {
         '✅ Troca os painéis pelas novas imagens.',
         '✅ Atualiza o painel de regras.',
         '✅ Mantém KOTH e Airdrop.',
-        '🧹 Cria os novos guias de Bunker 1, Bunker 2, áreas militares e infectado NBC amarelo, removendo estruturas antigas conhecidas.',
+        '🧹 Cria os guias de Bunker 1, Bunker 2, áreas militares, infectado NBC amarelo e **Flip de veículos**, removendo estruturas antigas conhecidas.',
         '',
         'Canais manuais que não fazem parte da lista antiga continuam preservados.'
       ].join('\n'))],

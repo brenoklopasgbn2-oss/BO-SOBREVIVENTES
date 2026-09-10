@@ -8,15 +8,15 @@ function buildAirdropPanel() {
   const file = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', image));
   const embed = baseEmbed()
     .setColor(0xe3263e)
-    .setTitle('🪂 Airdrop • CHAMPIONS Z')
+    .setTitle('🪂 AIRDROP / PLANE DROP • CHAMPIONS Z')
     .setDescription([
-      'Airdrops espalham pontos de disputa e loot pelo mapa.',
+      'Se você **ouvir ou ver um avião voando**, fique atento: uma **entrega de suprimentos** está acontecendo no servidor.',
       '',
-      '📦 Vá preparado: um drop pode atrair vários grupos.',
-      '⚔️ A área é de risco e pode virar PvP rapidamente.',
-      '🎯 Local, frequência e conteúdo podem mudar conforme o balanceamento.',
+      '📦 O avião pode dropar **4 cores de containers**, e cada um possui **loot específico**.',
+      '🧟 Para abrir o container, será necessário **abater os zumbis** que protegem o drop e pegar a **chave do container**.',
+      '⚔️ O evento também atrai outros jogadores e pode virar PvP rapidamente.',
       '',
-      'Qualquer regra especial será anunciada pela staff antes do evento.'
+      'Confira o canal **✈️・plane-crash** para ver o guia completo do evento.'
     ].join('\n'))
     .setImage(`attachment://${image}`);
   return { embeds: [embed], files: [file] };
