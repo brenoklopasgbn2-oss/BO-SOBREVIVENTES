@@ -73,40 +73,56 @@ async function ensureRole(guild, roleDefinition) {
     color: roleDefinition.color,
     hoist: roleDefinition.hoist,
     mentionable: true,
-    reason: 'Setup automático ZONA-Z'
+    reason: 'Setup automático CHAMPIONS Z'
   });
 }
 
 async function migrateLegacyRoles(guild) {
   await guild.members.fetch().catch(() => null);
-  const survivorRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
-  const legacyNames = [...new Set([
-    ...LEGACY_ROLE_NAMES.vanilla,
-    ...LEGACY_ROLE_NAMES.bbp,
-    ...LEGACY_ROLE_NAMES.deathmatch,
-    'RAID-Z IA'
-  ])];
-  const legacyRoles = legacyNames.map((name) => guild.roles.cache.find((role) => role.name === name)).filter(Boolean);
-  let moved = 0;
 
-  if (survivorRole) {
-    for (const member of guild.members.cache.values()) {
-      if (member.user.bot) continue;
-      if (legacyRoles.some((role) => member.roles.cache.has(role.id)) && !member.roles.cache.has(survivorRole.id)) {
-        await member.roles.add(survivorRole, 'Migração para ZONA-Z').catch(() => null);
-        moved += 1;
-      }
+  const championRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
+  const vipRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.vip);
+  const ownerRole = guild.roles.cache.find((role) => role.name === ROLE_NAMES.founder);
+
+  const playerLegacyRoles = (LEGACY_ROLE_NAMES.player || [])
+    .map((name) => guild.roles.cache.find((role) => role.name === name))
+    .filter(Boolean);
+  const vipLegacyRoles = (LEGACY_ROLE_NAMES.vip || [])
+    .map((name) => guild.roles.cache.find((role) => role.name === name))
+    .filter(Boolean);
+
+  let moved = 0;
+  let vipMigrated = 0;
+
+  for (const member of guild.members.cache.values()) {
+    if (member.user.bot) continue;
+
+    if (championRole && !member.roles.cache.has(championRole.id)) {
+      await member.roles.add(championRole, 'Migração para CHAMPIONS Z').catch(() => null);
+      moved += 1;
+    }
+
+    if (vipRole && vipLegacyRoles.some((role) => member.roles.cache.has(role.id)) && !member.roles.cache.has(vipRole.id)) {
+      await member.roles.add(vipRole, 'Migração de VIP para CHAMPIONS Z').catch(() => null);
+      vipMigrated += 1;
+    }
+
+    if (ownerRole && OWNER_IDS.includes(member.id) && !member.roles.cache.has(ownerRole.id)) {
+      await member.roles.add(ownerRole, 'Dono oficial CHAMPIONS Z').catch(() => null);
     }
   }
 
+  const protectedNames = new Set(ROLE_DEFINITIONS.map((role) => role.name));
+  const cleanupNames = new Set(LEGACY_ROLE_NAMES.cleanup || []);
   let removedRoles = 0;
-  for (const role of legacyRoles) {
-    if (role.managed || role.name === ROLE_NAMES.survivor || role.name === ROLE_NAMES.ai) continue;
-    const deleted = await role.delete('Limpeza de cargos do servidor antigo na migração ZONA-Z').then(() => true).catch(() => false);
+
+  for (const role of [...guild.roles.cache.values()]) {
+    if (role.managed || protectedNames.has(role.name) || !cleanupNames.has(role.name)) continue;
+    const deleted = await role.delete('Limpeza de cargos antigos na migração CHAMPIONS Z').then(() => true).catch(() => false);
     if (deleted) removedRoles += 1;
   }
 
-  return { moved, removedRoles };
+  return { moved, vipMigrated, removedRoles };
 }
 
 function allNames(definition) {
@@ -127,15 +143,15 @@ async function ensureCategory(guild, definition, position) {
       type: ChannelType.GuildCategory,
       position,
       permissionOverwrites,
-      reason: 'Setup automático ZONA-Z'
+      reason: 'Setup automático CHAMPIONS Z'
     });
   }
 
   const isSupport = definition.name.includes('SUPORTE');
   if (!isSupport && category.name !== definition.name) {
-    await category.setName(definition.name, 'Atualização visual ZONA-Z').catch(() => null);
+    await category.setName(definition.name, 'Atualização visual CHAMPIONS Z').catch(() => null);
   }
-  await category.permissionOverwrites.set(permissionOverwrites, 'Permissões ZONA-Z').catch(() => null);
+  await category.permissionOverwrites.set(permissionOverwrites, 'Permissões CHAMPIONS Z').catch(() => null);
   return category;
 }
 
@@ -153,14 +169,14 @@ async function ensureTextChannel(guild, category, channelDefinition, categoryDef
       topic: channelDefinition.topic,
       parent: category.id,
       permissionOverwrites,
-      reason: 'Setup automático ZONA-Z'
+      reason: 'Setup automático CHAMPIONS Z'
     });
   }
 
-  if (channel.name !== channelDefinition.name) await channel.setName(channelDefinition.name, 'Renomeado para ZONA-Z').catch(() => null);
-  if (channel.topic !== channelDefinition.topic) await channel.setTopic(channelDefinition.topic, 'Tópico atualizado para ZONA-Z').catch(() => null);
-  if (channel.parentId !== category.id) await channel.setParent(category.id, { lockPermissions: false, reason: 'Organização ZONA-Z' }).catch(() => null);
-  await channel.permissionOverwrites.set(permissionOverwrites, 'Permissões ZONA-Z').catch(() => null);
+  if (channel.name !== channelDefinition.name) await channel.setName(channelDefinition.name, 'Renomeado para CHAMPIONS Z').catch(() => null);
+  if (channel.topic !== channelDefinition.topic) await channel.setTopic(channelDefinition.topic, 'Tópico atualizado para CHAMPIONS Z').catch(() => null);
+  if (channel.parentId !== category.id) await channel.setParent(category.id, { lockPermissions: false, reason: 'Organização CHAMPIONS Z' }).catch(() => null);
+  await channel.permissionOverwrites.set(permissionOverwrites, 'Permissões CHAMPIONS Z').catch(() => null);
   return channel;
 }
 
@@ -177,14 +193,14 @@ async function ensureVoiceChannel(guild, category, channelDefinition) {
       userLimit: channelDefinition.userLimit || 0,
       bitrate: 64000,
       permissionOverwrites,
-      reason: 'Setup automático ZONA-Z'
+      reason: 'Setup automático CHAMPIONS Z'
     });
   }
 
-  if (channel.name !== channelDefinition.name) await channel.setName(channelDefinition.name, 'Renomeado para ZONA-Z').catch(() => null);
-  if (channel.parentId !== category.id) await channel.setParent(category.id, { lockPermissions: false, reason: 'Organização ZONA-Z' }).catch(() => null);
-  if (channel.userLimit !== (channelDefinition.userLimit || 0)) await channel.setUserLimit(channelDefinition.userLimit || 0, 'Limite ZONA-Z').catch(() => null);
-  await channel.permissionOverwrites.set(permissionOverwrites, 'Permissões ZONA-Z').catch(() => null);
+  if (channel.name !== channelDefinition.name) await channel.setName(channelDefinition.name, 'Renomeado para CHAMPIONS Z').catch(() => null);
+  if (channel.parentId !== category.id) await channel.setParent(category.id, { lockPermissions: false, reason: 'Organização CHAMPIONS Z' }).catch(() => null);
+  if (channel.userLimit !== (channelDefinition.userLimit || 0)) await channel.setUserLimit(channelDefinition.userLimit || 0, 'Limite CHAMPIONS Z').catch(() => null);
+  await channel.permissionOverwrites.set(permissionOverwrites, 'Permissões CHAMPIONS Z').catch(() => null);
   return channel;
 }
 
@@ -196,10 +212,10 @@ async function removeLegacyChannels(guild, protectedIds = new Set()) {
     if (protectedIds.has(channel.id)) continue;
     if (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.GuildVoice) continue;
     const low = String(channel.name || '').toLowerCase();
-    const isLegacy = names.has(low) || low.includes('bunker') || low.includes('banker');
+    const isLegacy = names.has(low);
     if (!isLegacy) continue;
 
-    const ok = await channel.delete('Remoção de canal do servidor antigo na repaginação ZONA-Z').then(() => true).catch(() => false);
+    const ok = await channel.delete('Remoção de canal antigo na repaginação CHAMPIONS Z').then(() => true).catch(() => false);
     if (ok) removed += 1;
   }
 
@@ -208,10 +224,11 @@ async function removeLegacyChannels(guild, protectedIds = new Set()) {
 
 async function removeLegacyServerCategories(guild, protectedIds = new Set()) {
   const oldNames = new Set([
-    CATEGORY_NAMES.vanilla,
-    ...(CATEGORY_ALIASES[CATEGORY_NAMES.vanilla] || []),
     '🔴・RAID-Z VANILLA',
-    '🔴・SOBREVIVENTES Z VANILLA'
+    '🔴・SOBREVIVENTES Z VANILLA',
+    '🔴・VANILLA',
+    '🧟 VANILLA',
+    'VANILLA'
   ].map((name) => String(name).toLowerCase()));
 
   let removed = 0;
@@ -222,7 +239,7 @@ async function removeLegacyServerCategories(guild, protectedIds = new Set()) {
     // Só apaga a categoria antiga se não restarem canais dentro dela.
     const hasChildren = guild.channels.cache.some((channel) => channel.parentId === category.id);
     if (hasChildren) continue;
-    const ok = await category.delete('Categoria antiga removida na migração ZONA-Z').then(() => true).catch(() => false);
+    const ok = await category.delete('Categoria antiga removida na migração CHAMPIONS Z').then(() => true).catch(() => false);
     if (ok) removed += 1;
   }
   return removed;
@@ -268,7 +285,7 @@ async function clearAndSendPanel(channel, panelBuilder, { replaceBotMessages = f
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setup')
-    .setDescription('Repagina e atualiza o Discord oficial da ZONA-Z.'),
+    .setDescription('Organiza e atualiza o Discord oficial do CHAMPIONS Z.'),
 
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
@@ -328,24 +345,25 @@ module.exports = {
     await updateSupportCategoryStatus(guild);
     await refreshTicketPanel(guild);
 
-    await logEvent(guild, 'setup_completed', '✅ Setup ZONA-Z executado', `${interaction.user} aplicou a nova estrutura ZONA-Z.`, [
+    await logEvent(guild, 'setup_completed', '✅ Setup CHAMPIONS Z executado', `${interaction.user} aplicou a nova estrutura CHAMPIONS Z.`, [
       { name: 'Canais antigos removidos', value: String(removedLegacyChannels), inline: true },
       { name: 'Categorias antigas removidas', value: String(removedLegacyCategories), inline: true },
       { name: 'Cargos antigos removidos', value: String(migration.removedRoles), inline: true },
-      { name: 'Jogadores migrados', value: String(migration.moved), inline: true },
+      { name: 'Jogadores com Champion', value: String(migration.moved), inline: true },
+      { name: 'VIPs migrados', value: String(migration.vipMigrated || 0), inline: true },
       { name: 'Cargos ativos', value: SERVER_ROLES.join(', '), inline: false },
       { name: 'Staff', value: STAFF_ROLES.join(', '), inline: false }
     ]);
 
     return interaction.editReply({
       embeds: [successEmbed([
-        '**ZONA-Z repaginada com sucesso.**',
+        '**CHAMPIONS Z configurado com sucesso.**',
         '',
         `🧹 ${removedLegacyChannels} canal(is) antigo(s) removido(s).`,
         `📁 ${removedLegacyCategories} categoria(s) antiga(s) removida(s).`,
         `🎭 ${migration.removedRoles} cargo(s) antigo(s) removido(s).`,
         '',
-        'A estrutura agora está focada em **Alteria, regras resumidas, eventos, KOTH, Airdrop, comunidade e suporte**.'
+        'A estrutura agora está focada em **Chernarus, competição, eventos, comunidade e suporte**.'
       ].join('\n'))]
     });
   }

@@ -6,7 +6,7 @@ async function createTranscriptAttachment(channel) {
     returnType: 'attachment',
     filename: `transcript-${channel.name}.html`,
     saveImages: true,
-    footerText: 'ZONA-Z • Transcript salvo pelo bot'
+    footerText: 'CHAMPIONS Z • Transcript salvo pelo bot'
   });
 }
 

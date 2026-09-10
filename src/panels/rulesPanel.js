@@ -1,65 +1,31 @@
 const path = require('path');
 const { AttachmentBuilder } = require('discord.js');
+const { PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
-const { getCategories, getRuleSet } = require('../data/rulesRepository');
 
 function rulesImageAttachment() {
-  const set = getRuleSet();
-  return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', set.image));
-}
-
-function compactText(text = '') {
-  return String(text).replace(/\s+/g, ' ').trim();
-}
-
-function splitRuleBlocks(rules, maxLength = 3800) {
-  const chunks = [];
-  let current = '';
-  for (const rule of rules) {
-    const block = `**${rule.number}. ${rule.title}**\n${compactText(rule.description)}`;
-    if (current && `${current}\n\n${block}`.length > maxLength) {
-      chunks.push(current);
-      current = block;
-    } else {
-      current = current ? `${current}\n\n${block}` : block;
-    }
-  }
-  if (current) chunks.push(current);
-  return chunks;
+  return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', PANEL_IMAGES.rules));
 }
 
 function buildRulesPanel() {
-  const set = getRuleSet();
-  const header = baseEmbed()
-    .setColor(set.color)
-    .setTitle('📜 Regras oficiais • ZONA-Z')
+  const embed = baseEmbed()
+    .setColor(0xd4af37)
+    .setTitle('📜 Regras oficiais • CHAMPIONS Z')
     .setDescription([
-      '**Baseadas nas regras do RAID-Z antigo, adaptadas para a ZONA-Z.**',
+      '**As regras do novo servidor estão sendo organizadas para esta temporada.**',
       '',
-      '🔥 Raid: **sábado 18h–23h**, máximo **10 jogadores por clã**, somente por **portões**.',
-      '🔐 Base principal: máximo **10 portões com CodeLock**.',
-      '🛏️ Sleeping Bag: até **5 por jogador**, cooldown global de **1 hora** e regras de posicionamento.',
+      '✅ Jogue limpo e respeite a comunidade.',
+      '🚫 Cheat, exploit, dupe, abuso de bug e qualquer vantagem externa são proibidos.',
+      '🎥 Denúncias devem ser acompanhadas de provas sempre que possível.',
+      '🏆 Regras competitivas, raid, clãs, bunkers e eventos serão publicadas aqui conforme forem fechadas.',
       '',
-      `📊 **${set.rules.length} regras principais** • ${getCategories().map((c) => c.name).join(' • ')}`,
+      '⚠️ **Nenhuma regra antiga da RAID-Z/ZONA-Z deve ser considerada válida no Champions Z.**',
       '',
-      '⚠️ Um aviso oficial da staff pode alterar temporariamente horário/regra de evento ou raid.'
+      'Em caso de dúvida, abra um ticket e confirme com a staff.'
     ].join('\n'))
-    .setImage(`attachment://${set.image}`);
+    .setImage(`attachment://${PANEL_IMAGES.rules}`);
 
-  const chunks = splitRuleBlocks(set.rules);
-  const messages = [
-    { embeds: [header], files: [rulesImageAttachment()], legacyTitles: ['📜 Regras Gerais', '🔴 Regras ZONA-Z Vanilla', '🏳️ Regra de Bandeira no Raid'] }
-  ];
-
-  chunks.forEach((body, index) => {
-    const embed = baseEmbed()
-      .setColor(set.color)
-      .setTitle(index === 0 ? '🔴 Regras completas' : `🔴 Regras completas • parte ${index + 1}`)
-      .setDescription(body);
-    messages.push({ embeds: [embed] });
-  });
-
-  return messages;
+  return [{ embeds: [embed], files: [rulesImageAttachment()] }];
 }
 
 function buildRulesMessages() { return buildRulesPanel(); }

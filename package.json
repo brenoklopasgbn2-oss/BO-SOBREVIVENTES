@@ -1,7 +1,7 @@
 {
-  "name": "zona-z-bot",
-  "version": "2.0.0",
-  "description": "Bot Discord da ZONA-Z para comunidade DayZ no mapa Alteria.",
+  "name": "champions-z-discord-bot",
+  "version": "1.0.0",
+  "description": "Bot oficial do Discord CHAMPIONS Z para comunidade DayZ em Chernarus.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

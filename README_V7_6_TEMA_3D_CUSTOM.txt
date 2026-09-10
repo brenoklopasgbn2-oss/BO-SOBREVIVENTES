@@ -1,1 +1,0 @@
-Atualização V7.6: fundos BBP/Vanilla com imagens novas, HUD de saldo no canto, compra personalizada de moedas, som apenas em botões, e cards 3D reforçados.

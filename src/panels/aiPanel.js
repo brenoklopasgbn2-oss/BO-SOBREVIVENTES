@@ -9,27 +9,22 @@ function aiImageAttachment() {
 
 function buildAiPanel(guild) {
   const role = guild?.roles?.cache?.find((item) => item.name === ROLE_NAMES.ai);
-  const mention = role ? `${role}` : '@ZONA-Z IA';
+  const mention = role ? `${role}` : '@Champions Z';
   const embed = baseEmbed()
-    .setColor(0xe3263e)
-    .setTitle('🤖 ZONA-Z IA — Ajuda rápida')
+    .setColor(0xd4af37)
+    .setTitle('🤖 CHAMPIONS Z • Ajuda rápida')
     .setDescription([
-      'Pergunte aqui sobre **regras, Alteria, grupo, base, KOTH, Airdrop, tickets, loja e suporte**.',
+      'Use este canal para dúvidas básicas sobre **servidor, eventos, denúncias, tickets e suporte**.',
       '',
-      '**Exemplos:**',
-      '• qual é o limite do grupo?',
-      '• como funciona o KOTH?',
-      '• como funciona o Airdrop?',
-      '• onde reporto um bug?',
-      '• como abro uma denúncia?',
+      'As regras detalhadas do novo projeto ainda serão cadastradas. O bot não reutilizará regras antigas da RAID-Z/ZONA-Z.',
       '',
       `Você também pode me marcar usando ${mention}.`,
       '',
-      '⚠️ Em casos de punição, perda de item ou situação que precise de prova, a decisão final é da staff.'
+      '⚠️ Em situações de punição ou análise de provas, a decisão final é da staff.'
     ].join('\n'))
     .setImage(`attachment://${PANEL_IMAGES.ai}`);
 
-  return { embeds: [embed], files: [aiImageAttachment()], legacyTitles: ['🤖 ZONA-Z IA — Ajuda rápida da comunidade'] };
+  return { embeds: [embed], files: [aiImageAttachment()] };
 }
 
 module.exports = { buildAiPanel };

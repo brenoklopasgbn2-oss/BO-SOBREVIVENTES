@@ -1,11 +1,11 @@
 const { EmbedBuilder } = require('discord.js');
 
-const BRAND_COLOR = 0xe3263e;
+const BRAND_COLOR = 0xd4af37;
 
 function baseEmbed() {
   return new EmbedBuilder()
     .setColor(BRAND_COLOR)
-    .setFooter({ text: 'ZONA-Z • DayZ Brasil' })
+    .setFooter({ text: 'CHAMPIONS Z • DayZ Brasil' })
     .setTimestamp();
 }
 

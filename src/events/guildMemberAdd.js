@@ -13,40 +13,42 @@ function panelImage(fileName) {
 module.exports = {
   name: Events.GuildMemberAdd,
   async execute(member) {
-    const survivorRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
-    if (survivorRole) await member.roles.add(survivorRole, 'Entrada automática ZONA-Z').catch(() => null);
+    const championRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
+    if (championRole) await member.roles.add(championRole, 'Entrada automática CHAMPIONS Z').catch(() => null);
 
     const welcomeChannel = findTextChannel(member.guild, CHANNELS.memberWelcome);
     if (welcomeChannel) {
       const accountCreated = Math.floor(member.user.createdTimestamp / 1000);
       const imageName = PANEL_IMAGES.welcomeMember;
       const embed = new EmbedBuilder()
-        .setColor(0xe3263e)
-        .setAuthor({ name: `Novo sobrevivente: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
-        .setTitle('🔴 Bem-vindo à ZONA-Z!')
+        .setColor(0xd4af37)
+        .setAuthor({ name: `Novo Champion: ${member.user.tag}`, iconURL: member.user.displayAvatarURL({ size: 128 }) })
+        .setTitle('🏆 BEM-VINDO AO CHAMPIONS Z!')
         .setDescription([
-          `${member}, bem-vindo à nossa comunidade DayZ PC.`,
+          `${member}, você acaba de entrar em uma nova disputa.`,
           '',
-          '🗺️ **Alteria** • 👁️ **1PP** • 📦 **Loot 1.3x**',
-          '🚩 **KOTH** • 🪂 **Airdrop** • 👥 **Grupo até 15**',
+          '🗺️ **Chernarus** • 👁️ **1PP** • ⚔️ **Competitivo**',
+          '🎯 **Eventos** • 🏆 **Temporadas** • 💰 **Premiações**',
           '',
-          'Seu cargo de **Sobrevivente** foi liberado automaticamente. Leia as regras resumidas e boa jornada.'
+          'Seu cargo **Champion** foi liberado automaticamente.',
+          'Leia as regras, acompanhe os avisos e prepare seu clã.',
+          '',
+          '**SOBREVIVA. DOMINE. SEJA CAMPEÃO.**'
         ].join('\n'))
         .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
         .setImage(`attachment://${imageName}`)
         .addFields(
           { name: '👤 Usuário', value: `${member.user.tag}`, inline: true },
-          { name: '🆔 ID', value: member.id, inline: true },
           { name: '📅 Conta criada', value: `<t:${accountCreated}:R>`, inline: true },
-          { name: '🌎 Membro número', value: `${member.guild.memberCount}`, inline: true }
+          { name: '🏆 Champion nº', value: `${member.guild.memberCount}`, inline: true }
         )
-        .setFooter({ text: 'ZONA-Z • Bem-vindo a Alteria' })
+        .setFooter({ text: 'CHAMPIONS Z • Chernarus' })
         .setTimestamp();
 
-      await welcomeChannel.send({ content: `👋 Bem-vindo, ${member}!`, embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);
+      await welcomeChannel.send({ content: `🏆 Bem-vindo, ${member}!`, embeds: [embed], files: [panelImage(imageName)] }).catch(() => null);
     }
 
-    await logEvent(member.guild, 'member_join', '📥 Entrada de usuário', `${member.user} entrou no servidor.`, [
+    await logEvent(member.guild, 'member_join', '📥 Entrada de usuário', `${member.user} entrou no CHAMPIONS Z.`, [
       { name: 'Usuário', value: `${member.user.tag} (${member.id})`, inline: false }
     ]);
   }

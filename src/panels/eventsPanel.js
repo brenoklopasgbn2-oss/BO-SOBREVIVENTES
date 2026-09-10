@@ -7,16 +7,17 @@ function buildEventsPanel() {
   const image = PANEL_IMAGES.events;
   const file = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', image));
   const embed = baseEmbed()
-    .setColor(0xe3263e)
-    .setTitle('🎯 Eventos ZONA-Z')
+    .setColor(0xd4af37)
+    .setTitle('🎯 Eventos • CHAMPIONS Z')
     .setDescription([
-      'Este canal concentra a programação e as instruções dos eventos especiais.',
+      'Este canal será o centro das **competições e premiações** do servidor.',
       '',
-      '🚩 **KOTH** — disputa de área e recompensa.',
-      '🪂 **Airdrop** — corrida por loot com alto risco de PvP.',
-      '🔥 **Eventos da staff** — regras, horário e local serão publicados aqui ou em avisos.',
+      '🚩 KOTH e disputas PvP',
+      '🪂 Airdrops e objetivos especiais',
+      '🔥 Eventos organizados pela administração',
+      '💰 Premiações e desafios da temporada',
       '',
-      'Quando um evento tiver regra própria, siga o comunicado daquele evento.'
+      'Horários, regras e valores serão publicados nos comunicados oficiais.'
     ].join('\n'))
     .setImage(`attachment://${image}`);
   return { embeds: [embed], files: [file] };

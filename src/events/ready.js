@@ -48,11 +48,11 @@ module.exports = {
   once: true,
   async execute(client) {
     client.user.setPresence({
-      activities: [{ name: 'ZONA-Z • Alteria', type: ActivityType.Watching }],
+      activities: [{ name: 'CHAMPIONS Z • Chernarus', type: ActivityType.Watching }],
       status: 'online'
     });
 
-    console.log(`Bot ZONA-Z online como ${client.user.tag}`);
+    console.log(`Bot CHAMPIONS Z online como ${client.user.tag}`);
 
     try {
       await registerGuildCommands(client);

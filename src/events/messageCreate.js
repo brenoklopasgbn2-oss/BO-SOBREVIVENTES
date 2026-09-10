@@ -23,7 +23,7 @@ function channelMode(channelName) {
       color: 0xf39c12,
       title: '📣 Comunicado Oficial',
       fallbackImage: PANEL_IMAGES.announcement,
-      footer: 'ZONA-Z • Aviso da Administração'
+      footer: 'CHAMPIONS Z • Aviso da Administração'
     };
   }
 
@@ -32,7 +32,7 @@ function channelMode(channelName) {
       color: 0xc0392b,
       title: '🚫 Registro de Banimento / Punição',
       fallbackImage: PANEL_IMAGES.banApplied,
-      footer: 'ZONA-Z • Banimentos e Punições'
+      footer: 'CHAMPIONS Z • Banimentos e Punições'
     };
   }
 
@@ -41,7 +41,7 @@ function channelMode(channelName) {
       color: 0x3498db,
       title: '📘 Informação Importante',
       fallbackImage: PANEL_IMAGES.announcement,
-      footer: 'ZONA-Z • Central de Informações'
+      footer: 'CHAMPIONS Z • Central de Informações'
     };
   }
 
@@ -64,7 +64,7 @@ function setTopicField(topic = '', key, value) {
 }
 
 function isTicketChannel(channel) {
-  return Boolean((channel?.topic?.includes('ZONAZ_TICKET') || channel?.topic?.includes('RAIDZ_TICKET')) || channel?.name?.includes('ticket-'));
+  return Boolean((channel?.topic?.includes('CHAMPIONSZ_TICKET') || channel?.topic?.includes('ZONAZ_TICKET') || channel?.topic?.includes('RAIDZ_TICKET')) || channel?.name?.includes('ticket-'));
 }
 
 async function autoClaimTicket(message) {
