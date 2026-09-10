@@ -78,6 +78,7 @@ const CHANNELS = {
   nbcYellow: '☣️・infectado-nbc-amarelo',
   vehicleFlip: '🚗・flip-de-veiculos',
   planeCrash: '✈️・plane-crash',
+  ghillieCamonet: '🥷・ghillie-camonet',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   openTicket: '🎫・abrir-ticket',
@@ -127,6 +128,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.nbcYellow]: ['infectado-nbc-amarelo', 'nbc-amarelo', 'infectado-pox'],
   [CHANNELS.vehicleFlip]: ['flip-de-veiculos', 'flip-veiculos', 'desvirar-veiculo', 'desvirar-veiculos'],
   [CHANNELS.planeCrash]: ['plane-crash', 'plane-drop', 'plane-drop-container', 'airdrop-plane', 'plane-crash-airdrop'],
+  [CHANNELS.ghillieCamonet]: ['ghillie-camonet', 'guile-camonet', 'ghillie', 'camonet-ghillie', 'guia-ghillie'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
@@ -211,7 +213,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.militaryAreas, aliases: CHANNEL_ALIASES[CHANNELS.militaryAreas], topic: 'Apresentação das 10 novas áreas militares do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.nbcYellow, aliases: CHANNEL_ALIASES[CHANNELS.nbcYellow], topic: 'Infectado NBC amarelo com POX: ao morrer, libera gás letal.', readOnly: true },
       { type: 'text', name: CHANNELS.vehicleFlip, aliases: CHANNEL_ALIASES[CHANNELS.vehicleFlip], topic: 'Guia do sistema de Flip: banco do motorista + F6 para desvirar o veículo.', readOnly: true },
-      { type: 'text', name: CHANNELS.planeCrash, aliases: CHANNEL_ALIASES[CHANNELS.planeCrash], topic: 'Guia do Plane Crash / Plane Drop: avião, 4 containers, zumbis e chave do container.', readOnly: true }
+      { type: 'text', name: CHANNELS.planeCrash, aliases: CHANNEL_ALIASES[CHANNELS.planeCrash], topic: 'Guia do Plane Crash / Plane Drop: avião, 4 containers, zumbis e chave do container.', readOnly: true },
+      { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true }
     ]
   },
   {
