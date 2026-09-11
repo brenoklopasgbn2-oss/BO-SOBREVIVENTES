@@ -3,6 +3,7 @@ const { AttachmentBuilder, AuditLogEvent, Events } = require('discord.js');
 const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
+const { consumeManagedBanTarget, isManagedBanReason } = require('../services/adminBanService');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -26,7 +27,9 @@ module.exports = {
       // ignore audit errors
     }
 
-    if (channel) {
+    const managedByPanel = consumeManagedBanTarget(ban.user.id) || isManagedBanReason(reason);
+
+    if (channel && !managedByPanel) {
       const imageName = PANEL_IMAGES.banApplied;
       const embed = baseEmbed()
         .setColor(0xc0392b)

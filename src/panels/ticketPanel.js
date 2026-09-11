@@ -45,8 +45,9 @@ function buildTicketPanel(guild) {
       '**Como funciona o atendimento por voz:**',
       `1. Entre em **${CHANNELS.waitingRoom}**.`,
       '2. Se houver staff em um canal de atendimento livre, o bot te move automaticamente.',
-      '3. Cada atendimento aceita vários staff, mas apenas **1 player** por vez.',
-      '4. Para denúncias e bugs, use os painéis específicos abaixo.'
+      '3. Nos atendimentos padrão entra **1 player por vez**, com quantos staff forem necessários.',
+      '4. A administração também possui um **atendimento ADM** para puxar players manualmente quando precisar.',
+      '5. Para denúncias e bugs, use os painéis específicos abaixo.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
     .addFields(

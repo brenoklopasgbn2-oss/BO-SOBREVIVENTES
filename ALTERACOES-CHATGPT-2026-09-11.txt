@@ -1,0 +1,33 @@
+ALTERAÇÕES APLICADAS NO DISCORD / BOT CHAMPIONS Z
+
+1) IMAGENS NOVAS APLICADAS
+- Avisos: champions-z-comunicado.png
+- Saídas: champions-z-saida.png
+- Abrir ticket / suporte: champions-z-ticket.png
+- Denúncias: champions-z-denuncias.png
+- Reportar bug: champions-z-reportar-bug.png
+- Banimentos / punições: champions-z-banimentos.png
+- Atendimento ADM extra adicionado como asset: champions-z-atendimento.png
+
+2) ESTRUTURA AJUSTADA
+- Removidos KOTH e AIRDROP da categoria central no setup.
+- Setup agora limpa canais antigos de koth/airdrop na repaginação.
+- Adicionado canal de voz: 🎧・atendimento-adm
+  -> sem limite de players
+  -> pensado para puxada manual da administração
+
+3) AVISOS / BANIMENTOS
+- Quando staff manda mensagem em avisos, banimentos e informações,
+  o bot republica a mensagem em formato mais bonito.
+
+4) SUPORTE
+- Painel de abrir ticket ficou com imagem nova.
+- Texto do painel ficou mais claro.
+- Atendimento ADM não entra na trava de 1 player por sala.
+- Autoatendimento continua usando atendimento-1 e atendimento-2.
+
+5) SUGESTÕES
+- Canal de sugestões ficou descrito para uso com enquetes/votação.
+
+OBSERVAÇÃO
+Para aplicar tudo no servidor, rode novamente o comando /setup com o bot online.

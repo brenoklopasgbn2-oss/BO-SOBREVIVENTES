@@ -15,7 +15,7 @@ function buildBugPanel() {
     .setDescription([
       'Encontrou um bug no Discord, no servidor ou em algum sistema da comunidade?',
       '',
-      'Abra o ticket abaixo e descreva exatamente o que aconteceu, como reproduzir o problema e envie prints ou vídeos.'
+      'Abra o ticket abaixo e descreva exatamente o que aconteceu, como reproduzir o problema e envie prints ou vídeos para facilitar a correção.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
     .addFields({ name: 'Dica', value: 'Quanto mais detalhes forem enviados, mais rápido a equipe consegue corrigir.', inline: false });

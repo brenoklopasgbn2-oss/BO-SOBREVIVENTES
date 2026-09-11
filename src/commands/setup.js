@@ -18,8 +18,6 @@ const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
-const { buildKothPanel } = require('../panels/kothPanel');
-const { buildAirdropPanel } = require('../panels/airdropPanel');
 const { buildHowToPlayPanel } = require('../panels/howToPlayPanel');
 const { buildBunker1AirfieldPanel } = require('../panels/bunker1AirfieldPanel');
 const { buildBunker2FrozenPanel } = require('../panels/bunker2FrozenPanel');
@@ -332,8 +330,6 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.rules), buildRulesPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.howToPlay), buildHowToPlayPanel, { replaceBotMessages: true });
-    await clearAndSendPanel(findChannel(CHANNELS.koth), buildKothPanel, { replaceBotMessages: true });
-    await clearAndSendPanel(findChannel(CHANNELS.airdrop), buildAirdropPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bunker1Airfield), buildBunker1AirfieldPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bunker2Frozen), buildBunker2FrozenPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.militaryAreas), buildMilitaryAreasPanel, { replaceBotMessages: true });
@@ -366,7 +362,7 @@ module.exports = {
         `📁 ${removedLegacyCategories} categoria(s) antiga(s) removida(s).`,
         `🎭 ${migration.removedRoles} cargo(s) antigo(s) removido(s).`,
         '',
-        'A estrutura agora está focada em **Chernarus, Bunker 1, Bunker 2, 10 novas áreas militares, NBC amarelo, Plane Crash, Ghillie Camonet, Flip de veículos, comunidade e suporte**.'
+        'A estrutura agora está focada em **Chernarus, Bunker 1, Bunker 2, 10 novas áreas militares, NBC amarelo, Plane Crash, Ghillie Camonet, Flip de veículos, comunidade, avisos e suporte**.'
       ].join('\n'))]
     });
   }

@@ -1,5 +1,5 @@
 const { Events, PermissionFlagsBits } = require('discord.js');
-const { CHANNELS } = require('../config/constants');
+const { CHANNELS, AUTO_ASSIGN_SUPPORT_VOICE_CHANNELS, SUPPORT_VOICE_CHANNELS, UNLIMITED_PLAYER_SUPPORT_VOICE_CHANNELS } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
 const { isStaffMember, isSupportVoiceChannel } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
@@ -33,7 +33,7 @@ function getWaitingPlayers(guild) {
 
 function getSupportChannelsWithStaff(guild) {
   return guild.channels.cache
-    .filter((channel) => channel.isVoiceBased?.() && isSupportVoiceChannel(channel))
+    .filter((channel) => channel.isVoiceBased?.() && AUTO_ASSIGN_SUPPORT_VOICE_CHANNELS.includes(channel.name))
     .filter((channel) => getStaff(channel).length > 0)
     .map((channel) => channel);
 }
@@ -44,7 +44,7 @@ async function movePlayerToStaffChannel(player, targetChannel, waitingChannel) {
   const permissions = targetChannel.permissionsFor(player);
   if (!permissions?.has(PermissionFlagsBits.Connect)) return false;
 
-  await player.voice.setChannel(targetChannel, 'Atendimento automático ZONA-Z').catch(() => null);
+  await player.voice.setChannel(targetChannel, 'Atendimento automático CHAMPIONS Z').catch(() => null);
 
   if (player.voice.channelId === targetChannel.id) {
     const staffList = getStaff(targetChannel).map((member) => `${member.user}`).join(', ') || 'Staff';
@@ -86,6 +86,7 @@ async function enforceSinglePlayerPerSupport(oldState, newState) {
 
   if (!joinedSupport || !waitingChannel) return;
   if (!isPlayer(newState.member)) return;
+  if (UNLIMITED_PLAYER_SUPPORT_VOICE_CHANNELS.includes(newState.channel.name)) return;
 
   const nonStaffMembers = getPlayers(newState.channel);
   if (nonStaffMembers.length <= 1) return;
@@ -111,7 +112,7 @@ module.exports = {
 
     handleStaffVoiceStateUpdate(oldState, newState);
 
-    const relevantChannelIds = [CHANNELS.waitingRoom, CHANNELS.supportRoom1, CHANNELS.supportRoom2];
+    const relevantChannelIds = [CHANNELS.waitingRoom, ...SUPPORT_VOICE_CHANNELS];
     const oldName = oldState.channel?.name;
     const newName = newState.channel?.name;
     const oldRelevant = oldName && relevantChannelIds.includes(oldName);

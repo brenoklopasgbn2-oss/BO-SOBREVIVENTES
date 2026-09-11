@@ -2,6 +2,7 @@ const { Events } = require('discord.js');
 const { errorEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
 const { submitTicketForm, handleTicketLanguageSelect } = require('../tickets/ticketService');
+const { submitAdminBan } = require('../services/adminBanService');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -42,6 +43,11 @@ module.exports = {
         const [action, value, language] = interaction.customId.split(':');
         if (action === 'ticket_form') {
           await submitTicketForm(interaction, value, language);
+          return;
+        }
+        if (action === 'admin_ban_form') {
+          await submitAdminBan(interaction, value);
+          return;
         }
       }
     } catch (error) {

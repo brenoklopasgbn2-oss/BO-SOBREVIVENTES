@@ -1,0 +1,31 @@
+CHAMPIONS Z - PAINEL DE BANIMENTO
+
+NOVO COMANDO
+/banir discord:@usuario
+
+COMO FUNCIONA
+1. Fundador/Administrador usa /banir e marca o Discord do jogador.
+2. O bot abre um formulário.
+3. Preencha Steam64 (17 números), nick do DayZ e motivo.
+4. Ao enviar, o bot verifica permissão/hierarquia e aplica o ban no Discord.
+5. O bot publica automaticamente em 🚫・banimentos usando a imagem oficial de banimentos.
+
+O REGISTRO MOSTRA
+- Nick DayZ
+- Steam64
+- Discord marcado
+- Discord ID
+- Motivo
+- ADM responsável
+- Situação BANIDO
+
+SEGURANÇA
+- Apenas Fundador/Administrador com permissão Banir membros pode usar.
+- Não permite auto-ban.
+- Não permite banir o dono do servidor.
+- Verifica se o bot consegue banir pela hierarquia de cargos.
+- Evita postagem duplicada do evento automático de ban.
+
+IMPORTANTE
+Esse comando aplica BAN NO DISCORD. O Steam64 é registrado no anúncio e no log.
+Para banir também dentro do servidor DayZ seria necessária integração com o sistema de bans/RCON da host.

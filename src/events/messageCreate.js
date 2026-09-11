@@ -16,6 +16,13 @@ function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
 }
 
+function collectImageAttachments(message) {
+  return [...message.attachments.values()].filter((file) => {
+    if (file.contentType?.startsWith('image/')) return true;
+    return /\.(png|jpe?g|gif|webp)$/i.test(file.name || '');
+  });
+}
+
 function channelMode(channelName) {
   if (channelName === CHANNELS.announcements) {
     return {
@@ -130,14 +137,8 @@ module.exports = {
     if (!mode) return;
     if (!isStaffMember(message.member)) return;
 
-    const attachment = message.attachments.find((file) => {
-      if (file.contentType?.startsWith('image/')) return true;
-      return /\.(png|jpe?g|gif|webp)$/i.test(file.name || '');
-    }) || null;
-
-    // No canal de avisos, mensagens com imagem ficam originais.
-    // O bot não apaga e não remanda, evitando perder a imagem ou criar duplicata.
-    if (message.channel.name === CHANNELS.announcements && attachment) return;
+    const attachments = collectImageAttachments(message);
+    const attachment = attachments[0] || null;
 
     const roleName = getMainStaffRole(message.member);
     const embed = baseEmbed()
@@ -157,7 +158,7 @@ module.exports = {
       embed.setImage(`attachment://${mode.fallbackImage}`);
     }
 
-    await message.delete().catch(() => null);
-    await message.channel.send({ embeds: [embed], files }).catch(() => null);
+    const sent = await message.channel.send({ embeds: [embed], files }).catch(() => null);
+    if (sent) await message.delete().catch(() => null);
   }
 };

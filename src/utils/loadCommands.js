@@ -1,6 +1,6 @@
 const { readCommandFiles } = require('./readFiles');
 
-const ACTIVE_COMMAND_FILES = new Set(['setup.js', 'atualizarcanais.js']);
+const ACTIVE_COMMAND_FILES = new Set(['setup.js', 'atualizarcanais.js', 'banir.js']);
 
 function loadCommands(client) {
   for (const file of readCommandFiles()) {

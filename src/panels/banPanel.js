@@ -15,7 +15,7 @@ function buildBanPanel() {
     .setDescription([
       'Este canal é usado para anúncios da equipe sobre **banimentos**, **punições** e **ações administrativas**.',
       '',
-      'Quando um administrador enviar uma mensagem aqui, o bot irá republicar em formato profissional.'
+      'Quando um administrador enviar uma mensagem aqui, o bot apaga a mensagem original e republica em formato mais bonito.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`);
 

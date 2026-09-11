@@ -13,9 +13,9 @@ function buildReportPanel() {
     .setColor(0xff6b00)
     .setTitle('🚨 Canal de Denúncias')
     .setDescription([
-      'Use este painel para denunciar jogadores, cheats, abusos, infrações e quebras de regra.',
+      'Use este painel para denunciar jogadores, hacks, abusos, infrações e qualquer quebra de regra.',
       '',
-      'Ao abrir o ticket, envie **nome, ID, horário, prints, vídeos e o máximo de provas** possível.'
+      'Ao abrir o ticket, envie **nome, ID, horário, prints, vídeos e o máximo de provas** possível para agilizar a análise.'
     ].join('\n'))
     .setImage(`attachment://${imageName}`)
     .addFields({ name: 'Importante', value: 'Denúncias falsas ou sem provas podem ser desconsideradas.', inline: false });

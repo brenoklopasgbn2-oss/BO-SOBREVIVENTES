@@ -87,6 +87,7 @@ const CHANNELS = {
   waitingRoom: '⏳・aguardando-atendimento',
   supportRoom1: '🎧・atendimento-1',
   supportRoom2: '🎧・atendimento-2',
+  supportRoomAdm: '🎧・atendimento-adm',
   generalVoice1: '🔊・geral-1',
   generalVoice2: '🔊・geral-2',
   squadVoice1: '🎯・cla-1',
@@ -137,6 +138,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.waitingRoom]: ['aguardando-atendimento'],
   [CHANNELS.supportRoom1]: ['atendimento-1'],
   [CHANNELS.supportRoom2]: ['atendimento-2'],
+  [CHANNELS.supportRoomAdm]: ['atendimento-adm', 'atendimento-admin', 'atendimento-privado'],
   [CHANNELS.generalVoice1]: [],
   [CHANNELS.generalVoice2]: [],
   [CHANNELS.squadVoice1]: ['squad-1'],
@@ -144,7 +146,9 @@ const CHANNEL_ALIASES = {
   [CHANNELS.staffVoice]: []
 };
 
-const SUPPORT_VOICE_CHANNELS = [CHANNELS.supportRoom1, CHANNELS.supportRoom2];
+const SUPPORT_VOICE_CHANNELS = [CHANNELS.supportRoom1, CHANNELS.supportRoom2, CHANNELS.supportRoomAdm];
+const AUTO_ASSIGN_SUPPORT_VOICE_CHANNELS = [CHANNELS.supportRoom1, CHANNELS.supportRoom2];
+const UNLIMITED_PLAYER_SUPPORT_VOICE_CHANNELS = [CHANNELS.supportRoomAdm];
 const PLAYER_VOICE_CHANNELS = [CHANNELS.generalVoice1, CHANNELS.generalVoice2, CHANNELS.squadVoice1, CHANNELS.squadVoice2];
 
 const SERVER_SELECTIONS = {
@@ -163,14 +167,14 @@ const TICKET_TYPES = {
 
 const PANEL_IMAGES = {
   welcome: 'champions-z-bem-vindo.png',
-  ticket: 'champions-z-logo.png',
-  report: 'champions-z-logo.png',
-  bug: 'champions-z-logo.png',
+  ticket: 'champions-z-ticket.png',
+  report: 'champions-z-denuncias.png',
+  bug: 'champions-z-reportar-bug.png',
   announcement: 'champions-z-comunicado.png',
   welcomeMember: 'champions-z-bem-vindo.png',
-  leaveMember: 'champions-z-logo.png',
-  banPanel: 'champions-z-logo.png',
-  banApplied: 'champions-z-logo.png',
+  leaveMember: 'champions-z-saida.png',
+  banPanel: 'champions-z-banimentos.png',
+  banApplied: 'champions-z-banimentos.png',
   rules: 'champions-z-regras.png',
   koth: 'champions-z-logo.png',
   airdrop: 'champions-z-logo.png',
@@ -196,11 +200,9 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.howToPlay, aliases: CHANNEL_ALIASES[CHANNELS.howToPlay], topic: 'Guia rápido do CHAMPIONS Z em Chernarus: 1PP, PvP competitivo, bunkers e novas áreas.', readOnly: true },
-      { type: 'text', name: CHANNELS.koth, aliases: CHANNEL_ALIASES[CHANNELS.koth], topic: 'Informações do KOTH e disputa PvP.', readOnly: true },
-      { type: 'text', name: CHANNELS.airdrop, aliases: CHANNEL_ALIASES[CHANNELS.airdrop], topic: 'Informações de Airdrop e disputa de loot.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IP e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Registro de banimentos e punições.', readOnly: true },
-      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Sugestões da comunidade para melhorar o CHAMPIONS Z.' }
+      { type: 'text', name: CHANNELS.suggestions, aliases: CHANNEL_ALIASES[CHANNELS.suggestions], topic: 'Canal de sugestões: a comunidade deve usar enquetes para votação e feedback.' }
     ]
   },
   {
@@ -241,7 +243,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.bugPanel, aliases: CHANNEL_ALIASES[CHANNELS.bugPanel], topic: 'Reporte bugs sem explorar a falha.', readOnly: true },
       { type: 'voice', name: CHANNELS.waitingRoom, aliases: CHANNEL_ALIASES[CHANNELS.waitingRoom], topic: 'Aguarde atendimento da equipe.', userLimit: 0 },
       { type: 'voice', name: CHANNELS.supportRoom1, aliases: CHANNEL_ALIASES[CHANNELS.supportRoom1], topic: 'Atendimento por voz.', userLimit: 0 },
-      { type: 'voice', name: CHANNELS.supportRoom2, aliases: CHANNEL_ALIASES[CHANNELS.supportRoom2], topic: 'Atendimento por voz.', userLimit: 0 }
+      { type: 'voice', name: CHANNELS.supportRoom2, aliases: CHANNEL_ALIASES[CHANNELS.supportRoom2], topic: 'Atendimento por voz.', userLimit: 0 },
+      { type: 'voice', name: CHANNELS.supportRoomAdm, aliases: CHANNEL_ALIASES[CHANNELS.supportRoomAdm], topic: 'Atendimento privado da administração com entrada manual, sem limite de players.', userLimit: 0 }
     ]
   },
   { name: CATEGORY_NAMES.ticketsOpen, aliases: CATEGORY_ALIASES[CATEGORY_NAMES.ticketsOpen], allowedRoles: STAFF_ROLES, channels: [] },
@@ -274,6 +277,8 @@ const LEGACY_CHANNEL_NAMES = [
   '🤖・comandos','comandos',
   '📡・status-servidor','status-servidor','status-servidores',
   '🎯・eventos','eventos','eventos-zona-z','eventos-champions-z',
+  '🚩・koth','koth','king-of-the-hill','rei-da-colina','evento-koth',
+  '🪂・airdrop','airdrop','airdrops','drop-aereo','drop-aéreo',
   '🤖・zona-z-ia','zona-z-ia','🤖・raid-z-ia','raid-z-ia','sobrevivente-ia','pergunte-as-regras','duvidas-regras','🤖・champions-z-ia','champions-z-ia','champions-ia'
 ];
 
@@ -289,6 +294,8 @@ module.exports = {
   CHANNELS,
   CHANNEL_ALIASES,
   SUPPORT_VOICE_CHANNELS,
+  AUTO_ASSIGN_SUPPORT_VOICE_CHANNELS,
+  UNLIMITED_PLAYER_SUPPORT_VOICE_CHANNELS,
   PLAYER_VOICE_CHANNELS,
   SERVER_SELECTIONS,
   TICKET_TYPES,
