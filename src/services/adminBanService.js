@@ -1,33 +1,15 @@
 const path = require('path');
 const {
   AttachmentBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ActionRowBuilder,
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
+  ActionRowBuilder,
   PermissionFlagsBits
 } = require('discord.js');
 const { CHANNELS, PANEL_IMAGES, OWNER_IDS, ROLE_NAMES } = require('../config/constants');
 const { baseEmbed, errorEmbed, successEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
-
-const MANAGED_BAN_PREFIX = '[CHAMPIONS_Z_PANEL]';
-const managedBanTargets = new Set();
-
-function markManagedBanTarget(userId) {
-  managedBanTargets.add(String(userId));
-  const timer = setTimeout(() => managedBanTargets.delete(String(userId)), 15000);
-  timer.unref?.();
-}
-
-function consumeManagedBanTarget(userId) {
-  const key = String(userId);
-  const found = managedBanTargets.has(key);
-  if (found) managedBanTargets.delete(key);
-  return found;
-}
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -40,7 +22,7 @@ function isAdminForBan(member) {
   return member.roles?.cache?.some((role) => [ROLE_NAMES.founder, ROLE_NAMES.admin].includes(role.name));
 }
 
-function buildAdminBanModal(targetUser) {
+function buildAdminBanModal() {
   const steam = new TextInputBuilder()
     .setCustomId('ban_steam64')
     .setLabel('Steam64 do jogador')
@@ -59,6 +41,15 @@ function buildAdminBanModal(targetUser) {
     .setMaxLength(64)
     .setRequired(true);
 
+  const discordName = new TextInputBuilder()
+    .setCustomId('ban_discord_name')
+    .setLabel('Discord do banido (opcional)')
+    .setPlaceholder('Ex.: @Ocletin ou nome sem marcar')
+    .setStyle(TextInputStyle.Short)
+    .setMinLength(0)
+    .setMaxLength(80)
+    .setRequired(false);
+
   const reason = new TextInputBuilder()
     .setCustomId('ban_reason')
     .setLabel('Motivo do banimento')
@@ -69,25 +60,17 @@ function buildAdminBanModal(targetUser) {
     .setRequired(true);
 
   return new ModalBuilder()
-    .setCustomId(`admin_ban_form:${targetUser.id}`)
-    .setTitle(`Banir ${targetUser.username}`.slice(0, 45))
+    .setCustomId('admin_ban_form:register')
+    .setTitle('Registrar Banimento')
     .addComponents(
       new ActionRowBuilder().addComponents(steam),
       new ActionRowBuilder().addComponents(nickname),
+      new ActionRowBuilder().addComponents(discordName),
       new ActionRowBuilder().addComponents(reason)
     );
 }
 
-function makeAuditReason({ moderator, steam64, nickname, reason }) {
-  const full = `${MANAGED_BAN_PREFIX} Steam64=${steam64} | Nick=${nickname} | Motivo=${reason} | ADM=${moderator.tag}`;
-  return full.slice(0, 510);
-}
-
-function isManagedBanReason(reason = '') {
-  return String(reason || '').startsWith(MANAGED_BAN_PREFIX);
-}
-
-async function submitAdminBan(interaction, targetUserId) {
+async function submitAdminBan(interaction) {
   if (!interaction.guild || !interaction.member) {
     return interaction.reply({ embeds: [errorEmbed('Este comando só pode ser usado dentro do servidor.')], ephemeral: true });
   }
@@ -98,6 +81,7 @@ async function submitAdminBan(interaction, targetUserId) {
 
   const steam64 = interaction.fields.getTextInputValue('ban_steam64').trim();
   const nickname = interaction.fields.getTextInputValue('ban_nickname').trim();
+  const discordName = interaction.fields.getTextInputValue('ban_discord_name').trim() || 'Não informado';
   const reason = interaction.fields.getTextInputValue('ban_reason').trim();
 
   if (!/^\d{17}$/.test(steam64)) {
@@ -112,44 +96,7 @@ async function submitAdminBan(interaction, targetUserId) {
     return interaction.reply({ embeds: [errorEmbed('Informe um motivo válido para o banimento.')], ephemeral: true });
   }
 
-  if (targetUserId === interaction.user.id) {
-    return interaction.reply({ embeds: [errorEmbed('Você não pode banir a si mesmo por este painel.')], ephemeral: true });
-  }
-
-  if (targetUserId === interaction.guild.ownerId) {
-    return interaction.reply({ embeds: [errorEmbed('O dono do servidor não pode ser banido pelo bot.')], ephemeral: true });
-  }
-
   await interaction.deferReply({ ephemeral: true });
-
-  const targetUser = await interaction.client.users.fetch(targetUserId).catch(() => null);
-  if (!targetUser) {
-    return interaction.editReply({ embeds: [errorEmbed('Não consegui localizar o usuário do Discord informado.')] });
-  }
-
-  const targetMember = await interaction.guild.members.fetch(targetUserId).catch(() => null);
-  if (targetMember && !targetMember.bannable) {
-    return interaction.editReply({ embeds: [errorEmbed('Não consigo banir esse usuário. Verifique a hierarquia dos cargos e a permissão **Banir membros** do bot.')] });
-  }
-
-  const auditReason = makeAuditReason({
-    moderator: interaction.user,
-    steam64,
-    nickname,
-    reason
-  });
-
-  markManagedBanTarget(targetUserId);
-  try {
-    await interaction.guild.members.ban(targetUserId, {
-      deleteMessageSeconds: 0,
-      reason: auditReason
-    });
-  } catch (error) {
-    managedBanTargets.delete(String(targetUserId));
-    console.error('Erro ao aplicar ban pelo painel:', error);
-    return interaction.editReply({ embeds: [errorEmbed('O Discord recusou o banimento. Verifique permissões e hierarquia do bot.')] });
-  }
 
   const banChannel = interaction.guild.channels.cache.find(
     (channel) => channel.name === CHANNELS.bans && channel.isTextBased?.()
@@ -160,58 +107,55 @@ async function submitAdminBan(interaction, targetUserId) {
     const imageName = PANEL_IMAGES.banApplied;
     const embed = baseEmbed()
       .setColor(0xc0392b)
-      .setTitle('🚫 BANIMENTO APLICADO • CHAMPIONS Z')
+      .setTitle('🚫 BANIMENTO REGISTRADO • CHAMPIONS Z')
       .setDescription([
-        `O jogador **${nickname}** foi removido da comunidade e banido do Discord.`,
+        `O jogador **${nickname}** foi **banido do servidor**.`,
         '',
-        `**Discord:** <@${targetUser.id}>`,
+        `**Discord:** ${discordName}`,
         `**Steam64:** \`${steam64}\``,
         `**Motivo:** ${reason}`,
         '',
-        `**Aplicado por:** ${interaction.user}`
+        `**Registrado por:** ${interaction.user}`
       ].join('\n'))
-      .setThumbnail(targetUser.displayAvatarURL({ size: 256 }))
       .setImage(`attachment://${imageName}`)
       .addFields(
         { name: '🎮 Nick DayZ', value: nickname, inline: true },
-        { name: '🆔 Discord ID', value: targetUser.id, inline: true },
+        { name: '💬 Discord', value: discordName, inline: true },
         { name: '🔗 Steam64', value: steam64, inline: false },
         { name: '⛔ Situação', value: '**BANIDO**', inline: true },
-        { name: '👑 Administração', value: `${interaction.user.tag}`, inline: true }
+        { name: '👑 Administração', value: `${interaction.user.tag}`, inline: true },
+        { name: '📝 Motivo', value: reason.slice(0, 1024), inline: false }
       )
       .setFooter({ text: 'CHAMPIONS Z • Jogo limpo sempre' });
 
     const sent = await banChannel.send({
-      content: `🚫 **Banimento registrado:** <@${targetUser.id}>`,
+      content: '🚫 **Banimento registrado com sucesso.**',
       embeds: [embed],
-      files: [localImage(imageName)],
-      allowedMentions: { users: [] }
+      files: [localImage(imageName)]
     }).catch(() => null);
     published = Boolean(sent);
   }
 
-  await logEvent(interaction.guild, 'admin_ban_panel', '🚫 Ban aplicado pelo painel', `${interaction.user} baniu ${targetUser.tag}.`, [
+  await logEvent(interaction.guild, 'admin_ban_panel', '🚫 Banimento registrado pelo painel', `${interaction.user} registrou o banimento de ${nickname}.`, [
     { name: 'Nick DayZ', value: nickname, inline: true },
     { name: 'Steam64', value: steam64, inline: true },
-    { name: 'Discord', value: `${targetUser.tag} (${targetUser.id})`, inline: false },
+    { name: 'Discord', value: discordName, inline: false },
     { name: 'Motivo', value: reason, inline: false }
   ]);
 
   const result = [
-    `**${targetUser.tag}** foi banido com sucesso.`,
+    `O banimento de **${nickname}** foi registrado com sucesso.`,
     `🎮 Nick: **${nickname}**`,
+    `💬 Discord: **${discordName}**`,
     `🔗 Steam64: \`${steam64}\``,
-    published ? `📢 Registro publicado em **${CHANNELS.bans}**.` : `⚠️ O canal **${CHANNELS.bans}** não foi encontrado; o ban foi aplicado, mas o anúncio não foi publicado.`
+    published ? `📢 Registro publicado em **${CHANNELS.bans}**.` : `⚠️ O canal **${CHANNELS.bans}** não foi encontrado; o registro não foi publicado.`
   ].join('\n');
 
   return interaction.editReply({ embeds: [successEmbed(result)] });
 }
 
 module.exports = {
-  MANAGED_BAN_PREFIX,
-  consumeManagedBanTarget,
   buildAdminBanModal,
   isAdminForBan,
-  isManagedBanReason,
   submitAdminBan
 };

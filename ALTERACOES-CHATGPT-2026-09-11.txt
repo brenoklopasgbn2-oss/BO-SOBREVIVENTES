@@ -31,3 +31,10 @@ ALTERAÇÕES APLICADAS NO DISCORD / BOT CHAMPIONS Z
 
 OBSERVAÇÃO
 Para aplicar tudo no servidor, rode novamente o comando /setup com o bot online.
+
+
+ATUALIZAÇÃO EXTRA
+- /banir agora apenas registra o banimento; não remove mais o usuário do Discord.
+- Campo de Discord no painel virou texto opcional (não precisa marcar o jogador).
+- Painel de atendimento foi reescrito para ficar mais bonito e organizado.
+- Painel de ticket agora usa a arte champions-z-atendimento.png.

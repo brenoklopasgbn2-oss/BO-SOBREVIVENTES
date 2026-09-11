@@ -3,7 +3,6 @@ const { AttachmentBuilder, AuditLogEvent, Events } = require('discord.js');
 const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
-const { consumeManagedBanTarget, isManagedBanReason } = require('../services/adminBanService');
 
 function localImage(fileName) {
   return new AttachmentBuilder(path.join(process.cwd(), 'assets', 'painels', fileName));
@@ -27,15 +26,13 @@ module.exports = {
       // ignore audit errors
     }
 
-    const managedByPanel = consumeManagedBanTarget(ban.user.id) || isManagedBanReason(reason);
-
-    if (channel && !managedByPanel) {
+    if (channel) {
       const imageName = PANEL_IMAGES.banApplied;
       const embed = baseEmbed()
         .setColor(0xc0392b)
         .setTitle('🚫 Banimento Aplicado')
         .setDescription([
-          `O jogador **${ban.user.tag}** foi banido da comunidade.`,
+          `O jogador **${ban.user.tag}** foi banido da comunidade do Discord.`,
           '',
           `**Motivo:** ${reason}`,
           executor ? `**Aplicado por:** ${executor}` : '**Aplicado por:** Staff'
@@ -45,7 +42,7 @@ module.exports = {
         .addFields(
           { name: '👤 Usuário', value: `${ban.user.tag}`, inline: true },
           { name: '🆔 ID', value: `${ban.user.id}`, inline: true },
-          { name: '⛔ Ação', value: 'Banimento', inline: true }
+          { name: '⛔ Ação', value: 'Banimento no Discord', inline: true }
         );
 
       await channel.send({ embeds: [embed], files: [localImage(imageName)] }).catch(() => null);

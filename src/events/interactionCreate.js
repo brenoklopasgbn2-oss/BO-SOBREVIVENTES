@@ -46,7 +46,7 @@ module.exports = {
           return;
         }
         if (action === 'admin_ban_form') {
-          await submitAdminBan(interaction, value);
+          await submitAdminBan(interaction);
           return;
         }
       }

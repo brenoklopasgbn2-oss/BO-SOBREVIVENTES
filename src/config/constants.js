@@ -167,7 +167,7 @@ const TICKET_TYPES = {
 
 const PANEL_IMAGES = {
   welcome: 'champions-z-bem-vindo.png',
-  ticket: 'champions-z-ticket.png',
+  ticket: 'champions-z-atendimento.png',
   report: 'champions-z-denuncias.png',
   bug: 'champions-z-reportar-bug.png',
   announcement: 'champions-z-comunicado.png',
