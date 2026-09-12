@@ -42,7 +42,7 @@
     "prisma": "^6.10.1"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=18.20"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

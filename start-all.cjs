@@ -2,43 +2,61 @@ const { spawn } = require('node:child_process');
 const path = require('node:path');
 
 const root = __dirname;
-const children = [];
+let webChild = null;
+let botChild = null;
 let shuttingDown = false;
+let botRestartTimer = null;
 
-function start(name, script) {
+function spawnChild(name, script) {
   const child = spawn(process.execPath, [script], {
     cwd: root,
     env: process.env,
     stdio: 'inherit'
   });
-  children.push(child);
-  child.on('exit', (code, signal) => {
-    if (shuttingDown) return;
-    console.error(`[${name}] encerrou (${signal || code}). Encerrando plataforma para o Railway reiniciar tudo junto.`);
-    shuttingDown = true;
-    for (const other of children) {
-      if (other !== child && !other.killed) other.kill('SIGTERM');
-    }
-    process.exit(code || 1);
+
+  child.on('error', (error) => {
+    console.error(`[${name}] falha ao iniciar:`, error);
   });
+
   return child;
 }
 
-start('WEB', path.join(root, 'src', 'index.js'));
-
-const token = process.env.TOKEN || process.env.DISCORD_TOKEN || process.env.BOT_TOKEN;
-if (token) {
-  start('DISCORD', path.join(root, 'discord-bot', 'src', 'index.js'));
-} else {
-  console.warn('[DISCORD] TOKEN/DISCORD_TOKEN/BOT_TOKEN ausente. Site inicia normalmente, bot fica desativado.');
+function startWeb() {
+  webChild = spawnChild('WEB', path.join(root, 'src', 'index.js'));
+  webChild.on('exit', (code, signal) => {
+    if (shuttingDown) return;
+    console.error(`[WEB] encerrou (${signal || code}). Solicitando restart da plataforma pelo Railway.`);
+    shutdown('SIGTERM', code || 1);
+  });
 }
 
-function shutdown(signal) {
+function startDiscord() {
+  const token = process.env.TOKEN || process.env.DISCORD_TOKEN || process.env.BOT_TOKEN;
+  if (!token) {
+    console.warn('[DISCORD] TOKEN/DISCORD_TOKEN/BOT_TOKEN ausente. Site continuará online; bot fica desativado.');
+    return;
+  }
+
+  botChild = spawnChild('DISCORD', path.join(root, 'discord-bot', 'src', 'index.js'));
+  botChild.on('exit', (code, signal) => {
+    if (shuttingDown) return;
+    console.error(`[DISCORD] encerrou (${signal || code}). O site continuará online. Nova tentativa em 5 segundos.`);
+    botRestartTimer = setTimeout(startDiscord, 5000);
+    botRestartTimer.unref?.();
+  });
+}
+
+function shutdown(signal = 'SIGTERM', exitCode = 0) {
   if (shuttingDown) return;
   shuttingDown = true;
-  for (const child of children) if (!child.killed) child.kill(signal);
-  setTimeout(() => process.exit(0), 3000).unref();
+  if (botRestartTimer) clearTimeout(botRestartTimer);
+  if (botChild && !botChild.killed) botChild.kill(signal);
+  if (webChild && !webChild.killed) webChild.kill(signal);
+  setTimeout(() => process.exit(exitCode), 1500).unref();
 }
 
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+startWeb();
+startDiscord();
+
+process.on('SIGINT', () => shutdown('SIGINT', 0));
+process.on('SIGTERM', () => shutdown('SIGTERM', 0));

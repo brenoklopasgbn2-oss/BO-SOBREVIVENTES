@@ -11,16 +11,22 @@ function readJsFiles(directory) {
   });
 }
 
+// IMPORTANTE NO MONOREPO:
+// O Railway inicia tudo com cwd=/app. Se usarmos process.cwd(), o bot procura
+// /app/src (site) em vez de /app/discord-bot/src. Sempre resolvemos a partir
+// deste arquivo para manter comandos/eventos/botoes dentro do pacote do bot.
+const BOT_SRC_DIR = path.resolve(__dirname, '..');
+
 function readCommandFiles() {
-  return readJsFiles(path.join(process.cwd(), 'src', 'commands'));
+  return readJsFiles(path.join(BOT_SRC_DIR, 'commands'));
 }
 
 function readEventFiles() {
-  return readJsFiles(path.join(process.cwd(), 'src', 'events'));
+  return readJsFiles(path.join(BOT_SRC_DIR, 'events'));
 }
 
 function readButtonFiles() {
-  return readJsFiles(path.join(process.cwd(), 'src', 'buttons'));
+  return readJsFiles(path.join(BOT_SRC_DIR, 'buttons'));
 }
 
 module.exports = { readJsFiles, readCommandFiles, readEventFiles, readButtonFiles };
