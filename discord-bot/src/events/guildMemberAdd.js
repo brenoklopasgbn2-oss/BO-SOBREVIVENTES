@@ -2,6 +2,7 @@ const path = require('path');
 const { AttachmentBuilder, EmbedBuilder, Events } = require('discord.js');
 const { CHANNELS, PANEL_IMAGES, ROLE_NAMES } = require('../config/constants');
 const { logEvent } = require('../utils/logger');
+const { findStreamerProfileByDiscord } = require('../services/streamerReferralService');
 
 function findTextChannel(guild, name) {
   return guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased());
@@ -16,7 +17,14 @@ module.exports = {
     const survivorRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.survivor);
     if (survivorRole) await member.roles.add(survivorRole, 'Entrada automática CHAMPIONS Z').catch(() => null);
 
+    const streamerProfile = await findStreamerProfileByDiscord(member.guild.id, member.id).catch(() => null);
+    if (streamerProfile?.active) {
+      const streamerRole = member.guild.roles.cache.find((role) => role.name === ROLE_NAMES.streamer);
+      if (streamerRole) await member.roles.add(streamerRole, 'Streamer ativo restaurado pelo cadastro persistente').catch(() => null);
+    }
+
     const welcomeChannel = findTextChannel(member.guild, CHANNELS.memberWelcome);
+    const referralChannel = findTextChannel(member.guild, CHANNELS.streamerReferral);
     if (welcomeChannel) {
       const accountCreated = Math.floor(member.user.createdTimestamp / 1000);
       const imageName = PANEL_IMAGES.welcomeMember;
@@ -30,7 +38,8 @@ module.exports = {
           '🗺️ **Chernarus** • 👁️ **1PP** • ⚔️ **Competitivo**',
           '🔐 **2 Bunkers** • 🪖 **10 áreas militares** • ☣️ **Novos perigos**',
           '',
-          'Seu cargo de **Sobrevivente** foi liberado automaticamente. Leia as regras resumidas e boa jornada.'
+          'Seu cargo de **Sobrevivente** foi liberado automaticamente. Leia as regras resumidas e boa jornada.',
+          referralChannel ? `🎥 Conheceu o servidor por um streamer? Registre em ${referralChannel}.` : ''
         ].join('\n'))
         .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
         .setImage(`attachment://${imageName}`)

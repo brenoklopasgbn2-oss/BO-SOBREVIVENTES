@@ -3,6 +3,7 @@ const { errorEmbed } = require('../utils/embeds');
 const { logEvent } = require('../utils/logger');
 const { submitTicketForm, handleTicketLanguageSelect } = require('../tickets/ticketService');
 const { submitAdminBan } = require('../services/adminBanService');
+const { handleReferralSelect, handleStaffRegisterUserSelect, handleStaffRegisterModal, handleStaffDetailsSelect } = require('../services/streamerReferralDiscordService');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -35,6 +36,24 @@ module.exports = {
         const action = interaction.customId.split(':')[0];
         if (action === 'ticket_language_select') {
           await handleTicketLanguageSelect(interaction);
+          return;
+        }
+        if (action === 'streamer_referral_select') {
+          await handleReferralSelect(interaction);
+          return;
+        }
+        if (action === 'streamer_staff_details_select') {
+          await handleStaffDetailsSelect(interaction);
+          return;
+        }
+        return;
+      }
+
+      if (interaction.isUserSelectMenu()) {
+        const action = interaction.customId.split(':')[0];
+        if (action === 'streamer_staff_register_user_select') {
+          await handleStaffRegisterUserSelect(interaction);
+          return;
         }
         return;
       }
@@ -47,6 +66,10 @@ module.exports = {
         }
         if (action === 'admin_ban_form') {
           await submitAdminBan(interaction);
+          return;
+        }
+        if (action === 'streamer_staff_register_modal') {
+          await handleStaffRegisterModal(interaction);
           return;
         }
       }

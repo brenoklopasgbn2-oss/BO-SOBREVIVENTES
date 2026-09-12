@@ -806,6 +806,40 @@ model CouponUse {
   @@index([createdAt])
 }
 
+model StreamerReferralProfile {
+  id                    String             @id @default(uuid())
+  guildId               String
+  discordUserId         String
+  streamerName          String
+  active                Boolean            @default(true)
+  registeredByDiscordId String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  referrals             StreamerReferral[]
+
+  @@unique([guildId, discordUserId])
+  @@index([guildId, active])
+  @@index([discordUserId])
+}
+
+model StreamerReferral {
+  id                    String                  @id @default(uuid())
+  guildId               String
+  playerDiscordId       String
+  playerDiscordUsername String?
+  playerDisplayName     String?
+  playerSteam64         String?
+  streamerProfileId     String
+  streamerProfile       StreamerReferralProfile @relation(fields: [streamerProfileId], references: [id], onDelete: Restrict)
+  selectedAt            DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  @@unique([guildId, playerDiscordId])
+  @@index([streamerProfileId, selectedAt])
+  @@index([guildId, selectedAt])
+  @@index([playerSteam64])
+}
+
 model StreamerCode {
   id                   String           @id @default(uuid())
   code                 String           @unique

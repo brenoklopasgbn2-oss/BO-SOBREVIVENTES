@@ -5,6 +5,7 @@ const { ACTIVE_COMMAND_FILES } = require('../utils/loadCommands');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { initializeStaffStatsForGuild, setupDailyStaffStatsReport } = require('../stats/staffStats');
 const { startDiscordOutboxWorker } = require('../services/discordOutboxWorker');
+const { refreshStreamerStaffPanel, syncActiveStreamerRoles } = require('../services/streamerReferralDiscordService');
 
 function getLocalCommands() {
   return readCommandFiles()
@@ -67,6 +68,8 @@ module.exports = {
       await guild.members.fetch().catch(() => null);
       initializeStaffStatsForGuild(guild);
       await refreshTicketPanel(guild).catch(() => null);
+      await syncActiveStreamerRoles(guild).catch(() => null);
+      await refreshStreamerStaffPanel(guild).catch(() => null);
     }
   }
 };

@@ -7,6 +7,7 @@ const ROLE_NAMES = {
   support: 'Suporte',
   developer: 'Desenvolvedor',
   vip: 'Impulsionador',
+  streamer: 'Streamer',
   survivor: 'Sobrevivente',
   // aliases internos mantidos para não quebrar partes antigas do sistema
   vanilla: 'Sobrevivente',
@@ -31,6 +32,7 @@ const ROLE_DEFINITIONS = [
   { name: ROLE_NAMES.support, color: 0x32c980, hoist: true },
   { name: ROLE_NAMES.developer, color: 0x9b59b6, hoist: true },
   { name: ROLE_NAMES.vip, color: 0xff6fbd, hoist: true },
+  { name: ROLE_NAMES.streamer, color: 0xd4af37, hoist: true },
   { name: ROLE_NAMES.survivor, color: 0xe3263e, hoist: false }
 ];
 
@@ -85,6 +87,9 @@ const CHANNELS = {
   ghillieCamonet: '🥷・ghillie-camonet',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
+  streamerReferral: '🎥・quem-te-trouxe',
+  streamerStaffPanel: '🎬・gestao-streamers',
+  streamerReferralLogs: '📥・indicacoes-streamers',
   openTicket: '🎫・abrir-ticket',
   reportsPanel: '🚨・denuncias',
   bugPanel: '🐞・reportar-bug',
@@ -140,6 +145,9 @@ const CHANNEL_ALIASES = {
   [CHANNELS.ghillieCamonet]: ['ghillie-camonet', 'guile-camonet', 'ghillie', 'camonet-ghillie', 'guia-ghillie'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
+  [CHANNELS.streamerReferral]: ['quem-te-trouxe', 'indicacao-streamer', 'streamer-indicacao'],
+  [CHANNELS.streamerStaffPanel]: ['gestao-streamers', 'painel-streamers', 'streamers-staff'],
+  [CHANNELS.streamerReferralLogs]: ['indicacoes-streamers', 'logs-streamers', 'streamer-logs'],
   [CHANNELS.openTicket]: ['abrir-ticket'],
   [CHANNELS.reportsPanel]: ['denúncias', 'denuncias'],
   [CHANNELS.bugPanel]: ['reportar-bug'],
@@ -236,6 +244,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: '💬・chat-geral', aliases: ['chat-geral', '💬・vanilla-chat', 'vanilla-chat'], topic: 'Conversa geral da comunidade CHAMPIONS Z.' },
       { type: 'text', name: '🎬・clips', aliases: ['clips', '🎬・vanilla-clips', 'vanilla-clips'], topic: 'Clipes e momentos do CHAMPIONS Z.' },
       { type: 'text', name: '🤝・procurar-grupo', aliases: ['procurar-grupo'], topic: 'Encontre outros jogadores e monte seu grupo para jogar.' },
+      { type: 'text', name: CHANNELS.streamerReferral, aliases: CHANNEL_ALIASES[CHANNELS.streamerReferral], topic: 'Informe qual streamer trouxe você para o CHAMPIONS Z.', readOnly: true },
       { type: 'voice', name: CHANNELS.generalVoice1, aliases: CHANNEL_ALIASES[CHANNELS.generalVoice1], topic: 'Canal geral de voz.', userLimit: 0 },
       { type: 'voice', name: CHANNELS.generalVoice2, aliases: CHANNEL_ALIASES[CHANNELS.generalVoice2], topic: 'Canal geral de voz.', userLimit: 0 },
       { type: 'voice', name: CHANNELS.squadVoice1, aliases: CHANNEL_ALIASES[CHANNELS.squadVoice1], topic: 'Canal de grupo.', userLimit: 15 },
@@ -263,7 +272,9 @@ const CATEGORY_DEFINITIONS = [
     allowedRoles: STAFF_ROLES,
     channels: [
       { type: 'text', name: CHANNELS.purchaseLogs, aliases: CHANNEL_ALIASES[CHANNELS.purchaseLogs], topic: 'Registro automático de todas as compras de moedas aprovadas no site.', readOnly: true },
-      { type: 'text', name: CHANNELS.linkAlerts, aliases: CHANNEL_ALIASES[CHANNELS.linkAlerts], topic: 'Alertas de jogadores com mais de 30 minutos online sem vínculo Discord ↔ Steam.', readOnly: true }
+      { type: 'text', name: CHANNELS.linkAlerts, aliases: CHANNEL_ALIASES[CHANNELS.linkAlerts], topic: 'Alertas de jogadores com mais de 30 minutos online sem vínculo Discord ↔ Steam.', readOnly: true },
+      { type: 'text', name: CHANNELS.streamerStaffPanel, aliases: CHANNEL_ALIASES[CHANNELS.streamerStaffPanel], topic: 'Cadastro, gerenciamento e ranking de streamers do CHAMPIONS Z.', readOnly: true },
+      { type: 'text', name: CHANNELS.streamerReferralLogs, aliases: CHANNEL_ALIASES[CHANNELS.streamerReferralLogs], topic: 'Log privado de quem veio por qual streamer.', readOnly: true }
     ]
   },
   { name: CATEGORY_NAMES.ticketsOpen, aliases: CATEGORY_ALIASES[CATEGORY_NAMES.ticketsOpen], allowedRoles: STAFF_ROLES, channels: [] },

@@ -27,10 +27,13 @@ const { buildNbcYellowPanel } = require('../panels/nbcYellowPanel');
 const { buildVehicleFlipPanel } = require('../panels/vehicleFlipPanel');
 const { buildPlaneCrashPanel } = require('../panels/planeCrashPanel');
 const { buildGhillieCamonetPanel } = require('../panels/ghillieCamonetPanel');
+const { buildStreamerReferralPanel } = require('../panels/streamerReferralPanel');
+const { buildStreamerStaffPanel } = require('../panels/streamerStaffPanel');
 const { SUPPORT_CATEGORY_NAMES, updateSupportCategoryStatus } = require('../panels/supportStatus');
 const { refreshTicketPanel } = require('../panels/refreshTicketPanel');
 const { readOnlyChannelOverwrites, roleOnlyOverwrites, serverMemberOverwrites, visibleToEveryoneOverwrites } = require('../utils/permissions');
 const { successEmbed } = require('../utils/embeds');
+const { syncActiveStreamerRoles } = require('../services/streamerReferralDiscordService');
 const { logEvent } = require('../utils/logger');
 
 function getCategoryOverwrites(guild, definition) {
@@ -254,7 +257,7 @@ function payloadTitle(payload) {
 async function clearAndSendPanel(channel, panelBuilder, { replaceBotMessages = false } = {}) {
   if (!channel?.isTextBased()) return;
   const ownBotId = channel.client.user.id;
-  const payloads = panelBuilder();
+  const payloads = await panelBuilder();
   const list = Array.isArray(payloads) ? payloads : [payloads];
   const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
   const botMessages = messages ? [...messages.values()].filter((message) => message.author.id === ownBotId) : [];
@@ -338,6 +341,8 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.vehicleFlip), buildVehicleFlipPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.planeCrash), buildPlaneCrashPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.ghillieCamonet), buildGhillieCamonetPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.streamerReferral), buildStreamerReferralPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.streamerStaffPanel), () => buildStreamerStaffPanel(guild.id), { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(guild), { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.linkAccount), buildLinkAccountPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.reportsPanel), buildReportPanel, { replaceBotMessages: true });
@@ -346,6 +351,7 @@ module.exports = {
 
     await updateSupportCategoryStatus(guild);
     await refreshTicketPanel(guild);
+    await syncActiveStreamerRoles(guild).catch(() => null);
 
     await logEvent(guild, 'setup_completed', '✅ Setup CHAMPIONS Z executado', `${interaction.user} aplicou a nova estrutura CHAMPIONS Z.`, [
       { name: 'Canais antigos removidos', value: String(removedLegacyChannels), inline: true },
