@@ -1,19 +1,50 @@
 {
-  "name": "champions-z-bot",
-  "version": "2.0.0",
-  "description": "Bot Discord do CHAMPIONS Z para comunidade DayZ em Chernarus.",
+  "name": "champions-z-platform",
+  "version": "4.0.0",
+  "description": "Plataforma unificada CHAMPIONS Z: site, Discord, ranking, clãs, Pix e API DayZ.",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "deploy:commands": "node src/deploy-commands.js"
-  },
-  "engines": {
-    "node": "18.x"
+    "dev": "nodemon src/index.js",
+    "start": "node src/scripts/predeployConfigCheck.js && node src/scripts/predeploySafetyCheck.js && prisma generate && node src/scripts/safeMigrateDeploy.js && node start-all.cjs",
+    "start:local": "node start-all.cjs",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "seed": "node prisma/seed.js",
+    "safe:deploy-check": "node src/scripts/predeploySafetyCheck.js",
+    "check:config": "node src/scripts/predeployConfigCheck.js",
+    "setup:secrets": "node src/scripts/generateSecrets.js",
+    "web": "node src/index.js",
+    "bot": "node discord-bot/src/index.js",
+    "deploy:commands": "node discord-bot/src/deploy-commands.js"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.8.2",
-    "discord-html-transcripts": "^3.2.0",
+    "@prisma/client": "^6.10.1",
+    "compression": "^1.8.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.1",
+    "node-cron": "^4.1.0",
+    "qrcode": "^1.5.4",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.64",
     "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5"
+    "discord-html-transcripts": "^3.2.0",
+    "@discordjs/builders": "^1.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.10.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

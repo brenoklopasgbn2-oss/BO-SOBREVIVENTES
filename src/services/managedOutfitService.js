@@ -309,7 +309,7 @@ function cleanClanNameFromOutfit(outfitName = '', ownerName = '') {
     .replace(/[\[\](){}_|]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  return (cleaned || String(ownerName || '').trim() || 'Clã ZONA-Z').slice(0, 80);
+  return (cleaned || String(ownerName || '').trim() || 'Clã DayZ').slice(0, 80);
 }
 
 function cleanClanTag(value = '') {
@@ -489,9 +489,9 @@ export async function ensureClansForManagedClanOutfits() {
               slug,
               serverType: 'vanilla',
               description: outfit.description || `Clã vinculado ao traje VIP personalizado ${outfit.name}.`,
-              flagUrl: outfit.imageUrl || null,
-              flagData: outfit.imageData || null,
-              flagMime: outfit.imageMime || null,
+              flagUrl: null,
+              flagData: null,
+              flagMime: null,
               ownerPlayerId: owner.id,
               status: 'ACTIVE',
               isRecruiting: false,
@@ -688,7 +688,7 @@ export async function addManagedOutfitMember({ outfitId, ownerPlayerId, memberSt
       });
       if (!clan || !clan.members.length) throw new Error('Esse player precisa estar no clã antes de receber o traje personalizado.');
       if (clanOutfitIsPaid(outfit) && member.id !== owner.id) {
-        throw new Error(`Este traje custa ${clanOutfitMonthlyPrice(outfit).toLocaleString('pt-BR')} RZ por player/mês. O próprio membro deve comprar no painel do clã.`);
+        throw new Error(`Este traje custa ${clanOutfitMonthlyPrice(outfit).toLocaleString('pt-BR')} moedas por player/mês. O próprio membro deve comprar no painel do clã.`);
       }
       const subscription = await grantManagedSubscription(tx, { outfit, player: member, source: CLAN_MEMBER_SOURCE, expiresAt: FOREVER });
       return { outfit, member, subscription, chargedCoins: 0 };
@@ -961,18 +961,18 @@ export async function requestManagedOutfitFlag({ outfitId, ownerPlayerId }) {
 
   try {
     // Importação dinâmica evita ciclo entre outfitService, managedOutfitService
-    // e fileBridgeService durante o início do site.
-    const { publishPlayerDeliveryFilesNow } = await import('./fileBridgeService.js');
-    result.fileBridgeImmediate = await publishPlayerDeliveryFilesNow([result.owner.steam64]);
+    // e o bridge da API durante o início do site.
+    const { publishPlayerDeliveryFilesNow } = await import('./gameApiBridgeService.js');
+    result.fileBridgeImmediate = await publishPlayerDeliveryFilesNow([result.owner.steam64], { syncInsurance: false });
   } catch (error) {
     // A entrega já ficou salva no banco. A fila rápida e o ciclo periódico ficam
-    // como recuperação, sem perder a bandeira caso o FTP oscile por alguns segundos.
+    // como recuperação, sem perder a bandeira caso o API oscile por alguns segundos.
     try {
-      const { queueImmediatePlayerFileSync } = await import('./fileBridgeService.js');
+      const { queueImmediatePlayerFileSync } = await import('./gameApiBridgeService.js');
       queueImmediatePlayerFileSync(result.owner.steam64);
     } catch {}
     result.fileBridgeImmediate = { ok: false, error: String(error?.message || error) };
-    console.error('[FILE_BRIDGE_NOW] Bandeira personalizada salva, mas o FTP imediato falhou:', error.message);
+    console.error('[FILE_BRIDGE_NOW] Bandeira personalizada salva; o mod buscará no próximo ciclo da API:', error.message);
   }
 
   return result;
@@ -1021,8 +1021,16 @@ export async function getCustomOutfitOrdersForPlayer(steam64) {
 
 export async function getManagedOutfitAdminData() {
   const [orders, flagRequests] = await Promise.all([
-    prisma.customOutfitOrder.findMany({ include: { player: true }, orderBy: { createdAt: 'desc' }, take: 200 }),
-    prisma.outfitFlagRequest.findMany({ include: { outfitTemplate: true }, orderBy: { createdAt: 'desc' }, take: 200 })
+    prisma.customOutfitOrder.findMany({
+      include: { player: { select: { id: true, steam64: true, nickname: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 100
+    }),
+    prisma.outfitFlagRequest.findMany({
+      include: { outfitTemplate: { select: { id: true, name: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 100
+    })
   ]);
   return { orders, flagRequests };
 }

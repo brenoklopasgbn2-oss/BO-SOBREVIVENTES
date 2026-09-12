@@ -1,47 +1,316 @@
 <%- include('partials/head') %>
+<link rel="stylesheet" href="/css/zona-z-pages-v500.css?v=500">
 <%- include('partials/nav') %>
-<main class="container outfits-page-v49">
+<main class="vip-studio-v300">
   <%- include('partials/alerts') %>
-  <style>
-    .outfits-page-v49{max-width:1500px;margin:0 auto;padding:36px 32px 70px}.outfit-hero-v49{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:stretch;margin-bottom:24px}.outfit-card-v49,.outfit-panel-v49{border:1px solid rgba(255,255,255,.12);border-radius:26px;background:linear-gradient(135deg,rgba(12,18,30,.88),rgba(3,7,14,.94));box-shadow:0 30px 90px rgba(0,0,0,.35);overflow:hidden}.outfit-hero-v49>div{padding:28px}.outfit-hero-v49 h1{margin:0;font-size:clamp(2.4rem,5vw,5rem);line-height:.9;text-transform:uppercase}.outfit-hero-v49 h1 span{color:#ff5a3d}.outfit-hero-v49 p{color:#b9c4d3;line-height:1.6}.outfit-active-v49{padding:22px;border-radius:20px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.28)}.outfit-grid-v49{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.outfit-card-v49{position:relative;padding:18px;display:flex;flex-direction:column;gap:14px}.outfit-card-v49 img{width:100%;height:170px;object-fit:contain;border-radius:18px;background:radial-gradient(circle at 50% 18%,rgba(239,68,68,.18),rgba(2,6,15,.9));border:1px solid rgba(255,255,255,.08)}.outfit-card-v49 h3{margin:0;font-size:1.25rem}.outfit-card-v49 p{margin:0;color:#aeb9c9;line-height:1.45}.outfit-price-v49{display:flex;justify-content:space-between;gap:10px;align-items:center}.outfit-price-v49 b{font-size:1.28rem;color:#fed7aa}.outfit-items-v49{display:flex;gap:6px;flex-wrap:wrap;max-height:78px;overflow:auto}.outfit-items-v49 code{font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:5px 7px;color:#dbeafe}.outfit-actions-v49{display:grid;gap:9px;margin-top:auto}.outfit-actions-v49 form{display:grid;gap:8px}.outfit-actions-v49 input,.outfit-actions-v49 select{width:100%;background:#050b16;border:1px solid rgba(255,255,255,.13);border-radius:12px;color:#fff;padding:12px}.streamer-free-v49{border-color:rgba(56,189,248,.42);box-shadow:0 0 36px rgba(56,189,248,.10)}.tag-v49{position:absolute;top:14px;left:14px;background:linear-gradient(90deg,#ef4444,#fb923c);border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:1000;text-transform:uppercase}.btn.full{width:100%}@media(max-width:900px){.outfit-hero-v49{grid-template-columns:1fr}.outfits-page-v49{padding:20px 14px}}
-  </style>
-  <section class="outfit-hero-v49">
-    <div class="outfit-panel-v49">
-      <p class="v9-kicker">Trajes VIP mensais</p>
-      <h1>Nasça equipado com <span>estilo</span></h1>
-      <p>Assine um traje mensal. Enquanto estiver ativo, quando você morrer e renascer o mod poderá consultar o site e montar seu inventário com o kit configurado. Se vencer, volta ao spawn padrão do servidor.</p>
+  <div class="zz-cmd-strip">
+    <span class="zz-cmd-dot"></span>
+    <span class="zz-cmd-code">SETOR // <b>ELITE VIP</b></span>
+    <span class="zz-cmd-tags"><span>Coleção premium</span><span>Ativação imediata</span><span>30 dias</span></span>
+  </div>
+  <% 
+    const fmt = value => Number(value || 0).toLocaleString('pt-BR');
+    const vipGroups = [];
+    const groupMap = new Map();
+
+    for (const outfit of (outfits || [])) {
+      const rawName = String(outfit.name || 'Traje VIP');
+      const parts = rawName.split(' • ');
+      const baseName = parts.length > 1 ? parts[0].trim() : rawName;
+      const variantName = parts.length > 1 ? parts.slice(1).join(' • ').trim() : rawName;
+      const key = `${baseName}||${outfit.imageUrl || ''}`;
+
+      if (!groupMap.has(key)) {
+        const group = {
+          key,
+          name: baseName,
+          description: outfit.description || '',
+          imageUrl: outfit.imageUrl || '',
+          durationDays: outfit.durationDays,
+          variants: []
+        };
+        groupMap.set(key, group);
+        vipGroups.push(group);
+      }
+
+      groupMap.get(key).variants.push({ ...outfit, variantName });
+    }
+  %>
+
+  <section class="zz-banner zz-banner--vip" aria-label="Área VIP <%= appName %>">
+    <div class="zz-banner-media" style="background-image:url('/images/zona-z/vip-hero.png')"></div>
+    <div class="zz-banner-scrim"></div>
+    <span class="zz-banner-corner tl"></span><span class="zz-banner-corner tr"></span>
+    <span class="zz-banner-corner bl"></span><span class="zz-banner-corner br"></span>
+    <div class="zz-banner-inner">
+      <span class="zz-banner-kicker"><%= appName %> // Operadores de elite</span>
+      <h1 class="zz-banner-title">Vista-se como <b>elite</b></h1>
+      <p class="zz-banner-sub">Trajes táticos exclusivos com kit completo, combos e mochila à sua escolha. Ativação imediata e vinculada à sua conta por 30 dias.</p>
+      <div class="zz-banner-tags"><span>Coleção premium</span><span>Ativação imediata</span><span>30 dias</span></div>
     </div>
-    <div class="outfit-panel-v49">
-      <h2>Status do seu traje</h2>
-      <% if (activeOutfit) { %>
-        <div class="outfit-active-v49"><strong><%= activeOutfit.outfitTemplate.name %></strong><br><small>Ativo até <%= activeOutfit.expiresAt.toLocaleDateString('pt-BR') %> • <%= activeOutfit.source === 'STREAMER_REWARD' ? 'Recompensa streamer 7 dias' : 'Assinatura mensal' %></small></div>
-      <% } else { %>
-        <p class="muted">Você ainda não tem traje ativo. Escolha um abaixo.</p>
-      <% } %>
+    <div class="zz-banner-stats">
+      <div><small>Trajes</small><strong><%= vipGroups.length %></strong></div>
+      <div><small>Variações</small><strong><%= (outfits || []).length %></strong></div>
     </div>
   </section>
 
-  <section class="outfit-grid-v49">
-    <% outfits.forEach(outfit => { const items = Array.isArray(outfit.items) ? outfit.items : []; %>
-      <article class="outfit-card-v49 <%= outfit.streamerRewardEnabled ? 'streamer-free-v49' : '' %>">
-        <span class="tag-v49">Nível <%= outfit.level || 1 %></span>
-        <img loading="lazy" decoding="async" src="<%= outfit.imageData ? '/outfit-image/' + outfit.id : (outfit.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'" alt="<%= outfit.name %>">
-        <h3><%= outfit.name %></h3>
-        <p><%= outfit.description || 'Traje VIP configurável pelo ADM.' %></p>
-        <div class="outfit-price-v49"><span><%= outfit.durationDays || 30 %> dias</span><b><%= coins(outfit.priceCoins || 0) %> RZ</b></div>
-        <div class="outfit-items-v49"><% items.slice(0,10).forEach(item => { %><code><%= item.quantity || 1 %>x <%= item.label || item.classname %></code><% }) %><% if (items.length > 10) { %><code>+<%= items.length-10 %> itens</code><% } %></div>
-        <div class="outfit-actions-v49">
-          <% if (player) { %>
-            <form method="POST" action="/outfits/buy"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><button class="btn primary full" type="submit">Assinar por 30 dias</button></form>
-            <% if (outfit.streamerRewardEnabled) { %>
-              <form method="POST" action="/outfits/streamer-reward"><input type="hidden" name="outfitId" value="<%= outfit.id %>"><input name="streamerCode" value="<%= streamerCode || '' %>" placeholder="Código do streamer"><button class="btn full" type="submit">Usar código e ganhar 7 dias</button></form>
-            <% } %>
+  <section class="vip-hero-v300">
+    <div class="vip-hero-copy-v300">
+      <span>TRAJES VIP • VITRINE REFORMULADA</span>
+      <h1>Escolha seu traje com um visual mais premium.</h1>
+      <p>Refizemos a vitrine para ficar mais profissional, proporcional e mais fácil de entender. O player vê o vídeo, confere o que acompanha no traje e escolhe a mochila em uma área bem mais organizada.</p>
+
+      <div class="vip-summary-v300">
+        <div><small>TRAJES</small><strong><%= vipGroups.length %></strong></div>
+        <div><small>VARIAÇÕES</small><strong><%= (outfits || []).length %></strong></div>
+        <div><small>DURAÇÃO</small><strong>30 DIAS</strong></div>
+        <div><small>ATIVAÇÃO</small><strong>IMEDIATA</strong></div>
+      </div>
+    </div>
+
+    <% if (activeOutfit) { %>
+      <aside class="vip-active-v300">
+        <small>SEU VIP ATIVO</small>
+        <strong><%= activeOutfit.outfitTemplate?.name || activeOutfit.name || 'Traje VIP' %></strong>
+        <span>Até <%= activeOutfit.expiresAt ? new Date(activeOutfit.expiresAt).toLocaleString('pt-BR') : '—' %></span>
+        <p>Se comprar outro traje, a nova ativação será processada normalmente para sua conta.</p>
+      </aside>
+    <% } else { %>
+      <aside class="vip-active-v300 is-neutral">
+        <small>STATUS ATUAL</small>
+        <strong>Nenhum traje ativo</strong>
+        <span>Escolha sua cor favorita e ative direto pela loja.</span>
+        <p>Todos os cards abaixo usam vídeo em loop contínuo enquanto estiverem visíveis.</p>
+      </aside>
+    <% } %>
+  </section>
+
+  <section class="vip-list-v300">
+    <% vipGroups.forEach(group => {
+      const first = group.variants[0];
+      const firstItems = Array.isArray(first?.items) ? first.items : [];
+      const commonItems = firstItems.filter(item => !['back','backpack'].includes(String(item.slot || '').toLowerCase()));
+      const prices = group.variants.map(v => Number(v.priceCoins || 0)).filter(Boolean);
+      const minPrice = prices.length ? Math.min(...prices) : 0;
+      const maxPrice = prices.length ? Math.max(...prices) : 0;
+      const starterFreeVariant = group.variants.find(variant => {
+        const items = Array.isArray(variant.items) ? variant.items : [];
+        const bag = items.find(item => ['back','backpack'].includes(String(item.slot || '').toLowerCase()));
+        return String(variant.variantName || variant.name || '').toLowerCase().includes('assault pack 80 slots')
+          || (String(bag?.classname || '').toLowerCase().includes('assault_pack') && String(bag?.label || '').includes('80'));
+      });
+    %>
+      <article class="vip-card-v300">
+        <div class="vip-media-v300">
+          <% if (group.imageUrl) { %>
+            <video
+              src="<%= group.imageUrl %>"
+              data-vip-loop-video
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+              disablepictureinpicture
+            ></video>
           <% } else { %>
-            <a class="btn primary full" href="/#entrar">Entrar para assinar</a>
+            <div class="vip-no-video-v300">
+              <b>VÍDEO 360°</b>
+              <span>Adicione uma mídia para este traje no painel.</span>
+            </div>
+          <% } %>
+          <div class="vip-media-badges-v300">
+            <span><%= group.durationDays || 30 %> dias</span>
+            <span><%= group.variants.length %> opções</span>
+          </div>
+        </div>
+
+        <div class="vip-content-v300">
+          <div class="vip-top-v300">
+            <div>
+              <span class="vip-label-v300">TRAJE VIP</span>
+              <h2><%= group.name %></h2>
+              <p><%= group.description || 'Traje VIP configurado para o servidor.' %></p>
+            </div>
+
+            <div class="vip-price-box-v300">
+              <small>VALORES</small>
+              <strong><%= fmt(minPrice) %> <%= currencyName %><% if (maxPrice && maxPrice !== minPrice) { %> <span>até <%= fmt(maxPrice) %> <%= currencyName %></span><% } %></strong>
+            </div>
+          </div>
+
+          <div class="vip-benefits-v300">
+            <div><b>Inclui</b><span>Colete + belt + pouch + IFAK + garrafa</span></div>
+            <div><b>Combos</b><span>2 latas, 2 bandagens e Faca Tática</span></div>
+            <div><b>Mochila</b><span>Escolha a opção ideal antes de ativar</span></div>
+          </div>
+
+          <div class="vip-included-v300">
+            <strong>ITENS DO TRAJE</strong>
+            <div class="vip-item-list-v300">
+              <% commonItems.slice(0, 10).forEach(item => { %>
+                <code>
+                  <%= item.quantity || 1 %>x <%= item.label || item.classname %>
+                  <% if (item.liquidPercent !== null && item.liquidPercent !== undefined) { %> • <%= item.liquidPercent %>%<% } %>
+                  <% if (Array.isArray(item.attachments) && item.attachments.length) { %> • montado<% } %>
+                </code>
+              <% }) %>
+            </div>
+          </div>
+
+          <% if (player) { %>
+            <% if (starterVipBenefit?.eligible && starterFreeVariant) { %>
+              <form method="POST" action="/outfits/free-7d" class="vip-free-v225">
+                <input type="hidden" name="outfitId" value="<%= starterFreeVariant.id %>">
+                <div>
+                  <span>🎁 BENEFÍCIO DO KIT INICIAL</span>
+                  <strong>7 DIAS GRÁTIS • MOCHILA 80 SLOTS</strong>
+                  <small>Escolha esta cor/traje sem gastar <%= currencyName %>. Benefício disponível uma única vez por conta.</small>
+                </div>
+                <button type="submit">RESGATAR ESTE TRAJE GRÁTIS</button>
+              </form>
+            <% } else if (starterVipBenefit?.used && starterFreeVariant) { %>
+              <div class="vip-free-v225 used">
+                <div>
+                  <span>✓ BENEFÍCIO DO KIT INICIAL</span>
+                  <strong>VIP GRÁTIS JÁ UTILIZADO</strong>
+                  <small>O benefício de 7 dias com mochila de 80 slots só pode ser usado uma vez.</small>
+                </div>
+              </div>
+            <% } %>
+            <form method="POST" action="/outfits/buy" class="vip-form-v300">
+              <div class="vip-form-head-v300">
+                <strong>ESCOLHA A MOCHILA</strong>
+                <span>Selecione a variação que deseja comprar.</span>
+              </div>
+
+              <div class="vip-options-v300">
+                <% group.variants.forEach((variant, variantIndex) => {
+                  const items = Array.isArray(variant.items) ? variant.items : [];
+                  const bag = items.find(item => ['back','backpack'].includes(String(item.slot || '').toLowerCase()));
+                %>
+                  <label class="vip-option-v300">
+                    <input
+                      type="radio"
+                      name="outfitId"
+                      value="<%= variant.id %>"
+                      <%= variantIndex === 0 ? 'checked' : '' %>
+                      required
+                    >
+                    <div class="vip-option-main-v300">
+                      <b><%= variant.variantName %></b>
+                      <small><%= bag?.label || bag?.classname || 'Mochila configurada' %></small>
+                    </div>
+                    <strong><%= fmt(variant.priceCoins) %> <%= currencyName %></strong>
+                  </label>
+                <% }) %>
+              </div>
+
+              <button type="submit" class="vip-buy-button-v300">ATIVAR VIP ESCOLHIDO</button>
+            </form>
+          <% } else { %>
+            <div class="vip-options-v300 is-static">
+              <% group.variants.forEach(variant => { %>
+                <div class="vip-option-v300 is-static">
+                  <div class="vip-option-main-v300">
+                    <b><%= variant.variantName %></b>
+                    <small>Abra a loja pelo jogo para comprar</small>
+                  </div>
+                  <strong><%= fmt(variant.priceCoins) %> <%= currencyName %></strong>
+                </div>
+              <% }) %>
+            </div>
+            <a class="vip-buy-button-v300 alt" href="/login">ABRIR PELO JOGO</a>
           <% } %>
         </div>
       </article>
     <% }) %>
+
+    <% if (!vipGroups.length) { %>
+      <div class="vip-empty-v300">
+        <strong>Nenhum traje cadastrado.</strong>
+        <span>A vitrine está pronta para receber novos VIPs.</span>
+      </div>
+    <% } %>
   </section>
 </main>
+
+<style>
+.vip-studio-v300{max-width:1500px;margin:0 auto;padding:36px 26px 90px}
+.vip-hero-v300{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:20px;padding:30px;border-radius:32px;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at top left,rgba(239,68,68,.14),transparent 28%),linear-gradient(135deg,rgba(8,13,24,.98),rgba(16,8,10,.96));box-shadow:0 32px 100px rgba(0,0,0,.32);margin-bottom:24px}
+.vip-hero-copy-v300>span,.vip-label-v300{font-size:.74rem;font-weight:900;letter-spacing:.16em;color:#fb7185;text-transform:uppercase}
+.vip-hero-copy-v300 h1{font-size:clamp(2.3rem,4.3vw,5rem);line-height:.94;margin:14px 0 16px;max-width:860px}
+.vip-hero-copy-v300 p,.vip-content-v300 p,.vip-active-v300 p,.vip-empty-v300 span{color:#aeb8c7;line-height:1.6}
+.vip-summary-v300{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}.vip-summary-v300 div{padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);display:grid;gap:4px}.vip-summary-v300 small,.vip-active-v300 small,.vip-price-box-v300 small,.vip-form-head-v300 span{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8;font-weight:900}.vip-summary-v300 strong{font-size:1.08rem}
+.vip-active-v300{padding:24px;border-radius:26px;border:1px solid rgba(34,197,94,.25);background:linear-gradient(160deg,rgba(8,36,22,.52),rgba(9,18,24,.9));display:grid;gap:8px;align-content:start}.vip-active-v300 strong{font-size:1.5rem}.vip-active-v300 span{color:#bbf7d0}.vip-active-v300.is-neutral{border-color:rgba(255,255,255,.12);background:linear-gradient(160deg,rgba(20,24,30,.72),rgba(9,18,24,.9))}.vip-active-v300.is-neutral span{color:#dbe4f0}
+.vip-list-v300{display:grid;gap:22px}.vip-card-v300{display:grid;grid-template-columns:minmax(300px,.7fr) minmax(0,1.3fr);overflow:hidden;border-radius:30px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(180deg,rgba(11,17,28,.98),rgba(6,10,18,.98));box-shadow:0 28px 70px rgba(0,0,0,.25)}
+.vip-media-v300{position:relative;min-height:100%;background:radial-gradient(circle at top left,rgba(255,255,255,.08),transparent 36%),rgba(255,255,255,.025)}
+.vip-media-v300 video{width:100%;height:100%;display:block;object-fit:contain;background:#060b14}
+.vip-no-video-v300{height:100%;display:grid;place-content:center;text-align:center;gap:8px;color:#94a3b8}.vip-no-video-v300 b{font-size:1.45rem;color:#fff}
+.vip-media-badges-v300{position:absolute;left:14px;top:14px;display:flex;flex-wrap:wrap;gap:8px}.vip-media-badges-v300 span{padding:7px 10px;border-radius:999px;background:rgba(4,8,14,.78);border:1px solid rgba(255,255,255,.12);font-size:.68rem;font-weight:900;color:#f8fafc;backdrop-filter:blur(12px)}
+.vip-content-v300{padding:22px 22px 24px;display:grid;gap:18px}
+.vip-top-v300{display:flex;justify-content:space-between;gap:18px;align-items:start}.vip-top-v300 h2{margin:7px 0 8px;font-size:2rem;line-height:1.02}.vip-price-box-v300{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);display:grid;gap:4px;min-width:200px}.vip-price-box-v300 strong{font-size:1.2rem}.vip-price-box-v300 strong span{display:block;font-size:.86rem;color:#aeb8c7;font-weight:700}
+.vip-benefits-v300{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.vip-benefits-v300 div{padding:14px 15px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);display:grid;gap:5px}.vip-benefits-v300 b{font-size:.85rem}.vip-benefits-v300 span{color:#aeb8c7;font-size:.8rem;line-height:1.45}
+.vip-included-v300{display:grid;gap:10px}.vip-included-v300>strong,.vip-form-head-v300 strong{font-size:.74rem;letter-spacing:.14em;color:#cbd5e1}.vip-item-list-v300{display:flex;flex-wrap:wrap;gap:7px}.vip-item-list-v300 code{padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.07);color:#dbeafe;font-size:.72rem}
+.vip-free-v225{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;border:1px solid rgba(34,197,94,.38);background:linear-gradient(135deg,rgba(34,197,94,.13),rgba(6,10,18,.9));box-shadow:0 16px 38px rgba(34,197,94,.08)}.vip-free-v225>div{display:grid;gap:5px}.vip-free-v225 span{font-size:.68rem;font-weight:950;letter-spacing:.13em;color:#86efac}.vip-free-v225 strong{font-size:1.02rem}.vip-free-v225 small{color:#aeb8c7;line-height:1.4}.vip-free-v225 button{border:0;border-radius:14px;padding:13px 16px;background:linear-gradient(135deg,#22c55e,#15803d);color:white;font-weight:950;cursor:pointer;white-space:nowrap}.vip-free-v225.used{grid-template-columns:1fr;border-color:rgba(148,163,184,.2);background:rgba(255,255,255,.025)}.vip-free-v225.used span{color:#94a3b8}
+.vip-form-v300{display:grid;gap:14px}.vip-form-head-v300{display:flex;justify-content:space-between;gap:10px;align-items:end}.vip-options-v300{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.vip-option-v300{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);cursor:pointer;transition:.18s ease}.vip-option-v300:hover{border-color:rgba(248,113,113,.55);background:rgba(239,68,68,.07)}.vip-option-v300:has(input:checked){border-color:#ef4444;background:rgba(239,68,68,.12);box-shadow:0 0 0 1px rgba(239,68,68,.22) inset}.vip-option-v300 input{accent-color:#ef4444;width:18px;height:18px}.vip-option-main-v300{display:grid;gap:4px}.vip-option-main-v300 b{font-size:.96rem;line-height:1.15}.vip-option-main-v300 small{color:#8fa0b7;font-size:.73rem}.vip-option-v300 strong{font-size:1rem;white-space:nowrap}.vip-options-v300.is-static{grid-template-columns:repeat(2,minmax(0,1fr))}.vip-option-v300.is-static{grid-template-columns:1fr auto;cursor:default}
+.vip-buy-button-v300{display:block;width:100%;border:0;border-radius:16px;padding:15px 18px;background:linear-gradient(135deg,#ef4444,#d1232a);color:#fff;font-weight:950;letter-spacing:.04em;text-decoration:none;text-align:center;cursor:pointer;box-shadow:0 18px 40px rgba(239,68,68,.26)}.vip-buy-button-v300.alt{margin-top:4px}
+.vip-empty-v300{padding:54px;border-radius:26px;border:1px dashed rgba(255,255,255,.14);display:grid;gap:8px;text-align:center;background:rgba(255,255,255,.02)}.vip-empty-v300 strong{font-size:1.35rem}
+@media(max-width:1180px){.vip-hero-v300{grid-template-columns:1fr}.vip-summary-v300{grid-template-columns:repeat(2,minmax(0,1fr))}.vip-card-v300{grid-template-columns:1fr}.vip-media-v300{min-height:420px}.vip-benefits-v300,.vip-options-v300,.vip-options-v300.is-static{grid-template-columns:1fr 1fr}.vip-top-v300{flex-direction:column}.vip-price-box-v300{min-width:unset}}
+@media(max-width:760px){.vip-studio-v300{padding:22px 14px 70px}.vip-hero-v300{padding:22px;border-radius:24px}.vip-hero-copy-v300 h1{font-size:2.35rem}.vip-summary-v300,.vip-benefits-v300,.vip-options-v300,.vip-options-v300.is-static{grid-template-columns:1fr}.vip-media-v300{min-height:360px}.vip-form-head-v300{flex-direction:column;align-items:start}.vip-free-v225{grid-template-columns:1fr}.vip-free-v225 button{width:100%}}
+</style>
+
+<script>
+(() => {
+  const videos = Array.from(document.querySelectorAll('[data-vip-loop-video]'));
+  if (!videos.length) return;
+
+  const ensurePlaying = (video) => {
+    if (!video || video.dataset.inView === '0' || document.hidden) return;
+    video.muted = true;
+    video.loop = true;
+    const promise = video.play();
+    if (promise && typeof promise.catch === 'function') promise.catch(() => {});
+  };
+
+  const observer = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          entry.target.dataset.inView = entry.isIntersecting ? '1' : '0';
+          if (entry.isIntersecting) ensurePlaying(entry.target);
+          else entry.target.pause();
+        });
+      }, { threshold: 0.14 })
+    : null;
+
+  videos.forEach((video) => {
+    video.dataset.inView = '1';
+    video.controls = false;
+    video.addEventListener('loadeddata', () => ensurePlaying(video));
+    video.addEventListener('canplay', () => ensurePlaying(video));
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      ensurePlaying(video);
+    });
+    video.addEventListener('pause', () => {
+      if (video.dataset.inView !== '0' && !document.hidden) {
+        setTimeout(() => ensurePlaying(video), 80);
+      }
+    });
+    if (observer) observer.observe(video);
+    ensurePlaying(video);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) videos.forEach(ensurePlaying);
+  });
+
+  setInterval(() => {
+    videos.forEach((video) => {
+      if (video.dataset.inView !== '0' && video.paused && !document.hidden) ensurePlaying(video);
+    });
+  }, 1500);
+})();
+</script>
+
 <%- include('partials/footer') %>

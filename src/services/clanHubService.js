@@ -4,12 +4,97 @@ import { canManageClan } from './rankingService.js';
 import { syncClanManagedOutfitAccess } from './managedOutfitService.js';
 
 
+export async function ensureClanOwnerMembership(clanId) {
+  const cleanClanId = String(clanId || '').trim();
+  if (!cleanClanId) return null;
+
+  return prisma.$transaction(async (tx) => {
+    const clan = await tx.clan.findUnique({
+      where: { id: cleanClanId },
+      select: {
+        id: true,
+        ownerPlayerId: true,
+        ownerPlayer: { select: { id: true, steam64: true } }
+      }
+    });
+    if (!clan?.ownerPlayerId || !clan.ownerPlayer?.steam64) return null;
+
+    await tx.clanMember.updateMany({
+      where: {
+        clanId: clan.id,
+        role: 'OWNER',
+        playerId: { not: clan.ownerPlayerId }
+      },
+      data: { role: 'MEMBER' }
+    });
+
+    return tx.clanMember.upsert({
+      where: { clanId_playerId: { clanId: clan.id, playerId: clan.ownerPlayerId } },
+      update: { steam64: clan.ownerPlayer.steam64, role: 'OWNER', status: 'ACTIVE' },
+      create: {
+        clanId: clan.id,
+        playerId: clan.ownerPlayerId,
+        steam64: clan.ownerPlayer.steam64,
+        role: 'OWNER',
+        status: 'ACTIVE'
+      }
+    });
+  });
+}
+
+export async function repairAllClanOwnerMemberships() {
+  const clans = await prisma.clan.findMany({
+    where: { status: 'ACTIVE', ownerPlayerId: { not: null } },
+    select: { id: true }
+  });
+  let repaired = 0;
+  let errors = 0;
+  for (const clan of clans) {
+    try {
+      const membership = await ensureClanOwnerMembership(clan.id);
+      if (membership) repaired += 1;
+    } catch (error) {
+      errors += 1;
+      console.error('[CLAN_OWNER_REPAIR]', clan.id, error.message);
+    }
+  }
+  return { checked: clans.length, repaired, errors };
+}
+
+async function getPrimaryActiveClanMembership(playerId, include = { clan: true }) {
+  if (!playerId) return null;
+
+  const ownedClan = await prisma.clan.findFirst({
+    where: { ownerPlayerId: playerId, status: 'ACTIVE' },
+    orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
+    select: { id: true }
+  });
+
+  if (ownedClan) {
+    await ensureClanOwnerMembership(ownedClan.id);
+    return prisma.clanMember.findUnique({
+      where: { clanId_playerId: { clanId: ownedClan.id, playerId } },
+      include
+    });
+  }
+
+  return prisma.clanMember.findFirst({
+    where: { playerId, status: 'ACTIVE', clan: { status: 'ACTIVE' } },
+    include,
+    orderBy: [{ updatedAt: 'desc' }, { joinedAt: 'desc' }]
+  });
+}
+
+
 const PUBLIC_PLAYER_SELECT = {
   id: true,
   steam64: true,
   nickname: true,
   profileBio: true,
   avatarMime: true,
+  discordId: true,
+  discordUsername: true,
+  discordLinkedAt: true,
   updatedAt: true
 };
 
@@ -38,7 +123,8 @@ async function getClanVipOutfitMap(clans = []) {
     if (!map.has(outfit.managedOwnerSteam64)) {
       map.set(outfit.managedOwnerSteam64, {
         ...outfit,
-        imageSrc: outfit.imageMime ? `/outfit-image/${outfit.id}` : (outfit.imageUrl || '/images/zona-z-vips-store.webp')
+        mediaUrl: outfit.imageUrl || null,
+        mediaType: 'video'
       });
     }
   }
@@ -77,7 +163,7 @@ function decorateMember(member, outfitMap) {
     ...member,
     displayName: member.player?.nickname || member.steam64,
     activeOutfit,
-    avatarUrl: member.player?.avatarMime ? `/player-avatar/${member.playerId}?v=${member.player.updatedAt ? new Date(member.player.updatedAt).getTime() : ''}` : '/images/zona-z-profile-default.webp'
+    avatarUrl: member.player?.avatarMime ? `/player-avatar/${member.playerId}?v=${member.player.updatedAt ? new Date(member.player.updatedAt).getTime() : ''}` : '/images/zona-z/default-profile.svg'
   };
 }
 
@@ -108,8 +194,8 @@ function decorateClan(clan, outfitMap, clanVipOutfitMap = new Map()) {
     clanVipOutfit,
     pendingApplications: (clan.joinApplications || []).filter(app => app.status === 'PENDING').length,
     accentColor: normalizeAccentColor(clan.accentColor),
-    flagImage: clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/zona-z-clan-default.webp'),
-    bannerImage: clan.bannerData ? `/clan-banner/${clan.id}` : '/images/zona-z-clans-hero.webp'
+    flagImage: clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/zona-z/default-clan.svg'),
+    bannerImage: clan.bannerData ? `/clan-banner/${clan.id}` : '/images/zona-z/clans-hero.webp'
   };
 }
 
@@ -146,7 +232,7 @@ export async function getClanHubOverview({ playerId = null } = {}) {
       orderBy: [{ isRecruiting: 'desc' }, { eventWins: 'desc' }, { createdAt: 'asc' }]
     }),
     getRecruitingClans({ limit: 6 }),
-    playerId ? prisma.clanMember.findFirst({ where: { playerId, status: 'ACTIVE' }, include: { clan: true } }) : Promise.resolve(null)
+    playerId ? getPrimaryActiveClanMembership(playerId, { clan: true }) : Promise.resolve(null)
   ]);
 
   const [outfitMap, clanVipOutfitMap] = await Promise.all([
@@ -161,8 +247,17 @@ export async function getClanHubOverview({ playerId = null } = {}) {
 }
 
 export async function getPublicClanBySlug(slug, viewerPlayerId = null) {
-  const clan = await prisma.clan.findUnique({
+  const baseClan = await prisma.clan.findUnique({
     where: { slug: String(slug || '') },
+    select: { id: true, status: true, ownerPlayerId: true }
+  });
+  if (!baseClan || baseClan.status !== 'ACTIVE') return null;
+  if (viewerPlayerId && baseClan.ownerPlayerId === viewerPlayerId) {
+    await ensureClanOwnerMembership(baseClan.id);
+  }
+
+  const clan = await prisma.clan.findUnique({
+    where: { id: baseClan.id },
     include: {
       ownerPlayer: { select: PUBLIC_PLAYER_SELECT },
       subOwnerPlayer: { select: PUBLIC_PLAYER_SELECT },
@@ -171,13 +266,13 @@ export async function getPublicClanBySlug(slug, viewerPlayerId = null) {
       joinApplications: viewerPlayerId ? { where: { playerId: viewerPlayerId }, orderBy: { createdAt: 'desc' }, take: 10 } : false
     }
   });
-  if (!clan || clan.status !== 'ACTIVE') return null;
+  if (!clan) return null;
   await syncClanOutfits([clan]);
   const [outfitMap, clanVipOutfitMap] = await Promise.all([
     getActiveOutfitMap(clan.members.map(member => member.steam64)),
     getClanVipOutfitMap([clan])
   ]);
-  const viewerMembership = viewerPlayerId ? await prisma.clanMember.findFirst({ where: { playerId: viewerPlayerId, status: 'ACTIVE' }, include: { clan: true } }) : null;
+  const viewerMembership = viewerPlayerId ? await getPrimaryActiveClanMembership(viewerPlayerId, { clan: true }) : null;
   const decoratedClan = decorateClan(clan, outfitMap, clanVipOutfitMap);
   return {
     clan: decoratedClan,
@@ -188,18 +283,17 @@ export async function getPublicClanBySlug(slug, viewerPlayerId = null) {
 }
 
 export async function getMyClanDashboard(playerId) {
-  const membership = await prisma.clanMember.findFirst({
-    where: { playerId, status: 'ACTIVE' },
-    include: {
-      player: { select: PUBLIC_PLAYER_SELECT },
-      clan: {
-        include: {
-          ownerPlayer: { select: PUBLIC_PLAYER_SELECT },
-          subOwnerPlayer: { select: PUBLIC_PLAYER_SELECT },
-          members: { where: { status: 'ACTIVE' }, include: { player: { select: PUBLIC_PLAYER_SELECT } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
-          awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' } },
-          joinApplications: { orderBy: { createdAt: 'desc' }, include: { player: { select: PUBLIC_PLAYER_SELECT } } }
-        }
+  const membership = await getPrimaryActiveClanMembership(playerId, {
+    player: { select: PUBLIC_PLAYER_SELECT },
+    clan: {
+      include: {
+        ownerPlayer: { select: PUBLIC_PLAYER_SELECT },
+        subOwnerPlayer: { select: PUBLIC_PLAYER_SELECT },
+        members: { where: { status: 'ACTIVE' }, include: { player: { select: PUBLIC_PLAYER_SELECT } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
+        awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' } },
+        selectedFlag: true,
+        championshipResults: { orderBy: { occurredAt: 'desc' }, take: 10 },
+        joinApplications: { orderBy: { createdAt: 'desc' }, include: { player: { select: PUBLIC_PLAYER_SELECT } } }
       }
     }
   });
@@ -220,7 +314,7 @@ export async function getMyClanDashboard(playerId) {
 export async function playerHasAnotherClan(playerId, clanId) {
   if (!playerId) return null;
   return prisma.clanMember.findFirst({
-    where: { playerId, status: 'ACTIVE', clanId: { not: clanId } },
+    where: { playerId, status: 'ACTIVE', clanId: { not: clanId }, clan: { status: 'ACTIVE' } },
     include: { clan: true }
   });
 }
@@ -229,6 +323,10 @@ export async function submitClanApplication({ clanId, playerId, steam64, inGameN
   const clan = await prisma.clan.findUnique({ where: { id: clanId } });
   if (!clan || clan.status !== 'ACTIVE') throw new Error('Clã não encontrado.');
   if (!clan.isRecruiting) throw new Error('Esse clã não está recrutando no momento.');
+  const sameClanMembership = await prisma.clanMember.findUnique({
+    where: { clanId_playerId: { clanId: clan.id, playerId } }
+  });
+  if (sameClanMembership?.status === 'ACTIVE') throw new Error('Você já faz parte deste clã.');
   const otherClan = await playerHasAnotherClan(playerId, clan.id);
   if (otherClan) throw new Error(`Você já faz parte do clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);
   const existingPending = await prisma.clanJoinApplication.findFirst({
@@ -249,10 +347,7 @@ export async function submitClanApplication({ clanId, playerId, steam64, inGameN
 }
 
 export async function reviewClanApplication({ applicationId, reviewerPlayerId, action = 'approve', ownerNote = '' }) {
-  const managerMembership = await prisma.clanMember.findFirst({
-    where: { playerId: reviewerPlayerId, status: 'ACTIVE' },
-    include: { clan: true, player: true }
-  });
+  const managerMembership = await getPrimaryActiveClanMembership(reviewerPlayerId, { clan: true, player: true });
   if (!canManageClan(managerMembership)) throw new Error('Apenas dono ou sub dono pode revisar solicitações.');
 
   const application = await prisma.clanJoinApplication.findUnique({
@@ -272,11 +367,13 @@ export async function reviewClanApplication({ applicationId, reviewerPlayerId, a
   if (!application.playerId) throw new Error('O player desta solicitação não está mais cadastrado.');
   const otherClan = await playerHasAnotherClan(application.playerId, managerMembership.clanId);
   if (otherClan) throw new Error(`Esse player já está no clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);
+  const activeMembers = await prisma.clanMember.count({ where: { clanId: managerMembership.clanId, status: 'ACTIVE' } });
+  if (activeMembers >= 5) throw new Error('O clã já atingiu o limite máximo de 5 integrantes.');
 
   const approved = await prisma.$transaction(async (tx) => {
     await tx.clanMember.upsert({
       where: { clanId_playerId: { clanId: managerMembership.clanId, playerId: application.playerId } },
-      update: { status: 'ACTIVE', role: 'MEMBER', steam64: application.requesterSteam64 },
+      update: { status: 'ACTIVE', steam64: application.requesterSteam64 },
       create: { clanId: managerMembership.clanId, playerId: application.playerId, steam64: application.requesterSteam64, role: 'MEMBER', status: 'ACTIVE' }
     });
     await tx.clanJoinApplication.update({
@@ -295,7 +392,7 @@ export async function reviewClanApplication({ applicationId, reviewerPlayerId, a
 
 export async function createClanFromPlayer({ player, data = {} }) {
   if (!player?.id) throw new Error('Player inválido.');
-  const currentClan = await prisma.clanMember.findFirst({ where: { playerId: player.id, status: 'ACTIVE' }, include: { clan: true } });
+  const currentClan = await getPrimaryActiveClanMembership(player.id, { clan: true });
   if (currentClan) throw new Error(`Você já faz parte do clã [${currentClan.clan.tag}] ${currentClan.clan.name}.`);
 
   const name = String(data.name || '').trim().slice(0, 80);

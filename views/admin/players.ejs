@@ -9,7 +9,7 @@
   </section>
   <section class="card">
     <table>
-      <thead><tr><th>Player</th><th>Steam64</th><th>Discord</th><th>Saldo</th><th>Ajustar saldo</th><th>Criado</th></tr></thead>
+      <thead><tr><th>Player</th><th>Steam64</th><th>Discord</th><th>Saldo</th><th>Acesso</th><th>Ajustar saldo</th><th>Criado</th></tr></thead>
       <tbody>
         <% players.forEach(p => { %>
           <tr>
@@ -17,6 +17,7 @@
             <td><code><%= p.steam64 %></code></td>
             <td><%= p.discordId || '-' %></td>
             <td><strong><%= coins(p.coins) %></strong></td>
+            <td><strong class="ok">Somente pelo jogo</strong><small>Steam64 confirmado automaticamente pelo DayZ.</small></td>
             <td>
               <form method="POST" action="/admin/players/<%= p.id %>/coins" class="inline-grid mini">
                 <input name="amount" type="number" placeholder="+1000 ou -500" required>

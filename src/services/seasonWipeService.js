@@ -465,7 +465,7 @@ export async function executeSeasonStoreWipe({ actor = 'admin' } = {}) {
           type: 'CREDIT',
           amount: credit,
           balanceAfter: updated.coins,
-          reason: `Wipe de temporada: reembolso ${refund} RZ + bônus ${SEASON_WIPE_BONUS_COINS} RZ`,
+          reason: `Wipe de temporada: reembolso ${refund} moedas + bônus ${SEASON_WIPE_BONUS_COINS} moedas`,
           refType: 'season_wipe_refund',
           refId: SEASON_WIPE_KEY,
           idempotencyKey: `${SEASON_WIPE_KEY}:${player.id}`
@@ -571,7 +571,7 @@ export async function executeAutomaticSeasonWipeRepairV161({ actor = 'system:aut
           type: 'CREDIT',
           amount: credit,
           balanceAfter: updated.coins,
-          reason: `Correção automática V161: reembolso faltante ${missingRefund} RZ + bônus faltante ${missingBonus} RZ`,
+          reason: `Correção automática V161: reembolso faltante ${missingRefund} moedas + bônus faltante ${missingBonus} moedas`,
           refType: 'season_wipe_refund',
           refId: SEASON_WIPE_REPAIR_KEY,
           idempotencyKey: `${SEASON_WIPE_REPAIR_KEY}:${player.id}`
@@ -632,12 +632,12 @@ export async function executeAutomaticSeasonWipeRepairV161({ actor = 'system:aut
 
 
 // V163: decisão administrativa pós-wipe. Todos os jogadores que já existiam no
-// corte do wipe ficam com saldo EXATO de 50.000 RZ. Nenhum reembolso de compras
+// corte do wipe ficam com saldo EXATO de 50.000 moedas. Nenhum reembolso de compras
 // é calculado aqui; valores adicionais serão lançados manualmente pelo ADM.
 // A rotina é idempotente e nunca inclui contas criadas depois do corte.
 export async function executeAutomaticOldPlayerFixedBalanceV163({ actor = 'system:auto-v163' } = {}) {
   // V170: rotina antiga desativada permanentemente. Ela definia o saldo exato
-  // dos jogadores antigos em 50.000 RZ e poderia apagar moedas adicionadas pelo ADM.
+  // dos jogadores antigos em 50.000 moedas e poderia apagar moedas adicionadas pelo ADM.
   // Atualizações normais do site jamais devem alterar Player.coins.
   const result = {
     status: 'DISABLED_BY_V170',

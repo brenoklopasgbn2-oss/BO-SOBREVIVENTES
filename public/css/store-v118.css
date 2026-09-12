@@ -73,7 +73,7 @@
   position:absolute;
   inset:0;
   z-index:-2;
-  background:url('/images/raidz-v81/hero-cinematic.png?v=118') center/cover no-repeat;
+  background:url('/images/zona-z/site-cinematic.webp?v=118') center/cover no-repeat;
   filter:saturate(.9) contrast(1.08);
   opacity:.72;
 }
@@ -383,3 +383,18 @@
 .store-v118 .rz-category-copy-v118 strong{font-size:.8rem!important}
 .store-v118 .rz-category-copy-v118 small{font-size:.67rem!important}
 @media(max-width:620px){.store-v118 .rz-category-card-v118{height:84px!important}.store-v118 .rz-category-art-v118{flex-basis:58px!important;width:58px!important;height:58px!important}}
+
+/* V171: o navegador deixa de gastar renderização com blocos fora da tela. */
+.rz-category-panel-v118,
+.rz-starter-v118,
+.rz-trust-grid-v118,
+#productsGrid > [data-store-card] {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 430px;
+}
+#productsGrid {
+  transition: opacity .12s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  #productsGrid { transition: none; }
+}

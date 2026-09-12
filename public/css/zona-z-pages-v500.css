@@ -1,0 +1,452 @@
+/* ============================================================
+   ZONA-Z — Redesign cinematográfico (Doações, Garagem, VIP, Ranking)
+   Somente apresentação visual. Nenhuma lógica alterada.
+   ============================================================ */
+
+:root {
+  --zzp-black: #06080c;
+  --zzp-graphite: #0d1219;
+  --zzp-steel: #161d27;
+  --zzp-line: rgba(255, 255, 255, 0.08);
+  --zzp-red: #e11d2a;
+  --zzp-red-deep: #8f1418;
+  --zzp-gold: #d9a441;
+  --zzp-text: #e9eef5;
+  --zzp-muted: #93a1b4;
+  --zzp-display: "Oswald", "Bebas Neue", system-ui, sans-serif;
+}
+
+/* ---------------- BANNER CINEMATOGRÁFICO ---------------- */
+.zz-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(225, 29, 42, 0.22);
+  min-height: clamp(300px, 42vw, 480px);
+  display: flex;
+  align-items: flex-end;
+  margin: 6px 0 28px;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  isolation: isolate;
+}
+.zz-banner-media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.03);
+  z-index: -3;
+  filter: saturate(1.05) contrast(1.05);
+}
+.zz-banner-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(6, 8, 12, 0.94) 0%, rgba(6, 8, 12, 0.72) 38%, rgba(6, 8, 12, 0.18) 72%, rgba(6, 8, 12, 0.45) 100%),
+    linear-gradient(0deg, rgba(6, 8, 12, 0.96) 2%, rgba(6, 8, 12, 0.1) 55%);
+}
+.zz-banner::after {
+  /* varredura vermelha de emergência */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(120% 90% at 6% 100%, rgba(225, 29, 42, 0.22), transparent 45%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.zz-banner-inner {
+  position: relative;
+  padding: clamp(24px, 4vw, 52px);
+  max-width: 760px;
+}
+.zz-banner-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--zzp-display);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: #ff5964;
+  padding: 7px 12px;
+  border: 1px solid rgba(225, 29, 42, 0.4);
+  border-radius: 999px;
+  background: rgba(143, 20, 24, 0.28);
+  backdrop-filter: blur(6px);
+}
+.zz-banner-title {
+  font-family: var(--zzp-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  margin: 16px 0 12px;
+  color: #fff;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.6);
+}
+.zz-banner-title b { color: var(--zzp-red); }
+.zz-banner-sub {
+  color: #cdd6e2;
+  font-size: clamp(0.98rem, 1.5vw, 1.12rem);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 0 20px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+.zz-banner-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.zz-banner-tags span {
+  font-family: var(--zzp-display);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  color: #e9eef5;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--zzp-line);
+  background: rgba(13, 18, 25, 0.66);
+  backdrop-filter: blur(8px);
+}
+.zz-banner-tags span::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--zzp-red);
+  box-shadow: 0 0 10px var(--zzp-red);
+  vertical-align: middle;
+}
+/* HUD nos cantos */
+.zz-banner-corner {
+  position: absolute;
+  width: 26px; height: 26px;
+  border: 2px solid rgba(225, 29, 42, 0.6);
+  z-index: 2;
+}
+.zz-banner-corner.tl { top: 16px; left: 16px; border-right: 0; border-bottom: 0; }
+.zz-banner-corner.tr { top: 16px; right: 16px; border-left: 0; border-bottom: 0; }
+.zz-banner-corner.bl { bottom: 16px; left: 16px; border-right: 0; border-top: 0; }
+.zz-banner-corner.br { bottom: 16px; right: 16px; border-left: 0; border-top: 0; }
+
+.zz-banner-stats {
+  position: absolute;
+  right: clamp(20px, 3vw, 40px);
+  bottom: clamp(20px, 3vw, 40px);
+  display: flex;
+  gap: 12px;
+  z-index: 2;
+}
+.zz-banner-stats div {
+  min-width: 96px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--zzp-line);
+  background: rgba(6, 8, 12, 0.7);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+.zz-banner-stats small {
+  display: block;
+  font-family: var(--zzp-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: var(--zzp-muted);
+}
+.zz-banner-stats strong {
+  font-family: var(--zzp-display);
+  font-size: 1.5rem;
+  color: #fff;
+}
+@media (max-width: 860px) {
+  .zz-banner-stats { display: none; }
+  .zz-banner { min-height: 340px; }
+}
+
+/* ================= DOAÇÕES — pacotes premium ================= */
+.wallet-page-v33 .coin-pack-grid-v33 {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+  gap: 18px !important;
+}
+.wallet-page-v33 .coin-pack-v33 {
+  position: relative;
+  border-radius: 22px !important;
+  border: 1px solid var(--zzp-line) !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(225, 29, 42, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--zzp-steel), var(--zzp-black)) !important;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.wallet-page-v33 .coin-pack-v33::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--zzp-red), transparent);
+  opacity: 0.7;
+}
+.wallet-page-v33 .coin-pack-v33:hover {
+  transform: translateY(-6px);
+  border-color: rgba(225, 29, 42, 0.5) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 40px rgba(225, 29, 42, 0.12);
+}
+.wallet-page-v33 .coin-pack-v33.popular {
+  border-color: rgba(225, 29, 42, 0.55) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(225, 29, 42, 0.18);
+  transform: translateY(-4px);
+}
+.wallet-page-v33 .coin-pack-v33.popular::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  border: 1.5px solid rgba(225, 29, 42, 0.4);
+  pointer-events: none;
+}
+.wallet-page-v33 .coin-pack-v33 em {
+  position: absolute;
+  top: 12px; right: 12px;
+  z-index: 3;
+  font-family: var(--zzp-display);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.64rem;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--zzp-red), var(--zzp-red-deep));
+  box-shadow: 0 8px 20px rgba(225, 29, 42, 0.4);
+}
+.wallet-page-v33 .coin-pack-art-v33 {
+  position: relative;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(217, 164, 65, 0.22), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 8px, transparent 8px 16px);
+  border-bottom: 1px solid var(--zzp-line);
+}
+.wallet-page-v33 .coin-pack-art-v33 span {
+  font-family: var(--zzp-display);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--zzp-gold);
+  font-size: 1.4rem;
+  text-shadow: 0 0 24px rgba(217, 164, 65, 0.5);
+}
+.wallet-page-v33 .coin-pack-content-v33 { padding: 18px; display: grid; gap: 6px; }
+.wallet-page-v33 .coin-pack-content-v33 small {
+  font-family: var(--zzp-display); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--zzp-muted); font-size: 0.66rem;
+}
+.wallet-page-v33 .coin-pack-content-v33 h3 { margin: 2px 0; font-size: 1.15rem; color: #fff; }
+.wallet-page-v33 .coin-pack-content-v33 strong {
+  font-family: var(--zzp-display); font-size: 1.7rem; color: var(--zzp-gold);
+  line-height: 1;
+}
+.wallet-page-v33 .coin-pack-content-v33 p { color: #fff; font-weight: 700; font-size: 1.05rem; margin: 2px 0; }
+.wallet-page-v33 .coin-pack-content-v33 b { color: var(--zzp-muted); font-weight: 600; font-size: 0.78rem; }
+.wallet-page-v33 .coin-buy-btn-v33 {
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--zzp-red), var(--zzp-red-deep)) !important;
+  border: 0 !important;
+  box-shadow: 0 14px 30px rgba(225, 29, 42, 0.32) !important;
+}
+
+/* ================= GARAGEM — cards horizontais cinematográficos ================= */
+.garage-shell-v29 .garage-vehicle-card-v29 {
+  border-radius: 22px !important;
+  border: 1px solid var(--zzp-line) !important;
+  background:
+    linear-gradient(180deg, rgba(22, 29, 39, 0.95), rgba(6, 8, 12, 0.98)) !important;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.garage-shell-v29 .garage-vehicle-card-v29:hover {
+  transform: translateY(-5px);
+  border-color: rgba(225, 29, 42, 0.45) !important;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 0 46px rgba(225, 29, 42, 0.14);
+}
+.garage-shell-v29 .garage-vehicle-card-v29.active {
+  border-color: rgba(225, 29, 42, 0.6) !important;
+  box-shadow: 0 0 0 1px rgba(225, 29, 42, 0.35) inset, 0 30px 70px rgba(0, 0, 0, 0.6);
+}
+.garage-shell-v29 .garage-card-art-v29 {
+  position: relative;
+  background:
+    radial-gradient(90% 70% at 50% 20%, rgba(217, 164, 65, 0.12), transparent 60%),
+    radial-gradient(80% 60% at 50% 100%, rgba(225, 29, 42, 0.14), transparent 65%),
+    #05070b !important;
+}
+.garage-shell-v29 .garage-card-art-v29::after {
+  /* piso reflexivo / holofote */
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: linear-gradient(0deg, rgba(225, 29, 42, 0.1), transparent);
+  pointer-events: none;
+}
+.garage-shell-v29 .garage-server-chip-v29,
+.garage-shell-v29 .garage-live-chip-v29 {
+  font-family: var(--zzp-display) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+.garage-shell-v29 .garage-live-chip-v29.stopped {
+  background: rgba(6, 8, 12, 0.82) !important;
+  border: 1px solid rgba(225, 29, 42, 0.5) !important;
+  color: #ff8088 !important;
+}
+.garage-shell-v29 .garage-card-content-v29 h2 { font-family: var(--zzp-display); letter-spacing: 0.02em; }
+.garage-shell-v29 .garage-stat-v29 {
+  border-radius: 18px !important;
+  border: 1px solid var(--zzp-line) !important;
+  background: linear-gradient(180deg, var(--zzp-steel), var(--zzp-black)) !important;
+}
+.garage-shell-v29 .garage-stat-v29 strong { font-family: var(--zzp-display); color: #fff; }
+.garage-shell-v29 .garage-stat-v29.coins strong { color: var(--zzp-gold); }
+
+/* ================= VIP — cards premium metálicos ================= */
+.vip-studio-v300 .vip-card-v300 {
+  border: 1px solid rgba(217, 164, 65, 0.2) !important;
+  background:
+    radial-gradient(80% 60% at 100% 0%, rgba(217, 164, 65, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(22, 29, 39, 0.98), rgba(6, 8, 12, 0.98)) !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.vip-studio-v300 .vip-card-v300:hover {
+  transform: translateY(-6px);
+  border-color: rgba(217, 164, 65, 0.5) !important;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 50px rgba(217, 164, 65, 0.12) !important;
+}
+.vip-studio-v300 .vip-label-v300 {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--zzp-gold) !important;
+}
+.vip-studio-v300 .vip-label-v300::before {
+  content: "★";
+  color: var(--zzp-gold);
+}
+/* Selo VIP metálico via CSS */
+.vip-studio-v300 .vip-media-v300::after {
+  content: "VIP";
+  position: absolute;
+  right: 14px; bottom: 14px;
+  z-index: 3;
+  font-family: var(--zzp-display);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-size: 1.05rem;
+  color: #1a140a;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f4d98a, #d9a441 55%, #a9791f);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 28px rgba(217, 164, 65, 0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.vip-studio-v300 .vip-buy-button-v300 {
+  background: linear-gradient(135deg, var(--zzp-red), var(--zzp-red-deep)) !important;
+  box-shadow: 0 18px 40px rgba(225, 29, 42, 0.3) !important;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* ================= RANKING — pódio PvP ================= */
+.zz-podium {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: end;
+  gap: 16px;
+  margin: 4px 0 30px;
+}
+.zz-podium-slot {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid var(--zzp-line);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--zzp-text);
+  background: linear-gradient(180deg, var(--zzp-steel), var(--zzp-black));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+.zz-podium-slot:hover { transform: translateY(-6px); box-shadow: 0 34px 80px rgba(0, 0, 0, 0.6); }
+.zz-podium-slot .zz-podium-head {
+  position: relative;
+  padding: 22px 18px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--zzp-line);
+}
+.zz-podium-rank {
+  font-family: var(--zzp-display);
+  font-weight: 700;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: #fff;
+}
+.zz-podium-medal {
+  display: inline-block;
+  font-family: var(--zzp-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.zz-podium-avatar {
+  width: 84px; height: 84px;
+  margin: 12px auto 0;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 2px solid var(--zzp-line);
+  background: #05070b;
+}
+.zz-podium-body { padding: 16px 18px 20px; display: grid; gap: 10px; text-align: center; }
+.zz-podium-name { font-family: var(--zzp-display); font-size: 1.15rem; color: #fff; letter-spacing: 0.02em; }
+.zz-podium-tag { color: var(--zzp-muted); font-size: 0.78rem; }
+.zz-podium-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+.zz-podium-stats div {
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--zzp-line);
+}
+.zz-podium-stats small { display: block; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--zzp-muted); }
+.zz-podium-stats strong { font-family: var(--zzp-display); font-size: 1.05rem; color: #fff; }
+/* posições */
+.zz-podium-slot.p1 { order: 2; }
+.zz-podium-slot.p2 { order: 1; }
+.zz-podium-slot.p3 { order: 3; }
+.zz-podium-slot.p1 {
+  border-color: rgba(217, 164, 65, 0.55);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(217, 164, 65, 0.15);
+}
+.zz-podium-slot.p1 .zz-podium-head { background: radial-gradient(90% 80% at 50% 0%, rgba(217, 164, 65, 0.22), transparent 60%); }
+.zz-podium-slot.p1 .zz-podium-rank { color: var(--zzp-gold); text-shadow: 0 0 26px rgba(217, 164, 65, 0.5); }
+.zz-podium-slot.p1 .zz-podium-medal { background: linear-gradient(135deg, #f4d98a, #d9a441); color: #1a140a; }
+.zz-podium-slot.p1 .zz-podium-avatar { width: 104px; height: 104px; border-color: rgba(217, 164, 65, 0.6); }
+.zz-podium-slot.p2 .zz-podium-medal { background: rgba(203, 213, 225, 0.2); color: #e2e8f0; }
+.zz-podium-slot.p2 .zz-podium-head { background: radial-gradient(90% 80% at 50% 0%, rgba(203, 213, 225, 0.14), transparent 60%); }
+.zz-podium-slot.p3 .zz-podium-medal { background: rgba(180, 120, 70, 0.22); color: #e0b088; }
+.zz-podium-slot.p3 .zz-podium-head { background: radial-gradient(90% 80% at 50% 0%, rgba(180, 120, 70, 0.16), transparent 60%); }
+@media (max-width: 780px) {
+  .zz-podium { grid-template-columns: 1fr; }
+  .zz-podium-slot.p1, .zz-podium-slot.p2, .zz-podium-slot.p3 { order: initial; }
+}

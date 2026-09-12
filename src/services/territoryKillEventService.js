@@ -97,7 +97,8 @@ function normalizeEventBody(body = {}) {
 function eventTimeAllows(event, occurredAt = new Date(), { allowInactive = false } = {}) {
   const at = new Date(occurredAt || Date.now());
   if (!allowInactive && !event.active) return false;
-  if (event.startsAt && at < event.startsAt) return false;
+  const effectiveStart = event.startsAt || event.createdAt;
+  if (effectiveStart && at < effectiveStart) return false;
   if (event.endsAt && at > event.endsAt) return false;
   return true;
 }
@@ -302,7 +303,7 @@ export async function evaluateKillForActiveTerritoryEvents(kill) {
       active: true,
       serverType: kill.serverType,
       AND: [
-        { OR: [{ startsAt: null }, { startsAt: { lte: occurredAt } }] },
+        { OR: [{ startsAt: { lte: occurredAt } }, { startsAt: null, createdAt: { lte: occurredAt } }] },
         { OR: [{ endsAt: null }, { endsAt: { gte: occurredAt } }] }
       ]
     },
@@ -333,6 +334,43 @@ export async function upsertTerritoryKillEvent(body = {}, id = null) {
     }
     await logAudit({ actor: 'admin', action: id ? 'territory_event.updated' : 'territory_event.created', target: saved.id, data: { name: saved.name, active: saved.active, serverType: saved.serverType, centerX: saved.centerX, centerZ: saved.centerZ, radiusMeters: saved.radiusMeters, rewardCoins: saved.rewardCoins }, tx });
     return saved;
+  });
+}
+
+export async function deleteTerritoryKillEvent(id) {
+  return prisma.$transaction(async (tx) => {
+    const event = await tx.territoryKillEvent.findUnique({
+      where: { id },
+      include: {
+        scores: {
+          select: { qualified: true, rewardCoins: true }
+        }
+      }
+    });
+    if (!event) throw new Error('Evento não encontrado.');
+
+    const acceptedCount = event.scores.filter(score => score.qualified).length;
+    const rejectedCount = event.scores.length - acceptedCount;
+    const rewardTotal = event.scores.reduce((sum, score) => sum + Number(score.rewardCoins || 0), 0);
+
+    await tx.territoryKillEvent.delete({ where: { id: event.id } });
+    await logAudit({
+      actor: 'admin',
+      action: 'territory_event.deleted',
+      target: event.id,
+      data: {
+        name: event.name,
+        serverType: event.serverType,
+        wasActive: event.active,
+        acceptedCount,
+        rejectedCount,
+        rewardTotal,
+        paidCoinsPreserved: true
+      },
+      tx
+    });
+
+    return { id: event.id, name: event.name, acceptedCount, rejectedCount, rewardTotal };
   });
 }
 

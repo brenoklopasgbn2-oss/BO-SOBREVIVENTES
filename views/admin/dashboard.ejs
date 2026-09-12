@@ -2,7 +2,32 @@
 <%- include('../partials/nav') %>
 <main class="container">
   <%- include('_admin_nav') %>
+  <div class="admin-content-v46">
   <%- include('../partials/alerts') %>
+  <div class="zz-cmd-strip">
+    <span class="zz-cmd-dot"></span>
+    <span class="zz-cmd-code">COMANDO // <b>VISÃO GERAL</b></span>
+    <span class="zz-cmd-tags"><span>Vendas do mês</span><span>Entregas</span><span>Wipe seguro</span></span>
+  </div>
+
+  <section class="card ftp-dashboard-card-v88">
+    <div>
+      <p class="eyebrow">API BRIDGE V76</p>
+      <h2>API do servidor DayZ</h2>
+      <p class="muted">Integração HTTP em lote, sem FTP/SFTP. O mod consulta a API de forma assíncrona e mantém journal/cache local para segurança das entregas.</p>
+    </div>
+    <a class="btn primary ftp-dashboard-btn-v88" href="/admin/ftp">🔌 ABRIR STATUS DA API</a>
+  </section>
+
+  <section class="card" style="display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;border-color:rgba(239,68,68,.28)">
+    <div>
+      <p class="eyebrow">RECRUTAMENTO DE CLÃS V107</p>
+      <h2>Discord com até 2 webhooks</h2>
+      <p class="muted">Regule os canais, o intervalo em horas e envie os clãs recrutando com imagens e instruções.</p>
+    </div>
+    <a class="btn primary" href="/admin/clan-recruitment-discord">📢 CONFIGURAR RECRUTAMENTO DC</a>
+  </section>
+
   <section class="shop-header">
     <div><p class="eyebrow">Controle da loja</p><h1>Dashboard</h1><p class="muted">Resumo rápido do mês atual, atalhos de vendas e logs.</p></div>
     <div class="admin-actions"><a class="btn" href="/admin/sales">Ver vendas</a><a class="btn" href="/admin/logs">Ver logs</a><form method="POST" action="/admin/send-monthly-report"><button class="btn primary">Mandar resumo mensal no Discord</button></form></div>
@@ -22,12 +47,12 @@
       <div>
         <p class="eyebrow">Proteção de atualização</p>
         <h2>Dados que ficam salvos quando atualizar o site</h2>
-        <p class="muted">Deploy normal não apaga saldo, garagem, uso de seguro, compras, entregas nem apoio streamer. Só o botão <b>WIPE GERAL</b> limpa esses dados.</p>
+        <p class="muted">Deploy normal não apaga players, perfis, clãs, recrutamentos, horários do Discord, saldos, garagem, compras ou entregas. O WIPE DE TEMPORADA fica bloqueado por padrão no código.</p>
       </div>
       <span class="status approved">SEGURO ATIVO</span>
     </div>
     <div class="stats-grid mini-safe-grid-v44">
-      <div class="stat"><span>Saldo total dos players</span><strong><%= coins(safeDataStats.totalPlayerCoins) %> RZ</strong></div>
+      <div class="stat"><span>Saldo total dos players</span><strong><%= coins(safeDataStats.totalPlayerCoins) %> <%= currencyName %></strong></div>
       <div class="stat"><span>Veículos dos players</span><strong><%= safeDataStats.playerVehiclesCount %></strong></div>
       <div class="stat"><span>Seguros usados esta semana</span><strong><%= safeDataStats.insuranceUsesThisWeek %></strong></div>
       <div class="stat"><span>Seguros usados total</span><strong><%= safeDataStats.insuranceUsesTotal %></strong></div>
@@ -47,13 +72,37 @@
   </section>
 
   <section class="card danger-zone-card">
-    <p class="eyebrow">Wipe Geral / Lançamento</p>
-    <h2>WIPE GERAL do painel</h2>
-    <p class="muted">Use antes de liberar o servidor de verdade. Ele deixa o painel limpo como novo: apaga players, saldos, Pix, compras, entregas, garagem, veículos dos players, ranking, clãs, estatísticas, histórico de apoio e logs. Mantém somente a estrutura da loja: produtos, itens, pacotes de moedas, veículos cadastrados, seguros, cupons, códigos streamer e configurações.</p>
-    <form method="POST" action="/admin/wipe/reset-store-stats" class="inline-grid" onsubmit="return confirm('WIPE GERAL: vai apagar players, saldos, compras, Pix, entregas, garagem, ranking, clãs e estatísticas. Produtos e itens ficam. Confirmar?');">
-      <input type="password" name="adminPassword" placeholder="Senha admin" required>
-      <button class="btn danger" type="submit">WIPE GERAL - limpar painel</button>
-    </form>
+    <p class="eyebrow">Wipe seguro do servidor</p>
+    <h2>WIPE DE TEMPORADA <%= seasonWipePreview.alreadyExecuted ? 'JÁ EXECUTADO' : (adminWipeEnabled ? 'LIBERADO MANUALMENTE' : 'BLOQUEADO') %></h2>
+
+    <div class="stats-grid mini-safe-grid-v44" style="margin:18px 0">
+      <div class="stat"><span>Players antigos beneficiados</span><strong><%= seasonWipePreview.playerCount %></strong></div>
+      <div class="stat"><span>Reembolso estimado</span><strong><%= coins(seasonWipePreview.refundableCoins) %> <%= currencyName %></strong></div>
+      <div class="stat"><span>Bônus total</span><strong><%= coins(seasonWipePreview.bonusCoins) %> <%= currencyName %></strong></div>
+      <div class="stat"><span>Bônus por player antigo</span><strong><%= coins(seasonWipeBonusCoins) %> <%= currencyName %></strong></div>
+      <div class="stat"><span>Veículos/alugueis para zerar</span><strong><%= seasonWipePreview.vehicles %></strong></div>
+      <div class="stat"><span>VIPs/trajes para liberar novamente</span><strong><%= seasonWipePreview.outfits %></strong></div>
+    </div>
+
+    <div class="info-strip-v44">
+      Preserva contas, saldo que ainda não foi gasto, Pix, clãs, ranking, troféus e <strong>todo o killfeed</strong>.
+      Reembolsa gastos da loja, soma 50.000 <%= currencyName %> apenas aos players já cadastrados, limpa compras/entregas/veículos/alugueis/seguros,
+      libera Kit Inicial + traje VIP inicial novamente e remove todos os storages não vanilla e os sacos de dormir.
+    </div>
+
+    <% if (seasonWipePreview.alreadyExecuted) { %>
+      <p class="muted" style="margin-top:14px">A trava única desta temporada já foi usada. O botão não aparece para impedir reembolso ou bônus duplicado.</p>
+    <% } else if (!adminWipeEnabled) { %>
+      <p class="muted" style="margin-top:14px">Para executar somente no momento do wipe, configure <code>ENABLE_ADMIN_WIPE=true</code> no Railway e reinicie o site. Depois da execução, volte a variável para <code>false</code>.</p>
+    <% } else { %>
+      <p class="muted" style="margin-top:14px">Confira o valor estimado acima. A execução é única e não pode ser repetida por clique duplo.</p>
+      <form method="POST" action="/admin/wipe/reset-store-stats" class="inline-grid" onsubmit="return confirm('CONFIRMA O WIPE DE TEMPORADA? Compras, entregas, VIPs comuns, veículos, alugueis e seguros serão zerados. Killfeed e contas serão preservados.');">
+        <input type="password" name="adminPassword" placeholder="Senha admin" required>
+        <input type="text" name="confirmPhrase" placeholder="Digite: <%= adminWipeConfirmPhrase %>" required autocomplete="off">
+        <button class="btn danger" type="submit">EXECUTAR WIPE + REEMBOLSAR</button>
+      </form>
+    <% } %>
   </section>
+  </div>
 </main>
 <%- include('../partials/footer') %>

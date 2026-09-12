@@ -115,29 +115,44 @@
   }
 
   function attach3DHoverEffects() {
+    const supportsPreciseHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const lowPowerDevice = Number(navigator.hardwareConcurrency || 4) <= 2;
+    if (prefersReducedMotion || !supportsPreciseHover || lowPowerDevice) return;
+
     const cards = document.querySelectorAll('.product-card-pro, .vehicle-shop-card, .vehicle-card-pro, .server-card, .category-stage-pill-v29, .garage-vehicle-card-v29, .garage-detail-v29, .garage-action-option-v29, .package-card.sz-hover-card, .confirm-card.sz-hover-card, .promo-card.sz-hover-card, .coin-pack-v33, .wallet-custom-v33, .wallet-hero-v33, .starter-kit-card-v33, .category-button-v32');
     cards.forEach((card) => {
+      let frame = 0;
+      let latestEvent = null;
       card.addEventListener('mouseenter', () => card.classList.add('is-hovered'));
       card.addEventListener('mouseleave', () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        latestEvent = null;
         card.classList.remove('is-hovered');
         card.style.setProperty('--rx', '0deg');
         card.style.setProperty('--ry', '0deg');
         card.style.setProperty('--mx', '50%');
         card.style.setProperty('--my', '50%');
       });
-      card.addEventListener('mousemove', (ev) => {
-        if (prefersReducedMotion) return;
-        const rect = card.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const x = (ev.clientX - rect.left) / rect.width;
-        const y = (ev.clientY - rect.top) / rect.height;
-        const rotateY = (x - 0.5) * 18;
-        const rotateX = (0.5 - y) * 13;
-        card.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
-        card.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
-        card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
-        card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
-      });
+      card.addEventListener('pointermove', (ev) => {
+        latestEvent = ev;
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          const current = latestEvent;
+          if (!current) return;
+          const rect = card.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          const x = (current.clientX - rect.left) / rect.width;
+          const y = (current.clientY - rect.top) / rect.height;
+          const rotateY = (x - 0.5) * 12;
+          const rotateX = (0.5 - y) * 9;
+          card.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
+          card.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
+          card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+          card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+        });
+      }, { passive: true });
     });
   }
 
@@ -153,7 +168,7 @@
   }
 
   function attachBuySound() {
-    document.querySelectorAll('form[action^="/shop/buy/"]').forEach((form) => {
+    document.querySelectorAll('form[action^="/shop/buy/"]:not([data-fast-checkout])').forEach((form) => {
       form.addEventListener('submit', (ev) => {
         unlockAudio();
         if (form.dataset.submitted === '1') { ev.preventDefault(); return; }
@@ -348,27 +363,14 @@
   function attachProductEntranceEffects() {
     document.querySelectorAll('form[action^="/shop/confirm/"]').forEach((form) => {
       form.addEventListener('submit', (ev) => {
+        if (ev.defaultPrevented) return;
         if (form.dataset.entering === '1') { ev.preventDefault(); return; }
-        ev.preventDefault();
         form.dataset.entering = '1';
-        unlockAudio();
-        playButtonClickSound();
-        playPortalWhoosh();
-        const card = form.closest('.v9-product-card');
         const btn = form.querySelector('button[type="submit"]');
-        const productName = card?.querySelector('h3')?.textContent?.trim() || 'Abrindo item';
-        if (card) {
-          card.classList.add('is-entering');
-          setTimeout(() => card.classList.add('is-entering-phase-2'), 210);
-        }
         if (btn) {
           btn.disabled = true;
-          btn.textContent = 'Abrindo item...';
+          btn.textContent = 'Abrindo confirmação...';
         }
-        if (!prefersReducedMotion) {
-          setTimeout(() => spawnProductEntryOverlay(card, productName), 120);
-        }
-        setTimeout(() => form.submit(), 80);
       });
     });
   }
@@ -397,24 +399,7 @@
   function attachConfirmPortalEntrance() {
     const confirmPage = document.querySelector('.confirm-page');
     if (!confirmPage) return;
-    // Nunca deixa a página de confirmação invisível caso o navegador reduza
-    // animações, o JS seja interrompido ou o modo leve esteja ativo.
     confirmPage.classList.add('confirm-page-ready');
-    if (prefersReducedMotion) return;
-    const title = confirmPage.querySelector('h1')?.textContent?.trim() || 'Confirmar compra';
-    const overlay = document.createElement('div');
-    overlay.className = 'confirm-portal-intro';
-    overlay.innerHTML = `
-      <div class="confirm-portal-core"></div>
-      <div class="confirm-portal-lines"><span></span><span></span><span></span></div>
-      <strong>${title}</strong>
-      <small>Entrada segura da loja</small>
-    `;
-    document.body.appendChild(overlay);
-    requestAnimationFrame(() => overlay.classList.add('show'));
-    setTimeout(() => confirmPage.classList.add('confirm-page-ready'), 120);
-    setTimeout(() => overlay.classList.add('close'), 680);
-    setTimeout(() => overlay.remove(), 1050);
   }
 
   function attachPixStatusPolling() {
@@ -460,6 +445,42 @@
   }
 
 
+  function attachPurchaseConfirmation() {
+    const selectors = [
+      'form[action^="/shop/confirm/"]',
+      'form[action^="/shop/buy/"]',
+      'form[action^="/vehicles/buy/"]',
+      'form[action="/outfits/buy"]',
+      'form[action="/outfits/free-7d"]',
+      'form[action="/starter-kit/claim"]',
+      'form[action="/cart/buy"]'
+    ];
+
+    const messageFor = (form) => {
+      const action = String(form.getAttribute('action') || '');
+      if (action.startsWith('/shop/confirm/')) return 'Deseja abrir a confirmação desta compra?';
+      if (action.startsWith('/shop/buy/')) return 'Confirmar esta compra agora?';
+      if (action.startsWith('/vehicles/buy/')) return 'Confirmar a compra deste veículo?';
+      if (action === '/outfits/buy') return 'Confirmar a ativação deste VIP?';
+      if (action === '/outfits/free-7d') return 'Confirmar a ativação do VIP grátis de 7 dias?';
+      if (action === '/starter-kit/claim') return 'Confirmar o resgate do kit inicial?';
+      if (action === '/cart/buy') return 'Confirmar a compra de todos os itens do carrinho?';
+      return 'Confirmar esta ação?';
+    };
+
+    document.querySelectorAll(selectors.join(',')).forEach((form) => {
+      form.addEventListener('submit', (ev) => {
+        if (form.dataset.confirmedPurchase === '1') return;
+        const ok = window.confirm(messageFor(form));
+        if (!ok) {
+          ev.preventDefault();
+          return;
+        }
+        form.dataset.confirmedPurchase = '1';
+      });
+    });
+  }
+
   function playCoinCheckoutSound() {
     if (!soundEnabled || !audioUnlocked) return;
     playTone(520, 0.04, 0.075, 'triangle', 0, 1.14);
@@ -481,7 +502,7 @@
     overlay.className = isKit ? 'starter-claim-burst-v33' : 'coin-checkout-burst-v33';
     overlay.innerHTML = `
       <div class="burst-box">
-        <div class="burst-icon">${isKit ? '🎁' : 'RZ'}</div>
+        <div class="burst-icon">${isKit ? '🎁' : 'P'}</div>
         <strong>${isKit ? 'Kit inicial resgatado!' : 'Gerando Pix seguro...'}</strong>
         <span>${isKit ? 'Criando entrega para o DayZ.' : 'Aguarde, abrindo pagamento.'}</span>
       </div>
@@ -546,6 +567,9 @@
     attachCoinCheckoutEffects();
     attachStarterKitClaimEffects();
     attachPixStatusPolling();
+    attachPurchaseConfirmation();
+    attachProductEntranceEffects();
+    attachConfirmPortalEntrance();
 
     if (!document.getElementById('purchaseCoinAudio')) {
       const audio = document.createElement('audio');
@@ -587,7 +611,6 @@
       category: card?.dataset.cartCategory,
       serverType: card?.dataset.cartServer || 'vanilla',
       priceCoins: Number(card?.dataset.cartPrice || 0),
-      imageUrl: card?.dataset.cartImage || '/images/no-real-image.svg',
       quantity: 1
     };
   }
@@ -620,8 +643,7 @@
     if (list) {
       list.innerHTML = items.slice(0, 6).map(item => `
         <div class="floating-cart-item-v42">
-          <img src="${item.imageUrl || '/images/no-real-image.svg'}" alt="">
-          <div><strong>${item.name || 'Produto'}</strong><small>${Number(item.quantity || 1)}x • RZ ${money(Number(item.priceCoins || 0) * Number(item.quantity || 1))}</small></div>
+          <div><strong>${item.name || 'Produto'}</strong><small>${Number(item.quantity || 1)}x • ${money(Number(item.priceCoins || 0) * Number(item.quantity || 1))} Pila</small></div>
         </div>
       `).join('') + (items.length > 6 ? `<small class="muted">+${items.length - 6} itens no carrinho</small>` : '');
     }
@@ -635,8 +657,12 @@
       const cleanUrl = window.location.pathname + (cleanQuery ? `?${cleanQuery}` : '') + window.location.hash;
       window.history.replaceState({}, '', cleanUrl);
     }
-    document.querySelectorAll('[data-add-to-cart]').forEach(btn => {
-      btn.addEventListener('click', () => addItem(productFromCard(btn.closest('[data-cart-product-id]'))));
+    // Delegação: continua funcionando nos cards trocados instantaneamente pela
+    // navegação de categorias, sem registrar dezenas de listeners por render.
+    document.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-add-to-cart]');
+      if (!btn) return;
+      addItem(productFromCard(btn.closest('[data-cart-product-id]')));
     });
     document.querySelectorAll('[data-cart-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {

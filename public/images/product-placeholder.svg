@@ -1,16 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
-  <defs>
-    <radialGradient id="glow" cx="50%" cy="34%" r="58%"><stop stop-color="#94a3b8" stop-opacity=".34"/><stop offset=".55" stop-color="#0f172a"/><stop offset="1" stop-color="#020617"/></radialGradient>
-    <linearGradient id="box" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#334155"/><stop offset=".5" stop-color="#111827"/><stop offset="1" stop-color="#475569"/></linearGradient>
-    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#e2e8f0" stop-opacity=".9"/><stop offset="1" stop-color="#64748b"/></linearGradient>
-  </defs>
-  <rect width="800" height="500" rx="42" fill="url(#glow)"/>
-  <ellipse cx="400" cy="392" rx="210" ry="44" fill="#000" opacity=".42"/>
-  <path d="M230 180 400 105l170 75-170 78z" fill="#3b4657"/>
-  <path d="M230 180v142l170 86V258z" fill="#151d2b"/>
-  <path d="M570 180v142l-170 86V258z" fill="url(#box)"/>
-  <path d="M282 212 400 160l118 52-118 54z" fill="#64748b" opacity=".55"/>
-  <path d="M400 258v150" stroke="url(#edge)" stroke-width="8" opacity=".58"/>
-  <path d="M250 238 377 302M550 238 423 302" stroke="#94a3b8" stroke-width="7" opacity=".35"/>
-  <text x="400" y="454" text-anchor="middle" fill="#e2e8f0" font-size="34" font-family="Arial" font-weight="800" letter-spacing="6">ITEM DAYZ</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650"><defs><radialGradient id="g"><stop stop-color="#45101a"/><stop offset="1" stop-color="#080b10"/></radialGradient><linearGradient id="r" x2="1"><stop stop-color="#ff3149"/><stop offset="1" stop-color="#9a071b"/></linearGradient></defs><rect width="900" height="650" rx="52" fill="url(#g)"/><path d="M0 520L900 330v320H0z" fill="#0e141d"/><g opacity=".18" stroke="#fff"><path d="M0 100h900M0 200h900M0 300h900M0 400h900M0 500h900"/><path d="M100 0v650M200 0v650M300 0v650M400 0v650M500 0v650M600 0v650M700 0v650M800 0v650"/></g><path d="M330 206h240l56 74-44 210H318l-44-210z" fill="#151c26" stroke="#ff3149" stroke-width="10"/><path d="M382 206c0-62 30-96 68-96s68 34 68 96" fill="none" stroke="#ff3149" stroke-width="14"/><path d="M405 330h90" stroke="url(#r)" stroke-width="24" stroke-linecap="round"/><text x="450" y="570" text-anchor="middle" fill="#fff" font-family="Arial Black,Arial" font-size="46" letter-spacing="10">ZONA-Z</text></svg>

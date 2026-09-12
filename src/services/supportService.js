@@ -1,6 +1,19 @@
 import { prisma } from '../db/prisma.js';
 import { logAudit } from './auditService.js';
 
+const PAID_COIN_SUPPORT_SOURCES = ['COIN_PURCHASE', 'DONATION'];
+
+function paidCoinSupportWhere() {
+  return {
+    paymentId: { not: null },
+    source: { in: PAID_COIN_SUPPORT_SOURCES }
+  };
+}
+
+function isPaidCoinSupportSale(sale) {
+  return Boolean(sale?.paymentId && PAID_COIN_SUPPORT_SOURCES.includes(String(sale?.source || '').toUpperCase()));
+}
+
 export function normalizeMarketingCode(value) {
   return String(value || '')
     .trim()
@@ -51,7 +64,7 @@ export async function validateCouponCode({ code, totalCoins, playerId = null, st
   if (coupon.startsAt && coupon.startsAt > now) throw new Error('Esse cupom ainda não começou.');
   if (coupon.endsAt && coupon.endsAt < now) throw new Error('Esse cupom já expirou.');
   if (coupon.maxUses !== null && coupon.maxUses !== undefined && coupon.usedCount >= coupon.maxUses) throw new Error('Esse cupom já atingiu o limite total de usos.');
-  if (Number(coupon.minCoins || 0) > Number(totalCoins || 0)) throw new Error(`Esse cupom exige doação mínima de ${coupon.minCoins} RZ.`);
+  if (Number(coupon.minCoins || 0) > Number(totalCoins || 0)) throw new Error(`Esse cupom exige doação mínima de ${coupon.minCoins} moedas.`);
 
   const maxUsesPerSteam = Number(coupon.maxUsesPerSteam || 0);
   if (maxUsesPerSteam > 0) {
@@ -101,31 +114,44 @@ export async function findActiveStreamerCode(code, tx = prisma) {
   return streamerCode;
 }
 
-export async function recordStreamerSupportSale({ tx = prisma, streamerCode, player, purchaseId = null, paymentId = null, source = 'PRODUCT', totalCoins = 0, couponCode = null }) {
-  if (!streamerCode) return null;
+export async function recordStreamerSupportSale({ tx = prisma, streamerCode, player, paymentId = null }) {
+  // V135: comissão streamer só nasce de uma compra de moedas paga.
+  // Ajuste de saldo pelo ADM, compra de produto, carrinho e resgate VIP não entram.
+  if (!streamerCode || !paymentId) return null;
+
+  const payment = await tx.payment.findUnique({ where: { id: paymentId } });
+  if (!payment || payment.status !== 'APPROVED' || Number(payment.amountBrl || 0) <= 0 || Number(payment.coins || 0) <= 0) return null;
+  if (player?.id && payment.playerId !== player.id) return null;
+
+  const existing = await tx.streamerSupportSale.findFirst({
+    where: { paymentId: payment.id, code: streamerCode.code }
+  });
+  if (existing) return existing;
+
+  const totalCoins = Number(payment.coins || 0);
   const commissionPercent = toPercent(streamerCode.percent, 0, 80);
-  const commissionCoins = Math.floor(Number(totalCoins || 0) * commissionPercent / 100);
+  const commissionCoins = Math.floor(totalCoins * commissionPercent / 100);
   const sale = await tx.streamerSupportSale.create({
     data: {
       streamerCodeId: streamerCode.id,
       code: streamerCode.code,
       streamerName: streamerCode.streamerName,
-      playerId: player?.id || null,
+      playerId: player?.id || payment.playerId || null,
       playerSteam64: player?.steam64 || null,
       playerName: player?.nickname || null,
-      purchaseId,
-      paymentId,
-      source,
-      totalCoins: Number(totalCoins || 0),
+      purchaseId: null,
+      paymentId: payment.id,
+      source: 'COIN_PURCHASE',
+      totalCoins,
       commissionPercent,
       commissionCoins,
-      couponCode: couponCode || null
+      couponCode: null
     }
   });
   await tx.streamerCode.update({
     where: { id: streamerCode.id },
     data: {
-      totalSalesCoins: { increment: Number(totalCoins || 0) },
+      totalSalesCoins: { increment: totalCoins },
       totalCommissionCoins: { increment: commissionCoins }
     }
   });
@@ -201,7 +227,7 @@ function periodRange(periodType = 'ALL') {
 }
 
 function periodWhere({ code, start = null, end = null, onlyUnpaid = false } = {}) {
-  const where = { code };
+  const where = { code, ...paidCoinSupportWhere() };
   if (onlyUnpaid) where.paidAt = null;
   if (start || end) {
     where.createdAt = {};
@@ -213,6 +239,7 @@ function periodWhere({ code, start = null, end = null, onlyUnpaid = false } = {}
 
 function summarizeSales(sales = [], fromDate = null, onlyUnpaid = false) {
   const filtered = sales.filter((sale) => {
+    if (!isPaidCoinSupportSale(sale)) return false;
     if (fromDate && new Date(sale.createdAt) < fromDate) return false;
     if (onlyUnpaid && sale.paidAt) return false;
     return true;
@@ -250,9 +277,23 @@ async function getSalesForPayout({ tx = prisma, code, start = null, end = null }
 }
 
 async function getStreamerDashboard(streamerCode) {
-  const [sales, payouts] = await Promise.all([
-    prisma.streamerSupportSale.findMany({ where: { code: streamerCode.code }, orderBy: { createdAt: 'desc' }, take: 800 }),
-    prisma.streamerPayout.findMany({ where: { code: streamerCode.code }, orderBy: { createdAt: 'desc' }, take: 60 })
+  const [sales, payouts, skinClaims] = await Promise.all([
+    prisma.streamerSupportSale.findMany({ where: { code: streamerCode.code, ...paidCoinSupportWhere() }, orderBy: { createdAt: 'desc' } }),
+    prisma.streamerPayout.findMany({ where: { code: streamerCode.code }, orderBy: { createdAt: 'desc' }, take: 60 }),
+    prisma.playerOutfitSubscription.findMany({
+      where: {
+        source: 'STREAMER_REWARD',
+        OR: [
+          { streamerCode: streamerCode.code },
+          { streamerCodeId: streamerCode.id }
+        ]
+      },
+      include: {
+        player: { select: { steam64: true, nickname: true, createdAt: true } },
+        outfitTemplate: { select: { name: true, slug: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
   ]);
   const starts = periodStarts();
   const stats = {
@@ -265,7 +306,74 @@ async function getStreamerDashboard(streamerCode) {
     pendingWeekly: summarizeSales(sales, starts.week, true),
     pendingMonthly: summarizeSales(sales, starts.month, true)
   };
-  return { streamerCode, sales: sales.slice(0, 160), payouts, stats };
+  const supporterMap = new Map();
+  for (const claim of skinClaims) {
+    const steam64 = claim.steam64 || claim.player?.steam64;
+    if (!steam64) continue;
+    const current = supporterMap.get(steam64) || {
+      steam64,
+      playerName: claim.player?.nickname || 'Player',
+      skinClaims: 0,
+      skinName: null,
+      skinStatus: null,
+      skinClaimedAt: null,
+      skinExpiresAt: null,
+      purchaseCount: 0,
+      totalCoins: 0,
+      commissionCoins: 0,
+      lastPurchaseAt: null
+    };
+    current.playerName = claim.player?.nickname || current.playerName;
+    current.skinClaims += 1;
+    if (!current.skinClaimedAt || new Date(claim.createdAt) > new Date(current.skinClaimedAt)) {
+      current.skinName = claim.outfitTemplate?.name || 'Skin do streamer';
+      current.skinStatus = claim.status;
+      current.skinClaimedAt = claim.createdAt;
+      current.skinExpiresAt = claim.expiresAt;
+    }
+    supporterMap.set(steam64, current);
+  }
+  for (const sale of sales) {
+    if (!sale.playerSteam64) continue;
+    const current = supporterMap.get(sale.playerSteam64) || {
+      steam64: sale.playerSteam64,
+      playerName: sale.playerName || 'Player',
+      skinClaims: 0,
+      skinName: null,
+      skinStatus: null,
+      skinClaimedAt: null,
+      skinExpiresAt: null,
+      purchaseCount: 0,
+      totalCoins: 0,
+      commissionCoins: 0,
+      lastPurchaseAt: null
+    };
+    current.playerName = sale.playerName || current.playerName;
+    current.purchaseCount += 1;
+    current.totalCoins += Number(sale.totalCoins || 0);
+    current.commissionCoins += Number(sale.commissionCoins || 0);
+    if (!current.lastPurchaseAt || new Date(sale.createdAt) > new Date(current.lastPurchaseAt)) current.lastPurchaseAt = sale.createdAt;
+    supporterMap.set(sale.playerSteam64, current);
+  }
+  const supporters = [...supporterMap.values()].sort((a, b) => {
+    const aDate = a.lastPurchaseAt || a.skinClaimedAt || 0;
+    const bDate = b.lastPurchaseAt || b.skinClaimedAt || 0;
+    return new Date(bDate) - new Date(aDate);
+  });
+  return {
+    streamerCode,
+    sales: sales.slice(0, 160),
+    payouts,
+    stats,
+    skinClaims: skinClaims.slice(0, 300),
+    supporters,
+    supporterStats: {
+      uniquePlayers: supporters.length,
+      skinRedeemers: supporters.filter(row => row.skinClaims > 0).length,
+      coinSupporters: supporters.filter(row => row.purchaseCount > 0).length,
+      both: supporters.filter(row => row.skinClaims > 0 && row.purchaseCount > 0).length
+    }
+  };
 }
 
 export async function getStreamerDashboardByCode(code) {
@@ -409,7 +517,7 @@ export async function getAdminSupportDashboard() {
   const [streamerCodesRaw, coupons, sales, payouts] = await Promise.all([
     prisma.streamerCode.findMany({ orderBy: [{ active: 'desc' }, { updatedAt: 'desc' }], take: 100 }),
     prisma.couponCode.findMany({ orderBy: [{ active: 'desc' }, { updatedAt: 'desc' }], take: 100 }),
-    prisma.streamerSupportSale.findMany({ orderBy: { createdAt: 'desc' }, take: 1000 }),
+    prisma.streamerSupportSale.findMany({ where: paidCoinSupportWhere(), orderBy: { createdAt: 'desc' }, take: 1000 }),
     prisma.streamerPayout.findMany({ orderBy: { createdAt: 'desc' }, take: 200 })
   ]);
   const starts = periodStarts();

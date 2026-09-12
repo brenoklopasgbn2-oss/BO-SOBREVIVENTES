@@ -1,0 +1,11 @@
+<%- include('../partials/head') %><link rel="stylesheet" href="/css/admin-v46.css"><%- include('_admin_nav') %>
+<main class="admin-page-v46" style="padding:24px"><%- include('../partials/alerts') %>
+<h1>🔗 Vínculos Discord ↔ Steam</h1><p>Central para identificar jogadores vinculados, online e pendentes. O bot alerta após 30 minutos jogando sem vínculo.</p>
+<section style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0">
+<article class="admin-card-v46" style="padding:16px"><small>Online agora</small><h2><%= presence.onlinePlayers.length %></h2></article>
+<article class="admin-card-v46" style="padding:16px"><small>Vinculados online</small><h2><%= presence.onlinePlayers.filter(p=>p.linked).length %></h2></article>
+<article class="admin-card-v46" style="padding:16px"><small>Sem vínculo online</small><h2><%= presence.onlinePlayers.filter(p=>!p.linked).length %></h2></article>
+</section>
+<section class="admin-card-v46" style="padding:18px;overflow:auto"><h2>Players ativos</h2><table style="width:100%;border-collapse:collapse"><thead><tr><th>Nick</th><th>Steam64</th><th>Discord</th><th>Online</th><th>Tempo</th><th>Servidor</th><th>Ação</th></tr></thead><tbody>
+<% players.forEach(p => { const live=presence.onlinePlayers.find(x=>x.id===p.id); %><tr style="border-top:1px solid #333"><td style="padding:9px"><b><%= p.nickname || '-' %></b></td><td><code><%= p.steam64 %></code></td><td><%= p.discordUsername || p.discordId || '❌ NÃO VINCULADO' %></td><td><%= live ? '🟢' : '⚫' %></td><td><%= live ? live.onlineMinutes+' min' : '-' %></td><td><%= p.lastSeenServerId || '-' %></td><td><% if(p.discordId){ %><form method="POST" action="/admin/links/<%= p.id %>/unlink" onsubmit="return confirm('Remover vínculo deste player?')"><button class="btn" type="submit">Desvincular</button></form><% } %></td></tr><% }) %>
+</tbody></table></section></main>

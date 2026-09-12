@@ -33,11 +33,11 @@
             <label>Centro X<input type="number" step="0.01" name="centerX" required value="<%= editing?.centerX ?? '' %>" placeholder="4569.07"></label>
             <label>Centro Z<input type="number" step="0.01" name="centerZ" required value="<%= editing?.centerZ ?? '' %>" placeholder="10042.91"></label>
             <label>Raio em metros<input type="number" min="25" max="10000" step="1" name="radiusMeters" required value="<%= editing?.radiusMeters ?? 300 %>"></label>
-            <label>RZ por kill válida<input type="number" min="1" max="1000000" step="1" name="rewardCoins" required value="<%= editing?.rewardCoins ?? 1000 %>"></label>
+            <label><%= currencyName %> por kill válida<input type="number" min="1" max="1000000" step="1" name="rewardCoins" required value="<%= editing?.rewardCoins ?? 1000 %>"></label>
             <label>Nome do local (plano B)<input name="placeKeyword" maxlength="100" value="<%= editing?.placeKeyword || '' %>" placeholder="Ex.: Zelenogorsk"></label>
             <label>Cooldown da mesma dupla (segundos)<input type="number" min="0" max="86400" name="pairCooldownSeconds" value="<%= editing?.pairCooldownSeconds ?? 1800 %>"></label>
             <label>Máximo de kills premiadas por player<input type="number" min="0" max="100000" name="maxRewardsPerPlayer" value="<%= editing?.maxRewardsPerPlayer ?? 0 %>"><small>0 = ilimitado</small></label>
-            <label>Orçamento total em RZ<input type="number" min="0" max="2000000000" name="totalRewardBudgetCoins" value="<%= editing?.totalRewardBudgetCoins ?? 0 %>"><small>0 = ilimitado</small></label>
+            <label>Orçamento total em <%= currencyName %><input type="number" min="0" max="2000000000" name="totalRewardBudgetCoins" value="<%= editing?.totalRewardBudgetCoins ?? 0 %>"><small>0 = ilimitado</small></label>
             <label>Início opcional<input type="datetime-local" name="startsAt" value="<%= localDate(editing?.startsAt) %>"></label>
             <label>Fim opcional<input type="datetime-local" name="endsAt" value="<%= localDate(editing?.endsAt) %>"></label>
           </div>
@@ -61,11 +61,12 @@
           <% events.forEach(event => { %>
             <article class="territory-event-card-v158 <%= event.active ? 'active' : '' %>">
               <div class="item-builder-top"><div><strong><%= event.name %></strong><br><small><%= event.serverType.toUpperCase() %> • X <%= Number(event.centerX).toFixed(0) %> / Z <%= Number(event.centerZ).toFixed(0) %> • <%= Math.round(event.radiusMeters) %> m</small></div><span class="status <%= event.active ? 'paid' : 'failed' %>"><%= event.displayStatus %></span></div>
-              <div class="stats-grid"><div class="stat"><span>Válidas</span><strong><%= event.acceptedCount %></strong></div><div class="stat"><span>Bloqueadas</span><strong><%= event.rejectedCount %></strong></div><div class="stat"><span>Pago</span><strong><%= coins(event.rewardTotal) %> RZ</strong></div></div>
+              <div class="stats-grid"><div class="stat"><span>Válidas</span><strong><%= event.acceptedCount %></strong></div><div class="stat"><span>Bloqueadas</span><strong><%= event.rejectedCount %></strong></div><div class="stat"><span>Pago</span><strong><%= coins(event.rewardTotal) %> <%= currencyName %></strong></div></div>
               <div class="territory-event-actions-v158">
                 <a class="btn small" href="/admin/eventos?edit=<%= encodeURIComponent(event.id) %>">Editar / ver</a>
                 <form method="POST" action="/admin/eventos/<%= event.id %>/toggle"><input type="hidden" name="active" value="<%= event.active ? 'false' : 'true' %>"><button class="btn small <%= event.active ? '' : 'primary' %>" type="submit"><%= event.active ? 'Desativar' : 'Ativar' %></button></form>
                 <form method="POST" action="/admin/eventos/<%= event.id %>/reprocess" onsubmit="return confirm('Reprocessar kills ainda não avaliadas deste evento? Kills válidas receberão moedas automaticamente.')"><input type="hidden" name="limit" value="10000"><button class="btn small" type="submit">Reprocessar kills</button></form>
+                <form method="POST" action="/admin/eventos/<%= event.id %>/delete" onsubmit="return confirm('Excluir definitivamente este evento? O ranking, as kills processadas e o histórico deste evento serão apagados. As moedas já pagas aos players NÃO serão retiradas. O próximo evento começará do zero.')"><button class="btn small danger" type="submit">🗑️ Excluir evento</button></form>
               </div>
             </article>
           <% }) %>
@@ -76,9 +77,9 @@
     <% if (selectedEvent) { %>
       <section class="card wide-card" style="margin-top:18px">
         <div class="item-builder-top"><h2>Ranking — <%= selectedEvent.name %></h2><span class="pill"><%= leaderboard.length %> players</span></div>
-        <table><thead><tr><th>#</th><th>Player</th><th>Kills válidas</th><th>RZ recebido</th><th>Última kill</th></tr></thead><tbody>
+        <table><thead><tr><th>#</th><th>Player</th><th>Kills válidas</th><th><%= currencyName %> recebido</th><th>Última kill</th></tr></thead><tbody>
           <% if (!leaderboard.length) { %><tr><td colspan="5" class="muted">Ainda não há kill válida.</td></tr><% } %>
-          <% leaderboard.forEach((row,index) => { %><tr><td><%= index + 1 %>º</td><td><strong><%= row.playerName %></strong><br><small><%= row.steam64 %></small></td><td><%= row.kills %></td><td><%= coins(row.rewardCoins) %> RZ</td><td><%= dateTime(row.lastKillAt) %></td></tr><% }) %>
+          <% leaderboard.forEach((row,index) => { %><tr><td><%= index + 1 %>º</td><td><strong><%= row.playerName %></strong><br><small><%= row.steam64 %></small></td><td><%= row.kills %></td><td><%= coins(row.rewardCoins) %> <%= currencyName %></td><td><%= dateTime(row.lastKillAt) %></td></tr><% }) %>
         </tbody></table>
       </section>
 
@@ -86,7 +87,7 @@
         <div class="item-builder-top"><h2>Auditoria das kills</h2><span class="pill"><%= recentAttempts.length %> recentes</span></div>
         <table><thead><tr><th>Data</th><th>Killer</th><th>Vítima</th><th>Resultado</th><th>Localização</th><th>Prêmio</th></tr></thead><tbody>
           <% if (!recentAttempts.length) { %><tr><td colspan="6" class="muted">Nenhuma kill processada nesse evento.</td></tr><% } %>
-          <% recentAttempts.forEach(row => { %><tr><td><%= dateTime(row.occurredAt) %></td><td><%= row.killerName || 'Player' %><br><small><%= row.killerSteam64 %></small></td><td><%= row.victimName || 'Player' %><br><small><%= row.victimSteam64 %></small></td><td class="<%= row.qualified ? 'territory-attempt-valid-v158' : 'territory-attempt-blocked-v158' %>"><strong><%= row.qualified ? 'VÁLIDA' : 'BLOQUEADA' %></strong><% if (!row.qualified) { %><br><small><%= rejectionLabels[row.rejectionReason] || row.rejectionReason || 'Motivo não informado' %></small><% } %></td><td><small>K: <%= row.killerPosX != null ? Number(row.killerPosX).toFixed(0) + '/' + Number(row.killerPosZ).toFixed(0) : '-' %><br>V: <%= row.victimPosX != null ? Number(row.victimPosX).toFixed(0) + '/' + Number(row.victimPosZ).toFixed(0) : '-' %></small></td><td><%= row.qualified ? '+' + coins(row.rewardCoins) + ' RZ' : '-' %></td></tr><% }) %>
+          <% recentAttempts.forEach(row => { %><tr><td><%= dateTime(row.occurredAt) %></td><td><%= row.killerName || 'Player' %><br><small><%= row.killerSteam64 %></small></td><td><%= row.victimName || 'Player' %><br><small><%= row.victimSteam64 %></small></td><td class="<%= row.qualified ? 'territory-attempt-valid-v158' : 'territory-attempt-blocked-v158' %>"><strong><%= row.qualified ? 'VÁLIDA' : 'BLOQUEADA' %></strong><% if (!row.qualified) { %><br><small><%= rejectionLabels[row.rejectionReason] || row.rejectionReason || 'Motivo não informado' %></small><% } %></td><td><small>K: <%= row.killerPosX != null ? Number(row.killerPosX).toFixed(0) + '/' + Number(row.killerPosZ).toFixed(0) : '-' %><br>V: <%= row.victimPosX != null ? Number(row.victimPosX).toFixed(0) + '/' + Number(row.victimPosZ).toFixed(0) : '-' %></small></td><td><%= row.qualified ? '+' + coins(row.rewardCoins) + ' ' + currencyName : '-' %></td></tr><% }) %>
         </tbody></table>
       </section>
     <% } %>

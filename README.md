@@ -1,43 +1,28 @@
-# ZONA-Z Bot • Alteria
+# DayZ Web Store — pacote preparado para repasse
 
-Versão repaginada do bot da comunidade **ZONA-Z**.
+Comece por **`LEIA-ME-NOVO-DONO.md`**.
 
-## Estrutura do Discord
+Este projeto usa Node.js 22+, Express, PostgreSQL, Prisma, EJS e integração HTTP/API em lote com o mod DayZ (sem FTP/SFTP).
 
-- 🚪 ENTRADA ZONA-Z
-- 📢 CENTRAL ZONA-Z
-  - avisos
-  - regras resumidas
-  - como jogar
-  - eventos
-  - KOTH
-  - Airdrop
-  - informações
-  - banimentos
-  - sugestões
-  - ZONA-Z IA
-- 🤝 COMUNIDADE
-- 🟡/🟢/🔴 SUPORTE
-- 📂 TICKETS
-- 🚀 IMPULSIONADORES
-- 👑 STAFF
-- 🤖 BOT
+## Comandos principais
 
-## O que foi removido
+```bash
+npm install
+npm run setup:secrets
+npm run check:config
+npm run dev
+npm start
+```
 
-O `/setup` remove os canais conhecidos do servidor anterior, incluindo guias de bunkers/chaves, plataforma congelante, missões de rádio antigas, regra de bandeira antiga, Vanilla Pro, carro blindado, base VIP e saco de dormir.
+## Documentação
 
-A migração preserva canais manuais que não fazem parte da lista de limpeza e reaproveita canais úteis (chat, clips, entrada etc.) renomeando e movendo para a estrutura nova.
+1. `LEIA-ME-NOVO-DONO.md`
+2. `docs/01-RAILWAY-PASSO-A-PASSO.md`
+3. `docs/02-VARIAVEIS.md`
+4. `docs/03-BANCO-DE-DADOS.md`
+5. `docs/04-FILEBRIDGE-DAYZ.md`
+6. `docs/05-CUSTOMIZACAO.md`
+7. `docs/06-PROBLEMAS-COMUNS.md`
+8. `docs/07-CHECKLIST-ANTES-DE-ABRIR.md`
 
-## Regras
-
-As regras foram reduzidas para **8 regras principais**, deixando detalhes específicos de raid/eventos para comunicados oficiais quando necessário.
-
-## Comandos ativos
-
-- `/setup` — aplica diretamente a nova estrutura ZONA-Z.
-- `/atualizarcanais` — mostra um botão de confirmação para executar a mesma atualização.
-
-## Tema
-
-Painéis novos em `assets/painels`, todos em 1600×500, com identidade visual ZONA-Z e foco em **Alteria • 1PP • Loot 1.3x • KOTH • Airdrop**.
+Use `.env.example` apenas como modelo. Nunca versione um `.env` real.

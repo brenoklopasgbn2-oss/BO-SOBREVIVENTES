@@ -7,6 +7,7 @@ const OFFICIAL_TYPES_URLS = [
 ];
 
 let remoteCache = { expires: 0, items: [] };
+let localSearchCache = null;
 
 function cleanClassname(value) {
   return String(value || '').trim().replace(/[^A-Za-z0-9_]/g, '').slice(0, 120);
@@ -60,7 +61,7 @@ function normalizeCatalogItem(raw, source = 'Catálogo local') {
 
 async function fetchText(url) {
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'RAIDZStore/1.0 (+catalogo oficial DayZ)' },
+    headers: { 'User-Agent': 'DayZStore/1.0 (+catalogo oficial DayZ)' },
     signal: AbortSignal.timeout(8000)
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -114,4 +115,28 @@ export async function getFullDayzItemCatalog() {
     }
   }
   return [...byClass.values()].sort((a, b) => String(a.category).localeCompare(String(b.category), 'pt-BR') || String(a.name).localeCompare(String(b.name), 'pt-BR'));
+}
+
+
+export function searchDayzItemCatalog(query = '', limit = 60) {
+  const q = String(query || '').trim().toLowerCase();
+  const max = Math.max(1, Math.min(Number(limit || 60), 100));
+  if (!localSearchCache) {
+    localSearchCache = getStaticDayzItemCatalog()
+      .map(item => normalizeCatalogItem(item, item.source || 'Catálogo local'))
+      .filter(Boolean);
+  }
+  const local = localSearchCache;
+  const seen = new Set();
+  const results = [];
+  for (const item of local) {
+    const key = String(item.classname || '').toLowerCase();
+    if (!key || seen.has(key)) continue;
+    const haystack = `${item.name} ${item.classname} ${item.category}`.toLowerCase();
+    if (q && !haystack.includes(q)) continue;
+    seen.add(key);
+    results.push(item);
+    if (results.length >= max) break;
+  }
+  return results;
 }

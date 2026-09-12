@@ -3,834 +3,410 @@ import {
   defaultPackages,
   storeCategories,
   starterKitConfig,
-  vanillaProducts,
-  defaultVehicles,
-  defaultInsurancePlans
+  vanillaProducts
 } from '../data/vanillaStoreData.js';
-import { defaultOutfitTemplates } from '../data/outfitTemplates.js';
-import { seedOutfitTemplates } from './outfitService.js';
-import { vehicleTemplatePayload } from './vehicleRentalService.js';
+import { vipOutfitsV201 } from '../data/vipOutfitsV201.js';
+import { defaultVehicleTemplatesV213 } from '../data/defaultVehicleTemplatesV213.js';
 
-function envFlag(name, fallback = false) {
-  const raw = process.env[name];
-  if (raw === undefined || raw === null || raw === '') return fallback;
-  return ['1', 'true', 'yes', 'sim', 'on'].includes(String(raw).trim().toLowerCase());
+const CLEAN_SLATE_KEY = 'store.cleanSlate.v200';
+const STARTER_KIT_V225_KEY = 'starterKit.v225.initialBaseVip7d';
+const STARTER_KIT_V610_KEY = 'starterKit.v610.fullDropStacks';
+
+async function settingExists(key) {
+  return prisma.appSetting.findUnique({ where: { key }, select: { key: true } });
 }
 
-// V62: modo seguro por padrão.
-// GitHub/deploy deve atualizar código, não conteúdo cadastrado no painel ADM.
-// Para forçar overwrite manualmente, configure explicitamente as variáveis abaixo como true.
-const OVERWRITE_PRODUCTS = envFlag('SEED_OVERWRITE_EXISTING_PRODUCTS', false);
-const OVERWRITE_VEHICLES = envFlag('SEED_OVERWRITE_EXISTING_VEHICLES', false);
-const OVERWRITE_SETTINGS = envFlag('SEED_OVERWRITE_EXISTING_SETTINGS', false);
-const OVERWRITE_PACKAGES = envFlag('SEED_OVERWRITE_EXISTING_PACKAGES', false);
-const OVERWRITE_INSURANCE_PLANS = envFlag('SEED_OVERWRITE_EXISTING_INSURANCE_PLANS', false);
-
-const SEED_DELETED_PRODUCTS_KEY = 'seed.deletedProducts.v66';
-const SEED_DELETED_VEHICLES_KEY = 'seed.deletedVehicles.v66';
-
-function cleanTombstoneSlug(value) {
-  return String(value || '').trim().toLowerCase();
+async function createSettingIfMissing(key, value) {
+  const existing = await settingExists(key);
+  if (existing) return existing;
+  return prisma.appSetting.create({ data: { key, value } });
 }
 
-function extractTombstoneSlugs(value) {
-  const source = Array.isArray(value?.slugs) ? value.slugs : (Array.isArray(value) ? value : []);
-  return new Set(source.map(cleanTombstoneSlug).filter(Boolean));
-}
+async function applyCleanSlateOnce() {
+  const done = await settingExists(CLEAN_SLATE_KEY);
+  if (done) return { applied: false };
 
-async function getSeedTombstones(key) {
-  const setting = await prisma.appSetting.findUnique({ where: { key } });
-  return extractTombstoneSlugs(setting?.value || {});
-}
+  const result = await prisma.$transaction(async (tx) => {
+    // Fila/histórico de produtos antigos. Coins, pagamentos e players NÃO são zerados.
+    // Sessões antigas são removidas para o novo servidor emitir acesso novamente.
+    const accessTokens = await tx.gameAccessToken.deleteMany({});
+    const disabledCoupons = await tx.couponCode.updateMany({ data: { active: false } });
+    const disabledStreamerCodes = await tx.streamerCode.updateMany({ data: { active: false } });
+    const disabledCoinPackages = await tx.coinPackage.updateMany({ data: { active: false } });
+    const deliveries = await tx.deliveryQueue.deleteMany({});
+    const purchases = await tx.purchase.deleteMany({});
+    const checkouts = await tx.checkoutAttempt.deleteMany({});
+    const starterClaims = await tx.starterKitClaim.deleteMany({});
 
-function hasText(value) {
-  return typeof value === 'string' && value.trim().length > 0;
-}
+    // Veículos antigos e dependências.
+    const vehicleLogs = await tx.vehicleRespawnLog.deleteMany({});
+    const playerVehicles = await tx.playerVehicle.deleteMany({});
+    const insurancePlans = await tx.vehicleInsurancePlan.deleteMany({});
+    const vehicles = await tx.vehicleTemplate.deleteMany({});
 
-function isEmptyJson(value) {
-  return value === null || value === undefined || (Array.isArray(value) && value.length === 0);
-}
+    // Trajes/VIPs antigos e dependências.
+    const outfitFlags = await tx.outfitFlagRequest.deleteMany({});
+    const outfitSubs = await tx.playerOutfitSubscription.deleteMany({});
+    const outfitOrders = await tx.customOutfitOrder.deleteMany({});
+    const outfits = await tx.outfitTemplate.deleteMany({});
 
-async function ensureProductItems(productId, savedProduct, defaultItems = []) {
-  const count = await prisma.productItem.count({ where: { productId } });
-  if (count > 0) return;
-  const sourceItems = defaultItems.length
-    ? defaultItems
-    : [{ classname: savedProduct.classname, quantity: savedProduct.quantity, label: savedProduct.name }];
+    // Catálogo antigo inteiro; a etapa seguinte recria somente Construção.
+    const productItems = await tx.productItem.deleteMany({});
+    const products = await tx.product.deleteMany({});
 
-  await prisma.productItem.createMany({
-    data: sourceItems
-      .filter((item) => hasText(item.classname))
-      .map((item, index) => ({
-        productId,
-        classname: item.classname,
-        quantity: Number(item.quantity || 1),
-        label: item.label || item.classname,
-        sortOrder: Number.isFinite(Number(item.sortOrder)) ? Number(item.sortOrder) : index
-      }))
-  });
-}
-
-async function upsertProduct(product) {
-  const { items = [], ...productData } = product;
-  const existing = await prisma.product.findUnique({ where: { slug: product.slug }, include: { items: true } });
-
-  if (!existing) {
-    const saved = await prisma.product.create({ data: productData });
-    await ensureProductItems(saved.id, saved, items);
-    return saved;
-  }
-
-  if (OVERWRITE_PRODUCTS) {
-    const saved = await prisma.product.update({ where: { slug: product.slug }, data: productData });
-    await prisma.productItem.deleteMany({ where: { productId: saved.id } });
-    await ensureProductItems(saved.id, saved, items);
-    return saved;
-  }
-
-  // Atualização segura: preserva preço, promoção, status, imagem enviada no ADM,
-  // categoria editada, estoque, destaque e itens do produto.
-  const safeData = {};
-  if (!hasText(existing.description) && hasText(productData.description)) safeData.description = productData.description;
-  if (!hasText(existing.category) && hasText(productData.category)) safeData.category = productData.category;
-  if (!hasText(existing.serverType) && hasText(productData.serverType)) safeData.serverType = productData.serverType;
-  if (!hasText(existing.classname) && hasText(productData.classname)) safeData.classname = productData.classname;
-  if (!hasText(existing.deliveryType) && hasText(productData.deliveryType)) safeData.deliveryType = productData.deliveryType;
-  if (!hasText(existing.dropBoxClassname) && hasText(productData.dropBoxClassname)) safeData.dropBoxClassname = productData.dropBoxClassname;
-  if (!hasText(existing.imageUrl) && !hasText(existing.imageData) && hasText(productData.imageUrl)) safeData.imageUrl = productData.imageUrl;
-
-  const saved = Object.keys(safeData).length
-    ? await prisma.product.update({ where: { slug: product.slug }, data: safeData })
-    : existing;
-
-  await ensureProductItems(saved.id, saved, items);
-  return saved;
-}
-
-async function upsertVehicle(vehicle) {
-  const vehicleData = {
-    ...vehicle,
-    fluids: vehicle.fluids || { fuelPercent: 80, waterPercent: 100, oilPercent: 100 },
-    variants: vehicle.variants || null,
-    cargoItems: vehicle.cargoItems || []
-  };
-
-  const existing = await prisma.vehicleTemplate.findUnique({ where: { slug: vehicle.slug } });
-  if (!existing) return prisma.vehicleTemplate.create({ data: vehicleData });
-
-  if (OVERWRITE_VEHICLES) {
-    return prisma.vehicleTemplate.update({ where: { slug: vehicle.slug }, data: vehicleData });
-  }
-
-  // Preserva preço, imagem enviada pelo ADM, status ativo/inativo e ajustes manuais.
-  // Só completa campos que estiverem vazios para veículo antigo não quebrar.
-  const safeData = {};
-  if (!hasText(existing.description) && hasText(vehicle.description)) safeData.description = vehicle.description;
-  if (!hasText(existing.serverType) && hasText(vehicle.serverType)) safeData.serverType = vehicle.serverType;
-  if (!hasText(existing.vehicleClassname) && hasText(vehicle.vehicleClassname)) safeData.vehicleClassname = vehicle.vehicleClassname;
-  if (!hasText(existing.imageUrl) && !hasText(existing.imageData) && hasText(vehicle.imageUrl)) safeData.imageUrl = vehicle.imageUrl;
-  if (isEmptyJson(existing.parts) && !isEmptyJson(vehicle.parts)) safeData.parts = vehicle.parts;
-  if (isEmptyJson(existing.cargoItems) && !isEmptyJson(vehicleData.cargoItems)) safeData.cargoItems = vehicleData.cargoItems;
-  if (isEmptyJson(existing.fluids) && !isEmptyJson(vehicleData.fluids)) safeData.fluids = vehicleData.fluids;
-  if (isEmptyJson(existing.variants) && !isEmptyJson(vehicleData.variants)) safeData.variants = vehicleData.variants;
-
-  return Object.keys(safeData).length
-    ? prisma.vehicleTemplate.update({ where: { slug: vehicle.slug }, data: safeData })
-    : existing;
-}
-
-async function upsertSetting(key, value, { overwrite = OVERWRITE_SETTINGS } = {}) {
-  return prisma.appSetting.upsert({
-    where: { key },
-    update: overwrite ? { value } : {},
-    create: { key, value }
-  });
-}
-
-async function upsertCoinPackage(pack) {
-  const exists = await prisma.coinPackage.findFirst({ where: { amountBrl: pack.amountBrl, coins: pack.coins } });
-  if (!exists) return prisma.coinPackage.create({ data: { ...pack, active: true } });
-  if (OVERWRITE_PACKAGES) return prisma.coinPackage.update({ where: { id: exists.id }, data: { ...pack, active: true } });
-  return exists;
-}
-
-async function upsertInsurancePlan(plan) {
-  const exists = await prisma.vehicleInsurancePlan.findFirst({ where: { name: plan.name, templateId: null } });
-  const data = { ...plan, templateId: null, active: true };
-  if (!exists) return prisma.vehicleInsurancePlan.create({ data });
-  if (OVERWRITE_INSURANCE_PLANS) return prisma.vehicleInsurancePlan.update({ where: { id: exists.id }, data });
-  return exists;
-}
-
-
-async function applyRaidZBrandingCleanup() {
-  // V67: remove marcas antigas visíveis em dados já salvos no banco.
-  // Não mexe em preços, saldos, compras, garagem, entregas ou imagens.
-  try {
-    const oldSupplyCategory = 'Sobre' + 'vivência';
-    const oldBrandPlural = 'Sobre' + 'viventes';
-    await prisma.product.updateMany({ where: { category: oldSupplyCategory }, data: { category: 'Suprimentos' } });
-    await prisma.appSetting.upsert({
-      where: { key: 'brand.raidz.v67' },
-      update: { value: { name: 'ZONA-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } },
-      create: { key: 'brand.raidz.v67', value: { name: 'ZONA-Z', currency: 'RZ Coins', oldBrandRemoved: true, updatedAt: new Date().toISOString() } }
-    });
-    const categorySetting = await prisma.appSetting.findUnique({ where: { key: 'store_categories_v1' } });
-    const categories = Array.isArray(categorySetting?.value?.categories) ? categorySetting.value.categories : null;
-    if (categories) {
-      const cleaned = categories.map((cat) => ({
-        ...cat,
-        name: String(cat.name || '').replace(new RegExp(oldSupplyCategory, 'gi'), 'Suprimentos').replace(new RegExp(oldBrandPlural + '\\s*Z', 'gi'), 'ZONA-Z').replace(new RegExp(oldBrandPlural, 'gi'), 'Players')
-      }));
-      await prisma.appSetting.update({ where: { key: 'store_categories_v1' }, data: { value: { ...categorySetting.value, categories: cleaned } } });
-    }
-  } catch (err) {
-    console.warn('Aviso: limpeza de marca ZONA-Z não aplicada:', err.message);
-  }
-}
-
-
-function packageKey(pack) {
-  const amount = Number(pack?.amountBrl || 0).toFixed(2);
-  return `${amount}:${Number(pack?.coins || 0)}`;
-}
-
-
-async function backfillDirectVehicleDeliveriesToGarageV70() {
-  // V70: compras antigas de veículo sem seguro também devem aparecer na Minha Garagem.
-  // Não cobra nada, não mexe em saldo e não cria nova entrega: só cria o registro de garagem.
-  try {
-    const deliveries = await prisma.deliveryQueue.findMany({
-      where: { productName: { startsWith: 'Veículo comprado sem seguro:' } },
-      orderBy: { createdAt: 'desc' },
-      take: 1000
-    });
-
-    for (const delivery of deliveries) {
-      const meta = delivery.meta || {};
-      const vehicleKey = String(meta.vehicleKey || '').trim();
-      const vehicleClassname = String(meta.vehicleClassname || delivery.classname || '').trim();
-      if (!vehicleKey || !vehicleClassname) continue;
-
-      const existing = await prisma.playerVehicle.findFirst({ where: { currentVehicleKey: vehicleKey } });
-      if (existing) continue;
-
-      const template = await prisma.vehicleTemplate.findFirst({
-        where: { vehicleClassname, active: true },
-        orderBy: { updatedAt: 'desc' }
-      });
-      if (!template) continue;
-
-      const displayNameRaw = String(meta.displayName || delivery.productName || template.name || 'Veículo').replace(/^Veículo comprado sem seguro:\s*/i, '').trim();
-      const playerVehicle = await prisma.playerVehicle.create({
-        data: {
-          playerId: delivery.playerId,
-          steam64: delivery.steam64,
-          templateId: template.id,
-          insurancePlanId: null,
-          serverType: delivery.serverType || template.serverType || 'vanilla',
-          displayName: displayNameRaw || template.name,
-          vehicleClassname,
-          ownershipType: 'OWNED',
-          status: 'ACTIVE',
-          expiresAt: null,
-          insuranceExpiresAt: null,
-          insuranceUsesWeekStart: new Date(),
-          insuranceUsesThisWeek: 0,
-          insuranceUsesTotal: 0,
-          deliveriesCreated: 1,
-          currentVehicleKey: vehicleKey,
-          lastRespawnAt: delivery.createdAt || new Date(),
-          currentVehicleMoving: false,
-          currentVehicleOccupied: false,
-          currentVehicleCanTheftClaim: true,
-          currentVehicleSpeedKmh: 0
-        }
-      });
-
-      await prisma.vehicleRespawnLog.create({
-        data: {
-          playerVehicleId: playerVehicle.id,
-          playerId: delivery.playerId,
-          deliveryId: delivery.id,
-          action: 'BUY_BACKFILL_GARAGE_V70',
-          newVehicleKey: vehicleKey,
-          costCoins: 0,
-          status: delivery.status === 'DELIVERED' ? 'DELIVERED' : 'PENDING'
-        }
-      });
-    }
-  } catch (err) {
-    console.warn('Aviso: backfill de garagem V70 não aplicado:', err.message);
-  }
-}
-
-async function applyRaidZV69CatalogCleanup() {
-  // V69: deixa doações, veículos, carlock e traje FOG exatamente como solicitado.
-  // Não mexe em saldos, compras, pagamentos, entregas nem garagem dos players.
-  const desiredPackageByKey = new Map(defaultPackages.map((pack) => [`${Number(pack.amountBrl).toFixed(2)}:${Number(pack.coins)}`, pack]));
-  const allPackages = await prisma.coinPackage.findMany({ orderBy: { createdAt: 'asc' } });
-  const activePackageKeys = new Set();
-
-  for (const pack of allPackages) {
-    const key = packageKey(pack);
-    const desired = desiredPackageByKey.get(key);
-    if (desired && !activePackageKeys.has(key)) {
-      activePackageKeys.add(key);
-      await prisma.coinPackage.update({
-        where: { id: pack.id },
-        data: { name: desired.name, amountBrl: desired.amountBrl, coins: desired.coins, bonusText: desired.bonusText, active: true }
-      });
-    } else {
-      await prisma.coinPackage.update({
-        where: { id: pack.id },
-        data: { active: false, name: String(pack.name || '').replace(/SZ/g, 'RZ'), bonusText: pack.bonusText ? String(pack.bonusText).replace(/SZ/g, 'RZ') : pack.bonusText }
-      });
-    }
-  }
-
-  for (const pack of defaultPackages) {
-    const key = `${Number(pack.amountBrl).toFixed(2)}:${Number(pack.coins)}`;
-    if (!activePackageKeys.has(key)) {
-      await prisma.coinPackage.create({ data: { ...pack, active: true } });
-      activePackageKeys.add(key);
-    }
-  }
-
-  const desiredVehiclesBySlug = new Map(defaultVehicles.map((vehicle) => [cleanTombstoneSlug(vehicle.slug), vehicle]));
-  for (const vehicle of defaultVehicles) {
-    const data = {
-      name: vehicle.name,
-      description: vehicle.description,
-      serverType: vehicle.serverType || 'vanilla',
-      vehicleClassname: vehicle.vehicleClassname,
-      buyPriceCoins: vehicle.buyPriceCoins || 70000,
-      rent1DayCoins: 0,
-      rent7DaysCoins: 0,
-      rent30DaysCoins: 0,
-      imageUrl: vehicle.imageUrl,
-      imageData: null,
-      imageMime: null,
-      parts: vehicle.parts || [],
-      cargoItems: vehicle.cargoItems || [],
-      fluids: vehicle.fluids || { fuelPercent: 80, waterPercent: 100, oilPercent: 100 },
-      variants: vehicle.variants || null,
-      active: true
-    };
-    await prisma.vehicleTemplate.upsert({
-      where: { slug: vehicle.slug },
-      update: data,
-      create: { ...data, slug: vehicle.slug }
-    });
-  }
-
-  const oldVehicleClassnames = new Set([
-    'Truck_01_Covered', 'Truck_01_Covered_Blue', 'Truck_01_Covered_Orange',
-    'MSFZ_LandRover', 'MSFZ_LandRover_ind', 'MSFZ_LandRover_black'
-  ]);
-  const desiredClassnames = new Set(defaultVehicles.map((vehicle) => vehicle.vehicleClassname));
-  const templates = await prisma.vehicleTemplate.findMany({ select: { id: true, slug: true, vehicleClassname: true } });
-  for (const template of templates) {
-    const slug = cleanTombstoneSlug(template.slug);
-    const isDesired = desiredVehiclesBySlug.has(slug);
-    const isOldDefault = oldVehicleClassnames.has(template.vehicleClassname) && !desiredClassnames.has(template.vehicleClassname);
-    const isM3S = String(template.vehicleClassname || '').startsWith('Truck_01_Covered');
-    const isNoGunM1025 = String(template.vehicleClassname || '').includes('TP_Apoc_M1025_NoGun');
-    if (!isDesired && (isOldDefault || isM3S || isNoGunM1025)) {
-      await prisma.vehicleTemplate.update({ where: { id: template.id }, data: { active: false } });
-    }
-  }
-
-  const murano = vanillaProducts.find((product) => product.slug === 'murano-carlock-5k');
-  if (murano) {
-    const { items = [], ...productData } = murano;
-    const saved = await prisma.product.upsert({
-      where: { slug: murano.slug },
-      update: { ...productData, imageData: null, imageMime: null, status: 'ACTIVE' },
-      create: { ...productData, status: 'ACTIVE' }
-    });
-    await prisma.productItem.deleteMany({ where: { productId: saved.id } });
-    await ensureProductItems(saved.id, saved, items);
-  }
-
-  await backfillDirectVehicleDeliveriesToGarageV70();
-
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v70' },
-    update: { value: { appliedAt: new Date().toISOString(), packages: defaultPackages.length, vehicles: defaultVehicles.length, carlock: 'MuranoCarlock', m1025Key: 'CarKey', fixes: ['modal_scroll', 'garage_for_all_vehicle_purchases', 'm1025_parts_complete'] } },
-    create: { key: 'raidz.catalog.v70', value: { appliedAt: new Date().toISOString(), packages: defaultPackages.length, vehicles: defaultVehicles.length, carlock: 'MuranoCarlock', m1025Key: 'CarKey', fixes: ['modal_scroll', 'garage_for_all_vehicle_purchases', 'm1025_parts_complete'] } }
-  });
-}
-
-
-async function applyRaidZV72CategoryCleanup() {
-  // V72: organiza peças de veículos em uma categoria única e evita produto sem categoria útil.
-  const vehiclePartSlugs = [
-    'murano-carlock-5k','glowplug-veiculo','vela-humvee-glowplug','pneu-humvee-offroad-02','bateria-caminhao-truckbattery',
-    'roda-land-rover-msfz','capo-land-rover-msfz','porta-motorista-land-rover-msfz','porta-passageiro-land-rover-msfz','porta-malas-land-rover-msfz',
-    'pneu-hatchback-vanilla','pneu-caminhao-m3s','pneu-duplo-caminhao-m3s','radiador-veiculo-vanilla','bateria-carro-vanilla','vela-ignicao-vanilla'
-  ];
-  const vehiclePartClassnames = [
-    'MuranoCarlock','GlowPlug','Offroad_02_Wheel','TruckBattery','MSFZ_LandRover_Wheel','MSFZ_LandRover_Hood','MSFZ_LandRover_Driver_Door',
-    'MSFZ_LandRover_CoDriver_Door','MSFZ_LandRover_Trunk','HatchbackWheel','Truck_01_Wheel','Truck_01_WheelDouble','CarRadiator','CarBattery','SparkPlug'
-  ];
-  await prisma.product.updateMany({
-    where: {
-      OR: [
-        { slug: { in: vehiclePartSlugs } },
-        { classname: { in: vehiclePartClassnames } },
-        { name: { contains: 'Land Rover' } },
-        { name: { contains: 'Humvee' } },
-        { name: { contains: 'M1025' } },
-        { name: { contains: 'Radiador' } },
-        { name: { contains: 'Bateria de Carro' } },
-        { name: { contains: 'Vela de Ignição' } },
-        { name: { contains: 'CarLock' } }
-      ]
-    },
-    data: { category: 'Peças de Veículos' }
-  });
-
-  await prisma.product.updateMany({ where: { category: '' }, data: { category: 'Geral' } });
-  await prisma.product.updateMany({ where: { category: null }, data: { category: 'Geral' } }).catch(() => {});
-
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v72' },
-    update: { value: { appliedAt: new Date().toISOString(), fixes: ['vehicle_parts_category', 'carlock_in_vehicle_parts', 'extra_vip_outfits'] } },
-    create: { key: 'raidz.catalog.v72', value: { appliedAt: new Date().toISOString(), fixes: ['vehicle_parts_category', 'carlock_in_vehicle_parts', 'extra_vip_outfits'] } }
-  });
-}
-
-
-async function applyRaidZV77OutfitImageRefresh() {
-  // V77: força as imagens corretas dos trajes VIP enviados pelo usuário na loja pública.
-  const outfits = [
-    { slug: 'traje-vip-comando-raidz', imageUrl: '/images/outfits/traje-vip-comando-real-v79.png' },
-    { slug: 'traje-vip-esquadrao-raidz', imageUrl: '/images/outfits/traje-vip-esquadrao-real-v79.png' },
-    { slug: 'traje-vip-boost-raidz', imageUrl: '/images/outfits/traje-vip-boost-real-v79.png' }
-  ];
-  for (const outfit of outfits) {
-    await prisma.outfitTemplate.updateMany({
-      where: { slug: outfit.slug },
-      data: { imageUrl: outfit.imageUrl, imageData: null, imageMime: null, active: true }
-    });
-  }
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v77' },
-    update: { value: { appliedAt: new Date().toISOString(), fixes: ['refresh_outfit_images_public_store'] } },
-    create: { key: 'raidz.catalog.v77', value: { appliedAt: new Date().toISOString(), fixes: ['refresh_outfit_images_public_store'] } }
-  });
-}
-
-
-
-function isM1025Classname(value) {
-  return String(value || '').toLowerCase().includes('m1025') || String(value || '').trim() === 'Offroad_02';
-}
-
-async function applyRaidZV85M1025FullParts() {
-  // V85: corrige M1025 TP_Apoc nascido sem peças usando as classes reais TP_Apoc_M1025_*.
-  // Atualiza os templates do banco e também entregas pendentes já criadas,
-  // reforçando meta.parts e aliases que o mod DayZ pode ler.
-  const m1025Vehicles = defaultVehicles.filter((vehicle) => isM1025Classname(vehicle.vehicleClassname) || isM1025Classname(vehicle.slug));
-  const byClassname = new Map(m1025Vehicles.map((vehicle) => [vehicle.vehicleClassname, vehicle]));
-
-  for (const vehicle of m1025Vehicles) {
-    await prisma.vehicleTemplate.updateMany({
+    // Remove configurações antigas que não existem mais no modelo novo.
+    await tx.appSetting.deleteMany({
       where: {
         OR: [
-          { slug: vehicle.slug },
-          { vehicleClassname: vehicle.vehicleClassname }
+          {
+            key: {
+              in: [
+                'drop_box_types_v1',
+                'store_categories_v1',
+                'starterKit.v1',
+                'store.globalPromo',
+                'fileBridge.ftp.v1',
+                'fileBridge.health.v1',
+                'fileBridge.diagnostics.v2',
+                'store.ftp.clean.v200',
+                'admin.ownerSteam64',
+                'admin.ownerSteam64.v144'
+              ]
+            }
+          },
+          { key: { startsWith: 'raidz.ftp.preset.' } }
         ]
-      },
-      data: {
-        parts: vehicle.parts || [],
-        cargoItems: vehicle.cargoItems || [],
-        fluids: vehicle.fluids || { fuelPercent: 80, waterPercent: 100, oilPercent: 100 },
-        active: true
       }
     });
-  }
 
-  const classnames = Array.from(byClassname.keys());
-  const pendingDeliveries = await prisma.deliveryQueue.findMany({
-    where: {
-      status: { in: ['PENDING', 'PROCESSING'] },
-      OR: [
-        { classname: { in: classnames } },
-        { productName: { contains: 'M1025' } },
-        { productName: { contains: 'Humvee' } }
-      ]
-    }
-  });
-
-  for (const delivery of pendingDeliveries) {
-    const meta = delivery.meta && typeof delivery.meta === 'object' && !Array.isArray(delivery.meta) ? delivery.meta : {};
-    const metaClass = String(meta.vehicleClassname || '').trim();
-    const vehicle = byClassname.get(delivery.classname) || byClassname.get(metaClass) || m1025Vehicles.find((item) => String(delivery.productName || '').toLowerCase().includes(String(item.name || '').toLowerCase().slice(0, 8))) || m1025Vehicles[0];
-    if (!vehicle) continue;
-    const payload = vehicleTemplatePayload(vehicle);
-    await prisma.deliveryQueue.update({
-      where: { id: delivery.id },
+    await tx.appSetting.create({
       data: {
-        classname: payload.vehicleClassname || delivery.classname,
-        deliveryType: 'drop_at_feet',
-        meta: {
-          ...meta,
-          ...payload,
-          kind: meta.kind || 'vehicle_rental',
-          deliveryMode: 'vehicle_full_mounted',
-          fullVehicle: true,
-          mounted: true,
-          shouldMountParts: true,
-          m1025FullPartsFix: 'v85'
+        key: CLEAN_SLATE_KEY,
+        value: {
+          appliedAt: new Date().toISOString(),
+          mode: 'clean_store_for_new_server',
+          kept: ['Player', 'Player.coins', 'CoinLedger', 'Payment', 'Streamer financial history'],
+          removed: ['old access tokens', 'old products', 'old purchases/deliveries', 'vehicles', 'insurance', 'VIP outfits', 'starter claims', 'drop box settings', 'old FTP/server connection settings', 'old admin Steam link'],
+          disabled: ['old coupons', 'old streamer codes', 'old coin packages']
         }
       }
     });
-  }
 
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v85.m1025_full_parts' },
-    update: { value: { appliedAt: new Date().toISOString(), vehicles: m1025Vehicles.length, pendingDeliveriesFixed: pendingDeliveries.length, fixes: ['m1025_tp_apoc_custom_parts', 'm1025_hood_body', 'm1025_slot_aliases', 'm1025_wheels'] } },
-    create: { key: 'raidz.catalog.v85.m1025_full_parts', value: { appliedAt: new Date().toISOString(), vehicles: m1025Vehicles.length, pendingDeliveriesFixed: pendingDeliveries.length, fixes: ['m1025_tp_apoc_custom_parts', 'm1025_hood_body', 'm1025_slot_aliases', 'm1025_wheels'] } }
-  });
+    return {
+      accessTokens: accessTokens.count,
+      disabledCoupons: disabledCoupons.count,
+      disabledStreamerCodes: disabledStreamerCodes.count,
+      disabledCoinPackages: disabledCoinPackages.count,
+      deliveries: deliveries.count,
+      purchases: purchases.count,
+      checkouts: checkouts.count,
+      starterClaims: starterClaims.count,
+      vehicleLogs: vehicleLogs.count,
+      playerVehicles: playerVehicles.count,
+      insurancePlans: insurancePlans.count,
+      vehicles: vehicles.count,
+      outfitFlags: outfitFlags.count,
+      outfitSubs: outfitSubs.count,
+      outfitOrders: outfitOrders.count,
+      outfits: outfits.count,
+      productItems: productItems.count,
+      products: products.count
+    };
+  }, { maxWait: 20_000, timeout: 120_000 });
+
+  console.log('[STORE_CLEAN_V200] Loja antiga limpa:', result);
+  return { applied: true, ...result };
 }
 
-async function applyRaidZV80CleanPublicCategories() {
-  // V80: remove a aba "Todas", cria/garante "Peças de Veículos" e manda itens sem categoria para "Diversos".
-  const strip = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/\s+/g, ' ');
-  const canonical = (value) => {
-    const raw = String(value || '').trim().replace(/\s+/g, ' ');
-    const key = strip(raw);
-    if (!key || key === 'geral' || key === 'geral dayz' || key === 'itens da loja' || key === 'sem categoria') return 'Diversos';
-    if (key === 'todas' || key === 'todos') return '';
-    if (key === 'equipamento') return 'Equipamentos';
-    if ((key.includes('peca') && key.includes('veicul')) || key === 'pecas') return 'Peças de Veículos';
-    if (key === 'veiculos disponiveis' || key === 'veiculo') return 'Veículos';
-    return raw;
-  };
-
-  const vehiclePartSlugs = [
-    'murano-carlock-5k','glowplug-veiculo','vela-humvee-glowplug','pneu-humvee-offroad-02','bateria-caminhao-truckbattery',
-    'roda-land-rover-msfz','capo-land-rover-msfz','porta-motorista-land-rover-msfz','porta-passageiro-land-rover-msfz','porta-malas-land-rover-msfz',
-    'pneu-hatchback-vanilla','pneu-caminhao-m3s','pneu-duplo-caminhao-m3s','radiador-veiculo-vanilla','bateria-carro-vanilla','vela-ignicao-vanilla'
-  ];
-  const vehiclePartClassnames = [
-    'MuranoCarlock','GlowPlug','Offroad_02_Wheel','TruckBattery','MSFZ_LandRover_Wheel','MSFZ_LandRover_Hood','MSFZ_LandRover_Driver_Door',
-    'MSFZ_LandRover_CoDriver_Door','MSFZ_LandRover_Trunk','HatchbackWheel','Hatchback_02_Wheel','CivSedanWheel','Sedan_02_Wheel',
-    'Truck_01_Wheel','Truck_01_WheelDouble','Truck_01_Hood','Truck_01_Door_1_1','Truck_01_Door_2_1','CarRadiator','CarBattery','TruckBattery','SparkPlug'
-  ];
-
-  await prisma.product.updateMany({
+async function ensureCoinPackage(pack) {
+  const amount = Number(pack.amountBrl);
+  const coins = Number(pack.coins);
+  // Ao renomear a moeda da loja, reaproveita os pacotes existentes em vez de
+  // criar duplicados no banco. O valor em BRL é estável e identifica o pacote.
+  const existing = await prisma.coinPackage.findFirst({
     where: {
       OR: [
-        { slug: { in: vehiclePartSlugs } },
-        { classname: { in: vehiclePartClassnames } },
-        { classname: { contains: 'Wheel' } },
-        { classname: { contains: 'LandRover' } },
-        { classname: { contains: 'HMMWV' } },
-        { name: { contains: 'Pneu' } },
-        { name: { contains: 'Roda' } },
-        { name: { contains: 'Land Rover' } },
-        { name: { contains: 'Humvee' } },
-        { name: { contains: 'M1025' } },
-        { name: { contains: 'Radiador' } },
-        { name: { contains: 'Bateria de Carro' } },
-        { name: { contains: 'Bateria de Caminhão' } },
-        { name: { contains: 'Vela de Ignição' } },
-        { name: { contains: 'Glow Plug' } },
-        { name: { contains: 'CarLock' } }
+        { name: pack.name },
+        { amountBrl: amount, coins },
+        { amountBrl: amount }
       ]
-    },
-    data: { category: 'Peças de Veículos' }
-  });
-
-  await prisma.product.updateMany({ where: { category: { in: ['', 'Geral', 'Geral DayZ', 'Itens da Loja', 'Sem categoria'] } }, data: { category: 'Diversos' } });
-  await prisma.product.updateMany({ where: { category: null }, data: { category: 'Diversos' } }).catch(() => {});
-
-  const desired = [
-    { name: 'Kits Base', serverType: 'vanilla', order: 10, active: true },
-    { name: 'Veículos', serverType: 'vanilla', order: 15, active: true },
-    { name: 'Peças de Veículos', serverType: 'vanilla', order: 18, active: true },
-    { name: 'Trajes VIPs', serverType: 'vanilla', order: 20, active: true },
-    { name: 'Construção', serverType: 'vanilla', order: 30, active: true },
-    { name: 'Ferramentas', serverType: 'vanilla', order: 40, active: true },
-    { name: 'Suprimentos', serverType: 'vanilla', order: 50, active: true },
-    { name: 'Armazenamento', serverType: 'vanilla', order: 60, active: true },
-    { name: 'Diversos', serverType: 'vanilla', order: 90, active: true }
-  ];
-
-  const setting = await prisma.appSetting.findUnique({ where: { key: 'store_categories_v1' } });
-  const current = Array.isArray(setting?.value?.categories) ? setting.value.categories : [];
-  const byKey = new Map();
-  for (const cat of current) {
-    const name = canonical(cat?.name);
-    if (!name) continue;
-    const key = strip(name);
-    if (!byKey.has(key)) byKey.set(key, { ...cat, name, serverType: cat?.serverType || 'vanilla', active: cat?.active !== false });
-  }
-  for (const cat of desired) {
-    const key = strip(cat.name);
-    byKey.set(key, { ...(byKey.get(key) || {}), ...cat });
-  }
-  const categories = Array.from(byKey.values()).sort((a, b) => Number(a.order || 999) - Number(b.order || 999) || String(a.name).localeCompare(String(b.name), 'pt-BR'));
-  await prisma.appSetting.upsert({
-    where: { key: 'store_categories_v1' },
-    update: { value: { categories } },
-    create: { key: 'store_categories_v1', value: { categories } }
-  });
-
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v80' },
-    update: { value: { appliedAt: new Date().toISOString(), fixes: ['remove_todas_tab', 'vehicle_parts_public_category', 'uncategorized_to_diversos'] } },
-    create: { key: 'raidz.catalog.v80', value: { appliedAt: new Date().toISOString(), fixes: ['remove_todas_tab', 'vehicle_parts_public_category', 'uncategorized_to_diversos'] } }
-  });
-}
-
-
-const RAIDZ_V86_MEDICAL_OUTFIT_CLASSNAMES = new Set([
-  'tetracyclineantibiotics',
-  'morphine',
-  'morphineautoinjector',
-  'epinephrine',
-  'epinephrineautoinjector',
-  'painkillertablets',
-  'charcoaltablets',
-  'vitaminbottle',
-  'salinebag',
-  'salinebagiv',
-  'bloodbagempty',
-  'bloodbagfull',
-  'bloodbagiv',
-  'startkitiv'
-]);
-
-function isRaidZV86MedicalOutfitItem(item) {
-  const classname = String(item?.classname || '').trim().toLowerCase();
-  const label = String(item?.label || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
-  if (!classname) return false;
-  if (RAIDZ_V86_MEDICAL_OUTFIT_CLASSNAMES.has(classname)) return true;
-  // Bandagem fica: o pedido foi para remover remédios, não curativo básico.
-  if (classname.includes('bandage') || label.includes('bandagem')) return false;
-  return label.includes('remedio')
-    || label.includes('morfina')
-    || label.includes('morphine')
-    || label.includes('tetraciclina')
-    || label.includes('tetracycline')
-    || label.includes('antibiotico')
-    || label.includes('antibiotic')
-    || label.includes('comprimido');
-}
-
-function raidZV86OutfitItems(items = []) {
-  const list = Array.isArray(items) ? items : [];
-  return list
-    .filter((item) => !isRaidZV86MedicalOutfitItem(item))
-    .map((item, index) => ({
-      slot: String(item?.slot || 'inventory').trim() || 'inventory',
-      classname: String(item?.classname || '').trim(),
-      quantity: Math.max(1, Math.min(Number(item?.quantity || 1), 999)),
-      label: String(item?.label || item?.classname || '').trim() || null,
-      sortOrder: Number.isFinite(Number(item?.sortOrder)) ? Number(item.sortOrder) : index
-    }))
-    .filter((item) => item.classname);
-}
-
-function raidZV86StarterKitItems() {
-  return (starterKitConfig.items || []).map((item, index) => ({
-    classname: String(item.classname || '').trim(),
-    quantity: Math.max(1, Math.min(Number(item.quantity || 1), 999)),
-    label: String(item.label || item.classname || '').trim(),
-    sortOrder: Number.isFinite(Number(item.sortOrder)) ? Number(item.sortOrder) : index
-  })).filter((item) => item.classname);
-}
-
-async function applyRaidZV86VipStarterKitFix() {
-  // V86: corrige trajes VIP incompletos, remove remédios dos VIPs e troca o kit inicial
-  // para 2 fardos de tábuas com 10 cada. Não mexe em saldo, compras, pagamentos ou garagem.
-  const defaultBySlug = new Map(defaultOutfitTemplates.map((outfit) => [outfit.slug, outfit]));
-  let defaultOutfitsFixed = 0;
-  let customOutfitsCleaned = 0;
-
-  for (const outfit of defaultOutfitTemplates) {
-    const fixedItems = raidZV86OutfitItems(outfit.items);
-    const result = await prisma.outfitTemplate.updateMany({
-      where: { slug: outfit.slug },
-      data: {
-        description: outfit.description || null,
-        items: fixedItems,
-        active: true
-      }
-    });
-    defaultOutfitsFixed += Number(result.count || 0);
-  }
-
-  const outfits = await prisma.outfitTemplate.findMany({ select: { id: true, slug: true, items: true } });
-  for (const outfit of outfits) {
-    if (defaultBySlug.has(outfit.slug)) continue;
-    const before = Array.isArray(outfit.items) ? outfit.items : [];
-    const after = raidZV86OutfitItems(before);
-    if (after.length !== before.length) {
-      await prisma.outfitTemplate.update({ where: { id: outfit.id }, data: { items: after } });
-      customOutfitsCleaned++;
-    }
-  }
-
-  const starterItems = raidZV86StarterKitItems();
-  const starterSetting = await prisma.appSetting.findUnique({ where: { key: 'starterKit.v1' } });
-  const currentStarter = starterSetting?.value && typeof starterSetting.value === 'object' && !Array.isArray(starterSetting.value)
-    ? starterSetting.value
-    : {};
-  const fixedStarterKit = {
-    ...starterKitConfig,
-    ...currentStarter,
-    enabled: currentStarter.enabled === undefined ? starterKitConfig.enabled : Boolean(currentStarter.enabled),
-    name: String(currentStarter.name || starterKitConfig.name || 'Kit Inicial Vanilla').trim(),
-    description: String(currentStarter.description || starterKitConfig.description || '').trim(),
-    serverType: String(currentStarter.serverType || starterKitConfig.serverType || 'vanilla').trim(),
-    bonusCoins: Number(currentStarter.bonusCoins ?? starterKitConfig.bonusCoins ?? 0),
-    deliveryType: 'drop_at_feet',
-    imageUrl: String(currentStarter.imageUrl || starterKitConfig.imageUrl || '').trim(),
-    imageData: currentStarter.imageData || null,
-    imageMime: currentStarter.imageMime || null,
-    imageUpdatedAt: currentStarter.imageUpdatedAt || null,
-    items: starterItems
-  };
-
-  await prisma.appSetting.upsert({
-    where: { key: 'starterKit.v1' },
-    update: { value: fixedStarterKit },
-    create: { key: 'starterKit.v1', value: fixedStarterKit }
-  });
-
-  const pendingStarterPlanks = await prisma.deliveryQueue.findMany({
-    where: {
-      classname: 'WoodenPlank',
-      status: { in: ['PENDING', 'PROCESSING'] },
-      productName: { contains: '[KIT INICIAL]' }
     },
     orderBy: { createdAt: 'asc' }
   });
 
-  let pendingPlankDeliveriesFixed = 0;
-  for (const delivery of pendingStarterPlanks) {
-    const meta = delivery.meta && typeof delivery.meta === 'object' && !Array.isArray(delivery.meta) ? delivery.meta : {};
-    await prisma.deliveryQueue.update({
-      where: { id: delivery.id },
-      data: {
-        quantity: 10,
-        productName: String(delivery.productName || '').includes('Fardo de tábuas')
-          ? delivery.productName
-          : `${String(delivery.productName || '[KIT INICIAL] Kit Inicial').replace(/:.*$/, '')}: Fardo de tábuas 1/2 (10)`,
-        deliveryType: 'drop_at_feet',
-        meta: { ...meta, itemLabel: 'Fardo de tábuas 1/2 (10)', sortOrder: 6, v86StarterPlanksFix: true }
-      }
-    });
-    pendingPlankDeliveriesFixed++;
+  const data = {
+    name: pack.name,
+    amountBrl: amount,
+    coins,
+    bonusText: pack.bonusText || null,
+    active: true
+  };
 
-    const secondExists = await prisma.deliveryQueue.findFirst({
-      where: {
-        steam64: delivery.steam64,
-        status: { in: ['PENDING', 'PROCESSING'] },
-        classname: 'WoodenPlank',
-        productName: { contains: 'Fardo de tábuas 2/2' }
-      },
-      select: { id: true }
+  if (existing) {
+    const updated = await prisma.coinPackage.update({ where: { id: existing.id }, data });
+    // Se alguma versão anterior já criou um pacote duplicado com o mesmo valor,
+    // mantém somente o registro canônico ativo.
+    await prisma.coinPackage.updateMany({
+      where: { amountBrl: amount, id: { not: existing.id } },
+      data: { active: false }
     });
+    return updated;
+  }
 
-    if (!secondExists) {
-      await prisma.deliveryQueue.create({
-        data: {
-          purchaseId: delivery.purchaseId || null,
-          playerId: delivery.playerId,
-          steam64: delivery.steam64,
-          serverType: delivery.serverType || fixedStarterKit.serverType || 'vanilla',
-          productName: `${String(delivery.productName || '[KIT INICIAL] Kit Inicial').replace(/:.*$/, '')}: Fardo de tábuas 2/2 (10)`,
-          classname: 'WoodenPlank',
-          quantity: 10,
-          deliveryType: 'drop_at_feet',
-          meta: { ...meta, itemLabel: 'Fardo de tábuas 2/2 (10)', sortOrder: 7, v86StarterPlanksFix: true }
-        }
-      });
-      pendingPlankDeliveriesFixed++;
+  return prisma.coinPackage.create({ data });
+}
+
+
+async function ensureVipOutfitV201(outfit) {
+  const existing = await prisma.outfitTemplate.findUnique({ where: { slug: outfit.slug } });
+  const data = {
+    name: outfit.name,
+    description: outfit.description || null,
+    serverType: outfit.serverType || 'vanilla',
+    level: Math.max(1, Number(outfit.level || 1)),
+    priceCoins: Math.max(0, Number(outfit.priceCoins || 0)),
+    durationDays: Math.max(1, Number(outfit.durationDays || 30)),
+    imageUrl: outfit.imageUrl || null,
+    imageData: null,
+    imageMime: null,
+    items: outfit.items || [],
+    active: outfit.active !== false,
+    streamerRewardEnabled: false,
+    isPrivate: Boolean(outfit.isPrivate)
+  };
+  if (existing) {
+    return prisma.outfitTemplate.update({ where: { id: existing.id }, data });
+  }
+  return prisma.outfitTemplate.create({ data: { ...data, slug: outfit.slug } });
+}
+
+
+
+
+async function retireLegacyVipOutfitsV613() {
+  const allowedSlugs = vipOutfitsV201.map(outfit => outfit.slug);
+  const legacy = await prisma.outfitTemplate.findMany({
+    where: {
+      slug: { notIn: allowedSlugs },
+      managedOwnerSteam64: null,
+      managedAccessEnabled: false,
+      OR: [
+        { slug: { startsWith: 'vip-' } },
+        { slug: { startsWith: 'traje-vip-' } }
+      ]
+    },
+    select: { id: true, slug: true }
+  });
+
+  if (!legacy.length) return { retired: 0 };
+  const ids = legacy.map(row => row.id);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.playerOutfitSubscription.updateMany({
+      where: { outfitTemplateId: { in: ids }, status: 'ACTIVE' },
+      data: { status: 'CANCELLED' }
+    });
+    await tx.outfitTemplate.updateMany({
+      where: { id: { in: ids } },
+      data: { active: false, isPrivate: true }
+    });
+  });
+
+  return { retired: legacy.length };
+}
+
+async function ensureVehicleTemplateV213(entry) {
+  const data = {
+    name: entry.name,
+    description: entry.description || null,
+    serverType: entry.serverType || 'vanilla',
+    vehicleClassname: entry.vehicleClassname,
+    buyPriceCoins: Math.max(0, Number(entry.buyPriceCoins || 0)),
+    noInsurancePriceCoins: entry.noInsurancePriceCoins === '' || entry.noInsurancePriceCoins == null ? null : Math.max(0, Number(entry.noInsurancePriceCoins || 0)),
+    rent1DayCoins: Math.max(0, Number(entry.rent1DayCoins || 0)),
+    rent7DaysCoins: Math.max(0, Number(entry.rent7DaysCoins || 0)),
+    rent30DaysCoins: Math.max(0, Number(entry.rent30DaysCoins || 0)),
+    imageUrl: entry.imageUrl || null,
+    imageData: null,
+    imageMime: null,
+    parts: Array.isArray(entry.parts) ? entry.parts : [],
+    cargoItems: Array.isArray(entry.cargoItems) ? entry.cargoItems : [],
+    fluids: entry.fluids || null,
+    variants: Array.isArray(entry.variants) ? entry.variants : [],
+    active: entry.active !== false
+  };
+
+  const existing = await prisma.vehicleTemplate.findUnique({ where: { slug: entry.slug } });
+  const template = existing
+    ? await prisma.vehicleTemplate.update({ where: { id: existing.id }, data })
+    : await prisma.vehicleTemplate.create({ data: { ...data, slug: entry.slug } });
+
+  if (entry.insurancePlan) {
+    const planData = {
+      name: entry.insurancePlan.name,
+      billingType: entry.insurancePlan.billingType || 'SUBSCRIPTION',
+      coverageType: entry.insurancePlan.coverageType || 'NORMAL',
+      priceCoins: Math.max(0, Number(entry.insurancePlan.priceCoins || 0)),
+      respawnFeeCoins: Math.max(0, Number(entry.insurancePlan.respawnFeeCoins || 0)),
+      durationDays: Math.max(1, Number(entry.insurancePlan.durationDays || 30)),
+      maxUsesPerWeek: Math.max(1, Number(entry.insurancePlan.maxUsesPerWeek || 1)),
+      description: entry.insurancePlan.description || null,
+      active: entry.insurancePlan.active !== false
+    };
+    const current = await prisma.vehicleInsurancePlan.findFirst({
+      where: { templateId: template.id, billingType: 'SUBSCRIPTION' },
+      orderBy: { createdAt: 'asc' }
+    });
+    if (current) {
+      await prisma.vehicleInsurancePlan.update({ where: { id: current.id }, data: planData });
+    } else {
+      await prisma.vehicleInsurancePlan.create({ data: { ...planData, templateId: template.id } });
     }
   }
 
-  await prisma.appSetting.upsert({
-    where: { key: 'raidz.catalog.v86.vip_starter_fix' },
-    update: {
-      value: {
-        appliedAt: new Date().toISOString(),
-        defaultOutfitsFixed,
-        customOutfitsCleaned,
-        pendingPlankDeliveriesFixed,
-        fixes: ['vip_outfits_complete_items', 'vip_medicines_removed', 'starter_kit_2x_woodenplank_10']
+  return template;
+}
+
+async function ensureStoreProduct(product) {
+  const { items = [], ...rawData } = product;
+  const data = {
+    ...rawData,
+    deliveryType: 'drop_at_feet',
+    dropBoxClassname: null,
+    imageUrl: rawData.imageUrl || null,
+    imageData: null,
+    imageMime: null,
+    status: rawData.status || 'ACTIVE'
+  };
+
+  const itemCreates = items.map((item, index) => ({
+    classname: String(item.classname || '').trim(),
+    quantity: Math.max(1, Number(item.quantity || 1)),
+    label: item.label || item.classname || null,
+    sortOrder: Number.isFinite(Number(item.sortOrder)) ? Number(item.sortOrder) : index
+  })).filter(item => item.classname);
+
+  const existing = await prisma.product.findUnique({
+    where: { slug: data.slug },
+    include: { items: true }
+  });
+
+  if (existing) {
+    return prisma.product.update({
+      where: { id: existing.id },
+      data: {
+        name: data.name,
+        description: data.description || null,
+        category: data.category,
+        serverType: data.serverType || 'vanilla',
+        classname: data.classname,
+        quantity: Math.max(1, Number(data.quantity || 1)),
+        priceCoins: Math.max(0, Number(data.priceCoins || 0)),
+        stock: data.stock ?? null,
+        imageUrl: data.imageUrl,
+        imageData: null,
+        imageMime: null,
+        deliveryType: 'drop_at_feet',
+        dropBoxClassname: null,
+        featured: Boolean(data.featured),
+        highlightColor: data.highlightColor || '#ef4444',
+        status: data.status || 'ACTIVE',
+        promoActive: Boolean(data.promoActive),
+        promoPercent: Math.max(0, Number(data.promoPercent || 0)),
+        promoLabel: data.promoLabel || null,
+        promoColor: data.promoColor || '#ff7a18',
+        items: {
+          deleteMany: {},
+          create: itemCreates
+        }
       }
-    },
-    create: {
-      key: 'raidz.catalog.v86.vip_starter_fix',
-      value: {
-        appliedAt: new Date().toISOString(),
-        defaultOutfitsFixed,
-        customOutfitsCleaned,
-        pendingPlankDeliveriesFixed,
-        fixes: ['vip_outfits_complete_items', 'vip_medicines_removed', 'starter_kit_2x_woodenplank_10']
-      }
+    });
+  }
+
+  return prisma.product.create({
+    data: {
+      ...data,
+      items: { create: itemCreates }
     }
   });
 }
 
+async function ensureStarterKitV225() {
+  const applied = await settingExists(STARTER_KIT_V225_KEY);
+  if (applied) return false;
+  await prisma.$transaction(async (tx) => {
+    await tx.appSetting.upsert({
+      where: { key: 'starterKit.v1' },
+      update: { value: starterKitConfig },
+      create: { key: 'starterKit.v1', value: starterKitConfig }
+    });
+    await tx.appSetting.upsert({
+      where: { key: STARTER_KIT_V225_KEY },
+      update: { value: { appliedAt: new Date().toISOString() } },
+      create: { key: STARTER_KIT_V225_KEY, value: { appliedAt: new Date().toISOString() } }
+    });
+  });
+  return true;
+}
+
+async function ensureStarterKitV610() {
+  const applied = await settingExists(STARTER_KIT_V610_KEY);
+  if (applied) return false;
+
+  // Corrige bancos que já tinham starterKit.v1 salvo com configuração antiga.
+  // Executa uma única vez e não apaga claims, players, saldo ou histórico.
+  await prisma.$transaction(async (tx) => {
+    await tx.appSetting.upsert({
+      where: { key: 'starterKit.v1' },
+      update: { value: starterKitConfig },
+      create: { key: 'starterKit.v1', value: starterKitConfig }
+    });
+    await tx.appSetting.upsert({
+      where: { key: STARTER_KIT_V610_KEY },
+      update: { value: { appliedAt: new Date().toISOString(), mode: 'full_quantity_stacks_and_complete_items' } },
+      create: { key: STARTER_KIT_V610_KEY, value: { appliedAt: new Date().toISOString(), mode: 'full_quantity_stacks_and_complete_items' } }
+    });
+  });
+  return true;
+}
+
 export async function ensureDefaultStoreData() {
-  // V62: boot/deploy seguro. Não desativa, não apaga, não reseta e não sobrescreve
-  // produtos, promoções, preços, imagens, veículos, seguros, saldos, compras, garagem ou trajes.
-  await upsertSetting('store_categories_v1', { categories: storeCategories });
-  await upsertSetting('starterKit.v1', starterKitConfig);
-  await upsertSetting('store.globalPromo', { enabled: false, percent: 10, label: 'PROMO RELÂMPAGO', color: '#ff7a18' });
-  await upsertSetting('drop_box_types_v1', { types: ['WoodenCrate', 'SeaChest', 'Barrel_Red', 'Barrel_Blue', 'Barrel_Green', 'FirstAidKit', 'AmmoBox'] });
-  await upsertSetting('deploy.safety.v62', {
-    safeDeployMode: true,
-    protectedOnNormalUpdate: [
-      'Product.priceCoins',
-      'Product.promoActive',
-      'Product.promoPercent',
-      'Product.status',
-      'Product.imageUrl/imageData',
-      'ProductItem',
-      'VehicleTemplate.price/status/image/parts/cargo',
-      'Seed tombstones: produtos e veículos apagados não voltam após update',
-      'VehicleInsurancePlan',
-      'Player.coins',
-      'CoinLedger',
-      'Payment',
-      'Purchase',
-      'DeliveryQueue',
-      'PlayerVehicle',
-      'VehicleRespawnLog',
-      'OutfitTemplate',
-      'PlayerOutfitSubscription'
-    ],
-    note: 'Deploy normal pelo GitHub preserva alterações feitas no painel ADM. Produtos/veículos apagados pelo ADM entram em bloqueio e não voltam no seed.'
+  const clean = await applyCleanSlateOnce();
+
+  await prisma.appSetting.upsert({
+    where: { key: 'store_categories_v1' },
+    update: { value: { categories: storeCategories } },
+    create: { key: 'store_categories_v1', value: { categories: storeCategories } }
+  });
+  await ensureStarterKitV225();
+  await ensureStarterKitV610();
+  await createSettingIfMissing('store.globalPromo', { enabled: false, percent: 0, label: '', color: '#ff7a18' });
+  await createSettingIfMissing('store.delivery.v200', {
+    physicalItems: 'drop_at_feet',
+    dropBoxesEnabled: false,
+    vehiclesUseModPreset: true,
+    vehiclePresetKey: 'vehicleClassname',
+    vipMedia: 'video',
+    vipItemPayloadVersion: 2
   });
 
-  const deletedProductSlugs = await getSeedTombstones(SEED_DELETED_PRODUCTS_KEY);
-  const deletedVehicleSlugs = await getSeedTombstones(SEED_DELETED_VEHICLES_KEY);
+  await prisma.product.updateMany({ where: { slug: 'blocos-concreto-5-vanilla' }, data: { status: 'INACTIVE' } });
 
-  for (const pack of defaultPackages) await upsertCoinPackage(pack);
-  for (const product of vanillaProducts) {
-    if (deletedProductSlugs.has(cleanTombstoneSlug(product.slug))) continue;
-    await upsertProduct(product);
-  }
-  for (const vehicle of defaultVehicles) {
-    if (deletedVehicleSlugs.has(cleanTombstoneSlug(vehicle.slug))) continue;
-    await upsertVehicle(vehicle);
-  }
-  for (const plan of defaultInsurancePlans) await upsertInsurancePlan(plan);
-  await seedOutfitTemplates(defaultOutfitTemplates);
-  await applyRaidZV69CatalogCleanup();
-  await applyRaidZV72CategoryCleanup();
-  await applyRaidZV77OutfitImageRefresh();
-  await applyRaidZV86VipStarterKitFix();
-  await applyRaidZV85M1025FullParts();
-  await applyRaidZV80CleanPublicCategories();
-  await applyRaidZBrandingCleanup();
+  for (const pack of defaultPackages) await ensureCoinPackage(pack);
+  for (const product of vanillaProducts) await ensureStoreProduct(product);
+  for (const vehicle of defaultVehicleTemplatesV213) await ensureVehicleTemplateV213(vehicle);
+  for (const outfit of vipOutfitsV201) await ensureVipOutfitV201(outfit);
+  const legacyVipCleanup = await retireLegacyVipOutfitsV613();
+
+  return {
+    ok: true,
+    cleanSlateApplied: clean.applied,
+    constructionProducts: vanillaProducts.filter(product => product.category === 'Construção').length,
+    restoredStorageProducts: vanillaProducts.filter(product => product.category === 'Armazenamento').length,
+    restoredMiscProducts: vanillaProducts.filter(product => product.category === 'Diversos').length,
+    defaultVehicles: defaultVehicleTemplatesV213.length,
+    defaultOutfits: vipOutfitsV201.length,
+    legacyVipOutfitsRetired: legacyVipCleanup.retired,
+    dropBoxesEnabled: false
+  };
 }

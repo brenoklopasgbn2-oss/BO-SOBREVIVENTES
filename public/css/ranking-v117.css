@@ -26,7 +26,7 @@
     radial-gradient(circle at 18% 23%,rgba(239,52,52,.13),transparent 27%),
     radial-gradient(circle at 88% 52%,rgba(239,52,52,.08),transparent 30%),
     linear-gradient(180deg,rgba(2,5,10,.58),#02050b 46%,#02050b 100%),
-    url('/images/raidz-v81/theme-bg-clean.png') center top/cover fixed;
+    url('/images/zona-z/site-backdrop.webp') center top/cover fixed;
   filter:saturate(.72) contrast(1.08);
 }
 .rz-ranking-backdrop::after{
@@ -53,7 +53,7 @@
   border-bottom:1px solid rgba(239,52,52,.32);
   background:
     linear-gradient(90deg,rgba(4,8,14,.98) 0%,rgba(5,8,14,.9) 45%,rgba(5,8,14,.6) 72%,rgba(5,8,14,.96) 100%),
-    url('/images/raidz-v81/hero-cinematic.png') center 43%/cover;
+    url('/images/zona-z/site-cinematic.webp') center 43%/cover;
   box-shadow:0 24px 70px rgba(0,0,0,.28);
 }
 .rz-rank-hero::before,.rz-rank-hero::after{
@@ -225,7 +225,7 @@
 /* Perfil competitivo */
 .rz-profile-breadcrumb{display:flex;align-items:center;gap:9px;margin:2px 0 10px;color:#7f8998;font-size:.72rem}.rz-profile-breadcrumb a{color:#d3d9e2}.rz-profile-breadcrumb strong{color:#9aa4b2}
 .rz-profile-hero{position:relative;min-height:230px;display:grid;grid-template-columns:185px minmax(0,1fr) 190px;gap:24px;align-items:end;padding:28px 30px;overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#050910;box-shadow:0 28px 70px rgba(0,0,0,.35)}
-.rz-profile-cover{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,7,12,.95),rgba(4,7,12,.72) 55%,rgba(4,7,12,.9)),url('/images/raidz-v81/hero-cinematic.png') center 41%/cover;opacity:.88}.rz-profile-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 16% 70%,rgba(239,52,52,.18),transparent 25%),linear-gradient(180deg,transparent 44%,rgba(3,6,11,.72));pointer-events:none}
+.rz-profile-cover{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,7,12,.95),rgba(4,7,12,.72) 55%,rgba(4,7,12,.9)),url('/images/zona-z/site-cinematic.webp') center 41%/cover;opacity:.88}.rz-profile-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 16% 70%,rgba(239,52,52,.18),transparent 25%),linear-gradient(180deg,transparent 44%,rgba(3,6,11,.72));pointer-events:none}
 .rz-profile-avatar-wrap,.rz-profile-identity,.rz-profile-rank-box{position:relative;z-index:1}
 .rz-profile-avatar-wrap{width:170px;height:170px}.rz-profile-avatar-wrap img{width:170px;height:170px;object-fit:cover;border-radius:12px;border:2px solid rgba(239,52,52,.5);background:#05080e;box-shadow:0 20px 45px rgba(0,0,0,.45),0 0 25px rgba(239,52,52,.16)}.rz-profile-avatar-wrap span{position:absolute;right:-8px;bottom:12px;min-width:48px;height:34px;padding:0 9px;display:grid;place-items:center;border:1px solid rgba(247,189,68,.55);border-radius:5px;background:linear-gradient(135deg,#8b5311,#2a1b0b);color:#ffdc7c;font-weight:1000}
 .rz-profile-identity h1{margin:4px 0 8px;font-size:2.2rem}.rz-profile-identity p{max-width:720px;margin:0;color:#b1bac7;line-height:1.5}.rz-profile-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.rz-profile-meta>*{padding:7px 9px;border:1px solid rgba(255,255,255,.12);border-radius:5px;background:rgba(4,8,14,.62);color:#cbd2dc;font-size:.68rem}.rz-profile-meta a:hover{border-color:rgba(239,52,52,.45)}

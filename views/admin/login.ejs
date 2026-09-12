@@ -1,18 +1,23 @@
 <%- include('../partials/head') %>
 <main class="container narrow admin-login">
-  <%- include('../partials/alerts') %>
-  <section class="card">
-    <img src="/images/zona-z-logo.png" class="login-logo" alt="Logo">
-    <h1>Painel Admin</h1>
-    <form method="POST" action="/admin/login" class="form-grid">
-      <label>Usuário
-        <input name="user" value="admin" required>
-      </label>
-      <label>Senha
-        <input name="password" type="password" required>
-      </label>
-      <button class="btn primary" type="submit">Entrar</button>
-    </form>
+  <section class="zz-cmd-login">
+    <div class="zz-cmd-login-top">
+      <div class="zz-cmd-login-mark"><img src="/images/brand/zona-z-mark.svg" alt="" aria-hidden="true"></div>
+      <small>Centro de comando</small>
+      <h1>Painel Admin</h1>
+    </div>
+    <div class="zz-cmd-login-body">
+      <%- include('../partials/alerts') %>
+      <form method="POST" action="/admin/login" class="form-grid">
+        <label>Usuário
+          <input name="user" value="admin" required>
+        </label>
+        <label>Senha
+          <input name="password" type="password" required>
+        </label>
+        <button class="btn primary" type="submit">Autenticar acesso</button>
+      </form>
+    </div>
   </section>
 </main>
 <%- include('../partials/footer') %>

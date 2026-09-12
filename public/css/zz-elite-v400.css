@@ -1,0 +1,467 @@
+/* ==================================================================
+   ZONA-Z // TACTICAL ELITE  —  v400
+   Nova identidade visual unificada (skin de topo, carregada por último).
+   Estratégia: o app inteiro já usa tokens var(--zz-*); redefinindo-os aqui
+   re-skinamos loja, páginas de conteúdo e admin de uma só vez, SEM tocar
+   em rotas, dados ou lógica. Depois, ajustes finos por página usando as
+   classes REAIS presentes nas views.
+   ================================================================== */
+
+/* ---------- TOKENS (núcleo da nova identidade) ---------- */
+:root,
+body.zz-next-ui {
+  /* Base gunmetal mais fria e profunda */
+  --zz-bg: #080a0e;
+  --zz-bg-2: #0b0e13;
+  --zz-panel: #0e1218;
+  --zz-panel-2: #131822;
+  --zz-card: #10151d;
+  --zz-line: rgba(226, 232, 240, 0.09);
+  --zz-line-strong: rgba(226, 232, 240, 0.18);
+  --zz-text: #eef2f7;
+  --zz-muted: #8b95a4;
+  --zz-soft: #c3ccd8;
+
+  /* Assinatura: carmim tático + latão (secundário) */
+  --zz-red: #e11d2a;
+  --zz-red-2: #9c0f1a;
+  --zz-red-soft: rgba(225, 29, 42, 0.16);
+  --zz-red-glow: rgba(225, 29, 42, 0.42);
+  --zz-green: #43d99a;
+  --zz-gold: #d9a441;
+
+  /* Geometria / profundidade */
+  --zz-radius: 16px;
+  --zz-radius-lg: 24px;
+  --zz-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --zz-shadow-strong: 0 40px 120px rgba(0, 0, 0, 0.66);
+  --zz-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* Tipografia militar real (carregada via Google Fonts no head) */
+  --zz-font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --zz-display: "Oswald", "Arial Narrow", Impact, "Franklin Gothic Condensed", sans-serif;
+
+  /* Tokens legados de outras camadas → nova paleta */
+  --accent-main: var(--zz-red);
+  --accent-second: var(--zz-gold);
+  --accent-soft: var(--zz-red-soft);
+  --accent-glow: var(--zz-red-glow);
+  --rz-red: var(--zz-red);
+  --rz-red2: var(--zz-red-2);
+  --rz-gold: var(--zz-gold);
+  --rz-blue: var(--zz-gold);
+  --rz-green: var(--zz-green);
+  --rz-bg: var(--zz-bg);
+  --rz-panel: var(--zz-panel);
+  --rz-panel-2: var(--zz-panel-2);
+  --rz-line: var(--zz-line);
+  --rz-text: var(--zz-text);
+  --rz-muted: var(--zz-muted);
+  --gold: var(--zz-gold);
+  --blue: var(--zz-gold);
+}
+
+/* ---------- BASE / FUNDO ---------- */
+body.zz-next-ui {
+  color: var(--zz-text) !important;
+  font-family: var(--zz-font) !important;
+  background:
+    radial-gradient(circle at 15% -10%, rgba(225, 29, 42, 0.10), transparent 26%),
+    radial-gradient(circle at 88% 3%, rgba(217, 164, 65, 0.06), transparent 22%),
+    linear-gradient(180deg, #0a0d12 0%, #06080c 50%, #080a0e 100%) !important;
+  -webkit-font-smoothing: antialiased;
+}
+body.zz-next-ui ::selection { background: rgba(225, 29, 42, 0.55); color: #fff; }
+
+/* ---------- TIPOGRAFIA MILITAR ---------- */
+body.zz-next-ui h1,
+body.zz-next-ui h2,
+body.zz-next-ui h3 {
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.012em !important;
+  text-transform: uppercase;
+}
+body.zz-next-ui h1,
+body.zz-next-ui h2 { font-weight: 700 !important; }
+body.zz-next-ui h3 { font-weight: 600 !important; }
+body.zz-next-ui p,
+body.zz-next-ui li,
+body.zz-next-ui td,
+body.zz-next-ui label,
+body.zz-next-ui input,
+body.zz-next-ui select,
+body.zz-next-ui textarea,
+body.zz-next-ui small { font-family: var(--zz-font) !important; }
+body.zz-next-ui .eyebrow,
+body.zz-next-ui .rz-eyebrow {
+  color: var(--zz-gold) !important;
+  font-family: var(--zz-display) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.26em !important;
+  font-weight: 600 !important;
+}
+body.zz-next-ui .muted { color: var(--zz-muted) !important; }
+
+/* ---------- SUPERFÍCIES GENÉRICAS ---------- */
+body.zz-next-ui .card,
+body.zz-next-ui .wide-card {
+  background: linear-gradient(180deg, rgba(20, 25, 34, 0.9), rgba(11, 14, 20, 0.96)) !important;
+  border: 1px solid var(--zz-line) !important;
+  border-radius: var(--zz-radius) !important;
+  box-shadow: var(--zz-shadow), var(--zz-inset) !important;
+}
+
+/* ---------- BOTÕES ---------- */
+body.zz-next-ui .btn,
+body.zz-next-ui .store-btn-v300,
+body.zz-next-ui .coin-buy-btn-v33,
+body.zz-next-ui .vip-buy-button-v300 {
+  font-family: var(--zz-display) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease !important;
+}
+body.zz-next-ui .btn:not(.primary):not(.danger):not(.ghost-btn):not(.secondary) {
+  border: 1px solid var(--zz-line-strong) !important;
+  background: linear-gradient(180deg, rgba(28, 34, 45, 0.9), rgba(15, 19, 26, 0.95)) !important;
+  color: var(--zz-text) !important;
+}
+body.zz-next-ui .btn.primary,
+body.zz-next-ui .store-btn-v300.primary,
+body.zz-next-ui .coin-buy-btn-v33,
+body.zz-next-ui .vip-buy-button-v300 {
+  border: 1px solid rgba(255, 120, 120, 0.32) !important;
+  background: linear-gradient(135deg, var(--zz-red), var(--zz-red-2)) !important;
+  color: #fff !important;
+  box-shadow: 0 16px 40px rgba(225, 29, 42, 0.26), var(--zz-inset) !important;
+}
+body.zz-next-ui .btn.primary:hover,
+body.zz-next-ui .store-btn-v300.primary:hover,
+body.zz-next-ui .coin-buy-btn-v33:hover,
+body.zz-next-ui .vip-buy-button-v300:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 22px 54px rgba(225, 29, 42, 0.4) !important;
+}
+body.zz-next-ui .btn.secondary,
+body.zz-next-ui .store-btn-v300.secondary {
+  background: linear-gradient(135deg, rgba(217, 164, 65, 0.92), rgba(120, 82, 22, 0.86)) !important;
+  border: 1px solid rgba(217, 164, 65, 0.5) !important;
+  color: #1a1206 !important;
+}
+body.zz-next-ui .btn.danger { background: linear-gradient(135deg, #7f1420, #2a0708) !important; border-color: var(--zz-red) !important; color: #fff !important; }
+body.zz-next-ui .ghost-btn,
+body.zz-next-ui .btn.ghost {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--zz-line-strong) !important;
+  color: var(--zz-soft) !important;
+}
+
+/* ---------- PÍLULAS / STATUS / ALERTS ---------- */
+body.zz-next-ui .pill {
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--zz-line) !important;
+  color: var(--zz-soft) !important;
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+body.zz-next-ui .pill.active {
+  background: linear-gradient(135deg, var(--zz-red), var(--zz-red-2)) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+body.zz-next-ui .status,
+body.zz-next-ui .tag {
+  border-radius: 7px !important;
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+body.zz-next-ui .status.approved,
+body.zz-next-ui .status.delivered,
+body.zz-next-ui .status.active { background: rgba(67, 217, 154, 0.14) !important; color: #7ff0c4 !important; }
+body.zz-next-ui .status.pending,
+body.zz-next-ui .status.processing { background: rgba(217, 164, 65, 0.16) !important; color: #f2cf8e !important; }
+body.zz-next-ui .status.failed,
+body.zz-next-ui .status.rejected,
+body.zz-next-ui .status.cancelled,
+body.zz-next-ui .status.inactive { background: rgba(225, 29, 42, 0.16) !important; color: #ff8a95 !important; }
+body.zz-next-ui .alert { border-radius: 14px !important; }
+body.zz-next-ui .alert.success { background: rgba(67, 217, 154, 0.1) !important; border: 1px solid rgba(67, 217, 154, 0.4) !important; color: #adf5d7 !important; }
+body.zz-next-ui .alert.error { background: rgba(225, 29, 42, 0.1) !important; border: 1px solid rgba(225, 29, 42, 0.45) !important; color: #ffbac1 !important; }
+
+/* ---------- FORMULÁRIOS / TABELAS ---------- */
+body.zz-next-ui input,
+body.zz-next-ui select,
+body.zz-next-ui textarea {
+  background: rgba(6, 9, 14, 0.85) !important;
+  border: 1px solid var(--zz-line-strong) !important;
+  border-radius: 11px !important;
+  color: var(--zz-text) !important;
+}
+body.zz-next-ui input:focus,
+body.zz-next-ui select:focus,
+body.zz-next-ui textarea:focus {
+  border-color: var(--zz-red) !important;
+  box-shadow: 0 0 0 3px var(--zz-red-soft) !important;
+  outline: none !important;
+}
+body.zz-next-ui th {
+  color: var(--zz-muted) !important;
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+}
+body.zz-next-ui td { border-bottom: 1px solid var(--zz-line) !important; }
+
+/* ==================================================================
+   HEADER / NAV  (classes reais: v9-* + zz-*)
+   ================================================================== */
+body.zz-next-ui .topbar.v9-topbar.zz-topbar {
+  background: linear-gradient(180deg, rgba(10, 13, 19, 0.94), rgba(6, 8, 12, 0.82)) !important;
+  border-bottom: 1px solid var(--zz-line) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4) !important;
+}
+body.zz-next-ui .topbar.v9-topbar.zz-topbar::before {
+  background: linear-gradient(90deg, transparent 3%, var(--zz-red) 16%, rgba(217, 164, 65, 0.5) 46%, transparent 88%) !important;
+  height: 2px !important;
+  opacity: 0.9 !important;
+}
+body.zz-next-ui .v9-logo-wrap.zz-logo-wrap {
+  border: 1px solid rgba(217, 164, 65, 0.32) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(225, 29, 42, 0.14) !important;
+}
+body.zz-next-ui .v9-brand.zz-brand strong { letter-spacing: 0.12em !important; }
+body.zz-next-ui .v9-brand.zz-brand strong b { color: var(--zz-red) !important; }
+body.zz-next-ui .zz-brand-copy small { color: var(--zz-gold) !important; letter-spacing: 0.22em !important; opacity: 0.85; }
+body.zz-next-ui .v9-nav-item {
+  color: #9aa4b3 !important;
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.09em !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+}
+body.zz-next-ui .v9-nav-item::after {
+  background: linear-gradient(90deg, var(--zz-red), var(--zz-gold)) !important;
+  box-shadow: 0 0 16px rgba(225, 29, 42, 0.7) !important;
+}
+body.zz-next-ui .v9-nav-item:hover,
+body.zz-next-ui .v9-nav-item.active { color: #fff !important; }
+body.zz-next-ui .admin-entry-link { color: var(--zz-gold) !important; }
+body.zz-next-ui .v9-cart-pill.zz-cart-pill b {
+  background: linear-gradient(135deg, var(--zz-red), #ff5a3d) !important;
+  box-shadow: 0 0 14px rgba(225, 29, 42, 0.8) !important;
+  font-family: var(--zz-display) !important;
+}
+body.zz-next-ui .zz-account-copy strong { font-family: var(--zz-display) !important; letter-spacing: 0.04em; }
+
+/* ==================================================================
+   LOJA / HOME  (classes reais)
+   ================================================================== */
+/* O hero usa var(--hero-image) e var(--category-accent) inline — preservado.
+   Reforçamos apenas a fita de assinatura e o CTA. */
+body.zz-next-ui .zz-hero-eyebrow { color: var(--zz-gold) !important; }
+body.zz-next-ui .zz-live-dot { background: var(--zz-red) !important; box-shadow: 0 0 12px var(--zz-red) !important; }
+body.zz-next-ui .zz-primary-cta {
+  background: linear-gradient(135deg, var(--zz-red), var(--zz-red-2)) !important;
+  border: 1px solid rgba(255, 120, 120, 0.32) !important;
+  color: #fff !important;
+  font-family: var(--zz-display) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  box-shadow: 0 16px 40px rgba(225, 29, 42, 0.28) !important;
+}
+body.zz-next-ui .zz-secondary-cta {
+  border: 1px solid var(--zz-line-strong) !important;
+  color: var(--zz-soft) !important;
+  font-family: var(--zz-display) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* Cartões de produto / veículo da loja */
+body.zz-next-ui .product-card-v300,
+body.zz-next-ui .vehicle-card-v300 {
+  border-radius: var(--zz-radius-lg) !important;
+  border: 1px solid var(--zz-line) !important;
+  background: linear-gradient(180deg, rgba(18, 23, 32, 0.9), rgba(9, 12, 18, 0.96)) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), var(--zz-inset) !important;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+body.zz-next-ui .product-card-v300:hover,
+body.zz-next-ui .vehicle-card-v300:hover {
+  transform: translateY(-3px);
+  border-color: rgba(225, 29, 42, 0.5) !important;
+  box-shadow: 0 40px 110px rgba(0, 0, 0, 0.64), 0 0 32px rgba(225, 29, 42, 0.15) !important;
+}
+body.zz-next-ui .product-title-row-v300 b,
+body.zz-next-ui .vehicle-heading-v300 { font-family: var(--zz-display) !important; color: #fff !important; }
+body.zz-next-ui .product-price-v300 strong,
+body.zz-next-ui .vehicle-price-v300 strong { font-family: var(--zz-display) !important; color: #fff !important; }
+
+/* Kit inicial em destaque (latão/carmim) */
+body.zz-next-ui .zz-starter-kit,
+body.zz-next-ui .starter-kit-v225 {
+  border-radius: var(--zz-radius-lg) !important;
+  border: 1px solid rgba(217, 164, 65, 0.5) !important;
+  background: linear-gradient(120deg, rgba(60, 14, 20, 0.55), rgba(40, 26, 10, 0.5) 48%, rgba(8, 10, 14, 0.96)) !important;
+  box-shadow: var(--zz-shadow-strong), 0 0 50px rgba(217, 164, 65, 0.1) !important;
+}
+
+/* ==================================================================
+   PÁGINAS DE CONTEÚDO — superfícies coesas (classes reais)
+   ================================================================== */
+body.zz-next-ui .coin-pack-content-v33,
+body.zz-next-ui .wallet-balance-card-v33,
+body.zz-next-ui .account-history-v33,
+body.zz-next-ui .profile-card-v106,
+body.zz-next-ui .profile-side-box-v106,
+body.zz-next-ui .support-code-wallet-card,
+body.zz-next-ui .rz-catalog-panel,
+body.zz-next-ui .rz-feed-panel,
+body.zz-next-ui .rz-clan-section,
+body.zz-next-ui .rz-empty-card,
+body.zz-next-ui .vip-card-v300,
+body.zz-next-ui .vip-summary-v300,
+body.zz-next-ui .vip-studio-v300,
+body.zz-next-ui .garage-card-content-v29,
+body.zz-next-ui .garage-detail-info-v29,
+body.zz-next-ui .garage-empty-v29,
+body.zz-next-ui .garage-stat-v29,
+body.zz-next-ui .clan-card-v106,
+body.zz-next-ui .clan-form-card-v106,
+body.zz-next-ui .clan-highlight-card-v106,
+body.zz-next-ui .clan-status-box-v106,
+body.zz-next-ui .myclan-panel-v106,
+body.zz-next-ui .myclan-app-card-v106,
+body.zz-next-ui .myclan-member-card-v106,
+body.zz-next-ui .myclan-empty-v106,
+body.zz-next-ui .myclan-stat-v106,
+body.zz-next-ui .clan-panel-v106,
+body.zz-next-ui .clan-info-box-v106,
+body.zz-next-ui .clan-member-card-v106,
+body.zz-next-ui .territory-history-v158,
+body.zz-next-ui .territory-empty-v158,
+body.zz-next-ui .territory-podium-v158,
+body.zz-next-ui .streamer-config-card,
+body.zz-next-ui .streamer-stats-v43,
+body.zz-next-ui .support-hero-card,
+body.zz-next-ui .premium-stat-v43,
+body.zz-next-ui .cart-list-card-v42,
+body.zz-next-ui .cart-checkout-v42,
+body.zz-next-ui .cart-item-v42,
+body.zz-next-ui .cart-empty-v42,
+body.zz-next-ui .checkout-glass,
+body.zz-next-ui .checkout-box,
+body.zz-next-ui .pix-info-v42,
+body.zz-next-ui .pix-qr-box-v42,
+body.zz-next-ui .player-login-shell-v153 {
+  border-radius: var(--zz-radius) !important;
+  border: 1px solid var(--zz-line) !important;
+  background: linear-gradient(180deg, rgba(18, 23, 32, 0.88), rgba(9, 12, 18, 0.95)) !important;
+  box-shadow: var(--zz-shadow), var(--zz-inset) !important;
+}
+
+/* Heróis das páginas de conteúdo — arte cinematográfica sob overlay coeso */
+body.zz-next-ui .wallet-hero-v33,
+body.zz-next-ui .rz-rank-hero,
+body.zz-next-ui .vip-hero-v300,
+body.zz-next-ui .garage-hero-v29,
+body.zz-next-ui .clan-hero-v106,
+body.zz-next-ui .myclan-hero-v106,
+body.zz-next-ui .clan-banner-v106,
+body.zz-next-ui .territory-hero-v158,
+body.zz-next-ui .cart-hero-v42 {
+  position: relative;
+  border-radius: var(--zz-radius-lg) !important;
+  border: 1px solid var(--zz-line) !important;
+  background:
+    linear-gradient(115deg, rgba(52, 12, 18, 0.78), rgba(8, 10, 14, 0.95)),
+    url('/images/zz-elite/hero-main.png') center/cover no-repeat !important;
+  box-shadow: var(--zz-shadow-strong), var(--zz-inset) !important;
+}
+body.zz-next-ui .wallet-hero-v33 h1,
+body.zz-next-ui .rz-rank-hero h1,
+body.zz-next-ui .vip-hero-copy-v300 h1,
+body.zz-next-ui .vip-hero-v300 h1,
+body.zz-next-ui .garage-hero-v29 h1,
+body.zz-next-ui .clan-hero-v106 h1,
+body.zz-next-ui .territory-hero-v158 h1,
+body.zz-next-ui .cart-hero-v42 h1 {
+  font-family: var(--zz-display) !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  text-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Fundo tático sutil em páginas com backdrop dedicado */
+body.zz-next-ui .rz-clan-bg,
+body.zz-next-ui .garage-bg-v29 {
+  background:
+    linear-gradient(90deg, rgba(8, 10, 14, 0.96), rgba(8, 10, 14, 0.74), rgba(8, 10, 14, 0.97)),
+    url('/images/zz-elite/backdrop.png') center top/cover no-repeat !important;
+}
+
+/* Emblemas/medalhas de ranking em latão */
+body.zz-next-ui .rz-rank-emblem,
+body.zz-next-ui .rz-clan-trophy,
+body.zz-next-ui .rz-mini-trophies { border-color: rgba(217, 164, 65, 0.5) !important; }
+
+/* PIX — realce carmim/verde de status */
+body.zz-next-ui .pix-approved-banner-v42 { border: 1px solid rgba(67, 217, 154, 0.45) !important; background: rgba(67, 217, 154, 0.1) !important; }
+body.zz-next-ui .pix-status-pill-v42 { font-family: var(--zz-display) !important; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ==================================================================
+   ADMIN — mesma identidade, sem alterar função (classes reais v46/v200/v34/v47)
+   ================================================================== */
+body.zz-next-ui.admin-performance-mode {
+  background:
+    radial-gradient(circle at 12% -8%, rgba(225, 29, 42, 0.06), transparent 22%),
+    linear-gradient(180deg, #0a0d12 0%, #06080c 100%) !important;
+}
+body.zz-next-ui .admin-shell-v46,
+body.zz-next-ui .admin-nav-v46,
+body.zz-next-ui .admin-content-v46,
+body.zz-next-ui .admin-main-v49,
+body.zz-next-ui .admin-page-head-v46,
+body.zz-next-ui .admin-products-clean-v200,
+body.zz-next-ui .admin-vehicles-clean-v200,
+body.zz-next-ui .admin-vip-clean-v200,
+body.zz-next-ui .admin-vip-hero-v200,
+body.zz-next-ui .admin-ranking-v34,
+body.zz-next-ui .admin-v47-panel-head,
+body.zz-next-ui .clan-dc-hero-v107,
+body.zz-next-ui .clan-dc-form-v107,
+body.zz-next-ui .admin-login {
+  border-radius: var(--zz-radius) !important;
+  background: linear-gradient(180deg, rgba(18, 23, 32, 0.9), rgba(10, 13, 19, 0.95)) !important;
+  border: 1px solid var(--zz-line) !important;
+  box-shadow: var(--zz-shadow) !important;
+}
+body.zz-next-ui .admin-nav-v46 a:hover,
+body.zz-next-ui .admin-nav-v46 a.active {
+  background: linear-gradient(135deg, rgba(225, 29, 42, 0.18), rgba(255, 255, 255, 0.04)) !important;
+  border-color: rgba(225, 29, 42, 0.45) !important;
+}
+body.zz-next-ui .admin-page-head-v46 h1,
+body.zz-next-ui .admin-vip-title-v200 { font-family: var(--zz-display) !important; }
+
+/* ---------- FLUTUANTES ---------- */
+body.zz-next-ui .sz-hover-card {
+  border-radius: 16px !important;
+  border: 1px solid var(--zz-line-strong) !important;
+  box-shadow: var(--zz-shadow) !important;
+}
+
+/* ---------- RODAPÉ ---------- */
+body.zz-next-ui .footer {
+  color: var(--zz-muted) !important;
+  border-top: 1px solid var(--zz-line);
+  font-family: var(--zz-display) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+}

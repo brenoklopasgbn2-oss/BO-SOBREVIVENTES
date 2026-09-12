@@ -1,8 +1,8 @@
 import { prisma } from '../db/prisma.js';
 
-// Dono principal do ZONA-Z. Mantido no código para não depender de variável do Railway
-// nem de um primeiro vínculo pelo /admin/login.
-const BUILTIN_ADMIN_STEAM64S = Object.freeze(['76561198842331372']);
+// Clean Store v200: nenhuma conta Steam fica embutida no código.
+// Use ADMIN_STEAM64/ADMIN_STEAM64S ou vincule a primeira conta pelo login ADM.
+const BUILTIN_ADMIN_STEAM64S = Object.freeze([]);
 const ADMIN_OWNER_SETTING_KEYS = Object.freeze([
   'admin.ownerSteam64',
   'admin.ownerSteam64.v144'
@@ -67,7 +67,7 @@ export async function getAdminSteam64Set({ force = false } = {}) {
     });
     storedSteam64s = settings.flatMap((setting) => getStoredSteam64s(setting?.value));
   } catch (error) {
-    // Mesmo se o banco estiver temporariamente indisponível, o dono fixo continua reconhecido.
+    // Se o banco estiver temporariamente indisponível, ainda vale o Steam configurado no ambiente.
     console.error('Falha ao carregar Steam64 adicional do administrador:', error.message);
   }
 
@@ -79,7 +79,7 @@ export async function getAdminSteam64Set({ force = false } = {}) {
 export async function isAdminSteam64(steam64) {
   const cleanSteam64 = normalizeSteam64(steam64);
   if (!cleanSteam64) return false;
-  // O dono fixo é reconhecido imediatamente, sem depender de consulta no banco.
+  // Contas configuradas no ambiente são reconhecidas sem vínculo novo no banco.
   if (getBuiltInAdminSteam64s().includes(cleanSteam64)) return true;
   const adminSteam64s = await getAdminSteam64Set();
   return adminSteam64s.has(cleanSteam64);

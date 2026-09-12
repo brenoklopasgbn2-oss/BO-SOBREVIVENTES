@@ -2,17 +2,26 @@
 <%- include('partials/nav') %>
 <main class="container">
   <%- include('partials/alerts') %>
-  <section class="card player-login-shell-v153">
-    <p class="eyebrow">ACESSO PROTEGIDO PELO SERVIDOR</p>
-    <h1>A loja abre somente pelo DayZ</h1>
-    <p class="muted">Entre no servidor ZONA-Z e aperte <strong>L</strong>. O jogo abrirá um link temporário e de uso único já ligado ao seu Steam64.</p>
-    <div class="player-login-steps-v153">
-      <div><b>1</b><span>Entre no ZONA-Z</span></div>
-      <div><b>2</b><span>Aperte L</span></div>
-      <div><b>3</b><span>A conta abre automaticamente</span></div>
+  <section class="zz-access player-login-shell-v153">
+    <div class="zz-access-art">
+      <span class="zz-access-badge"><i></i> ACESSO PROTEGIDO PELO SERVIDOR</span>
+      <div class="zz-access-art-copy">
+        <h2>Zona restrita</h2>
+        <p>O acesso à loja é liberado dentro do território <%= appName %>. Sem link do jogo, o portão permanece fechado.</p>
+      </div>
     </div>
-    <div class="notice">Não existe login por senha, formulário de Steam64 ou troca de conta pelo endereço. Links alterados, expirados ou reutilizados são recusados.</div>
-    <a class="btn primary" href="/shop?serverType=vanilla">Voltar para a loja</a>
+    <div class="zz-access-panel">
+      <span class="zz-access-eyebrow">Protocolo de entrada</span>
+      <h1>A loja abre somente pelo DayZ</h1>
+      <p class="muted">Entre no servidor <%= appName %> e aperte <strong>L</strong>. O jogo abrirá um link temporário e de uso único já ligado ao seu Steam64.</p>
+      <div class="zz-access-steps player-login-steps-v153">
+        <div class="zz-access-step"><b>1</b><span>Entre no <%= appName %></span></div>
+        <div class="zz-access-step"><b>2</b><span>Aperte L</span></div>
+        <div class="zz-access-step"><b>3</b><span>A conta abre automaticamente</span></div>
+      </div>
+      <div class="zz-access-note notice">Não existe login por senha, formulário de Steam64 ou troca de conta pelo endereço. Links alterados, expirados ou reutilizados são recusados.</div>
+      <a class="btn primary" href="/shop?serverType=vanilla">Voltar para a loja</a>
+    </div>
   </section>
 </main>
 <%- include('partials/footer') %>

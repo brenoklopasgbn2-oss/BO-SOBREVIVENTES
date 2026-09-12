@@ -1,0 +1,10 @@
+<%- include('partials/head') %><link rel="stylesheet" href="/css/zona-z-pages-v500.css?v=500"><%- include('partials/nav') %>
+<main style="max-width:920px;margin:0 auto;padding:40px 18px 80px"><%- include('partials/alerts') %>
+<section style="padding:28px;border:1px solid #3a3a3a;background:#111;border-radius:18px">
+  <p class="eyebrow">CONTA SEGURA</p><h1>🔗 Vincular Discord ↔ Steam</h1>
+  <% if (player.discordId) { %><div style="padding:18px;border:1px solid #1f7a4f;background:#10251c;border-radius:12px;margin:18px 0"><strong>✅ Conta vinculada</strong><p>Discord: <%= player.discordUsername || player.discordId %><br>Steam64: <code><%= player.steam64 %></code></p></div><% } else { %>
+  <ol style="line-height:1.9"><li>Abra o canal <b>🔗・vincular-conta</b> no Discord.</li><li>Clique em <b>Gerar código</b>. O código aparece somente para você.</li><li>Cole o código abaixo em até 10 minutos.</li></ol>
+  <form method="POST" action="/vincular" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px"><input name="code" required minlength="6" maxlength="16" autocomplete="off" placeholder="CZ-ABC123" style="flex:1;min-width:220px;padding:14px;border-radius:10px;border:1px solid #555;background:#080808;color:#fff;text-transform:uppercase"><button class="btn primary" type="submit">Vincular conta</button></form>
+  <% } %>
+  <p style="margin-top:24px;color:#aaa">A vinculação é obrigatória para registrar o clã no campeonato. Um Discord não pode ser usado por dois Steam64.</p>
+</section></main><%- include('partials/footer') %>

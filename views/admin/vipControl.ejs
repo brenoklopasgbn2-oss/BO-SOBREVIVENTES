@@ -33,11 +33,11 @@
     <div class="admin-page-head-v46">
       <p class="eyebrow">Administração / Histórico</p>
       <h1>Controle completo dos VIPs</h1>
-      <p class="muted">Veja quem possui VIP, quando vence, quais VIPs de 7 dias já venceram e quando o mod consultou cada cadastro. O histórico não some quando o arquivo é removido do FTP.</p>
+      <p class="muted">Veja quem possui VIP, quando vence, quais VIPs de 7 dias já venceram e quando o mod consultou cada cadastro. O histórico não some quando o VIP é removido.</p>
       <div class="vip-head-actions-v141">
-        <form method="POST" action="/admin/vip-control/sync-all" onsubmit="return confirm('Reenviar todos os VIPs ativos e remover do FTP os vencidos/cancelados?')">
+        <form method="POST" action="/admin/vip-control/sync-all" onsubmit="return confirm('Atualizar todos os trajes VIP para o mod buscar pela API?')">
           <input type="hidden" name="returnTo" value="<%= currentReturnTo %>">
-          <button class="btn primary" type="submit">🔄 Sincronizar todos no FTP</button>
+          <button class="btn primary" type="submit">🔄 Atualizar todos os trajes VIP</button>
         </form>
         <a class="btn" href="/admin/outfits">🧥 Criar ou editar trajes</a>
       </div>
@@ -45,7 +45,7 @@
 
     <div class="vip-summary-v141">
       <a class="vip-stat-v141" href="<%= baseQuery('all') %>"><small>Histórico total</small><strong><%= stats.total %></strong><em>Todos os registros</em></a>
-      <a class="vip-stat-v141 good" href="<%= baseQuery('active') %>"><small>VIPs ativos</small><strong><%= stats.active %></strong><em>Arquivo deve existir no FTP</em></a>
+      <a class="vip-stat-v141 good" href="<%= baseQuery('active') %>"><small>VIPs ativos</small><strong><%= stats.active %></strong><em>Disponível para o mod pela API</em></a>
       <a class="vip-stat-v141 warn" href="<%= baseQuery('expiring') %>"><small>Vencem em 7 dias</small><strong><%= stats.expiringSoon %></strong><em>Atenção para renovar</em></a>
       <a class="vip-stat-v141 danger" href="<%= baseQuery('expired') %>"><small>Vencidos</small><strong><%= stats.expired %></strong><em>Arquivo removido ao vencer</em></a>
       <a class="vip-stat-v141 purple" href="<%= baseQuery('expired7d') %>"><small>7 dias vencidos</small><strong><%= stats.expiredSevenDay %></strong><em>Inicial e streamer</em></a>
@@ -61,8 +61,8 @@
     <section class="vip-help-v141">
       <h3>Por que o VIP “some”?</h3>
       <p>Quando a validade termina ou o cadastro é cancelado, a sincronização <strong>remove automaticamente o JSON desse Steam64 da pasta inbox/vip</strong>. Antes, o painel de Trajes mostrava somente os ativos; por isso parecia que o cadastro tinha desaparecido. Aqui ele continua no histórico com a data e o motivo.</p>
-      <p><strong>“Consultado pelo mod”</strong> significa que o servidor pediu o traje pela API ao menos uma vez. Em instalações que usam somente o arquivo FTP, esse campo pode continuar vazio mesmo com o arquivo correto.</p>
-      <p>Se uma Steam64 tiver <strong>mais de um VIP ativo</strong>, o FTP envia somente o que possui o vencimento mais distante. O painel marca os outros como conflito, porque eles ficam ativos no banco, mas não são o traje escolhido pelo mod.</p>
+      <p><strong>“Consultado pelo mod”</strong> significa que o servidor pediu o traje pela API ao menos uma vez. Com o bridge V75, o mod atualiza esse estado pelo próximo ciclo da API.</p>
+      <p>Se uma Steam64 tiver <strong>mais de um VIP ativo</strong>, a API envia somente o que possui o vencimento mais distante. O painel marca os outros como conflito, porque eles ficam ativos no banco, mas não são o traje escolhido pelo mod.</p>
     </section>
 
     <section class="vip-filter-panel-v141">
@@ -112,7 +112,7 @@
             <% entries.forEach(item => { const statusClass = item.state === 'ACTIVE' ? (item.expiringSoon ? 'expiring' : 'active') : item.state.toLowerCase(); const statusText = item.state === 'ACTIVE' ? (item.expiringSoon ? 'VENCENDO' : 'ATIVO') : (item.state === 'EXPIRED' ? 'VENCIDO' : 'CANCELADO'); const modClass = item.state !== 'ACTIVE' ? 'off' : (item.lastSpawnAt ? 'ok' : 'wait'); %>
             <tr>
               <td><strong><%= item.player?.nickname || 'Sem nome' %></strong><code><%= item.steam64 %></code><% if (item.player?.discordId) { %><small>Discord: <%= item.player.discordId %></small><% } %></td>
-              <td><strong><%= item.outfitTemplate?.name || 'Traje removido' %></strong><span class="vip-source-v141"><%= item.sourceLabel %></span><% if (item.isSevenDay) { %><span class="vip-7d-v141">7 DIAS</span><% } %><% if (item.activeConflict) { %><span class="vip-7d-v141" style="background:rgba(239,68,68,.12);color:#ff9f9f"><%= item.selectedForFtp ? 'ESCOLHIDO NO FTP' : 'OCULTO POR OUTRO VIP' %></span><% } %><% if (item.streamerCode) { %><small>Código: <%= item.streamerCode %></small><% } %></td>
+              <td><strong><%= item.outfitTemplate?.name || 'Traje removido' %></strong><span class="vip-source-v141"><%= item.sourceLabel %></span><% if (item.isSevenDay) { %><span class="vip-7d-v141">7 DIAS</span><% } %><% if (item.activeConflict) { %><span class="vip-7d-v141" style="background:rgba(239,68,68,.12);color:#ff9f9f"><%= item.selectedForFtp ? 'ESCOLHIDO NA API' : 'OCULTO POR OUTRO VIP' %></span><% } %><% if (item.streamerCode) { %><small>Código: <%= item.streamerCode %></small><% } %></td>
               <td><span class="vip-status-v141 <%= statusClass %>"><%= statusText %></span><small><%= item.remainingLabel %></small></td>
               <td><%= dateTime(item.startsAt) %><small>Duração: <%= item.isPermanent ? 'permanente' : item.durationDays + ' dia(s)' %></small></td>
               <td><strong><%= item.isPermanent ? 'Permanente' : dateTime(item.expiresAt) %></strong><% if (item.expiringSoon) { %><small style="color:#ffd166">Renovar em breve</small><% } %></td>
@@ -121,9 +121,9 @@
               <td><small>Criado: <%= dateTime(item.createdAt) %></small><small>Atualizado: <%= dateTime(item.updatedAt) %></small><small>ID: <%= shortId(item.id) %></small></td>
               <td>
                 <div class="vip-actions-v141">
-                  <form method="POST" action="/admin/vip-control/<%= item.id %>/sync"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-sync-btn-v141" type="submit">Atualizar FTP</button></form>
+                  <form method="POST" action="/admin/vip-control/<%= item.id %>/sync"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-sync-btn-v141" type="submit">Atualizar API</button></form>
                   <form method="POST" action="/admin/vip-control/<%= item.id %>/renew"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><input name="durationDays" type="number" min="1" max="3650" value="<%= item.isSevenDay ? 7 : 30 %>" title="Dias"><button class="btn small primary" type="submit">Renovar</button></form>
-                  <% if (item.state === 'ACTIVE') { %><form method="POST" action="/admin/vip-control/<%= item.id %>/revoke" onsubmit="return confirm('Remover este VIP agora?')"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-remove-btn-v141" type="submit">Remover</button></form><% } %>
+                  <% if (item.state === 'ACTIVE') { %><form method="POST" action="/admin/vip-control/<%= item.id %>/revoke" onsubmit="return confirm('Remover TODOS os VIPs ativos deste player agora? O mod receberá a remoção no próximo poll da API.')"><input type="hidden" name="returnTo" value="<%= currentReturnTo %>"><button class="btn small vip-remove-btn-v141" type="submit">Remover</button></form><% } %>
                 </div>
               </td>
             </tr>

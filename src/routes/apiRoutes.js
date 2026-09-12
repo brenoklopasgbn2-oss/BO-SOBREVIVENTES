@@ -9,6 +9,9 @@ import { registerKillEventFromGame } from '../services/rankingService.js';
 import { getDeathmatchPublicConfig, enqueueDeathmatchGiftEvent, claimDeathmatchEvents, confirmDeathmatchEvent, clearDeathmatchStreamer, getDeathmatchRanking } from '../services/deathmatchService.js';
 import { getActiveOutfitForPlayer } from '../services/outfitService.js';
 import { upsertPlayerBySteam64, changePlayerCoins } from '../services/playerService.js';
+import { createPlayerGameAccessToken, gameLoginConfig } from '../services/gameLoginService.js';
+import { env } from '../config/env.js';
+import { handleGameApiBridgePoll } from '../services/gameApiBridgeService.js';
 
 export const apiRoutes = Router();
 
@@ -59,8 +62,47 @@ function resolveDeliveryOk(data = {}) {
 
 apiRoutes.use(requireApiKey);
 
+async function createGamePlayerAccess(req, res) {
+  try {
+    const source = req.method === 'GET' ? req.query : req.body;
+    const steam64 = String(source.steam64 || source.steamId || '').trim();
+    const nickname = String(source.nickname || source.playerName || '').trim();
+    const serverType = String(source.serverType || 'vanilla').trim().toLowerCase();
+    const token = await createPlayerGameAccessToken({ steam64, nickname, serverType });
+    const url = new URL('/from-game', env.publicUrl);
+    url.searchParams.set('token', token);
+    res.json({
+      ok: true,
+      steam64,
+      serverType,
+      expiresInSeconds: gameLoginConfig.tokenTtlSeconds,
+      url: url.toString()
+    });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message });
+  }
+}
+
+apiRoutes.get('/game/player/access', createGamePlayerAccess);
+apiRoutes.post('/game/player/access', createGamePlayerAccess);
+apiRoutes.get('/game/store/access', createGamePlayerAccess);
+apiRoutes.post('/game/store/access', createGamePlayerAccess);
+
+
+// Bridge HTTP leve do servidor DayZ: uma requisição em lote por ciclo.
+apiRoutes.post('/game/bridge/poll', async (req, res) => {
+  try {
+    const result = await handleGameApiBridgePoll(req.body || {}, { ip: req.ip });
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(result);
+  } catch (err) {
+    console.error('[GAME_API_BRIDGE]', err);
+    res.status(400).json({ ok: false, error: err.message });
+  }
+});
+
 apiRoutes.get('/health', (req, res) => {
-  res.json({ ok: true, name: 'raidz-web-store', time: new Date().toISOString() });
+  res.json({ ok: true, name: 'dayz-web-store', time: new Date().toISOString() });
 });
 
 
@@ -319,10 +361,10 @@ apiRoutes.get('/shop/products', async (req, res) => {
 
     const products = await prisma.product.findMany({
       where,
-      select: { id: true, name: true, description: true, category: true, serverType: true, classname: true, quantity: true, priceCoins: true, stock: true, deliveryType: true, dropBoxClassname: true, updatedAt: true, items: { orderBy: { sortOrder: 'asc' }, select: { label: true, classname: true, quantity: true, sortOrder: true } } },
+      select: { id: true, name: true, description: true, category: true, serverType: true, classname: true, quantity: true, priceCoins: true, stock: true, updatedAt: true, items: { orderBy: { sortOrder: 'asc' }, select: { label: true, classname: true, quantity: true, sortOrder: true } } },
       orderBy: [{ category: 'asc' }, { priceCoins: 'asc' }]
     });
-    res.json({ ok: true, products });
+    res.json({ ok: true, products: products.map(product => ({ ...product, deliveryType: 'drop_at_feet' })) });
   } catch (err) {
     res.status(400).json({ ok: false, error: err.message });
   }
@@ -334,9 +376,9 @@ apiRoutes.post('/shop/buy', async (req, res) => {
     const { steam64, productId, quantity, giftSteam64 } = req.body;
     const player = await prisma.player.findUnique({ where: { steam64: String(steam64) } });
     if (!player) return res.status(404).json({ ok: false, error: 'Player não encontrado.' });
-    const result = await buyProduct({ playerId: player.id, productId, quantity: Number(quantity || 1), source: 'api', giftSteam64 });
+    const result = await buyProduct({ playerId: player.id, productId, quantity: Number(quantity || 1), source: 'api', giftSteam64, checkoutToken: req.body.checkoutToken || req.body.idempotencyKey || null });
     res.json({ ok: true, purchaseId: result.purchase.id, deliveryId: result.delivery?.id,
-      deliveryIds: result.deliveries?.map(d => d.id) || [], balance: result.player.coins });
+      deliveryIds: result.deliveries?.map(d => d.id) || [], duplicate: Boolean(result.duplicate), balance: result.player.coins });
   } catch (err) {
     res.status(400).json({ ok: false, error: err.message });
   }
@@ -373,7 +415,8 @@ apiRoutes.post('/game/buy', async (req, res) => {
       productId,
       quantity: Number(req.body.quantity || 1),
       expectedServerType: serverType,
-      source: 'game'
+      source: 'game',
+      checkoutToken: req.body.checkoutToken || req.body.idempotencyKey || null
     });
 
     res.json({
@@ -382,6 +425,7 @@ apiRoutes.post('/game/buy', async (req, res) => {
       purchaseId: result.purchase.id,
       deliveryId: result.delivery?.id,
       deliveryIds: result.deliveries?.map(d => d.id) || [],
+      duplicate: Boolean(result.duplicate),
       delivery: result.delivery ? {
         id: result.delivery.id,
         classname: result.delivery.classname,

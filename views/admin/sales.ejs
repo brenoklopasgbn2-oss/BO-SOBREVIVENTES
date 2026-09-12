@@ -21,7 +21,7 @@
     <div class="stat"><span>Mês selecionado</span><strong><%= stats.monthLabel %></strong></div>
     <div class="stat"><span>Reais recebidos</span><strong><%= brl(stats.totalBrl) %></strong></div>
     <div class="stat"><span>Pix aprovados</span><strong><%= stats.approvedPayments %></strong></div>
-    <div class="stat"><span>Moedas vendidas</span><strong><%= coins(stats.coinsSold) %> RZ</strong></div>
+    <div class="stat"><span>Moedas vendidas</span><strong><%= coins(stats.coinsSold) %> <%= currencyName %></strong></div>
     <div class="stat"><span>Compras de itens</span><strong><%= stats.purchases %></strong></div>
     <div class="stat"><span>Players novos</span><strong><%= stats.playersCreated %></strong></div>
   </section>
@@ -75,7 +75,7 @@
               <td><%= p.player.nickname || p.player.steam64 %></td>
               <td><%= p.product.name %></td>
               <td><%= p.quantity %></td>
-              <td><%= coins(p.totalCoins) %> RZ</td>
+              <td><%= coins(p.totalCoins) %> <%= currencyName %></td>
               <td><%= p.product.serverType %></td>
             </tr>
           <% }) %>

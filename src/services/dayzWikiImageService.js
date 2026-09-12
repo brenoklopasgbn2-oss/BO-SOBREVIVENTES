@@ -151,7 +151,7 @@ function candidateTitles(type, name) {
 async function fetchText(url, timeout = 7500) {
   const res = await fetch(url, {
     headers: {
-      'User-Agent': 'RAIDZStore/1.0 (+DayZ store admin image resolver)',
+      'User-Agent': 'DayZStore/1.0 (+DayZ store admin image resolver)',
       'Accept': 'text/html,application/json,image/avif,image/webp,*/*'
     },
     signal: AbortSignal.timeout(timeout)
@@ -274,7 +274,7 @@ async function fileRedirectImage(apiBase, title) {
       const res = await fetch(url, {
         method: 'GET',
         redirect: 'follow',
-        headers: { 'User-Agent': 'RAIDZStore/1.0' },
+        headers: { 'User-Agent': 'DayZStore/1.0' },
         signal: AbortSignal.timeout(5200)
       });
       const finalUrl = res.url;
@@ -324,6 +324,25 @@ async function doResolve({ type, name, fallback }) {
 
   if (isGoodImage(fallback)) return fallback;
   return localNoImage();
+}
+
+export function resolveDayzWikiImageFast({ type, name, fallback }) {
+  const key = makeKey(type, name);
+  const cached = imageCache.get(key);
+  if (cached && cached.expires > Date.now()) {
+    return { url: cached.url || localNoImage(), pending: false };
+  }
+
+  // A loja nunca deve esperar a Wiki/Fandom. Na primeira abertura devolvemos
+  // uma imagem local imediatamente e aquecemos o cache em segundo plano.
+  if (!pendingResolves.has(key)) {
+    void resolveDayzWikiImage({ type, name, fallback }).catch(() => {});
+  }
+
+  return {
+    url: isGoodImage(fallback) ? String(fallback).replace(/&amp;/g, '&') : localNoImage(),
+    pending: true
+  };
 }
 
 export async function resolveDayzWikiImage({ type, name, fallback }) {

@@ -1,39 +1,149 @@
 <%- include('../partials/head') %>
 <%- include('../partials/nav') %>
-<main class="admin-shell-v46 admin-outfits-v49">
+<main class="admin-vip-clean-v200">
   <%- include('../partials/alerts') %>
-  <%- include('_admin_nav') %>
-  <style>
-    .admin-outfits-v49 .admin-main-v49{min-width:0}.outfits-board-v49{display:grid;grid-template-columns:minmax(340px,440px) minmax(0,1fr);gap:18px}.outfit-form-v49,.outfit-list-panel-v49,.outfit-active-panel-v49{border:1px solid rgba(148,163,184,.16);border-radius:24px;background:linear-gradient(180deg,rgba(9,16,30,.90),rgba(3,7,14,.94));padding:18px;box-shadow:0 28px 80px rgba(0,0,0,.28)}.outfit-form-v49 label{display:grid;gap:7px;color:#dbe4f0;font-weight:850;margin-bottom:10px}.outfit-form-v49 input,.outfit-form-v49 textarea,.outfit-form-v49 select{width:100%;background:#050b16;border:1px solid rgba(148,163,184,.18);border-radius:12px;color:#fff;padding:12px}.outfit-form-v49 textarea{min-height:190px;font-family:ui-monospace,Consolas,monospace}.outfit-grid-admin-v49{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}.outfit-admin-card-v49{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;padding:12px;border:1px solid rgba(148,163,184,.14);border-radius:19px;background:rgba(15,23,42,.62)}.outfit-admin-card-v49 img{width:82px;height:82px;object-fit:contain;border-radius:15px;background:#050b16}.outfit-admin-card-v49 h3{margin:0}.outfit-admin-card-v49 p{margin:5px 0;color:#aeb8c8}.outfit-admin-card-v49 code{display:inline-block;margin:3px 3px 0 0;font-size:.7rem;background:rgba(255,255,255,.06);border-radius:8px;padding:4px 6px}.outfit-actions-admin-v49{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.catalog-mini-v49{max-height:430px;overflow:auto;display:grid;gap:7px}.catalog-mini-v49 button{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.55);color:#fff;border-radius:12px;padding:7px;cursor:pointer}.catalog-mini-v49 img{width:42px;height:42px;object-fit:contain}.catalog-mini-v49 small{color:#9fb0c5}.outfit-split-v49{display:grid;grid-template-columns:1fr 340px;gap:14px}.active-subs-v49{display:grid;gap:8px;max-height:320px;overflow:auto}.active-subs-v49 div{padding:10px;border:1px solid rgba(148,163,184,.13);border-radius:12px;background:rgba(255,255,255,.04)}@media(max-width:1100px){.outfits-board-v49,.outfit-split-v49{grid-template-columns:1fr}}
-  </style>
-  <section class="admin-main-v49">
-    <div class="admin-page-head-v46"><p class="eyebrow">Trajes / Assinaturas</p><h1>Trajes VIP mensais</h1><p class="muted">Configure quais types o player vai nascer no inventário enquanto a assinatura estiver ativa. O mod vai consultar a API quando o player renascer.</p></div>
-    <div class="outfits-board-v49">
-      <form class="outfit-form-v49" method="POST" action="<%= editing ? '/admin/outfits/' + editing.id : '/admin/outfits' %>" enctype="multipart/form-data">
-        <h2><%= editing ? 'Editar traje' : 'Criar traje' %></h2>
-        <label>Nome<input name="name" value="<%= editing?.name || '' %>" required></label>
-        <div class="inline-grid two-cols"><label>Nível<input name="level" type="number" min="1" value="<%= editing?.level || 1 %>"></label><label>Preço RZ mensal<input name="priceCoins" type="number" min="0" value="<%= editing?.priceCoins || 0 %>"></label></div>
-        <div class="inline-grid two-cols"><label>Dias<input name="durationDays" type="number" min="1" value="<%= editing?.durationDays || 30 %>"></label><label>Servidor<select name="serverType"><option value="vanilla" <%= editing?.serverType === 'vanilla' ? 'selected' : '' %>>Vanilla</option><option value="bbp" <%= editing?.serverType === 'bbp' ? 'selected' : '' %>>Vanilla+</option></select></label></div>
-        <label>Descrição<textarea name="description"><%= editing?.description || '' %></textarea></label>
-        <label>Imagem URL<input name="imageUrl" value="<%= editing?.imageUrl || '' %>" placeholder="https://... ou deixe vazio para buscar na Wiki pelo type"></label>
-        <label>Upload imagem<input name="image" type="file" accept="image/*"></label>
-        <label>Types do traje <small class="muted">Formato: slot|classname|quantidade|nome. Ex: inventory|BandageDressing|1|Bandagem</small><textarea id="outfitItemsTextV49" name="itemsText" required><%= editing ? outfitItemsToText(editing.items || []) : 'body|Hoodie_Black|1|Moletom\nlegs|Jeans_Black|1|Calça\nfeet|AthleticShoes_Black|1|Tênis\ninventory|BandageDressing|1|Bandagem\ninventory|BakedBeansCan|1|Comida\ninventory|KitchenKnife|1|Faca\ninventory|SodaCan_Pipsi|1|Bebida' %></textarea></label>
-        <label class="check-row"><input name="active" type="checkbox" <%= !editing || editing.active ? 'checked' : '' %>><span>Ativo para venda</span></label>
-        <label class="check-row"><input name="streamerRewardEnabled" type="checkbox" <%= editing?.streamerRewardEnabled ? 'checked' : '' %>><span>Pode ser escolhido no bônus de 7 dias por streamer</span></label>
-        <button class="btn primary" type="submit"><%= editing ? 'Salvar traje' : 'Criar traje' %></button>
-      </form>
-      <section class="outfit-split-v49">
-        <div class="outfit-list-panel-v49"><div class="admin-v47-panel-head"><div><p class="eyebrow">Cadastrados</p><h2>Trajes criados</h2></div><a class="btn" href="/admin/outfits">Novo</a></div><div class="outfit-grid-admin-v49"><% outfits.forEach(o => { const items = Array.isArray(o.items) ? o.items : []; %><article class="outfit-admin-card-v49"><img src="<%= o.imageData ? '/outfit-image/' + o.id : (o.imageUrl || '/images/no-real-image.svg') %>" onerror="this.src='/images/no-real-image.svg'"><div><h3><%= o.name %></h3><p>Nível <%= o.level %> • <%= coins(o.priceCoins) %> RZ • <%= o.durationDays %> dias</p><% items.slice(0,5).forEach(i => { %><code><%= i.classname %></code><% }) %><div class="outfit-actions-admin-v49"><a class="btn small primary" href="/admin/outfits?edit=<%= o.id %>">Editar</a><form method="POST" action="/admin/outfits/<%= o.id %>/toggle"><button class="btn small"><%= o.active ? 'Desativar' : 'Ativar' %></button></form></div></div></article><% }) %></div></div>
-        <aside class="outfit-active-panel-v49"><h2>Teste / Ativos</h2><form method="POST" action="/admin/outfits/check-player" class="form-stack"><input name="steam64" maxlength="17" placeholder="Steam64 para consultar"><button class="btn">Consultar traje ativo</button></form><h3>Assinaturas ativas</h3><div class="active-subs-v49"><% activeSubs.forEach(s => { %><div><strong><%= s.player?.nickname || s.steam64 %></strong><br><small><%= s.outfitTemplate?.name %> • até <%= s.expiresAt.toLocaleDateString('pt-BR') %> • <%= s.source %></small></div><% }) %></div><h3>Catálogo rápido</h3><input id="catalogSearchOutfitV49" placeholder="Buscar type para adicionar..." style="width:100%;margin-bottom:8px"><div class="catalog-mini-v49" id="catalogOutfitV49"></div></aside>
-      </section>
-    </div>
+  <% const fmt = value => Number(value || 0).toLocaleString('pt-BR'); %>
+  <% const editingItems = editing ? outfitItemsToText(editing.items || []) : ''; %>
+  <%
+    const catalogGroups = [];
+    const catalogGroupMap = new Map();
+    for (const outfit of (catalogOutfits || [])) {
+      const rawName = String(outfit.name || 'Traje VIP');
+      const parts = rawName.split(' • ');
+      const baseName = parts.length > 1 ? parts[0].trim() : rawName;
+      const variantName = parts.length > 1 ? parts.slice(1).join(' • ').trim() : rawName;
+      const key = `${baseName}||${outfit.imageUrl || ''}`;
+      if (!catalogGroupMap.has(key)) {
+        const group = { key, name: baseName, imageUrl: outfit.imageUrl || '', variants: [] };
+        catalogGroupMap.set(key, group);
+        catalogGroups.push(group);
+      }
+      catalogGroupMap.get(key).variants.push({ ...outfit, variantName });
+    }
+  %>
+  <section class="admin-vip-hero-v200">
+    <div><span>PAINEL VIP • CLEAN V200</span><h1>Trajes com vídeo + payload avançado</h1><p>Sem imagens antigas. O campo de mídia aceita vídeo; os itens suportam percentual de líquido e acoplados.</p></div>
+    <form method="POST" action="/admin/outfits/sync-all-vips"><button type="submit">Atualizar VIPs na API</button></form>
   </section>
+
+  <section class="admin-vip-layout-v200">
+    <form method="POST" action="<%= editing ? ('/admin/outfits/' + editing.id) : '/admin/outfits' %>" class="admin-vip-form-v200">
+      <div class="admin-vip-title-v200"><div><span><%= editing ? 'EDITANDO' : 'NOVO TRAJE' %></span><h2><%= editing ? editing.name : 'Cadastrar VIP' %></h2></div><% if (editing) { %><a href="/admin/outfits">Cancelar edição</a><% } %></div>
+      <label>Nome<input name="name" value="<%= editing?.name || '' %>" required></label>
+      <label>Descrição<textarea name="description" rows="3"><%= editing?.description || '' %></textarea></label>
+      <div class="admin-vip-row-v200">
+        <label>Preço <%= currencyName %><input type="number" min="0" name="priceCoins" value="<%= editing?.priceCoins ?? 0 %>"></label>
+        <label>Duração (dias)<input type="number" min="1" max="3650" name="durationDays" value="<%= editing?.durationDays ?? 30 %>" required></label>
+        <label>Nível<input type="number" min="1" max="99" name="level" value="<%= editing?.level ?? 1 %>"></label>
+      </div>
+      <input type="hidden" name="serverType" value="vanilla">
+      <label>Vídeo do traje (.mp4 / .webm ou URL)
+        <input name="videoUrl" value="<%= editing?.imageUrl || '' %>" placeholder="/videos/vips/traje-nome.mp4">
+        <small>O vídeo toca automaticamente, sem som e fica em loop contínuo enquanto o player estiver visualizando o traje.</small>
+      </label>
+      <label>Itens do traje
+        <textarea name="itemsText" rows="12" required placeholder="Body|VIP_Jacket|1|Jaqueta VIP||Radio@WalkieTalkie@1
+inventory|GlassBottle|1|Garrafa|50|"><%= editingItems %></textarea>
+      </label>
+      <div class="admin-vip-format-v200">
+        <strong>Formato:</strong> <code>slot|classname|qtd|nome|liquido%|acoplados</code>
+        <span>Acoplados separados por vírgula. Cada um aceita <code>Classname@Slot@Qtd@%</code>. Para item dentro de outro, use <code>Bainha@@1@&gt;CombatKnife@@1@</code>.</span>
+      </div>
+      <div class="admin-vip-checks-v200">
+        <label><input type="checkbox" name="active" <%= editing ? (editing.active ? 'checked' : '') : 'checked' %>> Ativo</label>
+        <label><input type="checkbox" name="isPrivate" <%= editing?.isPrivate ? 'checked' : '' %>> VIP privado/oculto</label>
+      </div>
+      <label>Steam64 privados para liberar agora (opcional)<textarea name="privateSteamIds" rows="3" placeholder="7656119..."></textarea></label>
+      <button class="admin-vip-save-v200" type="submit"><%= editing ? 'Salvar traje' : 'Criar traje' %></button>
+    </form>
+
+    <aside class="admin-vip-list-v200">
+      <div class="admin-vip-list-head-v200">
+        <div><span>CATÁLOGO ATUAL</span><h2><%= catalogGroups.length %> traje(s)</h2></div>
+        <small>Somente os 11 trajes VIP novos. As mochilas são opções do mesmo traje.</small>
+      </div>
+
+      <% catalogGroups.forEach(group => { const allActive = group.variants.every(v => v.active); %>
+        <article class="admin-vip-card-v200 admin-vip-group-v613">
+          <div class="admin-vip-card-head-v200">
+            <strong><%= group.name %></strong>
+            <span class="<%= allActive ? 'on' : 'off' %>"><%= allActive ? 'ATIVO' : 'PARCIAL' %></span>
+          </div>
+          <small><%= group.variants.length %> opções de mochila • 1 único traje na loja</small>
+          <code><%= group.imageUrl || 'sem vídeo ainda' %></code>
+
+          <div class="admin-vip-manual-grant-v614">
+            <div class="admin-vip-manual-head-v614">
+              <div><span>SETAR VIP MANUAL</span><strong>Escolha a bolsa que o player vai receber</strong></div>
+              <small>O traje continua sendo <%= group.name %>; somente a mochila muda.</small>
+            </div>
+            <form method="POST" action="/admin/outfits/grant-manual" class="admin-vip-grant-manual-form-v614">
+              <label>Bolsa
+                <select name="outfitId" required>
+                  <% group.variants.forEach(variant => { const backItem = (Array.isArray(variant.items) ? variant.items : []).find(item => ['back','backpack'].includes(String(item.slot || '').toLowerCase())); %>
+                    <option value="<%= variant.id %>"><%= backItem?.label || variant.variantName %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>Steam64<input name="steam64" pattern="[0-9]{17}" maxlength="17" placeholder="7656119..." required></label>
+              <label>Nick<input name="nickname" placeholder="Nick opcional"></label>
+              <label>Dias<input name="durationDays" type="number" min="1" max="3650" value="<%= group.variants[0]?.durationDays || 30 %>" required></label>
+              <button type="submit">Setar <%= group.name %></button>
+            </form>
+          </div>
+
+          <details class="admin-vip-variants-details-v614">
+            <summary>Ver/editar as <%= group.variants.length %> opções de bolsa</summary>
+            <div class="admin-vip-variants-v613">
+              <% group.variants.forEach(variant => { const items = Array.isArray(variant.items) ? variant.items : []; const backItem = items.find(item => ['back','backpack'].includes(String(item.slot || '').toLowerCase())); %>
+                <div class="admin-vip-variant-v613">
+                  <div class="admin-vip-variant-main-v613">
+                    <b><%= backItem?.label || variant.variantName %></b>
+                    <small><%= fmt(variant.priceCoins) %> <%= currencyName %> • <%= variant.durationDays %> dias</small>
+                  </div>
+                  <div class="admin-vip-actions-v200">
+                    <a href="/admin/outfits?edit=<%= variant.id %>">Editar</a>
+                    <form method="POST" action="/admin/outfits/<%= variant.id %>/toggle"><button type="submit"><%= variant.active ? 'Desativar' : 'Ativar' %></button></form>
+                  </div>
+                  <details class="admin-vip-variant-access-v613">
+                    <summary>Ver itens</summary>
+                    <div class="admin-vip-mini-items-v200"><% items.slice(0,6).forEach(item => { %><span><%= item.classname %></span><% }) %></div>
+                  </details>
+                </div>
+              <% }) %>
+            </div>
+          </details>
+        </article>
+      <% }) %>
+
+      <% if (!catalogGroups.length) { %>
+        <div class="admin-vip-empty-v200">Nenhum dos 11 trajes atuais foi encontrado.</div>
+      <% } %>
+
+      <% if ((adminOutfits || []).length) { %>
+        <div class="admin-vip-list-head-v200 admin-vip-admin-head-v613"><div><span>ADMIN</span><h2>Traje bloqueado</h2></div></div>
+        <% adminOutfits.forEach(outfit => { const items = Array.isArray(outfit.items) ? outfit.items : []; %>
+          <article class="admin-vip-card-v200 admin-vip-admin-card-v613">
+            <div class="admin-vip-card-head-v200"><strong><%= outfit.name %></strong><span class="on">ADMIN ONLY</span></div>
+            <small>Oculto da loja • não entra na contagem dos 11 VIPs</small>
+            <div class="admin-vip-mini-items-v200"><% items.slice(0,8).forEach(item => { %><span><%= item.classname %></span><% }) %></div>
+            <div class="admin-vip-actions-v200"><a href="/admin/outfits?edit=<%= outfit.id %>">Editar</a></div>
+            <details><summary>Setar para um player</summary>
+              <form method="POST" action="/admin/outfits/<%= outfit.id %>/grant" class="admin-vip-grant-v200"><input name="steam64" pattern="[0-9]{17}" maxlength="17" placeholder="Steam64" required><input name="nickname" placeholder="Nick opcional"><input name="durationDays" type="number" min="1" max="3650" value="3650"><button type="submit">Liberar/Renovar ADMIN</button></form>
+            </details>
+          </article>
+        <% }) %>
+      <% } %>
+    </aside>
+  </section>
+
+  <% if (activeSubs?.length) { %>
+    <section class="admin-vip-active-v200"><h2>Assinaturas ativas</h2><div><% activeSubs.forEach(sub => { %><article><span><strong><%= sub.player?.nickname || sub.steam64 %></strong><small><%= sub.outfitTemplate?.name %> • até <%= new Date(sub.expiresAt).toLocaleString('pt-BR') %></small></span><form method="POST" action="/admin/outfits/subscriptions/<%= sub.id %>/revoke" onsubmit="return confirm('Remover TODOS os VIPs ativos deste player agora? O mod receberá a remoção no próximo poll da API.')"><button type="submit">Remover</button></form></article><% }) %></div></section>
+  <% } %>
 </main>
-<script>
- const CATALOG_OUTFIT_V49 = <%- JSON.stringify(catalog || []).replace(/</g, '\\u003c') %>;
- function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
- function renderOutfitCatalog(){const q=String(document.getElementById('catalogSearchOutfitV49')?.value||'').toLowerCase();const list=CATALOG_OUTFIT_V49.filter(i=>!q||[i.name,i.classname,i.category].join(' ').toLowerCase().includes(q)).slice(0,80);document.getElementById('catalogOutfitV49').innerHTML=list.map(i=>`<button type="button" data-cn="${esc(i.classname)}" data-name="${esc(i.name)}"><img loading="lazy" decoding="async" src="${esc(i.imageUrl)}" onerror="this.src='/images/no-real-image.svg'"><span><b>${esc(i.name)}</b><small>${esc(i.classname)}</small></span><em>+</em></button>`).join('');}
- document.getElementById('catalogSearchOutfitV49')?.addEventListener('input',renderOutfitCatalog);renderOutfitCatalog();
- document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cn]');if(!b)return;const ta=document.getElementById('outfitItemsTextV49');ta.value+=(ta.value.trim()?'\n':'')+`inventory|${b.dataset.cn}|1|${b.dataset.name}`;ta.focus();});
-</script>
+<style>
+.admin-vip-clean-v200{max-width:1500px;margin:0 auto;padding:34px 28px 80px}.admin-vip-hero-v200{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:26px;border-radius:24px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,#0a101b,#19080c);margin-bottom:18px}.admin-vip-hero-v200 span,.admin-vip-title-v200 span,.admin-vip-list-head-v200 span{font-size:.68rem;font-weight:950;letter-spacing:.16em;color:#fb7185}.admin-vip-hero-v200 h1{margin:5px 0;font-size:2.2rem}.admin-vip-hero-v200 p{margin:0;color:#aeb8c7}.admin-vip-hero-v200 button,.admin-vip-save-v200{border:0;border-radius:11px;padding:12px 15px;background:#ef4444;color:#fff;font-weight:900;cursor:pointer}.admin-vip-layout-v200{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.75fr);gap:18px}.admin-vip-form-v200,.admin-vip-list-v200,.admin-vip-active-v200{border:1px solid rgba(255,255,255,.1);border-radius:22px;background:rgba(7,11,18,.94);padding:20px}.admin-vip-form-v200{display:grid;gap:13px}.admin-vip-title-v200{display:flex;align-items:center;justify-content:space-between}.admin-vip-title-v200 h2,.admin-vip-list-head-v200 h2{margin:3px 0}.admin-vip-title-v200 a{color:#fda4af}.admin-vip-form-v200 label{display:grid;gap:6px;font-size:.79rem;font-weight:850;color:#dbe4f0}.admin-vip-form-v200 input,.admin-vip-form-v200 textarea,.admin-vip-grant-v200 input,.admin-vip-delete-v200 input{width:100%;box-sizing:border-box;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#050912;color:#fff}.admin-vip-form-v200 small{font-weight:400;color:#94a3b8}.admin-vip-row-v200{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.admin-vip-format-v200{padding:12px;border-radius:12px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.18);display:grid;gap:5px;color:#bae6fd;font-size:.78rem}.admin-vip-format-v200 code,.admin-vip-card-v200 code{word-break:break-all}.admin-vip-checks-v200{display:flex;gap:18px;flex-wrap:wrap}.admin-vip-checks-v200 label{display:flex;gap:7px;align-items:center}.admin-vip-checks-v200 input{width:auto}.admin-vip-list-v200{display:grid;gap:11px;align-content:start;max-height:1050px;overflow:auto}.admin-vip-list-head-v200 small{display:block;margin-top:4px;color:#7f8ea3;font-size:.72rem}.admin-vip-group-v613{gap:11px}.admin-vip-variants-v613{display:grid;gap:8px}.admin-vip-variant-v613{padding:10px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);display:grid;gap:8px}.admin-vip-variant-main-v613{display:flex;justify-content:space-between;gap:10px;align-items:center}.admin-vip-variant-main-v613 small{white-space:nowrap}.admin-vip-variant-access-v613{border-top:1px solid rgba(255,255,255,.06);padding-top:6px}.admin-vip-admin-head-v613{margin-top:8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.09)}.admin-vip-admin-card-v613{border-color:rgba(250,204,21,.24);background:linear-gradient(180deg,rgba(250,204,21,.055),rgba(255,255,255,.025))}.admin-vip-card-v200{padding:14px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);display:grid;gap:8px}.admin-vip-card-head-v200{display:flex;justify-content:space-between}.admin-vip-card-head-v200 .on{color:#86efac}.admin-vip-card-head-v200 .off{color:#fca5a5}.admin-vip-card-v200 small{color:#94a3b8}.admin-vip-mini-items-v200{display:flex;flex-wrap:wrap;gap:5px}.admin-vip-mini-items-v200 span{font-size:.67rem;padding:5px 7px;border-radius:7px;background:rgba(255,255,255,.05)}.admin-vip-mini-items-v200 b{color:#7dd3fc}.admin-vip-actions-v200{display:flex;gap:7px}.admin-vip-actions-v200 a,.admin-vip-actions-v200 button,.admin-vip-grant-v200 button,.admin-vip-delete-v200 button,.admin-vip-active-v200 button{border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.07);color:#fff;padding:8px 10px;text-decoration:none;cursor:pointer}.admin-vip-card-v200 details{margin-top:4px}.admin-vip-card-v200 summary{cursor:pointer;color:#fda4af}.admin-vip-grant-v200,.admin-vip-delete-v200{display:grid;gap:7px;margin-top:9px}.admin-vip-delete-v200 button{border-color:rgba(239,68,68,.35);color:#fecaca}.admin-vip-empty-v200{padding:28px;text-align:center;color:#94a3b8}.admin-vip-active-v200{margin-top:18px}.admin-vip-active-v200>div{display:grid;gap:8px}.admin-vip-active-v200 article{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,.035)}.admin-vip-active-v200 article span{display:grid;gap:3px}.admin-vip-active-v200 article small{color:#94a3b8}@media(max-width:980px){.admin-vip-layout-v200{grid-template-columns:1fr}.admin-vip-row-v200{grid-template-columns:1fr}.admin-vip-hero-v200{align-items:flex-start;flex-direction:column}.admin-vip-clean-v200{padding:22px 14px 60px}}
+
+.admin-vip-manual-grant-v614{margin-top:14px;padding:14px;border:1px solid rgba(56,189,248,.24);border-radius:15px;background:linear-gradient(135deg,rgba(14,46,73,.28),rgba(7,11,18,.72))}.admin-vip-manual-head-v614{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:11px}.admin-vip-manual-head-v614 div{display:grid;gap:3px}.admin-vip-manual-head-v614 span{font-size:.62rem;font-weight:1000;letter-spacing:.14em;color:#7dd3fc}.admin-vip-manual-head-v614 strong{font-size:.88rem;color:#fff}.admin-vip-manual-head-v614 small{color:#8fa1b6;font-size:.67rem;text-align:right}.admin-vip-grant-manual-form-v614{display:grid;grid-template-columns:minmax(170px,1.2fr) minmax(150px,1fr) minmax(120px,.8fr) 82px auto;gap:8px;align-items:end}.admin-vip-grant-manual-form-v614 label{display:grid;gap:5px;color:#aebdcd;font-size:.66rem;font-weight:900}.admin-vip-grant-manual-form-v614 input,.admin-vip-grant-manual-form-v614 select{width:100%;box-sizing:border-box;background:#050b15;border:1px solid rgba(148,163,184,.2);border-radius:9px;color:#fff;padding:9px}.admin-vip-grant-manual-form-v614 button{border:0;border-radius:9px;padding:10px 12px;background:#0ea5e9;color:#fff;font-weight:950;cursor:pointer;white-space:nowrap}.admin-vip-variants-details-v614{margin-top:10px}.admin-vip-variants-details-v614>summary{cursor:pointer;color:#9fb0c3;font-size:.7rem;font-weight:900}.admin-vip-variants-details-v614[open]>summary{margin-bottom:9px}@media(max-width:1050px){.admin-vip-grant-manual-form-v614{grid-template-columns:1fr 1fr}.admin-vip-grant-manual-form-v614 button{grid-column:1/-1}.admin-vip-manual-head-v614{align-items:flex-start;flex-direction:column}.admin-vip-manual-head-v614 small{text-align:left}}
+</style>
 <%- include('../partials/footer') %>

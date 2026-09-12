@@ -1,6 +1,14 @@
 import { prisma } from '../db/prisma.js';
 
 export const GLOBAL_PROMO_KEY = 'store.globalPromo';
+const GLOBAL_PROMO_CACHE_TTL_MS = 30_000;
+let globalPromoCache = null;
+let globalPromoCacheExpiresAt = 0;
+
+export function invalidateGlobalPromoCache() {
+  globalPromoCache = null;
+  globalPromoCacheExpiresAt = 0;
+}
 
 export function normalizePromoColor(value, fallback = '#ff7a18') {
   const color = String(value || '').trim();
@@ -23,8 +31,17 @@ export function normalizeGlobalPromo(raw = {}) {
 }
 
 export async function getGlobalPromo(tx = prisma) {
+  const canUseCache = tx === prisma;
+  const now = Date.now();
+  if (canUseCache && globalPromoCache && globalPromoCacheExpiresAt > now) return globalPromoCache;
+
   const setting = await tx.appSetting.findUnique({ where: { key: GLOBAL_PROMO_KEY } });
-  return normalizeGlobalPromo(setting?.value || {});
+  const promo = normalizeGlobalPromo(setting?.value || {});
+  if (canUseCache) {
+    globalPromoCache = promo;
+    globalPromoCacheExpiresAt = now + GLOBAL_PROMO_CACHE_TTL_MS;
+  }
+  return promo;
 }
 
 export async function saveGlobalPromo(data, tx = prisma) {
@@ -34,6 +51,12 @@ export async function saveGlobalPromo(data, tx = prisma) {
     update: { value },
     create: { key: GLOBAL_PROMO_KEY, value }
   });
+  if (tx === prisma) {
+    globalPromoCache = value;
+    globalPromoCacheExpiresAt = Date.now() + GLOBAL_PROMO_CACHE_TTL_MS;
+  } else {
+    invalidateGlobalPromoCache();
+  }
   return value;
 }
 

@@ -1,8 +1,15 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
 <% const theme = product.serverType === 'bbp' ? 'bbp' : 'vanilla'; %>
-<main class="container confirm-page theme-<%= theme %>">
+<main class="container confirm-page confirm-page-ready theme-<%= theme %>">
   <%- include('partials/alerts') %>
+  <section class="zz-page-visual zz-page-visual--confirm" aria-label="Confirmação <%= appName %>"><div><span><%= appName %> // CHECKOUT</span><strong>Última checagem antes do drop</strong><small>Confira produto, saldo e destino da entrega.</small></div></section>
+
+  <div class="zz-cmd-strip">
+    <span class="zz-cmd-dot"></span>
+    <span class="zz-cmd-code">SETOR // <b>CONFIRMAÇÃO</b></span>
+    <span class="zz-cmd-tags"><span>Revisão final</span><span>Cupom / streamer</span><span>Fila de entrega</span></span>
+  </div>
 
   <section class="confirm-mini-hero <%= theme === 'bbp' ? 'hero-bbp' : 'hero-vanilla' %>">
     <div>
@@ -16,14 +23,11 @@
   <section class="confirm-layout">
     <article class="card confirm-card compact-confirm sz-hover-card <%= theme === 'bbp' ? 'card-bbp' : 'card-vanilla' %>">
       <div class="confirm-product compact-product">
-        <div class="confirm-thumb">
-          <img src="<%= product.imageData ? ('/product-image/' + product.id + '?v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) : ((product.imageUrl || '/images/no-real-image.svg') + (((product.imageUrl || '/images/no-real-image.svg').includes('?')) ? '&' : '?') + 'v=' + (product.updatedAt ? new Date(product.updatedAt).getTime() : Date.now())) %>" alt="<%= product.name %>">
-        </div>
         <div>
           <div class="confirm-pills">
             <span class="pill"><%= product.category %></span>
             <span class="pill ghost"><%= product.serverType.toUpperCase() %></span>
-            <span class="pill ghost"><%= product.deliveryType === 'drop_box' ? '📦 Caixa' : (product.deliveryType === 'drop_at_feet' ? '⬇️ Chão' : '🔐 Virtual') %></span>
+            <span class="pill ghost">⬇️ Chão</span>
             <% if (product.promo?.active) { %><span class="pill promo-inline-pill" style="background:<%= product.promo.color %>22;border-color:<%= product.promo.color %>55;color:#fff">🔥 <%= product.promo.label %> -<%= product.promo.percent %>%</span><% } %>
           </div>
           <h2><%= product.name %></h2>
@@ -56,8 +60,9 @@
         <div class="alert error">Seu saldo atual não cobre o valor cheio. Você pode tentar usar cupom; sem desconto suficiente a finalização será recusada.</div>
         <a class="btn primary" href="/wallet">Fazer doação antes</a>
       <% } %>
-        <form method="POST" action="/shop/buy/<%= product.id %>" class="form-grid sz-buy-final-form">
+        <form method="POST" action="/shop/buy/<%= product.id %>" class="form-grid sz-buy-final-form" data-fast-checkout>
           <input type="hidden" name="quantity" value="<%= quantity %>">
+          <input type="hidden" name="checkoutToken" value="<%= checkoutToken %>">
           <div class="gift-friend-box">
             <label class="check gift-toggle-row">
               <input type="checkbox" name="sendToFriend" id="sendToFriendToggle">
@@ -75,15 +80,13 @@
             <label>Cupom de desconto opcional
               <input name="couponCode" placeholder="Ex: WIPE10" maxlength="32" style="text-transform:uppercase">
             </label>
-            <label>Código para apoiar streamer opcional
-              <input name="streamerCode" placeholder="Ex: BRENO10" maxlength="32" style="text-transform:uppercase">
-            </label>
-            <small>O cupom aplica desconto na finalização. O código streamer registra a comissão no painel dele.</small>
+            <small>O cupom aplica desconto nesta compra. Para apoiar um streamer e gerar comissão, use o código somente ao comprar moedas por Pix em <a href="/wallet">Minha conta</a>.</small>
           </div>
           <label class="check confirm-check">
             <input type="checkbox" name="confirmPurchase" required>
             Confirmo que quero fazer esta doação e gastar <%= coins(totalCoins) %> <%= currencyName %><% if (product.promo?.active) { %> com promoção aplicada<% } %>.
           </label>
+          <div class="fast-checkout-status" data-fast-checkout-status hidden role="status" aria-live="polite"></div>
           <button class="btn primary buy-pulse" type="submit">Confirmar doação</button>
           <a class="btn" href="/shop?serverType=<%= product.serverType %>">Cancelar</a>
         </form>
@@ -105,6 +108,58 @@
     };
     toggle.addEventListener('change', sync);
     sync();
+  })();
+
+  (() => {
+    const form = document.querySelector('[data-fast-checkout]');
+    if (!form) return;
+    const button = form.querySelector('button[type="submit"]');
+    const status = form.querySelector('[data-fast-checkout-status]');
+    const originalButtonText = button?.textContent || 'Confirmar doação';
+
+    const showStatus = (message, type) => {
+      if (!status) return;
+      status.hidden = false;
+      status.className = `fast-checkout-status alert ${type === 'success' ? 'success' : (type === 'error' ? 'error' : '')}`;
+      status.textContent = message;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      if (!form.reportValidity()) return;
+      event.preventDefault();
+      if (form.dataset.submitting === '1') return;
+      form.dataset.submitting = '1';
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Confirmando...';
+      }
+      showStatus('Processando uma única solicitação. Não feche esta página.', 'info');
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new URLSearchParams(new FormData(form)),
+          credentials: 'same-origin',
+          headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'fetch'
+          }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Não foi possível concluir a compra.');
+
+        showStatus(data.message || 'Compra aprovada e entrega criada.', 'success');
+        if (button) button.textContent = data.duplicate ? 'Compra já processada ✓' : 'Compra aprovada ✓';
+        window.setTimeout(() => window.location.replace(data.redirectUrl || '/shop'), 350);
+      } catch (error) {
+        form.dataset.submitting = '0';
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalButtonText;
+        }
+        showStatus(error?.message || 'Não foi possível concluir a compra.', 'error');
+      }
+    });
   })();
 </script>
 <%- include('partials/footer') %>

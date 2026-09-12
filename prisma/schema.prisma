@@ -48,12 +48,19 @@ enum CheckoutStatus {
 model Player {
   id                  String                     @id @default(uuid())
   steam64             String                     @unique
-  discordId           String?
+  discordId           String?                    @unique
+  discordUsername     String?
+  discordLinkedAt     DateTime?
+  lastSeenOnlineAt    DateTime?
+  onlineSince         DateTime?
+  lastSeenServerId    String?
+  unlinkedAlertedAt   DateTime?
   nickname            String?
   avatarData          String?                    @db.Text
   avatarMime          String?
   profileBio          String?                    @db.Text
   rememberToken       String?                    @unique
+  lastLoginAt         DateTime?
   coins               Int                        @default(0)
   cash                Int                        @default(0)
   createdAt           DateTime                   @default(now())
@@ -69,6 +76,8 @@ model Player {
   couponUses          CouponUse[]
   customOutfitOrders  CustomOutfitOrder[]
   checkoutAttempts    CheckoutAttempt[]
+  territoryKillScores TerritoryKillScore[]
+  discordLinkCodes    DiscordLinkCode[]
 
   ownedClans      Clan[]       @relation("ClanOwner")
   subOwnedClans   Clan[]       @relation("ClanSubOwner")
@@ -128,6 +137,7 @@ model Product {
   @@index([category])
   @@index([serverType])
   @@index([status])
+  @@index([status, serverType, category])
 }
 
 model ProductItem {
@@ -182,6 +192,15 @@ model Payment {
   @@index([createdAt])
 }
 
+model PaymentCreditGuard {
+  paymentId         String   @id
+  playerId          String
+  providerPaymentId String?
+  createdAt         DateTime @default(now())
+
+  @@index([playerId, createdAt])
+}
+
 model Purchase {
   id                String           @id @default(uuid())
   playerId          String
@@ -197,6 +216,7 @@ model Purchase {
   checkoutAttempt   CheckoutAttempt? @relation(fields: [checkoutAttemptId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
+  @@index([playerId, createdAt])
   @@index([checkoutAttemptId])
 }
 
@@ -239,19 +259,22 @@ model DeliveryQueue {
   @@index([steam64])
   @@index([status])
   @@index([serverType])
+  @@index([playerId, status, createdAt])
+  @@index([steam64, status, createdAt])
 }
 
 model CoinLedger {
-  id           String     @id @default(uuid())
-  playerId     String
-  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  type         LedgerType
-  amount       Int
-  balanceAfter Int
-  reason       String
-  refType      String?
-  refId        String?
-  createdAt    DateTime   @default(now())
+  id             String     @id @default(uuid())
+  playerId       String
+  player         Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  type           LedgerType
+  amount         Int
+  balanceAfter   Int
+  reason         String
+  refType        String?
+  refId          String?
+  idempotencyKey String?    @unique
+  createdAt      DateTime   @default(now())
 
   @@index([createdAt])
   @@index([type])
@@ -266,6 +289,23 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+  @@index([action, createdAt])
+}
+
+
+model GameAccessToken {
+  id         String   @id @default(uuid())
+  tokenHash  String   @unique
+  steam64    String
+  nickname   String?
+  serverType String   @default("vanilla")
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([steam64])
+  @@index([expiresAt])
+  @@index([usedAt])
 }
 
 model AppSetting {
@@ -283,6 +323,7 @@ model VehicleTemplate {
   serverType       String                 @default("vanilla")
   vehicleClassname String
   buyPriceCoins    Int                    @default(0)
+  noInsurancePriceCoins Int?
   rent1DayCoins    Int                    @default(0)
   rent7DaysCoins   Int                    @default(0)
   rent30DaysCoins  Int                    @default(0)
@@ -410,11 +451,19 @@ model Clan {
   accentColor      String       @default("#ef4444")
   eventWins        Int          @default(0)
   pointsBonus      Int          @default(0)
+  championshipPoints Int        @default(0)
+  championshipRegistered   Boolean   @default(false)
+  championshipRegisteredAt DateTime?
+  selectedFlagId            String?   @unique
+  selectedFlag              ClanFlagOption? @relation("ClanSelectedFlag", fields: [selectedFlagId], references: [id], onDelete: SetNull)
+  flagDeliveryStatus        String    @default("NONE") // NONE, RESERVED, DELIVERED
+  flagDeliveredAt           DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   members          ClanMember[]
   awards           ClanAward[]
   joinApplications ClanJoinApplication[]
+  championshipResults ChampionshipResult[]
 
   @@unique([tag, serverType])
   @@index([serverType])
@@ -481,6 +530,7 @@ model ClanJoinApplication {
 
 model KillEvent {
   id             String   @id @default(uuid())
+  sourceEventId  String?  @unique
   serverType     String   @default("vanilla")
   killerSteam64  String
   killerName     String?
@@ -489,18 +539,92 @@ model KillEvent {
   killerClanId   String?
   victimClanId   String?
   weapon         String?
+  cause          String?
+  sourceClassname String?
+  ammoClassname  String?
+  hitZone        String?
   distanceMeters Float?
   place          String?
   headshot       Boolean  @default(false)
   occurredAt     DateTime @default(now())
   createdAt      DateTime @default(now())
   raw            Json?
+  killerPosX     Float?
+  killerPosY     Float?
+  killerPosZ     Float?
+  victimPosX     Float?
+  victimPosY     Float?
+  victimPosZ     Float?
+  territoryScores TerritoryKillScore[]
 
   @@index([serverType])
   @@index([killerSteam64])
   @@index([victimSteam64])
   @@index([killerClanId])
   @@index([victimClanId])
+  @@index([occurredAt])
+}
+
+model TerritoryKillEvent {
+  id                     String               @id @default(uuid())
+  name                   String
+  description            String?              @db.Text
+  serverType             String               @default("vanilla")
+  active                 Boolean              @default(false)
+  centerX                Float
+  centerZ                Float
+  radiusMeters           Float                @default(300)
+  placeKeyword           String?
+  positionRule           String               @default("VICTIM") // VICTIM, KILLER, BOTH, EITHER
+  rewardCoins            Int                  @default(1000)
+  blockSameClan          Boolean              @default(true)
+  blockSuicide           Boolean              @default(true)
+  blockAdmins            Boolean              @default(true)
+  pairCooldownSeconds    Int                  @default(1800)
+  maxRewardsPerPlayer    Int                  @default(0) // 0 = ilimitado
+  totalRewardBudgetCoins Int                  @default(0) // 0 = ilimitado
+  startsAt               DateTime?
+  endsAt                 DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  scores                 TerritoryKillScore[]
+
+  @@index([serverType])
+  @@index([active])
+  @@index([startsAt])
+  @@index([endsAt])
+}
+
+model TerritoryKillScore {
+  id              String             @id @default(uuid())
+  eventId         String
+  event           TerritoryKillEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  killEventId     String
+  killEvent       KillEvent          @relation(fields: [killEventId], references: [id], onDelete: Cascade)
+  playerId        String?
+  player          Player?            @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  killerSteam64   String
+  killerName      String?
+  victimSteam64   String
+  victimName      String?
+  killerClanId    String?
+  victimClanId    String?
+  qualified       Boolean            @default(false)
+  rejectionReason String?
+  rewardCoins     Int                @default(0)
+  killerPosX      Float?
+  killerPosY      Float?
+  killerPosZ      Float?
+  victimPosX      Float?
+  victimPosY      Float?
+  victimPosZ      Float?
+  occurredAt      DateTime
+  createdAt       DateTime           @default(now())
+
+  @@unique([eventId, killEventId])
+  @@index([eventId, qualified])
+  @@index([killerSteam64])
+  @@index([victimSteam64])
   @@index([occurredAt])
 }
 
@@ -572,6 +696,76 @@ model PlayerBadge {
   @@index([visible])
 }
 
+model DiscordLinkCode {
+  id              String   @id @default(uuid())
+  codeHash        String   @unique
+  discordId       String
+  discordUsername String?
+  guildId         String?
+  playerId        String?
+  player          Player?  @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  expiresAt       DateTime
+  usedAt          DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([discordId, createdAt])
+  @@index([expiresAt])
+}
+
+model ClanFlagOption {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  classname   String?
+  description String?
+  imageData   String?  @db.Text
+  imageMime   String?
+  imageUrl    String?
+  status      String   @default("AVAILABLE") // AVAILABLE, RESERVED, DELIVERED, DISABLED
+  reservedAt  DateTime?
+  deliveredAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  clan        Clan?    @relation("ClanSelectedFlag")
+
+  @@index([status])
+}
+
+model ChampionshipResult {
+  id                String   @id @default(uuid())
+  clanId            String
+  clan              Clan     @relation(fields: [clanId], references: [id], onDelete: Cascade)
+  eventName         String
+  title             String?
+  description       String?  @db.Text
+  points            Int      @default(0)
+  imageData         String?  @db.Text
+  imageMime         String?
+  adminActor        String?
+  occurredAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+  discordPublishedAt DateTime?
+
+  @@index([clanId, occurredAt])
+  @@index([occurredAt])
+}
+
+model DiscordOutbox {
+  id          String   @id @default(uuid())
+  type        String
+  payload     Json
+  status      String   @default("PENDING") // PENDING, PROCESSING, SENT, FAILED
+  attempts    Int      @default(0)
+  availableAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sentAt      DateTime?
+  lastError   String?  @db.Text
+
+  @@index([status, availableAt, createdAt])
+  @@index([type, createdAt])
+}
+
 model CouponCode {
   id              String      @id @default(uuid())
   code            String      @unique
@@ -628,6 +822,7 @@ model StreamerCode {
 
   @@index([active])
   @@index([streamerSteam64])
+  @@index([streamerSteam64, active, updatedAt])
 }
 
 model StreamerSupportSale {
@@ -789,4 +984,7 @@ model PlayerOutfitSubscription {
   @@index([status])
   @@index([expiresAt])
   @@index([streamerCode])
+  @@index([status, expiresAt])
+  @@index([steam64, status, expiresAt])
+  @@index([outfitTemplateId, status, expiresAt])
 }

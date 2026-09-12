@@ -1,0 +1,259 @@
+
+/* ZONA-Z V603 - sem escuridão e sem serrilhado */
+:root{
+  --zz-bright-bg:#1a2230;
+  --zz-bright-bg-2:#202b3b;
+  --zz-bright-card:#243244;
+  --zz-bright-card-2:#2b3a4d;
+  --zz-bright-line:rgba(255,255,255,.16);
+  --zz-bright-text:#f8fbff;
+  --zz-bright-soft:#dde6f2;
+}
+
+/* remove atmosfera, scanline, vinheta e overlays de serrilhado */
+.zz-atmos,
+.zz-atmos > span,
+.zz-atmos-grid,
+.zz-atmos-scan,
+.zz-atmos-vignette,
+.zz-hud-corner,
+.shop-entry-overlay,
+.confirm-portal-intro,
+.product-overlay-v300,
+.zz-banner-scrim,
+body::after,
+.v9-bg::after,
+.v10-bg-cinematic::after,
+.garage-bg-v29::after,
+.zz-page-visual::after{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+
+html, body{background:#1a2230 !important;color:var(--zz-bright-text) !important;}
+body.zz-public-ui,
+body.zz-next-ui,
+body{
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,64,82,.10), transparent 20%),
+    radial-gradient(circle at 85% 10%, rgba(93,135,210,.12), transparent 24%),
+    linear-gradient(180deg, #202a39 0%, #182230 48%, #1f2937 100%) !important;
+}
+body::before{
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255,64,82,.10), transparent 22%),
+    radial-gradient(circle at 86% 12%, rgba(93,135,210,.10), transparent 24%),
+    linear-gradient(180deg, rgba(32,42,57,.74), rgba(24,34,48,.88)) !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* topo e barras */
+.topbar.v9-topbar,
+body.zz-next-ui .topbar.v9-topbar.zz-topbar,
+.zz-ops-ticker,
+.zz-cmd-strip,
+.zz-foot,
+.zz-hero-terminal,
+.v9-wallet-hud,
+.v9-server-card,
+.v10-login-panel,
+.category-buttons-v32,
+.v9-products-head,
+.vehicle-shop-board,
+.v9-trust-strip,
+.playtime-reward-alert-v78,
+.card,
+body.zz-public-ui .card,
+body.zz-public-ui .shop-header,
+body.zz-public-ui .wallet-buy-panel,
+body.zz-public-ui .confirm-mini-hero,
+.confirm-card,
+.compact-confirm,
+.cart-hero-v42,
+.confirm-mini-hero,
+.checkout-box,
+.cart-wallet-v42,
+.streamer-config-card,
+.zz-store-hero,
+.vip-card-v300,
+.vip-hero-v300,
+.vip-active-v300,
+.product-card-v300,
+.vehicle-card-v300,
+.zz-category-dock a,
+.v9-product-card,
+.coin-pack-v33,
+.vehicle-clean-card-v32,
+.outfit-card,
+.profile-card-v106,
+.clan-highlight-card-v106,
+.garage-side-v29,
+.garage-detail-v29,
+.garage-action-option-v29,
+.garage-usage-v29,
+.starter-kit-v225,
+.starter-kit-card-v33,
+.payment-card,
+.pix-card-v42{
+  background:linear-gradient(180deg, rgba(39,52,69,.96), rgba(30,41,55,.96)) !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.18) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* hero e painéis grandes mais claros */
+.v9-hero-zone.v10-hero-zone,
+.zz-page-visual,
+.zz-banner,
+.clan-hero-v106,
+.zz-store-hero{
+  background-color:#263243 !important;
+  box-shadow:0 16px 44px rgba(0,0,0,.18) !important;
+  border-color:rgba(255,255,255,.16) !important;
+}
+.v9-hero-zone.v10-hero-zone::before,
+.zz-page-visual::before,
+.zz-banner::before,
+.clan-hero-v106::after,
+.clan-hero-v106::before,
+.zz-access-art::after,
+.category-buttons-v32::before{
+  opacity:.25 !important;
+}
+
+/* remove escurecimento extra de artes */
+.zz-banner-media,
+.zz-hero-art,
+.zz-access-art,
+.vip-media-v300 video,
+.vehicle-media-v300 video{
+  filter:none !important;
+  background:#344256 !important;
+}
+
+/* fundos que eram muito pretos */
+.v9-bg,
+.v10-bg-cinematic,
+.garage-bg-v29{
+  background:
+    linear-gradient(180deg, rgba(31,42,57,.92), rgba(24,34,48,.96)) !important;
+  filter:none !important;
+}
+
+/* inputs e botões */
+body.zz-public-ui input,
+body.zz-public-ui select,
+body.zz-public-ui textarea,
+input, select, textarea{
+  background:#324153 !important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  color:#f8fbff !important;
+}
+body.zz-public-ui input::placeholder,
+body.zz-public-ui textarea::placeholder,
+input::placeholder,
+textarea::placeholder{color:#d8e0ea !important; opacity:.8 !important;}
+
+body.zz-public-ui .btn.primary,
+body.zz-public-ui button.primary,
+.zz-primary-cta,
+.store-btn-v300,
+.vip-buy-button-v300,
+.v9-enter-btn,
+button,
+.btn{
+  box-shadow:none !important;
+}
+
+/* textos auxiliares mais claros */
+body.zz-public-ui p,
+body.zz-public-ui small,
+body.zz-public-ui .muted,
+.vip-content-v300 p,
+.vip-active-v300 p,
+.vip-option-main-v300 small,
+.zz-page-visual small,
+.zz-terminal-list span,
+.product-footer-note-v300 span,
+.product-footer-note-v300 small,
+.product-meta-v300 code,
+.vehicle-class-v300 code,
+.garage-detail-grid-v29 small,
+.garage-usage-v29 small,
+.garage-usage-v29 em,
+.confirm-card .muted,
+.cart-hero-v42 p,
+.confirm-mini-hero p,
+.zz-foot-tag,
+.zz-foot-bar,
+.zz-foot-col a{
+  color:var(--zz-bright-soft) !important;
+}
+
+/* remover aspecto serrilhado em elementos pequenos */
+.product-badges-v300 span,
+.vehicle-badge-v300,
+.vip-media-badges-v300 span,
+.zz-cmd-strip .zz-cmd-tags span,
+.zz-hero-eyebrow,
+.delivery-badge,
+.product-img-badge,
+.zz-foot-live,
+.zz-foot-server,
+.garage-detail-tags-v29 span,
+.vip-item-list-v300 code,
+.product-meta-v300 code{
+  background:rgba(255,255,255,.10) !important;
+  border-color:rgba(255,255,255,.12) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* cards e mídia */
+.product-media-v300,
+.vehicle-media-v300,
+.vip-media-v300,
+.garage-detail-art-v29,
+.garage-detail-art-v29::before{
+  background:#314053 !important;
+  filter:none !important;
+}
+.garage-detail-art-v29::before{opacity:.18 !important;}
+
+/* footer e navegação */
+.zz-foot{background:linear-gradient(180deg, #243142, #1d2735) !important;}
+.v9-main-nav .v9-nav-item:hover,
+.v9-main-nav .v9-nav-item.active,
+body.zz-next-ui .v9-nav-item:hover,
+body.zz-next-ui .v9-nav-item.active,
+.zz-category-dock a:hover,
+.zz-category-dock a.active{
+  background:rgba(255,255,255,.08) !important;
+}
+
+/* confirmação e bursts simplificados */
+.purchase-burst,
+.cart-added-burst-v42{
+  background:rgba(43,58,77,.98) !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.16) !important;
+  backdrop-filter:none !important;
+}
+
+/* mobile */
+@media (max-width:760px){
+  body.zz-public-ui,
+  body.zz-next-ui,
+  body{background:linear-gradient(180deg, #222c3b 0%, #1b2532 100%) !important;}
+  .zz-page-visual,
+  .zz-banner,
+  .zz-store-hero,
+  .vip-card-v300,
+  .card,
+  .product-card-v300,
+  .vehicle-card-v300{box-shadow:0 10px 22px rgba(0,0,0,.14) !important;}
+}

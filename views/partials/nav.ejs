@@ -1,37 +1,26 @@
-<% const isAdminArea = String(path || "").startsWith("/admin"); %>
-<header class="topbar v9-topbar">
-  <a class="v9-brand" href="/shop?serverType=vanilla" aria-label="ZONA-Z Store">
-    <span class="v9-logo-wrap"><img src="/images/zona-z-logo.png?v=11" alt="ZONA-Z" style="width:58px;height:58px;max-width:58px;max-height:58px;object-fit:cover;border-radius:16px;"></span>
-    <span>
-      <strong>RAID-<b>Z</b> Store</strong>
-      <small>Sua evolução começa aqui</small>
-    </span>
+<% const isAdminArea = String(path || '').startsWith('/admin'); %>
+<% const canSeeAdminEntry = Boolean(isAdminLogged || isAdminAccount); %>
+<header class="topbar v9-topbar zz-topbar" data-zz-header>
+  <a class="v9-brand zz-brand" href="/" aria-label="CHAMPIONS Z">
+    <span class="v9-logo-wrap zz-logo-wrap"><img src="/images/brand/zona-z-mark.svg" alt="" aria-hidden="true"></span>
+    <span class="zz-brand-copy"><strong>CHAMPIONS <b>Z</b></strong><small>DAYZ • COMPETITIVO</small></span>
   </a>
-
-  <nav class="v9-main-nav" aria-label="Menu principal">
-    <a class="v9-nav-item <%= (path === '/shop' || path === '/') ? 'active' : '' %>" href="/shop?serverType=vanilla"><span>▣</span> Loja</a>
-    <% if (!isAdminArea) { %><a class="v9-nav-item" href="/shop?serverType=vanilla#categorias"><span>▦</span> Categorias</a><% } %>
-    <a class="v9-nav-item" href="/wallet"><span>◉</span> Doações</a>
-    <a class="v9-nav-item <%= path === '/my-vehicles' ? 'active' : '' %>" href="/my-vehicles"><span>🚗</span> Minha garagem</a>
-    <a class="v9-nav-item <%= path === '/outfits' ? 'active' : '' %>" href="/outfits"><span>👑</span> Trajes VIPs</a>
-    <a class="v9-nav-item <%= path === '/base-vip' ? 'active' : '' %>" href="/base-vip"><span>🏗️</span> Base VIP</a>
-    <a class="v9-nav-item <%= path === '/ranking' ? 'active' : '' %>" href="/ranking"><span>🏆</span> Ranking</a>
-    <a class="v9-nav-item <%= path === '/streamer' ? 'active' : '' %>" href="/streamer"><span>🎥</span> Painel Streamer</a>
-    <a class="v9-nav-item admin-entry-link" href="/admin"><span>⚙</span> Admin</a>
+  <button class="zz-mobile-menu" type="button" aria-label="Abrir menu" aria-expanded="false" data-zz-menu-toggle><span></span><span></span><span></span></button>
+  <nav class="v9-main-nav zz-main-nav" aria-label="Menu principal" data-zz-menu>
+    <a class="v9-nav-item <%= path === '/' ? 'active' : '' %>" href="/"><span>⌂</span> Início</a>
+    <a class="v9-nav-item <%= String(path || '').startsWith('/killfeed') ? 'active' : '' %>" href="/killfeed"><span>☠</span> Killfeed</a>
+    <a class="v9-nav-item <%= String(path || '').startsWith('/ranking') ? 'active' : '' %>" href="/ranking"><span>▲</span> Placar</a>
+    <a class="v9-nav-item <%= String(path || '').startsWith('/clans') || path === '/my-clan' ? 'active' : '' %>" href="/clans"><span>⬢</span> Clãs</a>
+    <a class="v9-nav-item <%= String(path || '').startsWith('/campeonato') ? 'active' : '' %>" href="/campeonato"><span>🏆</span> Campeonato</a>
+    <% if (player) { %><a class="v9-nav-item <%= path === '/vincular' ? 'active' : '' %>" href="/vincular"><span>🔗</span> Vincular</a><% } %>
+    <a class="v9-nav-item <%= path === '/wallet' ? 'active' : '' %>" href="/wallet"><span>◆</span> Moedas</a>
+    <% if (streamerAccessApproved) { %><a class="v9-nav-item <%= path === '/streamer' ? 'active' : '' %>" href="/streamer"><span>●</span> Streamer</a><% } %>
+    <% if (canSeeAdminEntry) { %><a class="v9-nav-item admin-entry-link <%= isAdminArea ? 'active' : '' %>" href="<%= isAdminLogged ? '/admin' : '/admin/login' %>"><span>⚙</span> Admin</a><% } %>
   </nav>
-
-  <nav class="v9-account-nav" aria-label="Conta">
-    <% if (player) { %>
-      <a class="v9-account-pill" href="/wallet">
-        <span class="v9-account-icon">◎</span>
-        <span><strong>Minha conta</strong><small><%= player.nickname || 'Player' %></small></span>
-      </a>
-      <a class="v9-cart-pill" href="/cart" aria-label="Carrinho">🛒<b data-nav-cart-count>0</b></a>
-    <% } else { %>
-      <a class="v9-account-pill" href="#entrar">
-        <span class="v9-account-icon">◎</span>
-        <span><strong>Minha conta</strong><small>Entrar / Cadastrar</small></span>
-      </a>
-    <% } %>
+  <nav class="v9-account-nav zz-account-nav" aria-label="Conta">
+    <% if (player) { %><a class="v9-account-pill zz-account-pill" href="/wallet"><span class="v9-account-icon zz-avatar"><% if (player.hasAvatar) { %><img src="/player-avatar/<%= player.id %>?v=<%= player.updatedAt ? new Date(player.updatedAt).getTime() : Date.now() %>" alt="Avatar"><% } else { %><span><%= String(player.nickname || 'P').slice(0,1).toUpperCase() %></span><% } %></span><span class="zz-account-copy"><strong><%= player.nickname || 'Player' %></strong><small><%= player.discordId ? 'Discord vinculado' : 'Vincule seu Discord' %></small></span></a>
+    <% } else { %><a class="v9-account-pill zz-account-pill zz-login-pill" href="/login"><span class="v9-account-icon zz-avatar"><span>↗</span></span><span class="zz-account-copy"><strong>Entrar</strong><small>Abrir pelo jogo</small></span></a><% } %>
   </nav>
 </header>
+<% const sector = path === '/' ? 'CENTRAL' : path === '/wallet' ? 'MOEDAS' : String(path || '').replace(/^\//,'').toUpperCase() || 'CENTRAL'; %>
+<div class="zz-ops-ticker" role="presentation" aria-hidden="true"><div class="zz-ops-inner"><span class="zz-ops-live"><i></i> CHAMPIONS Z ONLINE</span><span class="zz-ops-sep">//</span><span class="zz-ops-item">SETOR: <b><%= sector %></b></span><span class="zz-ops-sep">//</span><span class="zz-ops-item">MAPA: <b>CHERNARUS</b></span><span class="zz-ops-sep">//</span><span class="zz-ops-item">MODO: <b>1PP COMPETITIVO</b></span><span class="zz-ops-sep">//</span><span class="zz-ops-item">STATUS: <b class="zz-ops-ok">OPERACIONAL</b></span></div></div>

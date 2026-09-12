@@ -26,7 +26,7 @@ body::before{
     radial-gradient(circle at 16% 12%,rgba(239,52,52,.20),transparent 26%),
     radial-gradient(circle at 86% 18%,rgba(39,167,255,.14),transparent 30%),
     linear-gradient(180deg,rgba(2,4,10,.78),#02040a 70%),
-    url('/images/raidz-v81/theme-bg-clean.png?v=81') center top/cover no-repeat!important;
+    url('/images/raidz-v81/theme-bg-clean.webp?v=81') center top/cover no-repeat!important;
   opacity:1!important;
   filter:saturate(1.05) contrast(1.03)!important;
   transform:none!important;
@@ -92,7 +92,7 @@ main.container.v9-store-page{
   inset:66px 0 0 0!important;
   background:
     linear-gradient(90deg,rgba(2,4,10,.94),rgba(2,4,10,.50) 42%,rgba(2,4,10,.96)),
-    url('/images/raidz-v81/theme-bg-clean.png?v=81') center top/cover no-repeat!important;
+    url('/images/raidz-v81/theme-bg-clean.webp?v=81') center top/cover no-repeat!important;
   opacity:1!important;
   filter:saturate(1.1) contrast(1.06)!important;
 }
@@ -112,7 +112,7 @@ main.container.v9-store-page{
   border-radius:32px!important;
   background:
     linear-gradient(90deg,rgba(4,8,16,.92),rgba(4,8,16,.68) 52%,rgba(4,8,16,.88)),
-    url('/images/raidz-v81/hero-cinematic.png?v=81') center/cover no-repeat!important;
+    url('/images/raidz-v81/hero-cinematic.webp?v=81') center/cover no-repeat!important;
   box-shadow:0 36px 130px rgba(0,0,0,.62), inset 0 0 0 1px rgba(255,255,255,.035)!important;
   overflow:hidden!important;
   isolation:isolate!important;
@@ -213,7 +213,7 @@ main.container.v9-store-page{
   border:1px solid rgba(247,189,68,.58)!important;
   box-shadow:0 42px 135px rgba(0,0,0,.62),0 0 60px rgba(247,189,68,.16),0 0 48px rgba(168,85,247,.12)!important;
 }
-.starter-kit-bg-v33{background:url('/images/raidz-v81/category-kit-base.png?v=81') center/cover no-repeat!important;opacity:.28!important}
+.starter-kit-bg-v33{background:url('/images/raidz-v81/category-kit-base.webp?v=81') center/cover no-repeat!important;opacity:.28!important}
 .starter-kit-copy-v33 h2{font-size:clamp(2.8rem,5vw,5.4rem)!important;text-shadow:0 18px 40px rgba(0,0,0,.95),0 0 24px rgba(239,52,52,.18)!important}
 .starter-kit-art-v33{border-radius:28px!important;background:linear-gradient(180deg,rgba(2,6,13,.54),rgba(2,6,13,.90))!important}
 .starter-kit-action-v33 .btn{background:linear-gradient(135deg,#f59e0b,#ef3434,#6d28d9)!important;border-radius:18px!important}
@@ -270,8 +270,8 @@ main.container.v9-store-page{
 .vehicle-shop-board-v32{padding:20px 22px!important}
 .vehicle-clean-price-v32{border-radius:20px!important;background:rgba(247,189,68,.075)!important;border:1px solid rgba(247,189,68,.20)!important}
 .vehicle-config-box-v32{border-radius:30px!important;border:1px solid rgba(255,255,255,.14)!important;background:linear-gradient(180deg,rgba(9,15,27,.96),rgba(2,6,13,.98))!important;box-shadow:0 46px 160px rgba(0,0,0,.76)!important}
-.vehicle-config-preview-v32{border-radius:24px!important;background:linear-gradient(180deg,rgba(239,52,52,.12),rgba(255,255,255,.035)),url('/images/raidz-v81/panel-garagem.png?v=81') center/cover!important}
-.garage-bg-v29{background:linear-gradient(90deg,rgba(2,4,10,.94),rgba(2,4,10,.64),rgba(2,4,10,.96)),url('/images/raidz-v81/panel-garagem.png?v=81') center top/cover no-repeat!important}
+.vehicle-config-preview-v32{border-radius:24px!important;background:linear-gradient(180deg,rgba(239,52,52,.12),rgba(255,255,255,.035)),url('/images/raidz-v81/panel-garagem.webp?v=81') center/cover!important}
+.garage-bg-v29{background:linear-gradient(90deg,rgba(2,4,10,.94),rgba(2,4,10,.64),rgba(2,4,10,.96)),url('/images/raidz-v81/panel-garagem.webp?v=81') center top/cover no-repeat!important}
 .garage-hero-v29,.garage-stat-v29,.garage-detail-v29,.garage-insurance-cards-v29 article,.garage-empty-v29{
   border-radius:26px!important;background:linear-gradient(180deg,rgba(9,15,27,.82),rgba(3,7,14,.92))!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 30px 95px rgba(0,0,0,.45)!important
 }
@@ -286,8 +286,8 @@ main.container.v9-store-page{
   border:1px solid rgba(255,255,255,.12)!important;
   box-shadow:0 32px 105px rgba(0,0,0,.48)!important;
 }
-.premium-wallet,.wallet-hero-v33{background:linear-gradient(135deg,rgba(47,25,8,.78),rgba(3,7,14,.94)),url('/images/raidz-v81/panel-doacoes.png?v=81') center/cover!important}
-.ranking-bg-v34{background:linear-gradient(90deg,rgba(2,4,10,.94),rgba(2,4,10,.54),rgba(2,4,10,.95)),url('/images/raidz-v81/panel-ranking.png?v=81') center top/cover no-repeat!important}
+.premium-wallet,.wallet-hero-v33{background:linear-gradient(135deg,rgba(47,25,8,.78),rgba(3,7,14,.94)),url('/images/raidz-v81/panel-doacoes.webp?v=81') center/cover!important}
+.ranking-bg-v34{background:linear-gradient(90deg,rgba(2,4,10,.94),rgba(2,4,10,.54),rgba(2,4,10,.95)),url('/images/raidz-v81/panel-ranking.webp?v=81') center top/cover no-repeat!important}
 .coin-pack-v33:hover,.fancy-pack:hover{transform:translateY(-8px)!important;border-color:rgba(247,189,68,.42)!important;box-shadow:0 42px 120px rgba(0,0,0,.62),0 0 34px rgba(247,189,68,.15)!important}
 
 /* Admin visual sem mexer em função */

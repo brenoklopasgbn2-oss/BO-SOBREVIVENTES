@@ -1,7 +1,50 @@
-<footer class="footer">
-  <span>ZONA-Z Store • Loja DayZ PC</span>
-  <span>Entregas: instantâneo se online, pendente se offline</span>
+<footer class="zz-foot" role="contentinfo">
+  <div class="zz-foot-grid">
+    <div class="zz-foot-brand">
+      <div class="zz-foot-logo">
+        <span class="zz-foot-mark"><img src="/images/brand/zona-z-mark.svg" alt="" aria-hidden="true"></span>
+        <span class="zz-foot-word">ZONA-<b>Z</b></span>
+      </div>
+      <p class="zz-foot-tag">Loja oficial DayZ PC. Sobreviva, equipe e domine o mapa com entrega direta no servidor.</p>
+      <div class="zz-foot-status">
+        <span class="zz-foot-live"><i></i> SISTEMA ONLINE</span>
+        <span class="zz-foot-server">SERVIDOR // VANILLA</span>
+      </div>
+    </div>
+
+    <nav class="zz-foot-col" aria-label="Loja">
+      <h4>Operações</h4>
+      <a href="/shop?serverType=vanilla">Loja</a>
+      <a href="/shop?serverType=vanilla#categorias">Categorias</a>
+      <a href="/my-vehicles">Garagem</a>
+      <a href="/outfits">VIPs</a>
+    </nav>
+
+    <nav class="zz-foot-col" aria-label="Comunidade">
+      <h4>Comunidade</h4>
+      <a href="/eventos">Eventos</a>
+      <a href="/ranking">Ranking</a>
+      <a href="/clans">Clãs</a>
+      <a href="/wallet">Doações</a>
+    </nav>
+
+    <div class="zz-foot-col zz-foot-intel">
+      <h4>Central</h4>
+      <div class="zz-foot-intel-card">
+        <span class="zz-foot-intel-label">ENTREGA</span>
+        <strong>Instantânea se online</strong>
+        <small>Pendente e entregue ao reconectar se estiver offline.</small>
+      </div>
+      <a class="zz-foot-cta" href="/wallet">Adicionar <%= currencyName %> <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+
+  <div class="zz-foot-bar">
+    <span class="footer"><%= appName %> • Loja DayZ PC</span>
+    <span>Entregas: instantâneo se online, pendente se offline</span>
+  </div>
 </footer>
-<script src="/js/store-effects.js?v=66" defer></script>
+<% if (String(path || '').startsWith('/admin')) { %><script src="/js/admin-lite-v142.js?v=142" defer></script><% } else { %><script src="/js/store-effects.js?v=171" defer></script><% } %>
+<script src="/js/zona-z-next.js?v=301" defer></script>
 </body>
 </html>

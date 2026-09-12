@@ -3,7 +3,7 @@
 <main class="container" style="max-width:1450px;padding:34px 22px 70px">
   <%- include('partials/alerts') %>
   <section class="shop-header support-hero-card sz-hover-card">
-    <div><p class="eyebrow">Traje VIP personalizado</p><h1>Painel do líder do clã</h1><p class="muted">Aqui o líder acompanha o traje personalizado e dropa a bandeira. No modo gratuito, todos os membros recebem automaticamente. No modo pago, cada membro usa o próprio saldo para pagar 20.000 RZ por 30 dias.</p></div>
+    <div><p class="eyebrow">Traje VIP personalizado</p><h1>Painel do líder do clã</h1><p class="muted">Aqui o líder acompanha o traje personalizado e dropa a bandeira. No modo gratuito, todos os membros recebem automaticamente. No modo pago, cada membro usa o próprio saldo para pagar 20.000 <%= currencyName %> por 30 dias.</p></div>
     <a class="btn" href="/outfits">Voltar aos trajes</a>
   </section>
   <% if ((customOrders || []).length) { %>

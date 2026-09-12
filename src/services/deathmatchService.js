@@ -57,7 +57,7 @@ export const DEATHMATCH_CLASS_OPTIONS = {
 const DEFAULT_CONFIG = {
   version: 2,
   enabled: true,
-  betaLabel: 'ZONA-Z Death Math Interativo com TikTok BETA',
+  betaLabel: 'Death Match Interativo com TikTok BETA',
   gameplay: {
     blockStoreOnDeathmatch: true,
     blockAdminCallOnDeathmatch: true,

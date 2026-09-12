@@ -84,7 +84,7 @@ export async function logPaymentApproved({ player, payment }) {
     ? [{ name: '❤️ Streamer apoiado', value: `Código: **${payment.supportStreamerCode}**\nComissão: **${payment.supportCommissionPercent || 0}%**`, inline: true }]
     : [];
   const embed = {
-    author: { name: 'ZONA-Z • PIX aprovado', icon_url: DISCORD_STYLE.pixIcon },
+    author: { name: `${env.appName} • PIX aprovado`, icon_url: DISCORD_STYLE.pixIcon },
     title: '✅ DOAÇÃO PIX CONFIRMADA',
     description: 'Pagamento aprovado automaticamente. As moedas já foram creditadas no saldo do player.',
     color: COLORS.green,
@@ -98,46 +98,46 @@ export async function logPaymentApproved({ player, payment }) {
       { name: '🛒 Loja', value: `[Abrir painel](${discordLink('/admin/payments')})`, inline: true },
       ...supportField
     ],
-    footer: { text: 'ZONA-Z Store • Sistema automático de doações' },
+    footer: { text: `${env.appName} • Sistema automático de doações` },
     timestamp: new Date().toISOString()
   };
-  await sendDiscord({ embeds: [embed] }, { kind: 'sales', username: '💸 ZONA-Z • Doações' });
+  await sendDiscord({ embeds: [embed] }, { kind: 'sales', username: `💸 ${env.appName} • Doações` });
   if (env.discordSalesWebhookUrl && env.discordWebhookUrl && env.discordSalesWebhookUrl !== env.discordWebhookUrl) {
-    await sendDiscord({ embeds: [embed] }, { kind: 'default', username: '💸 ZONA-Z • Doações' });
+    await sendDiscord({ embeds: [embed] }, { kind: 'default', username: `💸 ${env.appName} • Doações` });
   }
 }
 
 export async function logPurchase({ player, product, purchase, delivery, deliveries = [], coupon = null, support = null, gift = null }) {
   return sendDiscord({
     embeds: [{
-      author: { name: 'ZONA-Z • Loja Alteria', icon_url: DISCORD_STYLE.storeIcon },
+      author: { name: `${env.appName} • Loja Vanilla`, icon_url: DISCORD_STYLE.storeIcon },
       title: '🛒 NOVA DOAÇÃO DE ITEM',
       description: `O player fez uma doação e escolheu **${safe(product.name)}**. A entrega foi criada para cair no DayZ.`,
       color: COLORS.orange,
       thumbnail: product.imageUrl ? { url: product.imageUrl } : { url: DISCORD_STYLE.storeIcon },
       fields: [
         { name: '👤 Player', value: `${safe(player.nickname, 'Sem nome')}\n\`${player.steam64}\``, inline: true },
-        { name: '🎮 Servidor', value: '**ALTERIA**', inline: true },
+        { name: '🎮 Servidor', value: `**${safe(product.serverType).toUpperCase()}**`, inline: true },
         { name: '💰 Total pago', value: `**${coins(purchase.totalCoins)} ${env.currencyName}**`, inline: true },
         { name: '📦 Produto', value: `${safe(product.name)}\nQtd: **${purchase.quantity}x**`, inline: true },
         { name: '🏦 Saldo após', value: `**${coins(player.coins)} ${env.currencyName}**`, inline: true },
         { name: '🚚 Entrega no jogo', value: `Status: **${delivery?.status || 'PENDING'}**\nModo: **${delivery?.deliveryType || product.deliveryType || '-'}**`, inline: true },
         { name: '📋 Itens / Classnames', value: deliverySummary(deliveries, product, purchase), inline: false },
-        ...(coupon?.code ? [{ name: '🏷️ Cupom aplicado', value: `**${coupon.code}**\nDesconto: **-${coins(coupon.discountCoins)} RZ**`, inline: true }] : []),
-        ...(support?.code ? [{ name: '❤️ Streamer apoiado', value: `**${support.streamerName}**\nCódigo: **${support.code}**\nComissão: **${coins(support.commissionCoins)} RZ**`, inline: true }] : []),
+        ...(coupon?.code ? [{ name: '🏷️ Cupom aplicado', value: `**${coupon.code}**\nDesconto: **-${coins(coupon.discountCoins)} ${env.currencyName}**`, inline: true }] : []),
+        ...(support?.code ? [{ name: '❤️ Streamer apoiado', value: `**${support.streamerName}**\nCódigo: **${support.code}**\nComissão: **${coins(support.commissionCoins)} ${env.currencyName}**`, inline: true }] : []),
         ...(gift?.steam64 ? [{ name: '🎁 Presente para', value: `\`${gift.steam64}\``, inline: true }] : [])
       ],
-      footer: { text: `Compra ${shortId(purchase.id)} • ZONA-Z Store` },
+      footer: { text: `Compra ${shortId(purchase.id)} • ${env.appName}` },
       timestamp: new Date().toISOString()
     }]
-  }, { kind: 'sales', username: '🛒 ZONA-Z • Vendas' });
+  }, { kind: 'sales', username: `🛒 ${env.appName} • Vendas` });
 }
 
 export async function logCartPurchase({ player, purchases = [], deliveries = [], totalCoins = 0, coupon = null, support = null }) {
-  const productsLine = purchases.map((p, idx) => `**${idx + 1}.** ${p.productName || p.product?.name || 'Produto'} — ${p.quantity}x — **${coins(p.totalCoins)} RZ**`).join('\n').slice(0, 1000) || '-';
+  const productsLine = purchases.map((p, idx) => `**${idx + 1}.** ${p.productName || p.product?.name || 'Produto'} — ${p.quantity}x — **${coins(p.totalCoins)} ${env.currencyName}**`).join('\n').slice(0, 1000) || '-';
   return sendDiscord({
     embeds: [{
-      author: { name: 'ZONA-Z • Carrinho finalizado', icon_url: DISCORD_STYLE.cartIcon },
+      author: { name: `${env.appName} • Carrinho finalizado`, icon_url: DISCORD_STYLE.cartIcon },
       title: '🧺 CARRINHO FINALIZADO NA LOJA',
       description: 'Player comprou vários itens de uma vez. O sistema recalculou tudo no servidor e criou as entregas no DayZ.',
       color: COLORS.gold,
@@ -149,13 +149,13 @@ export async function logCartPurchase({ player, purchases = [], deliveries = [],
         { name: '🧾 Lista do carrinho', value: productsLine, inline: false },
         { name: '🚚 Entregas criadas', value: `**${deliveries.length}**`, inline: true },
         { name: '🏦 Saldo após', value: `**${coins(player.coins)} ${env.currencyName}**`, inline: true },
-        ...(coupon?.code ? [{ name: '🏷️ Cupom aplicado', value: `**${coupon.code}**\nDesconto: **-${coins(coupon.discountCoins)} RZ**`, inline: true }] : []),
-        ...(support?.code ? [{ name: '❤️ Streamer apoiado', value: `**${support.streamerName}**\nCódigo: **${support.code}**\nComissão: **${coins(support.commissionCoins)} RZ**`, inline: true }] : [])
+        ...(coupon?.code ? [{ name: '🏷️ Cupom aplicado', value: `**${coupon.code}**\nDesconto: **-${coins(coupon.discountCoins)} ${env.currencyName}**`, inline: true }] : []),
+        ...(support?.code ? [{ name: '❤️ Streamer apoiado', value: `**${support.streamerName}**\nCódigo: **${support.code}**\nComissão: **${coins(support.commissionCoins)} ${env.currencyName}**`, inline: true }] : [])
       ],
-      footer: { text: 'ZONA-Z Store • Carrinho e cupom' },
+      footer: { text: `${env.appName} • Carrinho e cupom` },
       timestamp: new Date().toISOString()
     }]
-  }, { kind: 'sales', username: '🧺 ZONA-Z • Carrinho' });
+  }, { kind: 'sales', username: `🧺 ${env.appName} • Carrinho` });
 }
 
 export async function logBalanceChange({ player, amount, type, reason }) {
@@ -188,7 +188,6 @@ export async function logDelivery({ delivery, ok, error }) {
         { name: 'Quantidade', value: String(delivery.quantity), inline: true },
         { name: 'Servidor', value: delivery.serverType, inline: true },
         { name: 'Status', value: ok ? 'DELIVERED' : 'FAILED', inline: true },
-        ...(delivery.meta?.dropBoxClassname ? [{ name: 'Caixa usada', value: `\`${delivery.meta.dropBoxClassname}\``, inline: true }] : []),
         ...(error ? [{ name: 'Erro', value: String(error).slice(0, 900), inline: false }] : [])
       ],
       timestamp: new Date().toISOString()
@@ -254,7 +253,7 @@ export async function sendRankingToDiscord({ rankingData, kind = 'players', serv
   const color = kind === 'clans' ? COLORS.purple : (server === 'bbp' ? COLORS.blue : COLORS.red);
   const periodLabel = rankingData.range?.label || period;
   const embeds = chunks.slice(0, 10).map((chunk, idx) => ({
-    author: idx === 0 ? { name: `ZONA-Z • Ranking ${labelServer}`, icon_url: DISCORD_STYLE.trophyIcon } : undefined,
+    author: idx === 0 ? { name: `${env.appName} • Ranking ${labelServer}`, icon_url: DISCORD_STYLE.trophyIcon } : undefined,
     title: idx === 0 ? (title || `🏆 RANKING ${labelKind} ${labelServer}`) : `🏆 RANKING ${labelKind} ${labelServer} • PARTE ${idx + 1}`,
     description: idx === 0
       ? `**Período:** ${periodLabel}\n**Servidor:** ${labelServer}\n\n${chunk}`
@@ -269,7 +268,7 @@ export async function sendRankingToDiscord({ rankingData, kind = 'players', serv
       { name: '🔗 Painel', value: `[Ver ranking no site](${discordLink('/ranking')})`, inline: true },
       { name: '⏱️ Atualizado', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true }
     ] : [],
-    footer: { text: 'ZONA-Z • Ranking automático completo' },
+    footer: { text: `${env.appName} • Ranking automático completo` },
     timestamp: new Date().toISOString()
   }));
   return sendDiscord({ embeds }, { kind: rankingKindFor(server, kind), username: `🏆 Ranking ${labelServer} • ${labelKind}` });

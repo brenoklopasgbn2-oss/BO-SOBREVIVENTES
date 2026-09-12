@@ -9,10 +9,15 @@
 </style>
 <main class="container clan-detail-v106">
   <%- include('partials/alerts') %>
+  <div class="zz-cmd-strip">
+    <span class="zz-cmd-dot"></span>
+    <span class="zz-cmd-code">SETOR // <b>DOSSIÊ DA FACÇÃO</b></span>
+    <span class="zz-cmd-tags"><span>Perfil do clã</span><span>Membros</span><span>Recrutamento</span></span>
+  </div>
 
   <section class="clan-banner-v106" style="box-shadow:0 30px 90px rgba(0,0,0,.35), inset 0 0 0 1px <%= clan.accentColor %>33">
     <div class="clan-banner-inner-v106">
-      <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z-clan-default.webp'">
+      <img src="<%= clan.flagImage %>" alt="<%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z/default-clan.svg'">
       <div class="clan-banner-copy-v106">
         <p class="eyebrow">Página pública do clã</p>
         <h1>[<%= clan.tag %>] <%= clan.name %></h1>
@@ -21,15 +26,14 @@
           <span><%= clan.serverType.toUpperCase() %></span>
           <span><%= clan.memberCount %> membro(s)</span>
           <% if (clan.isRecruiting) { %><span>📢 Recrutando agora</span><% } %>
-          <% if ((clan.activeOutfitNames || []).length) { %><span>VIPs: <%= clan.activeOutfitNames.join(', ') %></span><% } %>
         </div>
       </div>
     </div>
   </section>
 
-  <% if (clan.clanVipOutfit) { const clanVipPaid = clan.clanVipOutfit.billingMode === 'PAID'; const viewerIsOwner = viewerMembership?.clan?.id === clan.id && viewerClanMember?.role === 'OWNER'; %>
+  <% if (false && clan.clanVipOutfit) { const clanVipPaid = clan.clanVipOutfit.billingMode === 'PAID'; const viewerIsOwner = viewerMembership?.clan?.id === clan.id && viewerClanMember?.role === 'OWNER'; %>
     <section class="clan-public-vip-v111">
-      <img src="<%= clan.clanVipOutfit.imageSrc %>" onerror="this.src='/images/zona-z-vips-store.webp'" alt="<%= clan.clanVipOutfit.name %>">
+      <% if (clan.clanVipOutfit.mediaUrl) { %><video src="<%= clan.clanVipOutfit.mediaUrl %>" autoplay muted loop playsinline preload="metadata" style="width:min(360px,100%);aspect-ratio:1/1;object-fit:cover;border-radius:22px"></video><% } else { %><div style="width:min(360px,100%);aspect-ratio:1/1;display:grid;place-items:center;border-radius:22px;background:rgba(255,255,255,.05);font-size:4rem">👕</div><% } %>
       <div>
         <p class="eyebrow">Traje VIP personalizado do clã</p>
         <h2><%= clan.clanVipOutfit.name %></h2>
@@ -37,7 +41,7 @@
         <div class="clan-public-vip-tags-v111">
           <span>👑 Exclusivo do clã</span>
           <% if (clanVipPaid) { %>
-            <span>💰 <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ por player / 30 dias</span>
+            <span>💰 <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> <%= currencyName %> por player / 30 dias</span>
             <span>👑 Dono do clã não paga</span>
             <span>🚫 Venceu e não renovou: perde o acesso</span>
           <% } else { %>
@@ -51,10 +55,10 @@
             <div class="notice success" style="margin-top:14px"><strong>Acesso liberado:</strong> <%= viewerIsOwner ? 'o dono recebe gratuitamente o próprio traje.' : 'este traje foi configurado como gratuito para o clã.' %></div>
           <% } else if (viewerClanMember?.clanVipActive) { %>
             <div class="notice success" style="margin-top:14px"><strong>Seu traje está ativo</strong> até <%= dateTime(viewerClanMember.clanVipExpiresAt) %>.</div>
-            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Renovar por mais 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ do seu saldo?')"><button class="btn primary" type="submit">Renovar por mais 30 dias</button></form>
+            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Renovar por mais 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> <%= currencyName %> do seu saldo?')"><button class="btn primary" type="submit">Renovar por mais 30 dias</button></form>
           <% } else { %>
             <div class="notice" style="margin-top:14px">Você faz parte do clã, mas ainda não pagou a mensalidade deste traje.</div>
-            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Comprar este traje por 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ do seu saldo?')"><button class="btn primary" type="submit">Comprar por <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> RZ / 30 dias</button></form>
+            <form method="POST" action="/clans/<%= clan.slug %>/vip/buy" style="margin-top:10px" onsubmit="return confirm('Comprar este traje por 30 dias usando <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> <%= currencyName %> do seu saldo?')"><button class="btn primary" type="submit">Comprar por <%= coins(clan.clanVipOutfit.monthlyPriceCoins) %> <%= currencyName %> / 30 dias</button></form>
           <% } %>
         <% } %>
       </div>
@@ -79,12 +83,12 @@
         </div>
       <% } %>
 
-      <h3>Membros e VIPs</h3>
+      <h3>Membros do clã</h3>
       <div class="clan-member-grid-v106">
         <% clan.members.forEach(member => { %>
           <article class="clan-member-card-v106">
             <div class="clan-member-head-v106">
-              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/zona-z-profile-default.webp'">
+              <img src="<%= member.avatarUrl %>" alt="<%= member.displayName %>" onerror="this.onerror=null;this.src='/images/zona-z/default-profile.svg'">
               <div>
                 <strong><%= member.displayName %></strong>
                 <small><%= member.role === 'OWNER' ? 'Dono' : (member.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></small>
@@ -92,7 +96,6 @@
             </div>
             <span class="tag">Steam64: <%= member.steam64 %></span>
             <% if (member.player?.profileBio) { %><small><%= member.player.profileBio %></small><% } %>
-            <% if (member.activeOutfit?.outfitTemplate?.name) { %><span class="tag">👑 <%= member.activeOutfit.outfitTemplate.name %></span><% } else { %><span class="tag">Sem traje VIP ativo</span><% } %>
           </article>
         <% }) %>
       </div>
@@ -106,10 +109,10 @@
       <% } else if (viewerMembership?.clan) { %>
         <p>Você já faz parte do clã [<%= viewerMembership.clan.tag %>] <%= viewerMembership.clan.name %>. Saia dele antes de entrar em outro.</p>
       <% } else if (!player) { %>
-        <p>Entre com seu Steam64 na loja para enviar o formulário de recrutamento.</p>
-        <a class="btn primary" href="/shop#entrar">Entrar com Steam64</a>
+        <p>Abra a conta pelo L dentro do DayZ para enviar o formulário de recrutamento.</p>
+        <a class="btn primary" href="/login">Abrir pelo jogo</a>
       <% } else if (!player.hasAvatar) { %>
-        <p>Para se candidatar a um clã, a loja exige uma imagem de perfil salva no seu Steam64.</p>
+        <p>Para se candidatar a um clã, o perfil precisa ter uma imagem salva no seu Steam64.</p>
         <a class="btn primary" href="/wallet#perfil-player">Enviar imagem de perfil</a>
       <% } else if (!clan.isRecruiting) { %>
         <p>Esse clã não está recrutando no momento.</p>

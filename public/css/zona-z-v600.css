@@ -1,0 +1,91 @@
+/* ============================================================
+   ZONA-Z V600 — Vivid cinematic refresh
+   Brand cleanup + stronger contrast + image coverage for dry pages.
+   ============================================================ */
+:root{
+  --zz-red:#ff1f3d;
+  --zz-red-2:#c00820;
+  --zz-red-hot:#ff4b5f;
+  --zz-red-soft:rgba(255,31,61,.22);
+  --zz-gold:#ffd061;
+  --zz-green:#48f0a5;
+  --zz-text:#fbfcff;
+  --zz-soft:#d6deea;
+  --zz-muted:#9ca9ba;
+  --zz-panel:#0c1119;
+  --zz-card:#101722;
+  --zz-line:rgba(255,255,255,.12);
+  --zz-line-strong:rgba(255,255,255,.21);
+}
+body.zz-public-ui{
+  background:
+    radial-gradient(circle at 10% -2%,rgba(255,31,61,.23),transparent 25%),
+    radial-gradient(circle at 87% 10%,rgba(79,112,170,.16),transparent 28%),
+    radial-gradient(circle at 50% 100%,rgba(122,0,19,.13),transparent 33%),
+    linear-gradient(180deg,#070a0f 0%,#030508 48%,#080b11 100%)!important;
+}
+body.zz-public-ui::before{opacity:.25!important;background-size:40px 40px!important}
+body.zz-next-ui .topbar.v9-topbar.zz-topbar{background:rgba(5,7,11,.94)!important;border-bottom-color:rgba(255,31,61,.22)!important;box-shadow:0 18px 55px rgba(0,0,0,.42),0 0 36px rgba(255,31,61,.07)!important;backdrop-filter:blur(20px) saturate(1.35)!important}
+body.zz-next-ui .v9-logo-wrap.zz-logo-wrap{border-color:rgba(255,64,82,.28)!important;box-shadow:0 10px 34px rgba(0,0,0,.5),0 0 26px rgba(255,31,61,.22)!important}
+body.zz-next-ui .v9-brand.zz-brand strong b{color:#ff3049!important;text-shadow:0 0 24px rgba(255,31,61,.72)!important}
+body.zz-next-ui .v9-nav-item:hover,body.zz-next-ui .v9-nav-item.active{background:linear-gradient(180deg,transparent,rgba(255,31,61,.11))!important}
+.zz-ops-ticker{border-color:rgba(255,31,61,.18)!important;background:linear-gradient(90deg,rgba(31,5,10,.86),rgba(8,11,17,.95) 32%,rgba(8,11,17,.95) 68%,rgba(31,5,10,.86))!important}
+.zz-ops-live i,.zz-cmd-dot{background:#ff2d46!important;box-shadow:0 0 15px #ff2d46!important}
+.zz-cmd-strip{border-color:rgba(255,31,61,.24)!important;background:linear-gradient(90deg,rgba(255,31,61,.11),rgba(12,17,25,.88) 25%,rgba(12,17,25,.88) 75%,rgba(255,31,61,.06))!important;box-shadow:0 14px 38px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025)!important}
+body.zz-public-ui .card,body.zz-public-ui .shop-header,body.zz-public-ui .wallet-buy-panel,body.zz-public-ui .confirm-mini-hero{border-color:rgba(255,255,255,.115)!important;background:radial-gradient(circle at 10% 0%,rgba(255,31,61,.07),transparent 30%),linear-gradient(160deg,rgba(18,25,37,.97),rgba(7,10,16,.98))!important;box-shadow:0 24px 65px rgba(0,0,0,.34)!important}
+body.zz-public-ui .card:hover{border-color:rgba(255,70,88,.26)!important}
+body.zz-public-ui .btn.primary,body.zz-public-ui button.primary,.zz-primary-cta{background:linear-gradient(135deg,#ff3049,#bd0b24)!important;border-color:rgba(255,129,141,.34)!important;box-shadow:0 14px 32px rgba(255,31,61,.28)!important}
+body.zz-public-ui .btn.primary:hover,body.zz-public-ui button.primary:hover,.zz-primary-cta:hover{box-shadow:0 18px 44px rgba(255,31,61,.38)!important;filter:saturate(1.18)}
+
+/* Existing cinematic art gets less gray and more punch. */
+.zz-banner-media,.zz-hero-art{filter:saturate(1.32) contrast(1.12) brightness(1.05)!important}
+.zz-banner{border-color:rgba(255,31,61,.36)!important;box-shadow:0 42px 125px rgba(0,0,0,.58),0 0 48px rgba(255,31,61,.09)!important}
+.zz-banner-title b,.zz-banner-kicker{color:#ff3d53!important}
+.zz-banner-kicker{border-color:rgba(255,47,71,.5)!important;background:rgba(163,9,29,.34)!important}
+.zz-store-hero{border-color:rgba(255,31,61,.28)!important;box-shadow:0 38px 100px rgba(0,0,0,.56),0 0 46px rgba(255,31,61,.08)!important}
+.zz-store-hero .zz-hero-art{transform:scale(1.025)}
+.zz-terminal-icon{background:linear-gradient(145deg,rgba(255,31,61,.28),rgba(255,255,255,.055))!important;border-color:rgba(255,31,61,.38)!important}
+
+/* Universal image headers for pages that previously had no visual anchor. */
+.zz-page-visual{position:relative;min-height:250px;margin:0 0 18px;border-radius:26px;overflow:hidden;border:1px solid rgba(255,31,61,.31);background:#0a0e15 center/cover no-repeat;box-shadow:0 30px 90px rgba(0,0,0,.5),0 0 42px rgba(255,31,61,.08);isolation:isolate}
+.zz-page-visual::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,7,11,.96) 0%,rgba(5,7,11,.79) 38%,rgba(5,7,11,.22) 76%,rgba(5,7,11,.48)),linear-gradient(0deg,rgba(5,7,11,.85),transparent 62%)}
+.zz-page-visual::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#ff213f,rgba(255,33,63,.13),transparent 72%);box-shadow:0 0 20px rgba(255,31,61,.75)}
+.zz-page-visual>div{min-height:250px;max-width:790px;display:flex;flex-direction:column;justify-content:flex-end;padding:32px 36px}
+.zz-page-visual span{color:#ff5366;font-weight:900;font-size:.67rem;letter-spacing:.2em;text-transform:uppercase}
+.zz-page-visual strong{margin-top:8px;font-family:var(--zz-display);font-size:clamp(2.25rem,4.3vw,4.5rem);line-height:.92;text-transform:uppercase;letter-spacing:.015em;color:#fff;text-shadow:0 14px 36px rgba(0,0,0,.7)}
+.zz-page-visual small{margin-top:10px;color:#d4dce7;font-size:.9rem;font-weight:650}
+.zz-page-visual--cart{background-image:url('/images/zona-z/cart-hero.webp')}
+.zz-page-visual--confirm{background-image:url('/images/zona-z/confirm-hero.webp')}
+.zz-page-visual--events{background-image:url('/images/zona-z/events-hero.webp')}
+.zz-page-visual--streamer{background-image:url('/images/zona-z/streamer-hero.webp')}
+
+/* Access/login page: use real cinematic image instead of an empty dark panel. */
+.zz-access-art{background-image:linear-gradient(180deg,rgba(4,6,10,.12),rgba(4,6,10,.78)),url('/images/zona-z/login-hero.webp')!important;background-position:center!important;background-size:cover!important}
+.zz-access-art::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 78%,rgba(255,31,61,.24),transparent 33%);pointer-events:none}
+.zz-access-art-copy,.zz-access-badge{position:relative;z-index:2}
+
+/* Clans and profile visuals. */
+.clan-hero-v106::before{background:url('/images/zona-z/clans-hero.webp') center/cover no-repeat!important;opacity:.68!important;filter:saturate(1.3) contrast(1.08)}
+.clan-hero-v106::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,7,12,.92),rgba(4,7,12,.58) 58%,rgba(4,7,12,.28));pointer-events:none}
+.clan-hero-inner-v106{position:relative;z-index:2}
+.profile-card-v106{border-color:rgba(255,31,61,.28)!important;background:radial-gradient(circle at 10% 15%,rgba(255,31,61,.19),transparent 35%),linear-gradient(145deg,rgba(15,22,33,.99),rgba(5,8,13,.99))!important}
+.profile-avatar-v106 img{border-color:rgba(255,55,78,.55)!important;box-shadow:0 18px 48px rgba(0,0,0,.45),0 0 42px rgba(255,31,61,.18)!important}
+.profile-avatar-v106::after{background:linear-gradient(90deg,rgba(142,8,27,.86),rgba(8,11,17,.88))!important;border:1px solid rgba(255,75,91,.22)}
+
+/* Cart / checkout feel like a proper operation terminal. */
+.cart-hero-v42,.confirm-mini-hero,.support-hero-card,.territory-hero-v158{position:relative;overflow:hidden;border-color:rgba(255,31,61,.22)!important}
+.cart-hero-v42::after,.confirm-mini-hero::after,.support-hero-card::after,.territory-hero-v158::after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,#ff2744,transparent 72%);pointer-events:none}
+.cart-wallet-v42,.checkout-box,.streamer-config-card{box-shadow:0 22px 60px rgba(0,0,0,.36),0 0 32px rgba(255,31,61,.05)!important}
+
+/* Stronger product/category cards. */
+.zz-category-dock a,.v9-product-card,.coin-pack-v33,.vehicle-clean-card-v32,.outfit-card{background-color:#0d131d!important;border-color:rgba(255,255,255,.12)!important}
+.zz-category-dock a:hover,.v9-product-card:hover,.coin-pack-v33:hover,.vehicle-clean-card-v32:hover,.outfit-card:hover{border-color:rgba(255,51,75,.42)!important;box-shadow:0 24px 60px rgba(0,0,0,.42),0 0 30px rgba(255,31,61,.09)!important}
+
+/* Footer gets a definitive brand finish. */
+.zz-foot{border-top-color:rgba(255,31,61,.22)!important;background:radial-gradient(circle at 12% 0%,rgba(255,31,61,.13),transparent 25%),linear-gradient(180deg,#070a10,#030507)!important}
+.zz-foot-mark{box-shadow:0 0 28px rgba(255,31,61,.22)}
+.zz-foot-word b{color:#ff2f48!important;text-shadow:0 0 20px rgba(255,31,61,.6)}
+
+@media(max-width:760px){
+ .zz-page-visual{min-height:220px;border-radius:20px}.zz-page-visual>div{min-height:220px;padding:25px 22px}.zz-page-visual strong{font-size:2.2rem}
+}

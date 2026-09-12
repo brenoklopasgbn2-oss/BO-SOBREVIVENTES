@@ -2,16 +2,23 @@
 <%- include('partials/nav') %>
 <main class="container cart-page-v42 theme-vanilla">
   <%- include('partials/alerts') %>
+  <section class="zz-page-visual zz-page-visual--cart" aria-label="Logística <%= appName %>"><div><span><%= appName %> // LOGÍSTICA</span><strong>Seu carregamento está pronto</strong><small>Revise itens, saldo e finalize a entrega.</small></div></section>
+
+  <div class="zz-cmd-strip">
+    <span class="zz-cmd-dot"></span>
+    <span class="zz-cmd-code">SETOR // <b>LOGÍSTICA</b></span>
+    <span class="zz-cmd-tags"><span>Compra em lote</span><span>Cupom de desconto</span><span>Recálculo no servidor</span></span>
+  </div>
 
   <section class="cart-hero-v42">
     <div>
       <p class="eyebrow">Carrinho da loja</p>
       <h1>Finalizar vários itens de uma vez</h1>
-      <p>Revise os itens, aplique cupom de desconto e código de apoio streamer antes de confirmar.</p>
+      <p>Revise os itens e aplique seu cupom de desconto antes de confirmar.</p>
     </div>
     <div class="cart-wallet-v42">
       <span>Seu saldo</span>
-      <strong><%= coins(player?.coins || 0) %> RZ</strong>
+      <strong><%= coins(player?.coins || 0) %> <%= currencyName %></strong>
       <a class="btn small" href="/wallet">Fazer doação Pix</a>
     </div>
   </section>
@@ -37,26 +44,25 @@
     <aside class="card cart-checkout-v42">
       <p class="eyebrow">Resumo seguro</p>
       <h2>Total do carrinho</h2>
-      <div class="cart-total-v42"><span>RZ</span><strong id="cartPageTotal">0</strong></div>
+      <div class="cart-total-v42"><span><%= currencyName %></span><strong id="cartPageTotal">0</strong></div>
       <div class="cart-row-v42"><span>Produtos</span><b id="cartPageCount">0</b></div>
-      <div class="cart-row-v42"><span>Saldo atual</span><b><%= coins(player?.coins || 0) %> RZ</b></div>
+      <div class="cart-row-v42"><span>Saldo atual</span><b><%= coins(player?.coins || 0) %> <%= currencyName %></b></div>
 
-      <form method="POST" action="/cart/buy" id="cartCheckoutForm" class="form-grid">
+      <form method="POST" action="/cart/buy" id="cartCheckoutForm" class="form-grid" data-fast-cart-checkout>
         <input type="hidden" name="cartItemsJson" id="cartItemsJson" value="[]">
+        <input type="hidden" name="checkoutToken" value="<%= checkoutToken %>">
         <label>Cupom de desconto
           <input name="couponCode" placeholder="EX: WIPE10" maxlength="32" style="text-transform:uppercase">
         </label>
-        <label>Código de apoio streamer
-          <input name="streamerCode" placeholder="EX: BRENO" maxlength="32" style="text-transform:uppercase">
-        </label>
         <label class="check confirm-check">
-          <input type="checkbox" required>
-          Confirmo que quero comprar todos os itens do carrinho com meu saldo RZ.
+          <input type="checkbox" name="confirmPurchase" required>
+          Confirmo que quero comprar todos os itens do carrinho com meu saldo <%= currencyName %>.
         </label>
         <button class="btn primary buy-pulse" type="submit" id="cartCheckoutButton">Finalizar carrinho</button>
+        <div id="cartCheckoutStatus" class="muted" role="status" aria-live="polite"></div>
         <button class="btn danger" type="button" id="cartClearButton">Limpar carrinho</button>
       </form>
-      <p class="muted">O preço final é recalculado no servidor na hora da compra. Assim ninguém consegue burlar valor pelo navegador.</p>
+      <p class="muted">O preço final é recalculado no servidor. Comissão streamer é gerada somente quando o player compra moedas por Pix usando o código na carteira; gastar saldo na loja não gera comissão.</p>
     </aside>
   </section>
 </main>
@@ -71,6 +77,8 @@
     const form = document.getElementById('cartCheckoutForm');
     const clearBtn = document.getElementById('cartClearButton');
     const checkoutBtn = document.getElementById('cartCheckoutButton');
+    const checkoutStatus = document.getElementById('cartCheckoutStatus');
+    let submitting = false;
 
     function money(n) { return new Intl.NumberFormat('pt-BR').format(Math.max(0, Math.floor(Number(n || 0)))); }
     function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { return []; } }
@@ -89,7 +97,6 @@
       checkoutBtn.disabled = items.length === 0;
       itemsBox.innerHTML = items.map((item, index) => `
         <div class="cart-item-v42" data-index="${index}">
-          <img src="${item.imageUrl || '/images/no-real-image.svg'}" alt="">
           <div>
             <strong>${item.name || 'Produto'}</strong>
             <small>${item.category || 'Loja'} • ${item.serverType || 'vanilla'}</small>
@@ -99,7 +106,7 @@
             <b>${Number(item.quantity || 1)}</b>
             <button type="button" data-inc="${index}">+</button>
           </div>
-          <span><b>RZ ${money(Number(item.priceCoins || 0) * Number(item.quantity || 1))}</b></span>
+          <span><b><%= currencyName %> ${money(Number(item.priceCoins || 0) * Number(item.quantity || 1))}</b></span>
           <button class="btn danger small" type="button" data-remove="${index}">Remover</button>
         </div>
       `).join('');
@@ -126,8 +133,51 @@
       sync();
     });
 
-    form.addEventListener('submit', () => {
-      setTimeout(() => write([]), 600);
+    form.addEventListener('submit', async (ev) => {
+      if (!form.reportValidity()) return;
+      ev.preventDefault();
+      if (submitting) return;
+      const items = read().filter(item => item && item.productId);
+      if (!items.length) return;
+
+      submitting = true;
+      checkoutBtn.disabled = true;
+      clearBtn.disabled = true;
+      checkoutBtn.textContent = 'Confirmando carrinho...';
+      if (checkoutStatus) {
+        checkoutStatus.className = 'alert';
+        checkoutStatus.textContent = 'Processando uma única solicitação. Não feche esta página.';
+      }
+      form.querySelectorAll('input:not([type="hidden"])').forEach(input => { input.readOnly = true; });
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new URLSearchParams(new FormData(form)),
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json', 'X-Requested-With': 'fetch' }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Não foi possível finalizar o carrinho.');
+
+        write([]);
+        if (checkoutStatus) {
+          checkoutStatus.className = 'alert success';
+          checkoutStatus.textContent = data.message || 'Carrinho aprovado e entregas criadas.';
+        }
+        checkoutBtn.textContent = data.duplicate ? 'Carrinho já processado ✓' : 'Carrinho aprovado ✓';
+        window.setTimeout(() => window.location.replace(data.redirectUrl || '/shop?clearCart=1'), 350);
+      } catch (error) {
+        submitting = false;
+        checkoutBtn.disabled = false;
+        clearBtn.disabled = false;
+        checkoutBtn.textContent = 'Finalizar carrinho';
+        form.querySelectorAll('input:not([type="hidden"])').forEach(input => { input.readOnly = false; });
+        if (checkoutStatus) {
+          checkoutStatus.className = 'alert error';
+          checkoutStatus.textContent = error?.message || 'Não foi possível finalizar o carrinho.';
+        }
+      }
     });
 
     sync();

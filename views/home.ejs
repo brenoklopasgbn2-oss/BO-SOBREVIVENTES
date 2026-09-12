@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/css/zona-z-pages-v500.css?v=500">
+<%- include('partials/nav') %>
+<main style="max-width:1400px;margin:0 auto;padding:24px 18px 70px">
+  <%- include('partials/alerts') %>
+  <section class="zz-banner zz-banner--ranking" style="min-height:360px">
+    <div class="zz-banner-media" style="background-image:url('/images/zona-z/ranking-hero.png')"></div><div class="zz-banner-scrim"></div>
+    <div class="zz-banner-inner">
+      <span class="zz-banner-kicker">CHAMPIONS Z // CHERNARUS 1PP</span>
+      <h1 class="zz-banner-title">COMPETIÇÃO. <b>CLÃS. CAMPEÕES.</b></h1>
+      <p class="zz-banner-sub">Killfeed em tempo real, ranking de players e clãs, campeonato oficial, contas vinculadas e premiações administradas pela equipe.</p>
+      <div class="zz-banner-tags"><span>Killfeed via API</span><span>Clãs até 5</span><span>Campeonato</span><span>Sem Pay-to-Win</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <a class="btn primary" href="/ranking">Ver placar</a><a class="btn" href="/killfeed">Killfeed</a><a class="btn" href="/clans">Clãs</a>
+        <% if (player) { %><a class="btn" href="/vincular">Vincular Discord</a><a class="btn" href="/wallet">Comprar moedas</a><% } %>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0">
+    <% [['Players',stats.players],['Vinculados',stats.linkedPlayers],['Clãs',stats.clans],['Kills registradas',stats.kills]].forEach(([label,value]) => { %>
+      <article style="padding:18px;border:1px solid #333;background:#111;border-radius:14px"><small><%= label %></small><div style="font-size:28px;font-weight:900;margin-top:5px"><%= coins(value) %></div></article>
+    <% }) %>
+  </section>
+
+  <section style="display:grid;grid-template-columns:1.1fr .9fr;gap:18px">
+    <article style="padding:20px;border:1px solid #333;background:#111;border-radius:16px">
+      <h2>🏆 Campeonato de Clãs</h2><p>Classificação oficial por pontos concedidos nos eventos da temporada.</p>
+      <% championshipClans.forEach((clan,i) => { %><div style="display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #292929"><b>#<%= i+1 %></b><div><strong>[<%= clan.tag %>] <%= clan.name %></strong><br><small><%= clan.members.length %>/5 membros • <%= clan.eventWins %> vitórias</small></div><strong><%= coins(clan.championshipPoints) %> pts</strong></div><% }) %>
+      <% if (!championshipClans.length) { %><p>A temporada ainda não possui clãs pontuados.</p><% } %>
+    </article>
+    <article style="padding:20px;border:1px solid #333;background:#111;border-radius:16px">
+      <h2>🎯 Últimos campeões</h2>
+      <% recentResults.forEach(result => { %><div style="padding:12px 0;border-top:1px solid #292929"><strong><%= result.eventName %></strong><br><span>[<%= result.clan.tag %>] <%= result.clan.name %> • <b>+<%= result.points %> pts</b></span><br><small><%= dateTime(result.occurredAt) %></small></div><% }) %>
+      <% if (!recentResults.length) { %><p>Nenhum resultado publicado ainda.</p><% } %>
+    </article>
+  </section>
+
+  <section style="margin-top:18px;padding:20px;border:1px solid #333;background:#111;border-radius:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2>☠️ Killfeed recente</h2><p>Dados recebidos diretamente do servidor.</p></div><a class="btn" href="/killfeed">Abrir completo</a></div>
+    <div style="overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th>Hora</th><th>Killer</th><th>Vítima</th><th>Arma</th><th>Dist.</th><th>Localizações</th></tr></thead><tbody>
+      <% recentKills.forEach(k => { %><tr style="border-top:1px solid #292929"><td style="padding:10px"><%= dateTime(k.occurredAt) %></td><td><b><%= k.killerClan ? '['+k.killerClan.tag+'] ' : '' %><%= k.killerName || k.killerSteam64 %></b></td><td><%= k.victimClan ? '['+k.victimClan.tag+'] ' : '' %><%= k.victimName || k.victimSteam64 %></td><td><%= k.weapon || '-' %><%= k.headshot ? ' 🎯' : '' %></td><td><%= k.distanceMeters ? Math.round(k.distanceMeters)+'m' : '-' %></td><td><small>K <%= k.killerPosX != null ? Math.round(k.killerPosX)+','+Math.round(k.killerPosZ) : '-' %> / V <%= k.victimPosX != null ? Math.round(k.victimPosX)+','+Math.round(k.victimPosZ) : '-' %></small></td></tr><% }) %>
+    </tbody></table></div>
+  </section>
+</main>
+<%- include('partials/footer') %>

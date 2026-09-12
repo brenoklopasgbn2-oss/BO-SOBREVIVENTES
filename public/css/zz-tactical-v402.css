@@ -1,0 +1,242 @@
+/* ==================================================================
+   ZONA-Z // TACTICAL STRUCTURE — v402
+   Estilos das NOVAS estruturas HTML adicionadas nas views (.ejs):
+   atmosfera HUD global, ops ticker, faixas de comando, footer militar,
+   telas de acesso/erro reformuladas. Não altera dados nem lógica.
+   ================================================================== */
+
+/* ---------- ATMOSFERA GLOBAL DESLIGADA (pedido do cliente) ---------- */
+.zz-atmos { display: none !important; }
+.zz-atmos > span, .zz-atmos-grid, .zz-atmos-scan, .zz-atmos-vignette, .zz-hud-corner { display: none !important; }
+
+
+/* ---------- OPS TICKER (nav.ejs) ---------- */
+.zz-ops-ticker {
+  position: relative;
+  z-index: 30;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(60, 10, 14, 0.92), rgba(8, 10, 14, 0.92));
+  border-bottom: 1px solid rgba(225, 29, 42, 0.28);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+.zz-ops-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+  padding: 7px 0;
+  font-family: var(--zz-display, "Oswald", sans-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b9c2cf;
+  animation: zz-ops-marquee 34s linear infinite;
+  will-change: transform;
+}
+.zz-ops-inner b { color: #fff; font-weight: 600; }
+.zz-ops-live { display: inline-flex; align-items: center; gap: 7px; color: #ff9aa2; font-weight: 600; padding-left: 100%; }
+.zz-ops-live i { width: 8px; height: 8px; border-radius: 50%; background: #e11d2a; box-shadow: 0 0 12px #e11d2a; animation: zz-pulse 1.4s ease-in-out infinite; }
+.zz-ops-sep { color: rgba(225, 29, 42, 0.6); }
+.zz-ops-ok { color: #56e0a6 !important; }
+@keyframes zz-ops-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes zz-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .zz-ops-inner { animation: none; } .zz-ops-live { padding-left: 16px; } }
+
+/* ---------- FAIXA DE COMANDO (topo das páginas de conteúdo) ---------- */
+.zz-cmd-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 18px 0 6px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.1);
+  border-left: 3px solid var(--zz-red, #e11d2a);
+  background: linear-gradient(90deg, rgba(225, 29, 42, 0.1), rgba(14, 18, 24, 0.72) 40%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.zz-cmd-strip .zz-cmd-code {
+  font-family: var(--zz-display, "Oswald", sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 0.94rem;
+}
+.zz-cmd-strip .zz-cmd-code b { color: var(--zz-red, #e11d2a); }
+.zz-cmd-strip .zz-cmd-dot { width: 9px; height: 9px; border-radius: 50%; background: #56e0a6; box-shadow: 0 0 12px #56e0a6; animation: zz-pulse 1.6s ease-in-out infinite; }
+.zz-cmd-strip .zz-cmd-tags { display: inline-flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.zz-cmd-strip .zz-cmd-tags span {
+  font-family: var(--zz-display, "Oswald", sans-serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #aeb8c7;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  background: rgba(8, 10, 14, 0.6);
+}
+@media (max-width: 640px) { .zz-cmd-strip .zz-cmd-tags { margin-left: 0; } }
+
+/* ---------- FOOTER MILITAR (footer.ejs) ---------- */
+.zz-foot {
+  position: relative;
+  margin-top: 60px;
+  padding: 46px clamp(18px, 5vw, 64px) 0;
+  border-top: 1px solid rgba(225, 29, 42, 0.28);
+  background:
+    linear-gradient(180deg, rgba(10, 13, 19, 0.4), rgba(6, 8, 12, 0.96)),
+    url('/images/zz-elite/backdrop.png') center/cover no-repeat;
+  color: #c3ccd8;
+}
+.zz-foot::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 4%, #e11d2a 20%, #d9a441 55%, transparent 92%);
+  opacity: 0.85;
+}
+.zz-foot-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: 30px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+.zz-foot-logo { display: flex; align-items: center; gap: 12px; }
+.zz-foot-mark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px; border: 1px solid rgba(217, 164, 65, 0.35); background: rgba(8, 10, 14, 0.6); }
+.zz-foot-mark img { width: 30px; height: 30px; }
+.zz-foot-word { font-family: var(--zz-display, "Oswald", sans-serif); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.14em; color: #fff; text-transform: uppercase; }
+.zz-foot-word b { color: #e11d2a; }
+.zz-foot-tag { margin: 16px 0; max-width: 34ch; line-height: 1.6; color: #8b95a4; }
+.zz-foot-status { display: flex; gap: 10px; flex-wrap: wrap; }
+.zz-foot-live, .zz-foot-server {
+  font-family: var(--zz-display, "Oswald", sans-serif);
+  font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(226, 232, 240, 0.12);
+}
+.zz-foot-live { color: #56e0a6; display: inline-flex; align-items: center; gap: 7px; }
+.zz-foot-live i { width: 7px; height: 7px; border-radius: 50%; background: #56e0a6; box-shadow: 0 0 10px #56e0a6; }
+.zz-foot-server { color: #f2cf8e; }
+.zz-foot-col h4 { font-family: var(--zz-display, "Oswald", sans-serif); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; margin: 0 0 14px; }
+.zz-foot-col a { display: block; color: #9aa4b3; text-decoration: none; padding: 6px 0; transition: color 0.16s ease, padding 0.16s ease; }
+.zz-foot-col a:hover { color: #fff; padding-left: 6px; }
+.zz-foot-intel-card { border: 1px solid rgba(226, 232, 240, 0.1); border-radius: 14px; padding: 14px; background: rgba(8, 10, 14, 0.55); display: grid; gap: 4px; }
+.zz-foot-intel-label { font-family: var(--zz-display, "Oswald", sans-serif); font-size: 0.66rem; letter-spacing: 0.16em; color: #8b95a4; }
+.zz-foot-intel-card strong { color: #fff; }
+.zz-foot-intel-card small { color: #8b95a4; line-height: 1.5; }
+.zz-foot-cta {
+  margin-top: 14px; display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; letter-spacing: 0.08em;
+  color: #fff; text-decoration: none; padding: 11px 16px; border-radius: 12px;
+  background: linear-gradient(135deg, #e11d2a, #9c0f1a); box-shadow: 0 14px 34px rgba(225, 29, 42, 0.28);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.zz-foot-cta:hover { transform: translateY(-2px); box-shadow: 0 20px 46px rgba(225, 29, 42, 0.4); }
+.zz-foot-bar {
+  max-width: 1280px; margin: 0 auto; padding: 18px 0 26px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  border-top: 1px solid rgba(226, 232, 240, 0.08);
+  font-family: var(--zz-display, "Oswald", sans-serif); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #6f7a89;
+}
+.zz-foot-bar .footer { border: 0 !important; padding: 0 !important; }
+@media (max-width: 900px) { .zz-foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .zz-foot-grid { grid-template-columns: 1fr; } }
+
+/* ---------- TELA DE ACESSO REFORMULADA (playerLogin.ejs) ---------- */
+.zz-access {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.1);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.66);
+  margin: 26px 0 40px;
+}
+.zz-access-art {
+  position: relative;
+  min-height: 520px;
+  background: linear-gradient(120deg, rgba(52, 12, 18, 0.5), rgba(6, 8, 12, 0.6)), url('/images/zz-elite/hero-main.png') center/cover no-repeat;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.zz-access-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 60%, rgba(6, 8, 12, 0.95)); }
+.zz-access-badge {
+  position: relative; z-index: 2; align-self: flex-start;
+  font-family: var(--zz-display, "Oswald", sans-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #ff9aa2; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(225, 29, 42, 0.4); background: rgba(8, 10, 14, 0.6);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.zz-access-badge i { width: 8px; height: 8px; border-radius: 50%; background: #e11d2a; box-shadow: 0 0 12px #e11d2a; animation: zz-pulse 1.4s ease-in-out infinite; }
+.zz-access-art-copy { position: relative; z-index: 2; }
+.zz-access-art-copy h2 { font-family: var(--zz-display, "Oswald", sans-serif); font-size: clamp(2rem, 4vw, 3.4rem); line-height: 0.98; text-transform: uppercase; color: #fff; margin: 0 0 10px; text-shadow: 0 16px 40px rgba(0, 0, 0, 0.8); }
+.zz-access-art-copy p { color: #cdd5e0; max-width: 40ch; line-height: 1.6; }
+.zz-access-panel { padding: clamp(24px, 4vw, 46px); background: linear-gradient(180deg, rgba(18, 23, 32, 0.94), rgba(9, 12, 18, 0.98)); display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+.zz-access-eyebrow { font-family: var(--zz-display, "Oswald", sans-serif); letter-spacing: 0.22em; text-transform: uppercase; color: #d9a441; font-size: 0.76rem; }
+.zz-access-panel h1 { font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; font-size: clamp(1.7rem, 3vw, 2.4rem); color: #fff; margin: 0; line-height: 1.02; }
+.zz-access-panel > p { color: #8b95a4; line-height: 1.6; margin: 0; }
+.zz-access-steps { display: grid; gap: 10px; margin: 4px 0; }
+.zz-access-step { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(226, 232, 240, 0.1); background: rgba(8, 10, 14, 0.5); }
+.zz-access-step b { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; font-family: var(--zz-display, "Oswald", sans-serif); font-size: 1.1rem; color: #fff; background: linear-gradient(135deg, #e11d2a, #9c0f1a); }
+.zz-access-step span { color: #dbe2ea; font-weight: 500; }
+.zz-access-note { padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(217, 164, 65, 0.28); background: rgba(217, 164, 65, 0.08); color: #f2cf8e; font-size: 0.86rem; line-height: 1.5; }
+@media (max-width: 860px) { .zz-access { grid-template-columns: 1fr; } .zz-access-art { min-height: 300px; } .zz-access-art::after { background: linear-gradient(180deg, transparent 40%, rgba(6, 8, 12, 0.96)); } }
+
+/* ---------- TELA DE ERRO / SINAL PERDIDO (error.ejs) ---------- */
+.zz-signal {
+  position: relative; overflow: hidden; text-align: center;
+  margin: 40px auto; max-width: 720px; padding: clamp(30px, 6vw, 64px);
+  border-radius: 24px; border: 1px solid rgba(225, 29, 42, 0.3);
+  background: linear-gradient(160deg, rgba(52, 12, 18, 0.45), rgba(9, 12, 18, 0.97)), url('/images/zz-elite/backdrop.png') center/cover no-repeat;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.66);
+}
+.zz-signal-code { font-family: var(--zz-display, "Oswald", sans-serif); font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: #ff9aa2; display: inline-flex; align-items: center; gap: 10px; }
+.zz-signal-code::before, .zz-signal-code::after { content: ""; width: 30px; height: 1px; background: rgba(225, 29, 42, 0.5); }
+.zz-signal h1 { font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; font-size: clamp(2rem, 6vw, 3.6rem); color: #fff; margin: 16px 0 10px; text-shadow: 0 16px 40px rgba(0, 0, 0, 0.8); }
+.zz-signal p { color: #b3bcc9; line-height: 1.6; max-width: 46ch; margin: 0 auto 22px; }
+.zz-signal .btn { margin: 0 auto; }
+
+/* ---------- LOGIN DE COMANDO (admin/login.ejs) ---------- */
+.zz-cmd-login {
+  position: relative; overflow: hidden;
+  max-width: 440px; margin: 50px auto; padding: 0;
+  border-radius: 22px; border: 1px solid rgba(226, 232, 240, 0.12);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, rgba(18, 23, 32, 0.96), rgba(9, 12, 18, 0.98));
+}
+.zz-cmd-login-top {
+  padding: 28px 30px 20px; text-align: center;
+  background: linear-gradient(160deg, rgba(52, 12, 18, 0.6), rgba(9, 12, 18, 0.4)), url('/images/zz-elite/backdrop.png') center/cover no-repeat;
+  border-bottom: 1px solid rgba(225, 29, 42, 0.28);
+}
+.zz-cmd-login-mark { width: 68px; height: 68px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, #e11d2a, #7f1d1d); color: #fff; box-shadow: 0 12px 34px rgba(225, 29, 42, 0.4); }
+.zz-cmd-login-mark img { width: 40px; height: 40px; }
+.zz-cmd-login-top h1 { font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; letter-spacing: 0.1em; color: #fff; margin: 0; font-size: 1.4rem; }
+.zz-cmd-login-top small { font-family: var(--zz-display, "Oswald", sans-serif); letter-spacing: 0.2em; text-transform: uppercase; color: #d9a441; font-size: 0.7rem; }
+.zz-cmd-login-body { padding: 26px 30px 30px; }
+
+/* ---------- BADGE DE COMANDO (sidebar admin) ---------- */
+.zz-cmd-badge {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; margin-bottom: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(225, 29, 42, 0.26);
+  background: linear-gradient(135deg, rgba(52, 12, 18, 0.5), rgba(9, 12, 18, 0.72));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.zz-cmd-badge-mark {
+  width: 42px; height: 42px; flex: 0 0 auto;
+  display: grid; place-items: center; border-radius: 12px;
+  background: linear-gradient(135deg, #e11d2a, #7f1d1d);
+  box-shadow: 0 8px 22px rgba(225, 29, 42, 0.4);
+}
+.zz-cmd-badge-mark img { width: 26px; height: 26px; }
+.zz-cmd-badge-txt { display: flex; flex-direction: column; line-height: 1.1; }
+.zz-cmd-badge-txt b { font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; letter-spacing: 0.16em; color: #fff; font-size: 1.05rem; }
+.zz-cmd-badge-txt small { font-family: var(--zz-display, "Oswald", sans-serif); text-transform: uppercase; letter-spacing: 0.18em; color: #d9a441; font-size: 0.62rem; margin-top: 3px; }

@@ -15,12 +15,33 @@
       </div>
     </header>
 
+    <%- include('partials/alerts') %>
+
     <section class="pix-grid-v42">
       <article class="pix-info-v42">
         <div class="pix-metric-v42"><span>Valor da doação</span><strong><%= brl(payment.amountBrl) %></strong></div>
-        <div class="pix-metric-v42"><span>Você recebe</span><strong><%= coins(payment.coins) %> RZ</strong></div>
-        <% if (payment.supportStreamerCode) { %>
-          <div class="pix-streamer-v42">❤️ Apoiando streamer <b><%= payment.supportStreamerCode %></b> • comissão <%= payment.supportCommissionPercent %>%</div>
+        <div class="pix-metric-v42"><span>Você recebe</span><strong><%= coins(payment.coins) %> <%= currencyName %></strong></div>
+        <% if (payment.status === 'PENDING') { %>
+          <form class="pix-streamer-support-v159" method="POST" action="/payment/<%= payment.id %>/support-streamer">
+            <div class="pix-streamer-support-copy-v159">
+              <span aria-hidden="true">❤️</span>
+              <div>
+                <strong>Apoiar um streamer</strong>
+                <small>Digite e confirme o código antes de pagar. A comissão só será registrada quando este Pix for aprovado.</small>
+              </div>
+            </div>
+            <div class="pix-streamer-support-action-v159">
+              <input name="streamerCode" value="<%= payment.supportStreamerCode || '' %>" placeholder="CÓDIGO DO STREAMER" maxlength="32" autocomplete="off" required aria-label="Código do streamer">
+              <button class="btn primary" type="submit"><%= payment.supportStreamerCode ? 'Atualizar apoio' : 'Confirmar apoio' %></button>
+            </div>
+            <% if (payment.supportStreamerCode) { %>
+              <small class="pix-streamer-current-v159">Apoiando agora: <b><%= payment.supportStreamerCode %></b> • comissão de <%= payment.supportCommissionPercent %>%</small>
+            <% } %>
+          </form>
+        <% } else if (payment.supportStreamerCode) { %>
+          <div class="pix-streamer-v42">❤️ Compra de moedas apoiando <b><%= payment.supportStreamerCode %></b> • comissão <%= payment.supportCommissionPercent %>%</div>
+        <% } else if (payment.status === 'APPROVED') { %>
+          <div class="pix-streamer-closed-v159">Este Pix já foi aprovado sem código de streamer.</div>
         <% } %>
         <div class="pix-processing-copy-v42" id="pixProcessingText"><%= payment.status === 'APPROVED' ? 'Aprovado' : 'Aguardando pagamento via Pix...' %></div>
       </article>
@@ -45,7 +66,7 @@
     <div class="pix-approved-banner-v42" id="pixApprovedBanner" hidden>
       <div class="pix-approved-icon-v42">✅</div>
       <strong>Pix aprovado!</strong>
-      <span>Suas RZ Coins já entraram na conta. Voltando para a loja em <b id="pixRedirectCountdown">4</b>s...</span>
+      <span>Suas <%= currencyName %> já entraram na conta. Voltando para a loja em <b id="pixRedirectCountdown">4</b>s...</span>
     </div>
 
     <p class="muted" id="pixHelpText">Assim que o Mercado Pago confirmar, o site credita as moedas e volta sozinho para a loja.</p>
