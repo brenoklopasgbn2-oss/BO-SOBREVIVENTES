@@ -68,9 +68,11 @@ const CHANNELS = {
   memberLeave: '📤・saidas',
   announcements: '📣・avisos',
   rules: '📜・regras',
+  championshipRules: '🏆・regras-campeonato',
   howToPlay: '🧭・como-jogar',
   koth: '🚩・koth',
   megaKoth: '👑・mega-koth',
+  antiHack: '🛡️・sistema-anti-hack',
   airdrop: '🪂・airdrop',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
@@ -127,9 +129,11 @@ const CHANNEL_ALIASES = {
   [CHANNELS.memberLeave]: ['saidas'],
   [CHANNELS.announcements]: ['avisos'],
   [CHANNELS.rules]: ['📜・regras-gerais', 'regras', 'regras-gerais'],
+  [CHANNELS.championshipRules]: ['regras-campeonato', 'campeonato-regras', 'regras-do-campeonato'],
   [CHANNELS.howToPlay]: ['📌・vanilla-info', 'vanilla-info', 'como-jogar', 'guia-inicial'],
   [CHANNELS.koth]: ['koth', 'king-of-the-hill', 'rei-da-colina', 'evento-koth'],
   [CHANNELS.megaKoth]: ['mega-koth', 'megakoth', 'mega-king-of-the-hill', 'evento-mega-koth'],
+  [CHANNELS.antiHack]: ['sistema-anti-hack', 'anti-hack', 'antihack', 'scam-echo', 'echo-scan'],
   [CHANNELS.airdrop]: ['airdrop', 'airdrops', 'drop-aereo', 'drop-aéreo'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
@@ -194,8 +198,10 @@ const PANEL_IMAGES = {
   banPanel: 'champions-z-banimentos.png',
   banApplied: 'champions-z-banimentos.png',
   rules: 'champions-z-regras.png',
+  championshipRules: 'champions-z-campeonato-regras.png',
   koth: 'champions-z-koth-guia.png',
   megaKoth: 'champions-z-mega-koth-guia.png',
+  antiHack: 'champions-z-sistema-anti-hack.png',
   airdrop: 'champions-z-logo.png',
   howToPlay: 'champions-z-bem-vindo.png'
 };
@@ -218,6 +224,7 @@ const CATEGORY_DEFINITIONS = [
     channels: [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras oficiais do CHAMPIONS Z.', readOnly: true },
+      { type: 'text', name: CHANNELS.championshipRules, aliases: CHANNEL_ALIASES[CHANNELS.championshipRules], topic: 'Regras, participação, pontuação e premiações do Campeonato CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.howToPlay, aliases: CHANNEL_ALIASES[CHANNELS.howToPlay], topic: 'Guia rápido do CHAMPIONS Z em Chernarus: 1PP, PvP competitivo, bunkers e novas áreas.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IP e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Registro de banimentos e punições.', readOnly: true },
@@ -238,6 +245,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.planeCrash, aliases: CHANNEL_ALIASES[CHANNELS.planeCrash], topic: 'Guia do Plane Crash / Plane Drop: avião, 4 containers, zumbis e chave do container.', readOnly: true },
       { type: 'text', name: CHANNELS.koth, aliases: CHANNEL_ALIASES[CHANNELS.koth], topic: 'Guia oficial do KOTH CHAMPIONS Z: PvP, domínio de 15 minutos e recompensas especiais.', readOnly: true },
       { type: 'text', name: CHANNELS.megaKoth, aliases: CHANNEL_ALIASES[CHANNELS.megaKoth], topic: 'Guia oficial do MEGA KOTH CHAMPIONS Z: 30 minutos de domínio, loot premium e ranking próprio.', readOnly: true },
+      { type: 'text', name: CHANNELS.antiHack, aliases: CHANNEL_ALIASES[CHANNELS.antiHack], topic: 'Sistema anti-hack do CHAMPIONS Z: scam ECHO diário, telagem profissional e tolerância zero com provas.', readOnly: true },
       { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true }
     ]
   },

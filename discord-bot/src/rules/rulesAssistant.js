@@ -10,7 +10,7 @@ const FAQS = [
   {
     title: 'Eventos',
     keywords: ['evento','eventos','koth','airdrop','premio','premiação','premiacao'],
-    answer: 'Acompanhe **🎯・eventos**, **🚩・koth**, **🪂・airdrop** e **📣・avisos**. Horários e regras serão publicados oficialmente nesses canais.'
+    answer: 'Acompanhe **🎯・eventos**, **🚩・koth**, **👑・mega-koth**, **🛡️・sistema-anti-hack**, **🪂・airdrop** e **📣・avisos**. Horários, verificações e regras serão publicados oficialmente nesses canais.'
   },
   {
     title: 'Denúncia e ticket',

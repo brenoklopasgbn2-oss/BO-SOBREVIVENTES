@@ -19,6 +19,7 @@ const { buildReportPanel } = require('../panels/reportPanel');
 const { buildBugPanel } = require('../panels/bugPanel');
 const { buildBanPanel } = require('../panels/banPanel');
 const { buildRulesPanel } = require('../panels/rulesPanel');
+const { buildChampionshipRulesPanel } = require('../panels/championshipRulesPanel');
 const { buildHowToPlayPanel } = require('../panels/howToPlayPanel');
 const { buildBunker1AirfieldPanel } = require('../panels/bunker1AirfieldPanel');
 const { buildBunker2FrozenPanel } = require('../panels/bunker2FrozenPanel');
@@ -28,6 +29,7 @@ const { buildVehicleFlipPanel } = require('../panels/vehicleFlipPanel');
 const { buildPlaneCrashPanel } = require('../panels/planeCrashPanel');
 const { buildKothPanel } = require('../panels/kothPanel');
 const { buildMegaKothPanel } = require('../panels/megaKothPanel');
+const { buildAntiHackPanel } = require('../panels/antiHackPanel');
 const { buildGhillieCamonetPanel } = require('../panels/ghillieCamonetPanel');
 const { buildStreamerReferralPanel } = require('../panels/streamerReferralPanel');
 const { buildStreamerStaffPanel } = require('../panels/streamerStaffPanel');
@@ -333,8 +335,16 @@ module.exports = {
 
     const findChannel = (name) => ensuredChannels.get(name) || guild.channels.cache.find((channel) => channel.name === name && channel.isTextBased?.());
 
+    // Garante que as regras do campeonato fiquem imediatamente abaixo do canal de regras gerais.
+    const rulesChannel = findChannel(CHANNELS.rules);
+    const championshipRulesChannel = findChannel(CHANNELS.championshipRules);
+    if (rulesChannel && championshipRulesChannel && rulesChannel.parentId === championshipRulesChannel.parentId) {
+      await championshipRulesChannel.setPosition(rulesChannel.rawPosition + 1, 'Regras do campeonato abaixo das regras gerais').catch(() => null);
+    }
+
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.rules), buildRulesPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.championshipRules), buildChampionshipRulesPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.howToPlay), buildHowToPlayPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bunker1Airfield), buildBunker1AirfieldPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.bunker2Frozen), buildBunker2FrozenPanel, { replaceBotMessages: true });
@@ -344,6 +354,7 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.planeCrash), buildPlaneCrashPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.koth), buildKothPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.megaKoth), buildMegaKothPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.antiHack), buildAntiHackPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.ghillieCamonet), buildGhillieCamonetPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerReferral), buildStreamerReferralPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerStaffPanel), () => buildStreamerStaffPanel(guild.id), { replaceBotMessages: true });
