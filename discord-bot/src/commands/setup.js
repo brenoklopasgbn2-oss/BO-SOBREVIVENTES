@@ -26,6 +26,8 @@ const { buildMilitaryAreasPanel } = require('../panels/militaryAreasPanel');
 const { buildNbcYellowPanel } = require('../panels/nbcYellowPanel');
 const { buildVehicleFlipPanel } = require('../panels/vehicleFlipPanel');
 const { buildPlaneCrashPanel } = require('../panels/planeCrashPanel');
+const { buildKothPanel } = require('../panels/kothPanel');
+const { buildMegaKothPanel } = require('../panels/megaKothPanel');
 const { buildGhillieCamonetPanel } = require('../panels/ghillieCamonetPanel');
 const { buildStreamerReferralPanel } = require('../panels/streamerReferralPanel');
 const { buildStreamerStaffPanel } = require('../panels/streamerStaffPanel');
@@ -340,6 +342,8 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.nbcYellow), buildNbcYellowPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.vehicleFlip), buildVehicleFlipPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.planeCrash), buildPlaneCrashPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.koth), buildKothPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.megaKoth), buildMegaKothPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.ghillieCamonet), buildGhillieCamonetPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerReferral), buildStreamerReferralPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerStaffPanel), () => buildStreamerStaffPanel(guild.id), { replaceBotMessages: true });

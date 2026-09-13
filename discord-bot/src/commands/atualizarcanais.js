@@ -27,7 +27,7 @@ module.exports = {
         '✅ Renomeia e reorganiza os canais principais.',
         '✅ Troca os painéis pelas novas imagens.',
         '✅ Atualiza o painel de regras.',
-        '✅ Mantém KOTH e Airdrop.',
+        '✅ Cria/atualiza os guias oficiais do **KOTH** e **MEGA KOTH** e mantém os demais eventos.',
         '🧹 Cria os guias de Bunker 1, Bunker 2, áreas militares, infectado NBC amarelo e **Flip de veículos**, removendo estruturas antigas conhecidas.',
         '',
         'Canais manuais que não fazem parte da lista antiga continuam preservados.'

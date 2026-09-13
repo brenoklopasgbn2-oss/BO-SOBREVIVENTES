@@ -8,6 +8,7 @@ const { getMainStaffRole } = require('../panels/supportStatus');
 const { createTranscriptAttachment } = require('./transcript');
 const { recordTicketAnswered } = require('../stats/staffStats');
 const { getProfile, saveGameNickname } = require('./ticketProfileStore');
+const { getTicketPlayerData, buildTicketLinkFields, buildStaffProfileFields } = require('../services/ticketPlayerDataService');
 const { getCloseSummaryCopy, getLanguage, getLanguageOptions, getTicketFormCopy, normalizeLanguage, translateText } = require('../services/ticketTranslationService');
 
 function buildTicketControls(channelId) {
@@ -185,7 +186,7 @@ async function showTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
 
   const language = normalizeLanguage(selectedLanguage);
   const copy = getTicketFormCopy(language);
-  const profile = getProfile(interaction.guild.id, interaction.user.id);
+  const profile = await getProfile(interaction.guild.id, interaction.user.id);
   const savedNickname = normalizeGameNickname(profile?.gameNickname || '');
   const modal = new ModalBuilder()
     .setCustomId(`ticket_form:${typeKey}:${language}`)
@@ -228,7 +229,7 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
 
   const language = normalizeLanguage(selectedLanguage);
   const languageInfo = getLanguage(language);
-  const profile = getProfile(interaction.guild.id, interaction.user.id);
+  const profile = await getProfile(interaction.guild.id, interaction.user.id);
   const savedNickname = normalizeGameNickname(profile?.gameNickname || '');
   let submittedNickname = '';
   try {
@@ -260,11 +261,15 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
   }
 
   if (!savedNickname) {
-    const nicknameSaved = saveGameNickname(interaction.guild.id, interaction.user.id, gameNickname);
+    const nicknameSaved = await saveGameNickname(interaction.guild.id, interaction.user.id, gameNickname);
     if (!nicknameSaved) {
       return interaction.editReply({ embeds: [errorEmbed('Não consegui salvar seu nick. Tente abrir o ticket novamente.') ] });
     }
   }
+
+  const playerData = await getTicketPlayerData({ guildId: interaction.guild.id, member: interaction.member });
+  const linkFields = buildTicketLinkFields(playerData);
+  const staffProfileFields = buildStaffProfileFields(playerData);
 
   const category = interaction.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildCategory && channel.name === CATEGORY_NAMES.ticketsOpen)
     || interaction.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildCategory && channel.name === CATEGORY_NAMES.support);
@@ -275,7 +280,7 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
     name: `${serverInfo.prefix}-ticket-${ticketType.name}-${safeName}`,
     type: ChannelType.GuildText,
     parent: category?.id,
-    topic: `ZONAZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|LANG:${language}|TRANSLATE:ON|STATUS:OPEN`,
+    topic: `ZONAZ_TICKET|OWNER_ID:${interaction.user.id}|TYPE:${typeKey}|SERVER:${serverInfo.label}|LANG:${language}|TRANSLATE:ON|LINKED:${playerData?.linked ? 'YES' : 'NO'}|STATUS:OPEN`,
     permissionOverwrites: [
       { id: interaction.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
       {
@@ -304,7 +309,8 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
     .setImage(`attachment://${imageName}`)
     .addFields(
       { name: '👤 Autor', value: `${interaction.user} (${interaction.user.id})`, inline: false },
-      { name: '🎮 Nick no jogo', value: gameNickname, inline: true },
+      { name: '🎮 Nick informado no ticket', value: gameNickname, inline: true },
+      ...linkFields,
       { name: '📂 Categoria', value: ticketType.label, inline: true },
       { name: `${serverInfo.emoji} Servidor`, value: serverInfo.label, inline: true },
       { name: '🌐 Idioma selecionado', value: `${languageInfo.emoji} ${languageInfo.nativeLabel}`, inline: true },
@@ -320,14 +326,23 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
     files: [panelImage(imageName)]
   });
 
-  await logEvent(interaction.guild, 'ticket_opened', '🎫 Ticket aberto', `${interaction.user} abriu ${channel}.`, [
-    { name: 'Nick no jogo', value: gameNickname, inline: true },
-    { name: 'Tipo', value: ticketType.label, inline: true },
-    { name: 'Servidor', value: `${serverInfo.emoji} ${serverInfo.label}`, inline: true },
-    { name: 'Idioma', value: `${languageInfo.emoji} ${languageInfo.nativeLabel}`, inline: true },
-    { name: 'Motivo informado', value: translatedTicketReason || ticketReason, inline: false },
-    { name: 'Canal', value: `${channel}`, inline: true }
-  ]);
+  const ticketLogFields = [
+    { name: '🎫 Nick informado no ticket', value: gameNickname, inline: true },
+    { name: '📂 Tipo', value: ticketType.label, inline: true },
+    { name: '🖥️ Servidor', value: `${serverInfo.emoji} ${serverInfo.label}`, inline: true },
+    { name: '🌐 Idioma', value: `${languageInfo.emoji} ${languageInfo.nativeLabel}`, inline: true },
+    { name: '📝 Motivo informado', value: translatedTicketReason || ticketReason, inline: false },
+    { name: '📍 Canal', value: `${channel}`, inline: true },
+    ...staffProfileFields
+  ].slice(0, 25);
+
+  await logEvent(
+    interaction.guild,
+    'ticket_opened',
+    playerData?.linked ? '🎫 Ticket aberto • ✅ PLAYER VINCULADO' : '🎫 Ticket aberto • ❌ PLAYER NÃO VINCULADO',
+    `${interaction.user} abriu ${channel}. Perfil consultado automaticamente no PostgreSQL.`,
+    ticketLogFields
+  );
 
   return interaction.editReply({ embeds: [successEmbed(`Ticket criado com sucesso: ${channel}`)] });
 }

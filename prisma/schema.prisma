@@ -806,6 +806,19 @@ model CouponUse {
   @@index([createdAt])
 }
 
+model TicketPlayerProfile {
+  id            String   @id @default(uuid())
+  guildId       String
+  discordUserId String
+  gameNickname  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([guildId, discordUserId])
+  @@index([discordUserId])
+  @@index([guildId, updatedAt])
+}
+
 model StreamerReferralProfile {
   id                    String             @id @default(uuid())
   guildId               String

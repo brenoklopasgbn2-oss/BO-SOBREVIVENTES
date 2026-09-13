@@ -1,70 +1,54 @@
-const fs = require('node:fs');
-const path = require('node:path');
+const { prisma } = require('../services/platformDb');
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DATA_FILE = path.join(DATA_DIR, 'ticketPlayerProfiles.json');
+function cleanId(value) {
+  return String(value || '').replace(/\D/g, '').slice(0, 24);
+}
 
-function emptyData() {
+function cleanNickname(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 32);
+}
+
+async function getProfile(guildId, userId) {
+  const gid = String(guildId || '').trim();
+  const uid = cleanId(userId);
+  if (!gid || !uid) return null;
+
+  const [ticketProfile, linkedPlayer] = await Promise.all([
+    prisma.ticketPlayerProfile.findUnique({
+      where: { guildId_discordUserId: { guildId: gid, discordUserId: uid } }
+    }).catch(() => null),
+    prisma.player.findUnique({
+      where: { discordId: uid },
+      select: { nickname: true, steam64: true }
+    }).catch(() => null)
+  ]);
+
+  if (!ticketProfile && !linkedPlayer) return null;
+
   return {
-    version: 1,
-    profiles: {}
+    ...(ticketProfile || {}),
+    gameNickname: cleanNickname(ticketProfile?.gameNickname || linkedPlayer?.nickname || ''),
+    linkedSteam64: linkedPlayer?.steam64 || null
   };
 }
 
-function ensureStorage() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(emptyData(), null, 2));
-  }
-}
+async function saveGameNickname(guildId, userId, gameNickname) {
+  const gid = String(guildId || '').trim();
+  const uid = cleanId(userId);
+  const nickname = cleanNickname(gameNickname);
+  if (!gid || !uid || !nickname) return false;
 
-function loadData() {
   try {
-    ensureStorage();
-    const parsed = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    return {
-      ...emptyData(),
-      ...parsed,
-      profiles: parsed?.profiles || {}
-    };
-  } catch (error) {
-    console.error('Erro ao carregar ticketPlayerProfiles.json:', error);
-    return emptyData();
-  }
-}
-
-function saveData(data) {
-  try {
-    ensureStorage();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    await prisma.ticketPlayerProfile.upsert({
+      where: { guildId_discordUserId: { guildId: gid, discordUserId: uid } },
+      update: { gameNickname: nickname },
+      create: { guildId: gid, discordUserId: uid, gameNickname: nickname }
+    });
     return true;
   } catch (error) {
-    console.error('Erro ao salvar ticketPlayerProfiles.json:', error);
+    console.error('Erro ao salvar perfil persistente de ticket:', error);
     return false;
   }
-}
-
-function getProfile(guildId, userId) {
-  if (!guildId || !userId) return null;
-  const data = loadData();
-  return data.profiles?.[guildId]?.[userId] || null;
-}
-
-function saveGameNickname(guildId, userId, gameNickname) {
-  if (!guildId || !userId || !gameNickname) return false;
-
-  const data = loadData();
-  if (!data.profiles[guildId]) data.profiles[guildId] = {};
-
-  const previous = data.profiles[guildId][userId] || {};
-  data.profiles[guildId][userId] = {
-    ...previous,
-    gameNickname,
-    createdAt: previous.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-
-  return saveData(data);
 }
 
 module.exports = { getProfile, saveGameNickname };

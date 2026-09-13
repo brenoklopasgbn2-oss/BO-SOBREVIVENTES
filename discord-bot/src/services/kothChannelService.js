@@ -3,7 +3,7 @@ const { CATEGORY_DEFINITIONS, CHANNELS } = require('../config/constants');
 const { readOnlyChannelOverwrites } = require('../utils/permissions');
 const { buildKothPanel } = require('../panels/kothPanel');
 
-const KOTH_REASON = 'Canal oficial KOTH RAID-Z';
+const KOTH_REASON = 'Canal oficial KOTH CHAMPIONS Z';
 
 function getKothCategoryDefinition() {
   return CATEGORY_DEFINITIONS.find((definition) =>
@@ -24,7 +24,7 @@ function findKothCategory(guild, definition) {
 
 function getKothTopic(definition) {
   return definition?.channels?.find((channel) => channel.name === CHANNELS.koth)?.topic
-    || 'KOTH RAID-Z: fumaça branca livre, fumaça vermelha em progresso e loot dinâmico conforme a quantidade de jogadores dentro da área.';
+    || 'Guia oficial do KOTH CHAMPIONS Z: PvP, domínio de 15 minutos e recompensas especiais.';
 }
 
 function payloadTitle(payload) {
@@ -76,7 +76,7 @@ async function ensureKothChannel(guild, options = {}) {
     if (skipIfNoCategory) {
       return { channel: null, created: false, moved: false, skipped: true };
     }
-    throw new Error('A categoria CENTRAL RAID-Z não foi encontrada para criar o canal do KOTH.');
+    throw new Error('A categoria GUIAS CHAMPIONS Z não foi encontrada para criar o canal do KOTH.');
   }
 
   const topic = getKothTopic(categoryDefinition);
@@ -111,16 +111,14 @@ async function ensureKothChannel(guild, options = {}) {
     await channel.permissionOverwrites.set(permissionOverwrites, KOTH_REASON);
   }
 
-  const raidMissionsDefinition = categoryDefinition?.channels?.find((item) => item.name === CHANNELS.raidMissions);
-  const raidMissionNames = [CHANNELS.raidMissions, ...(raidMissionsDefinition?.aliases || [])];
-  const raidMissionsChannel = guild.channels.cache.find((candidate) =>
+  const planeCrashChannel = guild.channels.cache.find((candidate) =>
     candidate.type === ChannelType.GuildText
       && candidate.parentId === category.id
-      && raidMissionNames.includes(candidate.name)
+      && candidate.name === CHANNELS.planeCrash
   );
 
-  if (raidMissionsChannel && channel.position !== raidMissionsChannel.position + 1) {
-    await channel.setPosition(raidMissionsChannel.position + 1, { reason: KOTH_REASON }).catch(() => null);
+  if (planeCrashChannel && channel.position !== planeCrashChannel.position + 1) {
+    await channel.setPosition(planeCrashChannel.position + 1, { reason: KOTH_REASON }).catch(() => null);
   }
 
   if (updatePanel) await updateKothPanel(channel);

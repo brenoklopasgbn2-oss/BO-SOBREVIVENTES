@@ -70,6 +70,7 @@ const CHANNELS = {
   rules: '📜・regras',
   howToPlay: '🧭・como-jogar',
   koth: '🚩・koth',
+  megaKoth: '👑・mega-koth',
   airdrop: '🪂・airdrop',
   info: '📘・informacoes',
   bans: '🚫・banimentos',
@@ -128,6 +129,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.rules]: ['📜・regras-gerais', 'regras', 'regras-gerais'],
   [CHANNELS.howToPlay]: ['📌・vanilla-info', 'vanilla-info', 'como-jogar', 'guia-inicial'],
   [CHANNELS.koth]: ['koth', 'king-of-the-hill', 'rei-da-colina', 'evento-koth'],
+  [CHANNELS.megaKoth]: ['mega-koth', 'megakoth', 'mega-king-of-the-hill', 'evento-mega-koth'],
   [CHANNELS.airdrop]: ['airdrop', 'airdrops', 'drop-aereo', 'drop-aéreo'],
   [CHANNELS.info]: ['informações', 'informacoes'],
   [CHANNELS.bans]: ['banimentos', 'punições', 'punicoes'],
@@ -192,7 +194,8 @@ const PANEL_IMAGES = {
   banPanel: 'champions-z-banimentos.png',
   banApplied: 'champions-z-banimentos.png',
   rules: 'champions-z-regras.png',
-  koth: 'champions-z-logo.png',
+  koth: 'champions-z-koth-guia.png',
+  megaKoth: 'champions-z-mega-koth-guia.png',
   airdrop: 'champions-z-logo.png',
   howToPlay: 'champions-z-bem-vindo.png'
 };
@@ -233,6 +236,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.nbcYellow, aliases: CHANNEL_ALIASES[CHANNELS.nbcYellow], topic: 'Infectado NBC amarelo com POX: ao morrer, libera gás letal.', readOnly: true },
       { type: 'text', name: CHANNELS.vehicleFlip, aliases: CHANNEL_ALIASES[CHANNELS.vehicleFlip], topic: 'Guia do sistema de Flip: banco do motorista + F6 para desvirar o veículo.', readOnly: true },
       { type: 'text', name: CHANNELS.planeCrash, aliases: CHANNEL_ALIASES[CHANNELS.planeCrash], topic: 'Guia do Plane Crash / Plane Drop: avião, 4 containers, zumbis e chave do container.', readOnly: true },
+      { type: 'text', name: CHANNELS.koth, aliases: CHANNEL_ALIASES[CHANNELS.koth], topic: 'Guia oficial do KOTH CHAMPIONS Z: PvP, domínio de 15 minutos e recompensas especiais.', readOnly: true },
+      { type: 'text', name: CHANNELS.megaKoth, aliases: CHANNEL_ALIASES[CHANNELS.megaKoth], topic: 'Guia oficial do MEGA KOTH CHAMPIONS Z: 30 minutos de domínio, loot premium e ranking próprio.', readOnly: true },
       { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true }
     ]
   },
@@ -308,6 +313,7 @@ const LEGACY_CHANNEL_NAMES = [
   '📡・status-servidor','status-servidor','status-servidores',
   '🎯・eventos','eventos','eventos-zona-z','eventos-champions-z',
   '🚩・koth','koth','king-of-the-hill','rei-da-colina','evento-koth',
+  '👑・mega-koth','mega-koth','megakoth','mega-king-of-the-hill','evento-mega-koth',
   '🪂・airdrop','airdrop','airdrops','drop-aereo','drop-aéreo',
   '🤖・zona-z-ia','zona-z-ia','🤖・raid-z-ia','raid-z-ia','sobrevivente-ia','pergunte-as-regras','duvidas-regras','🤖・champions-z-ia','champions-z-ia','champions-ia'
 ];
