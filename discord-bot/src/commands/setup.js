@@ -13,6 +13,7 @@ const {
   LEGACY_CHANNEL_NAMES
 } = require('../config/constants');
 const { buildWelcomePanel } = require('../panels/welcomePanel');
+const { buildLaunchSchedulePanel } = require('../panels/launchSchedulePanel');
 const { buildTicketPanel } = require('../panels/ticketPanel');
 const { buildLinkAccountPanel } = require('../panels/linkAccountPanel');
 const { buildReportPanel } = require('../panels/reportPanel');
@@ -343,6 +344,7 @@ module.exports = {
     }
 
     await clearAndSendPanel(findChannel(CHANNELS.welcome), buildWelcomePanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.launchSchedule), buildLaunchSchedulePanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.rules), buildRulesPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.championshipRules), buildChampionshipRulesPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.howToPlay), buildHowToPlayPanel, { replaceBotMessages: true });

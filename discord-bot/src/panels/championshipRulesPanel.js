@@ -47,11 +47,10 @@ function buildChampionshipRulesPanel() {
       '• Ao final da temporada, **o clã que tiver mais pontos será o campeão**.',
       '',
       '⏳ **QUANDO COMEÇAM OS EVENTOS VALENDO PONTOS?**',
-      '• Os eventos que contam pontos para o campeonato **só serão liberados 1 mês após o lançamento oficial do servidor**.',
-      '• A data de lançamento do CHAMPIONS Z **ainda não foi definida**.',
-      '• Assim que o servidor for lançado, começa a contagem desse primeiro mês.',
-      '• Depois de completar 1 mês de servidor aberto, a administração anunciará oficialmente a **liberação dos eventos valendo pontos**.',
-      '• Somente eventos realizados após essa liberação oficial entrarão na classificação do campeonato.',
+      '• **Lançamento oficial do servidor: 03/10/2026.**',
+      '• O primeiro mês será dedicado à preparação dos jogadores, clãs e bases.',
+      '• **As competições e eventos valendo pontos começam em 03/11/2026.**',
+      '• Somente eventos realizados a partir de 03/11/2026 entram na classificação oficial da temporada.',
       '',
       '🏆 Os resultados oficiais dos eventos e a classificação da temporada serão publicados no canal **🏆・campeonato**.'
     ].join('\n'))

@@ -38,6 +38,7 @@ const ROLE_DEFINITIONS = [
 
 const CATEGORY_NAMES = {
   entry: '🚪・ENTRADA CHAMPIONS Z',
+  launch: '🚀・LANÇAMENTO • 03-10-2026',
   central: '📢・CENTRAL CHAMPIONS Z',
   guides: '🗺️・GUIAS CHAMPIONS Z',
   vanilla: '🧟・CHAMPIONS Z CHERNARUS', // chave interna antiga; mantida apenas para compatibilidade
@@ -51,6 +52,7 @@ const CATEGORY_NAMES = {
 
 const CATEGORY_ALIASES = {
   [CATEGORY_NAMES.entry]: ['🚪・ENTRADA ZONA-Z', '🚪・ENTRADA RAID-Z', '🚪・ENTRADA', '🚪 ENTRADA', 'ENTRADA'],
+  [CATEGORY_NAMES.launch]: ['🚀・LANÇAMENTO', '🚀 LANÇAMENTO', 'LANÇAMENTO DO SERVIDOR'],
   [CATEGORY_NAMES.central]: ['📢・CENTRAL ZONA-Z', '📢・CENTRAL RAID-Z', '📢・CENTRAL', '📢 CENTRAL', 'CENTRAL'],
   [CATEGORY_NAMES.guides]: ['🗺️・GUIAS', '🧭・GUIAS', 'GUIAS CHAMPIONS Z'],
   [CATEGORY_NAMES.vanilla]: ['🔴・RAID-Z VANILLA', '🔴・VANILLA', '🧟 VANILLA', 'VANILLA', '🔴・SOBREVIVENTES Z VANILLA'],
@@ -64,6 +66,7 @@ const CATEGORY_ALIASES = {
 
 const CHANNELS = {
   welcome: '🚪・entrada-champions-z',
+  launchSchedule: '📅・cronograma-do-servidor',
   memberWelcome: '👋・boas-vindas',
   memberLeave: '📤・saidas',
   announcements: '📣・avisos',
@@ -125,6 +128,7 @@ const CHANNELS = {
 
 const CHANNEL_ALIASES = {
   [CHANNELS.welcome]: ['🚪・entrada-zona-z', '🚪・entrada-raid-z', 'entrada-zona-z', 'entrada-raid-z', '🎯・escolha-seu-servidor', 'escolha-seu-servidor'],
+  [CHANNELS.launchSchedule]: ['cronograma-do-servidor', 'lancamento-do-servidor', 'lançamento-do-servidor'],
   [CHANNELS.memberWelcome]: ['boas-vindas'],
   [CHANNELS.memberLeave]: ['saidas'],
   [CHANNELS.announcements]: ['avisos'],
@@ -215,6 +219,14 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.welcome, aliases: CHANNEL_ALIASES[CHANNELS.welcome], topic: 'Entrada oficial do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.memberWelcome, aliases: CHANNEL_ALIASES[CHANNELS.memberWelcome], topic: 'Novos sobreviventes que chegaram ao CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.memberLeave, aliases: CHANNEL_ALIASES[CHANNELS.memberLeave], topic: 'Registro de saída da comunidade.', readOnly: true }
+    ]
+  },
+  {
+    name: CATEGORY_NAMES.launch,
+    aliases: CATEGORY_ALIASES[CATEGORY_NAMES.launch],
+    visibleToEveryone: true,
+    channels: [
+      { type: 'text', name: CHANNELS.launchSchedule, aliases: CHANNEL_ALIASES[CHANNELS.launchSchedule], topic: 'Lançamento 03/10/2026 • raids 10/10 e 17/10 • competição 03/11/2026.', readOnly: true }
     ]
   },
   {
