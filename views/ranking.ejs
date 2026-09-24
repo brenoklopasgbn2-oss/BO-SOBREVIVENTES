@@ -166,7 +166,7 @@
           <div class="rz-clan-flag"><img src="<%= clan.flagUrl %>" alt="Bandeira do clã <%= clan.name %>" onerror="this.onerror=null;this.src='/images/zona-z/default-clan.svg'"></div>
           <div class="rz-clan-copy">
             <small>TAG</small>
-            <h3>[<%= clan.tag %>] <%= clan.name %></h3>
+            <h3>[<%= clan.tag %>] <%= clan.name %></h3><% if (clan.isNoRaid) { %><span style="display:inline-block;padding:4px 8px;border-radius:999px;background:#ff1493;color:white;font-size:.7rem;font-weight:900">🩷 NO RAID</span><% } %>
             <p><%= clan.description || `Clã competitivo cadastrado no ${appName}.` %></p>
             <div class="rz-clan-stats">
               <span><small>Kills</small><strong><%= clan.kills %></strong></span>

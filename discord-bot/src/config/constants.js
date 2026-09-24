@@ -95,6 +95,7 @@ const CHANNELS = {
   clanFlags: '🚩・escolha-de-bandeira',
   rulePunishments: '⚖️・punicoes-de-ghost',
   fobFlag: '🏴・bandeira-fob',
+  noRaidFlag: '🩷・bandeira-no-raid',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   streamerReferral: '🎥・quem-te-trouxe',
@@ -161,6 +162,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.clanFlags]: ['escolha-de-bandeira', 'bandeiras-dos-clas', 'bandeiras-clas'],
   [CHANNELS.rulePunishments]: ['punicoes-de-ghost', 'punicoes-quebra-de-regras', 'punicoes-regras', 'quebra-de-regras'],
   [CHANNELS.fobFlag]: ['bandeira-fob', 'fob', 'regra-fob'],
+  [CHANNELS.noRaidFlag]: ['bandeira-no-raid', 'no-raid', 'regra-no-raid'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.streamerReferral]: ['quem-te-trouxe', 'indicacao-streamer', 'streamer-indicacao'],
@@ -219,7 +221,8 @@ const PANEL_IMAGES = {
   rulePunishments: 'champions-z-punicoes-regras.png',
   whiteFlag: 'champions-z-logo.png',
   clanFlags: 'champions-z-logo.png',
-  fobFlag: 'champions-z-bandeira-fob.png'
+  fobFlag: 'champions-z-bandeira-fob.png',
+  noRaid: 'champions-z-no-raid.png'
 };
 
 const CATEGORY_DEFINITIONS = [
@@ -274,7 +277,8 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true },
       { type: 'text', name: CHANNELS.whiteFlag, aliases: CHANNEL_ALIASES[CHANNELS.whiteFlag], topic: 'Bandeira Branca: proteção inicial de 14 dias para novos clãs durante a temporada.', readOnly: true },
       { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: escolha pelo site e entrega controlada pela staff.', readOnly: true },
-      { type: 'text', name: CHANNELS.fobFlag, aliases: CHANNEL_ALIASES[CHANNELS.fobFlag], topic: 'Regras da FOB: bandeira FOB obrigatória, janela diária de raid e autorização para bases sem bandeira.', readOnly: true }
+      { type: 'text', name: CHANNELS.fobFlag, aliases: CHANNEL_ALIASES[CHANNELS.fobFlag], topic: 'Regras da FOB: bandeira FOB obrigatória, janela diária de raid e autorização para bases sem bandeira.', readOnly: true },
+      { type: 'text', name: CHANNELS.noRaidFlag, aliases: CHANNEL_ALIASES[CHANNELS.noRaidFlag], topic: 'Bandeira NO RAID: máximo 5 players; não pode raidar, participar de raid nem receber raid.', readOnly: true }
     ]
   },
   {

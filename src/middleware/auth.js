@@ -19,6 +19,7 @@ const PUBLIC_MEDIA_PREFIXES = Object.freeze([
   '/outfit-image/',
   '/player-avatar/',
   '/clan-flag/',
+  '/clan-flag-option/',
   '/clan-banner/',
   '/starter-kit-image'
 ]);

@@ -2,6 +2,7 @@ import { prisma } from '../db/prisma.js';
 import { slugify } from '../utils/slug.js';
 import { canManageClan } from './rankingService.js';
 import { syncClanManagedOutfitAccess } from './managedOutfitService.js';
+import { enqueueDiscordEvent } from './discordOutboxService.js';
 
 
 export async function ensureClanOwnerMembership(clanId) {
@@ -194,7 +195,8 @@ function decorateClan(clan, outfitMap, clanVipOutfitMap = new Map()) {
     clanVipOutfit,
     pendingApplications: (clan.joinApplications || []).filter(app => app.status === 'PENDING').length,
     accentColor: normalizeAccentColor(clan.accentColor),
-    flagImage: clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/zona-z/default-clan.svg'),
+    flagImage: clan.selectedFlag ? `/clan-flag-option/${clan.selectedFlag.id}` : (clan.flagData ? `/clan-flag/${clan.id}` : (clan.flagUrl || '/images/zona-z/default-clan.svg')),
+    noRaid: Boolean(clan.isNoRaid),
     bannerImage: clan.bannerData ? `/clan-banner/${clan.id}` : '/images/zona-z/clans-hero.webp'
   };
 }
@@ -206,7 +208,8 @@ export async function getRecruitingClans({ limit = 6 } = {}) {
       ownerPlayer: { select: PUBLIC_PLAYER_SELECT },
       members: { where: { status: 'ACTIVE' }, include: { player: { select: PUBLIC_PLAYER_SELECT } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
       awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' }, take: 3 },
-      joinApplications: { where: { status: 'PENDING' }, take: 100 }
+      joinApplications: { where: { status: 'PENDING' }, take: 100 },
+      selectedFlag: true
     },
     orderBy: [{ eventWins: 'desc' }, { updatedAt: 'desc' }],
     take: limit
@@ -227,7 +230,8 @@ export async function getClanHubOverview({ playerId = null } = {}) {
         subOwnerPlayer: { select: PUBLIC_PLAYER_SELECT },
         members: { where: { status: 'ACTIVE' }, include: { player: { select: PUBLIC_PLAYER_SELECT } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
         awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' }, take: 4 },
-        joinApplications: { where: { status: 'PENDING' }, take: 100 }
+        joinApplications: { where: { status: 'PENDING' }, take: 100 },
+      selectedFlag: true
       },
       orderBy: [{ isRecruiting: 'desc' }, { eventWins: 'desc' }, { createdAt: 'asc' }]
     }),
@@ -263,7 +267,8 @@ export async function getPublicClanBySlug(slug, viewerPlayerId = null) {
       subOwnerPlayer: { select: PUBLIC_PLAYER_SELECT },
       members: { where: { status: 'ACTIVE' }, include: { player: { select: PUBLIC_PLAYER_SELECT } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
       awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' } },
-      joinApplications: viewerPlayerId ? { where: { playerId: viewerPlayerId }, orderBy: { createdAt: 'desc' }, take: 10 } : false
+      joinApplications: viewerPlayerId ? { where: { playerId: viewerPlayerId }, orderBy: { createdAt: 'desc' }, take: 10 } : false,
+      selectedFlag: true
     }
   });
   if (!clan) return null;
@@ -365,10 +370,12 @@ export async function reviewClanApplication({ applicationId, reviewerPlayerId, a
   }
 
   if (!application.playerId) throw new Error('O player desta solicitação não está mais cadastrado.');
+  if (!application.player?.discordId) throw new Error('Esse jogador ainda não está verificado. Apenas players com Discord ↔ Steam vinculado podem entrar em clãs.');
   const otherClan = await playerHasAnotherClan(application.playerId, managerMembership.clanId);
   if (otherClan) throw new Error(`Esse player já está no clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);
   const activeMembers = await prisma.clanMember.count({ where: { clanId: managerMembership.clanId, status: 'ACTIVE' } });
-  if (activeMembers >= 10) throw new Error('O clã já atingiu o limite máximo de 10 integrantes.');
+  const memberLimit = managerMembership.clan.isNoRaid ? 5 : 10;
+  if (activeMembers >= memberLimit) throw new Error(`O clã já atingiu o limite máximo de ${memberLimit} integrantes${managerMembership.clan.isNoRaid ? ' por ser NO RAID' : ''}.`);
 
   const approved = await prisma.$transaction(async (tx) => {
     await tx.clanMember.upsert({
@@ -392,35 +399,44 @@ export async function reviewClanApplication({ applicationId, reviewerPlayerId, a
 
 export async function createClanFromPlayer({ player, data = {} }) {
   if (!player?.id) throw new Error('Player inválido.');
+  if (!player.discordId) throw new Error('Você precisa estar verificado com Discord ↔ Steam antes de criar um clã.');
   const currentClan = await getPrimaryActiveClanMembership(player.id, { clan: true });
   if (currentClan) throw new Error(`Você já faz parte do clã [${currentClan.clan.tag}] ${currentClan.clan.name}.`);
 
   const name = String(data.name || '').trim().slice(0, 80);
   const tag = String(data.tag || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
   const description = String(data.description || '').trim().slice(0, 1200) || null;
-  const flagUrl = String(data.flagUrl || '').trim() || null;
   const serverType = 'vanilla';
+  const isNoRaid = ['1', 'true', 'on', 'sim', 'yes', 'no_raid', 'noraid'].includes(String(data.isNoRaid || data.clanMode || '').toLowerCase());
   if (!name) throw new Error('Digite o nome do clã.');
   if (!tag) throw new Error('Digite a TAG do clã.');
   const accentColor = normalizeAccentColor(data.accentColor);
   const slugBase = slugify(`${tag}-${name}-${Date.now().toString(36)}`);
+  const requestedFlagId = String(data.flagId || '').trim();
 
-  const clan = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const duplicate = await tx.clan.findFirst({ where: { tag, serverType, status: 'ACTIVE' } });
     if (duplicate) throw new Error('Já existe um clã ativo com essa TAG.');
+
+    let flag;
+    if (isNoRaid) {
+      flag = await tx.clanFlagOption.findFirst({ where: { slug: 'no-raid', shared: true, status: { not: 'DISABLED' } } });
+      if (!flag) throw new Error('A bandeira NO RAID ainda não está disponível no sistema.');
+    } else {
+      if (!requestedFlagId) throw new Error('Escolha uma bandeira disponível para o seu clã.');
+      flag = await tx.clanFlagOption.findUnique({ where: { id: requestedFlagId } });
+      if (!flag || flag.shared || flag.status !== 'AVAILABLE') throw new Error('Essa bandeira não está mais disponível. Atualize a página e escolha outra.');
+      const reserved = await tx.clanFlagOption.updateMany({ where: { id: flag.id, status: 'AVAILABLE', shared: false }, data: { status: 'RESERVED', reservedAt: new Date() } });
+      if (reserved.count !== 1) throw new Error('Outro clã acabou de escolher essa bandeira. Escolha outra.');
+    }
+
     const clan = await tx.clan.create({
       data: {
-        name,
-        tag,
-        slug: slugBase,
-        serverType,
-        description,
-        flagUrl,
-        flagData: data.flagData || null,
-        flagMime: data.flagMime || null,
-        bannerData: data.bannerData || null,
-        bannerMime: data.bannerMime || null,
+        name, tag, slug: slugBase, serverType, description,
         ownerPlayerId: player.id,
+        isNoRaid,
+        selectedFlagId: flag.id,
+        flagDeliveryStatus: 'RESERVED',
         isRecruiting: ['1', 'true', 'on', 'sim', 'yes'].includes(String(data.isRecruiting || '').toLowerCase()),
         recruitmentTitle: String(data.recruitmentTitle || '').trim().slice(0, 120) || null,
         recruitmentMessage: String(data.recruitmentMessage || '').trim().slice(0, 1200) || null,
@@ -430,11 +446,10 @@ export async function createClanFromPlayer({ player, data = {} }) {
         status: 'ACTIVE'
       }
     });
-    await tx.clanMember.create({
-      data: { clanId: clan.id, playerId: player.id, steam64: player.steam64, role: 'OWNER', status: 'ACTIVE' }
-    });
-    return clan;
+    await tx.clanMember.create({ data: { clanId: clan.id, playerId: player.id, steam64: player.steam64, role: 'OWNER', status: 'ACTIVE' } });
+    await enqueueDiscordEvent('FLAG_RESERVATION_TICKET', { clanId: clan.id, flagId: flag.id, requestedByPlayerId: player.id, source: 'CLAN_CREATE', isNoRaid }, { tx });
+    return { clan, flag };
   });
-  await syncClanManagedOutfitAccess(clan.id);
-  return clan;
+  await syncClanManagedOutfitAccess(result.clan.id);
+  return result.clan;
 }

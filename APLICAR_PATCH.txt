@@ -1,0 +1,10 @@
+CHAMPIONS Z V620 — APLICAR PATCH
+
+1. Faça backup do seu projeto atual.
+2. Extraia este ZIP.
+3. Copie TODO o conteúdo da pasta CHAMPIONS-Z-V620-PATCH para a RAIZ do projeto BO-SOBREVIVENTES-main.
+4. Aceite SUBSTITUIR os arquivos com o mesmo nome.
+5. No deploy, o comando npm start aplicará a migration pelo fluxo safeMigrateDeploy já existente.
+6. Rode o setup/atualizar canais do bot para criar/atualizar o canal 🩷・bandeira-no-raid e publicar o painel.
+
+Este patch contém somente arquivos novos/alterados; assets grandes e não relacionados do projeto original foram omitidos de propósito.

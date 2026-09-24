@@ -7,10 +7,12 @@ import {
 } from '../data/vanillaStoreData.js';
 import { vipOutfitsV201 } from '../data/vipOutfitsV201.js';
 import { defaultVehicleTemplatesV213 } from '../data/defaultVehicleTemplatesV213.js';
+import { clanFlagsV620 } from '../data/clanFlagsV620.js';
 
 const CLEAN_SLATE_KEY = 'store.cleanSlate.v200';
 const STARTER_KIT_V225_KEY = 'starterKit.v225.initialBaseVip7d';
 const STARTER_KIT_V610_KEY = 'starterKit.v610.fullDropStacks';
+const CLAN_FLAGS_V620_KEY = 'clanFlags.v620.seeded';
 
 async function settingExists(key) {
   return prisma.appSetting.findUnique({ where: { key }, select: { key: true } });
@@ -370,6 +372,39 @@ async function ensureStarterKitV610() {
   return true;
 }
 
+
+async function ensureClanFlagsV620() {
+  const already = await settingExists(CLAN_FLAGS_V620_KEY);
+  if (already) return { created: 0, updated: 0, total: clanFlagsV620.length, skipped: true };
+  let created = 0;
+  let updated = 0;
+  for (const flag of clanFlagsV620) {
+    const existing = await prisma.clanFlagOption.findUnique({ where: { slug: flag.slug } });
+    const data = {
+      name: flag.name,
+      classname: flag.classname || null,
+      description: flag.description || null,
+      imageUrl: flag.imageUrl || null,
+      category: flag.category || 'MOD',
+      shared: Boolean(flag.shared),
+      ...(flag.shared ? { status: 'AVAILABLE' } : {})
+    };
+    if (existing) {
+      await prisma.clanFlagOption.update({ where: { id: existing.id }, data });
+      updated += 1;
+    } else {
+      await prisma.clanFlagOption.create({ data: { ...data, slug: flag.slug, status: 'AVAILABLE' } });
+      created += 1;
+    }
+  }
+  await prisma.appSetting.upsert({
+    where: { key: CLAN_FLAGS_V620_KEY },
+    update: { value: { seededAt: new Date().toISOString(), total: clanFlagsV620.length } },
+    create: { key: CLAN_FLAGS_V620_KEY, value: { seededAt: new Date().toISOString(), total: clanFlagsV620.length } }
+  });
+  return { created, updated, total: clanFlagsV620.length, skipped: false };
+}
+
 export async function ensureDefaultStoreData() {
   const clean = await applyCleanSlateOnce();
 
@@ -397,6 +432,7 @@ export async function ensureDefaultStoreData() {
   for (const vehicle of defaultVehicleTemplatesV213) await ensureVehicleTemplateV213(vehicle);
   for (const outfit of vipOutfitsV201) await ensureVipOutfitV201(outfit);
   const legacyVipCleanup = await retireLegacyVipOutfitsV613();
+  const clanFlags = await ensureClanFlagsV620();
 
   return {
     ok: true,
@@ -407,6 +443,7 @@ export async function ensureDefaultStoreData() {
     defaultVehicles: defaultVehicleTemplatesV213.length,
     defaultOutfits: vipOutfitsV201.length,
     legacyVipOutfitsRetired: legacyVipCleanup.retired,
+    clanFlags,
     dropBoxesEnabled: false
   };
 }

@@ -454,10 +454,11 @@ model Clan {
   championshipPoints Int        @default(0)
   championshipRegistered   Boolean   @default(false)
   championshipRegisteredAt DateTime?
-  selectedFlagId            String?   @unique
+  selectedFlagId            String?
   selectedFlag              ClanFlagOption? @relation("ClanSelectedFlag", fields: [selectedFlagId], references: [id], onDelete: SetNull)
   flagDeliveryStatus        String    @default("NONE") // NONE, RESERVED, DELIVERED
   flagDeliveredAt           DateTime?
+  isNoRaid                  Boolean   @default(false)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   members          ClanMember[]
@@ -468,6 +469,7 @@ model Clan {
   @@unique([tag, serverType])
   @@index([serverType])
   @@index([status])
+  @@index([selectedFlagId])
 }
 
 model ClanMember {
@@ -722,11 +724,13 @@ model ClanFlagOption {
   imageMime   String?
   imageUrl    String?
   status      String   @default("AVAILABLE") // AVAILABLE, RESERVED, DELIVERED, DISABLED
+  category    String   @default("MOD") // MOD, VANILLA, NO_RAID
+  shared      Boolean  @default(false)
   reservedAt  DateTime?
   deliveredAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  clan        Clan?    @relation("ClanSelectedFlag")
+  clans       Clan[]   @relation("ClanSelectedFlag")
 
   @@index([status])
 }

@@ -30,6 +30,7 @@
           <div class="myclan-badge-row-v106" style="margin-top:12px">
             <span>Seu cargo: <%= membership.role === 'OWNER' ? 'Dono' : (membership.role === 'SUB_OWNER' ? 'Sub dono' : 'Membro') %></span>
             <span><%= membership.clan.isRecruiting ? '📢 Recrutando' : '⛔ Recrutamento fechado' %></span>
+            <% if (membership.clan.isNoRaid) { %><span style="background:#ff1493;color:#fff">🩷 NO RAID • MÁX. 5</span><% } else { %><span>⚔️ RAID • MÁX. 10</span><% } %>
           </div>
         </div>
         <div class="myclan-stat-grid-v106">
@@ -39,6 +40,15 @@
         </div>
       </div>
     </section>
+
+    <% if (membership.clan.isNoRaid) { %>
+      <section class="myclan-panel-v106" style="border-color:rgba(255,20,147,.55);background:linear-gradient(145deg,rgba(70,5,42,.35),rgba(4,8,14,.96))">
+        <div style="display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center">
+          <img src="/images/clan-flags/no-raid.png" alt="NO RAID" style="width:150px;border-radius:18px">
+          <div><p class="eyebrow">Status especial</p><h2>🩷 Clã NO RAID</h2><p>Máximo de <b>5 jogadores verificados</b>. Este clã <b>não pode raidar</b>, não pode ajudar ou participar de nenhum estilo de raid e também <b>não pode receber raid</b>. A bandeira NO RAID deve permanecer vinculada ao clã.</p></div>
+        </div>
+      </section>
+    <% } %>
 
     <% if (false && membership.clan.clanVipOutfit) { const clanVipPaid = membership.clan.clanVipOutfit.billingMode === 'PAID'; const currentClanMember = membership.clan.members.find(member => member.playerId === membership.playerId); %>
       <section class="clan-vip-showcase-v111">
@@ -135,7 +145,7 @@
         <div>
           <p class="eyebrow">Adicionar membro</p>
           <h2>Inclusão manual</h2>
-          <p class="muted-note">Use o nick in-game e o Steam64 do player. Se ele já estiver em outro clã, o sistema bloqueia a entrada.</p>
+          <p class="muted-note">Somente players verificados com Discord ↔ Steam podem entrar. Limite deste clã: <b><%= membership.clan.isNoRaid ? 5 : 10 %></b> integrantes.</p>
         </div>
         <% if (membership.role === 'OWNER' || membership.role === 'SUB_OWNER') { %>
           <form method="POST" action="/my-clan/members/add" class="myclan-form-v106">
@@ -189,14 +199,14 @@
       <div><p class="eyebrow">CHAMPIONS Z • TEMPORADA</p><h2>🏆 Inscrição no campeonato</h2></div>
       <% const allLinked = (membership.clan.members || []).every(m => m.player?.discordId); %>
       <div class="myclan-badge-row-v106">
-        <span>Integrantes: <b><%= membership.clan.members.length %>/10</b></span>
+        <span>Integrantes: <b><%= membership.clan.members.length %>/<%= membership.clan.isNoRaid ? 5 : 10 %></b></span>
         <span>Vínculos: <b><%= allLinked ? '✅ Todos vinculados' : '⚠️ Pendente' %></b></span>
         <span>Pontos: <b><%= membership.clan.championshipPoints || 0 %></b></span>
         <span>Bandeira: <b><%= membership.clan.flagDeliveryStatus || 'NONE' %></b></span>
       </div>
       <% if (membership.clan.championshipRegistered) { %>
         <div style="display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:center;margin-top:16px">
-          <% if (membership.clan.selectedFlag?.imageData) { %><img style="width:100%;border-radius:12px" src="/clan-flag-option/<%= membership.clan.selectedFlag.id %>" alt="Bandeira"><% } %>
+          <% if (membership.clan.selectedFlag) { %><img style="width:100%;border-radius:12px" src="/clan-flag-option/<%= membership.clan.selectedFlag.id %>" alt="Bandeira"><% } %>
           <div><h3>✅ Clã inscrito</h3><p>Bandeira reservada: <b><%= membership.clan.selectedFlag?.name || 'Selecionada' %></b>.</p><p>A administração fará a entrega dentro do jogo. O ticket de entrega foi criado automaticamente no Discord.</p></div>
         </div>
       <% } else if (membership.role === 'OWNER' || membership.role === 'SUB_OWNER') { %>
@@ -204,12 +214,12 @@
         <div class="myclan-member-grid-v106" style="margin:14px 0">
           <% membership.clan.members.forEach(m => { %><article class="myclan-member-card-v106"><strong><%= m.player?.nickname || m.steam64 %></strong><small><%= m.player?.discordId ? ' ✅ Discord vinculado' : ' ❌ Falta vincular Discord' %></small></article><% }) %>
         </div>
+        <div style="display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:center;margin:16px 0">
+          <% if (membership.clan.selectedFlag) { %><img style="width:100%;border-radius:12px" src="/clan-flag-option/<%= membership.clan.selectedFlag.id %>" alt="Bandeira"><% } %>
+          <div><h3>Bandeira do clã</h3><p><b><%= membership.clan.selectedFlag?.name || 'Não definida' %></b><br><code><%= membership.clan.selectedFlag?.classname || '' %></code></p><p>Ela já foi reservada na criação do clã e não pode ser escolhida por outro clã.</p></div>
+        </div>
         <form method="POST" action="/my-clan/championship/register">
-          <label><b>Escolha a bandeira oficial do clã</b></label>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:12px 0">
-            <% (availableFlags || []).forEach(flag => { %><label style="border:1px solid #444;border-radius:12px;padding:10px;cursor:pointer"><% if (flag.imageData) { %><img style="width:100%;height:110px;object-fit:cover;border-radius:8px" src="/clan-flag-option/<%= flag.id %>" alt="<%= flag.name %>"><% } %><div style="margin-top:8px"><input type="radio" name="flagId" value="<%= flag.id %>" required> <b><%= flag.name %></b></div><small><%= flag.classname || '' %></small></label><% }) %>
-          </div>
-          <% if ((availableFlags || []).length) { %><button class="btn primary" type="submit" <%= allLinked ? '' : 'disabled' %>>Inscrever clã e reservar bandeira</button><% } else { %><p>Nenhuma bandeira disponível no momento. Aguarde a administração.</p><% } %>
+          <button class="btn primary" type="submit" <%= allLinked ? '' : 'disabled' %>>Inscrever clã no campeonato</button>
         </form>
       <% } %>
     </section>

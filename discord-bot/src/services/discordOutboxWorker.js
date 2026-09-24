@@ -85,15 +85,15 @@ async function createFlagTicket(guild, payload) {
     type: ChannelType.GuildText,
     name: `🏳️-${safeChannelSlug(clan.tag)}-bandeira`, parent: category.id,
     topic: `CHAMPIONS_FLAG:${clan.id}|FLAG:${clan.selectedFlag.id}`, permissionOverwrites: overwrites,
-    reason: 'Reserva de bandeira do campeonato CHAMPIONS Z'
+    reason: 'Entrega da bandeira exclusiva do clã CHAMPIONS Z'
   });
   const file = bufferAttachment(clan.selectedFlag.imageData, clan.selectedFlag.imageMime, 'bandeira-escolhida');
   const linkedMentions = clan.members.filter(m => m.player?.discordId).map(m => `<@${m.player.discordId}>`).join(' ');
-  const embed = new EmbedBuilder().setColor(0xd4af37).setTitle('🏳️ Nova bandeira reservada • Campeonato').setDescription([
-    `O clã **[${clan.tag}] ${clan.name}** concluiu a inscrição no campeonato.`, '', `**Bandeira:** ${clan.selectedFlag.name}`,
+  const embed = new EmbedBuilder().setColor(0xd4af37).setTitle('🏳️ Bandeira do clã • Entrega automática').setDescription([
+    `O clã **[${clan.tag}] ${clan.name}** foi criado e reservou sua bandeira oficial.`, clan.isNoRaid ? '**Tipo:** 🩷 NO RAID • máximo 5 players' : '**Tipo:** ⚔️ RAID • máximo 10 players', '', `**Bandeira:** ${clan.selectedFlag.name}`, 
     clan.selectedFlag.classname ? `**Classname:** \`${clan.selectedFlag.classname}\`` : '', '', '**Integrantes:**', ...clan.members.map(m => `• ${m.player?.nickname || m.steam64} — \`${m.steam64}\` ${m.player?.discordId ? `<@${m.player.discordId}>` : '❌ sem Discord'}`),
     '', 'A administração deve entregar a bandeira no jogo e depois marcar **Entregue** no painel ADM do site.'
-  ].filter(Boolean).join('\n')).setFooter({ text: 'CHAMPIONS Z • Reserva automática pelo site' }).setTimestamp();
+  ].filter(Boolean).join('\n')).setFooter({ text: 'CHAMPIONS Z • Bandeira reservada automaticamente na criação do clã' }).setTimestamp();
   if (file) embed.setImage(`attachment://${file.name}`);
   await ticket.send({ content: linkedMentions || undefined, embeds: [embed], files: file ? [file] : [], allowedMentions: { users: [] } });
 }

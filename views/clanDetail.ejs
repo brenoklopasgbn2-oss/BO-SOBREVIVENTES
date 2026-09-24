@@ -26,10 +26,20 @@
           <span><%= clan.serverType.toUpperCase() %></span>
           <span><%= clan.memberCount %> membro(s)</span>
           <% if (clan.isRecruiting) { %><span>📢 Recrutando agora</span><% } %>
+          <% if (clan.isNoRaid) { %><span style="background:#ff1493;color:#fff">🩷 NO RAID • MÁX. 5</span><% } else { %><span>⚔️ RAID • MÁX. 10</span><% } %>
         </div>
       </div>
     </div>
   </section>
+
+  <% if (clan.isNoRaid) { %>
+    <section class="clan-panel-v106" style="border-color:rgba(255,20,147,.55);background:linear-gradient(145deg,rgba(70,5,42,.35),rgba(4,8,14,.96))">
+      <div style="display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center">
+        <img src="/images/clan-flags/no-raid.png" alt="NO RAID" style="width:150px;border-radius:18px">
+        <div><p class="eyebrow">Proteção especial</p><h2>🩷 CLÃ NO RAID</h2><p>Máximo de <b>5 jogadores verificados</b>. Este clã não pode raidar, ajudar ou participar de qualquer estilo de raid e também não pode receber raid.</p></div>
+      </div>
+    </section>
+  <% } %>
 
   <% if (false && clan.clanVipOutfit) { const clanVipPaid = clan.clanVipOutfit.billingMode === 'PAID'; const viewerIsOwner = viewerMembership?.clan?.id === clan.id && viewerClanMember?.role === 'OWNER'; %>
     <section class="clan-public-vip-v111">
@@ -73,6 +83,8 @@
         <div class="clan-info-box-v106"><small>Sub dono</small><strong><%= clan.subOwnerPlayer?.nickname || clan.subOwnerPlayer?.steam64 || 'Não definido' %></strong></div>
         <div class="clan-info-box-v106"><small>Premiações</small><strong><%= (clan.awards || []).length %></strong></div>
         <div class="clan-info-box-v106"><small>Recrutamento</small><strong><%= clan.isRecruiting ? 'Aberto' : 'Fechado' %></strong></div>
+        <div class="clan-info-box-v106"><small>Tipo</small><strong><%= clan.isNoRaid ? '🩷 NO RAID' : '⚔️ RAID' %></strong></div>
+        <div class="clan-info-box-v106"><small>Bandeira</small><strong><%= clan.selectedFlag?.name || '—' %></strong></div>
       </div>
       <% if (clan.recruitmentTitle || clan.recruitmentMessage || clan.recruitmentRequirements) { %>
         <div class="clan-panel-v106" style="padding:16px;border-radius:24px;background:rgba(255,255,255,.03)">

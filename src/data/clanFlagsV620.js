@@ -1,0 +1,3386 @@
+export const clanFlagsV620 = [
+  {
+    "name": "bloody Flag",
+    "slug": "flag-bloody1",
+    "classname": "Flag_bloody1",
+    "description": "bloody Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_bloody1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "boom Flag 1",
+    "slug": "flag-boom1",
+    "classname": "Flag_boom1",
+    "description": "boom Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_boom1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "boom Flag 2",
+    "slug": "flag-boom2",
+    "classname": "Flag_boom2",
+    "description": "boom Flag 2",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_boom2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "black Skull 1",
+    "slug": "flag-blkskull",
+    "classname": "Flag_blkSkull",
+    "description": "black Skull 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_bskulls1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cocain Bear",
+    "slug": "flag-cokebear",
+    "classname": "Flag_cokebear",
+    "description": "Cocain Bear",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_cokebear.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Compass Flag",
+    "slug": "flag-comp1",
+    "classname": "Flag_comp1",
+    "description": "Compass Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_com1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cookie men Flag",
+    "slug": "flag-cookie",
+    "classname": "Flag_cookie",
+    "description": "Cookie men",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_cookie1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Dolfin Flag",
+    "slug": "flag-dolf1",
+    "classname": "Flag_dolf1",
+    "description": "Dolfin Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_dolf.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Dune Flag",
+    "slug": "flag-dune1",
+    "classname": "Flag_dune1",
+    "description": "Dune Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_dune1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Frog Flag 1",
+    "slug": "flag-frog1",
+    "classname": "Flag_frog1",
+    "description": "Frog Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_frog1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Frog Flag 2",
+    "slug": "flag-frog2",
+    "classname": "Flag_frog2",
+    "description": "Frog Flag 2",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_frog2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Hang on Flag",
+    "slug": "flag-hngon",
+    "classname": "Flag_hngon",
+    "description": "Hang on Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_hangon.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Joker Flag",
+    "slug": "flag-jkr1",
+    "classname": "Flag_jkr1",
+    "description": "Joker Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_joker.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "LSD Space Flag",
+    "slug": "flag-lsdspace",
+    "classname": "Flag_lsdspace",
+    "description": "LSD Space Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_lsdSpace.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "mystery Wolve Flag",
+    "slug": "flag-myswol1",
+    "classname": "Flag_mysWol1",
+    "description": "mystery Wolve Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_mysWol1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Police Flag 1",
+    "slug": "flag-pinrce1",
+    "classname": "Flag_pinRce1",
+    "description": "Police Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_pol1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 8",
+    "slug": "flag-plce1",
+    "classname": "Flag_plce1",
+    "description": "Cannabis 8",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__flag_dope1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Punk Flag 1",
+    "slug": "flag-pnx1",
+    "classname": "Flag_pnx1",
+    "description": "Punk Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_punks.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Racing Flag 1",
+    "slug": "flag-rce1",
+    "classname": "Flag_rce1",
+    "description": "Racing Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_race2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rat Flag 1",
+    "slug": "flag-rat1",
+    "classname": "Flag_rat1",
+    "description": "Rat Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_rat1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Red Skull Flag 1",
+    "slug": "flag-rdskull",
+    "classname": "Flag_rdSkull",
+    "description": "Red Skull Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_rdSkull22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Skull Flag 1",
+    "slug": "flag-otskull",
+    "classname": "Flag_otSkull",
+    "description": "Skull Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_skull33.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sniper Flag 1",
+    "slug": "flag-snp1",
+    "classname": "Flag_snp1",
+    "description": "Sniper Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_sniper.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sticker Flag 1",
+    "slug": "flag-stk1",
+    "classname": "Flag_stk1",
+    "description": "Sticker Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_sticker1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Toxic Flag",
+    "slug": "flag-toxc1",
+    "classname": "Flag_toxc1",
+    "description": "Flag Toxic",
+    "imageUrl": "/images/clan-flags/custom/Other__TDL_Toxic_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Umbrella Flag 1",
+    "slug": "flag-umba1",
+    "classname": "Flag_umba1",
+    "description": "Umbrella Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_umb1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "World Flag 1",
+    "slug": "flag-wld1",
+    "classname": "Flag_wld1",
+    "description": "World Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_world1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Zombie Hands Flag 1",
+    "slug": "flag-zmbhnds",
+    "classname": "Flag_zmbHnds",
+    "description": "Zombie Hands 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_zmbHands.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Zombie Warrior Flag 1",
+    "slug": "flag-zmbwrr1",
+    "classname": "Flag_zmbWrr1",
+    "description": "Zombie Warrior 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_zw1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Argentina Flag",
+    "slug": "flag-argentina",
+    "classname": "Flag_Argentina",
+    "description": "Flag Argentina",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Argentina.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Armenia Flag",
+    "slug": "flag-armenia",
+    "classname": "Flag_Armenia",
+    "description": "Flag Armenia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Armenia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Austria Flag",
+    "slug": "flag-austria",
+    "classname": "Flag_Austria",
+    "description": "Flag Austria",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Austria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Belgium Flag",
+    "slug": "flag-belgium",
+    "classname": "Flag_Belgium",
+    "description": "Flag Belgium",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Belgium.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bulgaria Flag",
+    "slug": "flag-bulgaria",
+    "classname": "Flag_Bulgaria",
+    "description": "Flag Bulgaria",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bulgaria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Croatia Flag",
+    "slug": "flag-croatia",
+    "classname": "Flag_Croatia",
+    "description": "Flag Croatia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Croatia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cuba Flag",
+    "slug": "flag-cuba",
+    "classname": "Flag_Cuba",
+    "description": "Flag Cuba",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cuba.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Ireland Flag",
+    "slug": "flag-ireland",
+    "classname": "Flag_Ireland",
+    "description": "Flag Ireland",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Ireland.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Italy Flag",
+    "slug": "flag-italy",
+    "classname": "Flag_Italy",
+    "description": "Flag Italy",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Italy.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Jamaica Flag",
+    "slug": "flag-jamaica",
+    "classname": "Flag_Jamaica",
+    "description": "Flag Jamaica",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Jamaica.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Luxembourg Flag",
+    "slug": "flag-luxembourg",
+    "classname": "Flag_Luxembourg",
+    "description": "Flag Luxembourg",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Luxembourg.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Monaco Flag",
+    "slug": "flag-monaco",
+    "classname": "Flag_Monaco",
+    "description": "Flag Monaco",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Monaco.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "North Macedonia Flag",
+    "slug": "flag-north-macedonia",
+    "classname": "Flag_North_Macedonia",
+    "description": "Flag North Macedonia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_North_Macedonia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Norway Flag",
+    "slug": "flag-norway",
+    "classname": "Flag_Norway",
+    "description": "Flag Norway",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Norway.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Portugal Flag",
+    "slug": "flag-portugal",
+    "classname": "Flag_Portugal",
+    "description": "Flag Portugal",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Portugal.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Puerto Rico Flag",
+    "slug": "flag-puerto-rico",
+    "classname": "Flag_Puerto_Rico",
+    "description": "Flag Puerto Rico",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_puerto_rico.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Romania Flag",
+    "slug": "flag-romania",
+    "classname": "Flag_Romania",
+    "description": "Flag Romania",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Romania.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Saudi Arabia Flag",
+    "slug": "flag-saudi-arabia",
+    "classname": "Flag_Saudi_Arabia",
+    "description": "Flag Saudi Arabia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Saudi_Arabia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Switzerland Flag",
+    "slug": "flag-switzerland",
+    "classname": "Flag_Switzerland",
+    "description": "Flag Switzerland",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Switzerland.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Syria Flag",
+    "slug": "flag-syria",
+    "classname": "Flag_Syria",
+    "description": "Flag Syria",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Syria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Tunisia Flag",
+    "slug": "flag-tunisia",
+    "classname": "Flag_Tunisia",
+    "description": "Flag Tunisia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Tunisia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Uruguay Flag",
+    "slug": "flag-uruguay",
+    "classname": "Flag_Uruguay",
+    "description": "Flag Uruguay",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Uruguay.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Vietnam Flag",
+    "slug": "flag-vietnam",
+    "classname": "Flag_Vietnam",
+    "description": "Flag Vietnam",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Vietnam.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rick & Morty Flag",
+    "slug": "flag-rickmorty1",
+    "classname": "Flag_RickMorty1",
+    "description": "Rick & Morty Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_RM_Pickle.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rick & Morty Flag",
+    "slug": "flag-rickmorty2",
+    "classname": "Flag_RickMorty2",
+    "description": "Rick & Morty Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_RM_wtf.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 1",
+    "slug": "flag-spnb1",
+    "classname": "Flag_SpnB1",
+    "description": "Movie Spongebob 1",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 2",
+    "slug": "flag-spnb2",
+    "classname": "Flag_SpnB2",
+    "description": "Movie Spongebob 2",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 3",
+    "slug": "flag-spnb3",
+    "classname": "Flag_SpnB3",
+    "description": "Movie Spongebob 3",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 4",
+    "slug": "flag-spnb4",
+    "classname": "Flag_SpnB4",
+    "description": "Movie Spongebob 4",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb4.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 5",
+    "slug": "flag-spnb5",
+    "classname": "Flag_SpnB5",
+    "description": "Movie Spongebob 5",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb5.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 6",
+    "slug": "flag-spnb6",
+    "classname": "Flag_SpnB6",
+    "description": "Movie Spongebob 6",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb6.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spongebob 7",
+    "slug": "flag-spnb7",
+    "classname": "Flag_SpnB7",
+    "description": "Movie Spongebob 7",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_sb7.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Family Guy 5",
+    "slug": "flag-famguy1",
+    "classname": "Flag_FamGuy1",
+    "description": "Family Guy 5",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_FG_33.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Family Guy 5",
+    "slug": "flag-famguy2",
+    "classname": "Flag_FamGuy2",
+    "description": "Family Guy 5",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_FG33.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Family Guy 7",
+    "slug": "flag-famguy3",
+    "classname": "Flag_FamGuy3",
+    "description": "Family Guy 7",
+    "imageUrl": "/images/clan-flags/custom/Other__flagFG_65.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Family Guy 1",
+    "slug": "flag-famguy4",
+    "classname": "Flag_FamGuy4",
+    "description": "Movie Family Guy 1",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_fg1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Braveheart",
+    "slug": "flag-brvh1",
+    "classname": "Flag_Brvh1",
+    "description": "Movie Braveheart",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_bravh.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Simpsons",
+    "slug": "flag-simp1",
+    "classname": "Flag_Simp1",
+    "description": "Movie Simpsons",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_simp1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 6",
+    "slug": "flag-can9",
+    "classname": "Flag_Can9",
+    "description": "Cannabis 6",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__flag_canna9.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 1",
+    "slug": "flag-can8",
+    "classname": "Flag_Can8",
+    "description": "Cannabis 1",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__TDF_Can_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 4",
+    "slug": "flag-can7",
+    "classname": "Flag_Can7",
+    "description": "Cannabis 4",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__flag_canna7.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 2",
+    "slug": "flag-can6",
+    "classname": "Flag_Can6",
+    "description": "Cannabis 2",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__TDF_Can_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 3",
+    "slug": "flag-can5",
+    "classname": "Flag_Can5",
+    "description": "Cannabis 3",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__TDF_Can_3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Canada Flag",
+    "slug": "flag-can4",
+    "classname": "Flag_Can4",
+    "description": "Flag Canada",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Canada.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Band Flag",
+    "slug": "flag-acdc",
+    "classname": "Flag_ACDC",
+    "description": "ACDC",
+    "imageUrl": "/images/clan-flags/custom/Bands__TDF_Acdc.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Band Flag",
+    "slug": "flag-dropkick",
+    "classname": "Flag_Dropkick",
+    "description": "Dropkick Murphys",
+    "imageUrl": "/images/clan-flags/custom/Bands__TDF_DropKi_Black.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "NOFX Flag",
+    "slug": "flag-nofx",
+    "classname": "Flag_NOFX",
+    "description": "Flag Gelb NOFX",
+    "imageUrl": "/images/clan-flags/custom/Bands__TDF_NofX.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Band Flag",
+    "slug": "flag-offspring",
+    "classname": "Flag_Offspring",
+    "description": "Offspring",
+    "imageUrl": "/images/clan-flags/custom/Bands__TDF_OffSpr_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "CSD Flag",
+    "slug": "flag-sd",
+    "classname": "Flag_SD",
+    "description": "Flag CSD",
+    "imageUrl": "/images/clan-flags/custom/Other__TDL_CSD.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Band Flag",
+    "slug": "flag-ramones",
+    "classname": "Flag_Ramones",
+    "description": "Ramones",
+    "imageUrl": "/images/clan-flags/custom/Bands__TDLF_Ramones_black.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Freddy's Flag",
+    "slug": "flag-freddy",
+    "classname": "Flag_Freddy",
+    "description": "Freddy",
+    "imageUrl": "/images/clan-flags/custom/Bands__BM_Freddy.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 420",
+    "slug": "flag-black420",
+    "classname": "Flag_Black420",
+    "description": "420 Flag",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__TDF_Black_420.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cannabis Flag 10",
+    "slug": "flag-can1",
+    "classname": "Flag_Can1",
+    "description": "Cannabis 10",
+    "imageUrl": "/images/clan-flags/custom/Cannabis__Canna_Flag_10.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 2",
+    "slug": "flag-can2",
+    "classname": "Flag_Can2",
+    "description": "Anime Flag 2",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 3",
+    "slug": "flag-can3",
+    "classname": "Flag_Can3",
+    "description": "Anime Flag 3",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_36.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag Black",
+    "slug": "flag-dayz1",
+    "classname": "Flag_DayZ1",
+    "description": "DayZ Flag",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_DayZ_Black_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag White",
+    "slug": "flag-dayz-black",
+    "classname": "Flag_DayZ_Black",
+    "description": "Flag DayZ",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_DayZ_Wh.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag Lun",
+    "slug": "flag-dayz-lun",
+    "classname": "Flag_DayZ_Lun",
+    "description": "DayZ Flag Lun",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_DayZ_Lun.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag Chernarus",
+    "slug": "flag-dayz-white",
+    "classname": "Flag_DayZ_white",
+    "description": "DayZ Flag",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_Screen_Chern.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "PRC Flag",
+    "slug": "flag-cherna",
+    "classname": "Flag_Cherna",
+    "description": "Flag PRC",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_PRC.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag",
+    "slug": "flag-dayz-red",
+    "classname": "Flag_DayZ_red",
+    "description": "DayZ red Flag",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_DayZ_red.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag",
+    "slug": "flag-dayz-skull",
+    "classname": "Flag_DayZ_skull",
+    "description": "DayZ skull green Flag",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDL_DayZ_skull_green.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Atem",
+    "slug": "flag-ateam",
+    "classname": "Flag_Ateam",
+    "description": "Ateam",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDF_Ateam_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Batman",
+    "slug": "flag-batman",
+    "classname": "Flag_Batman",
+    "description": "Batman",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDF_Batman_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Django",
+    "slug": "flag-django",
+    "classname": "Flag_Django",
+    "description": "Django Flag Movie",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDF_Django_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag GhostBusters",
+    "slug": "flag-ghostbus",
+    "classname": "Flag_GhostBus",
+    "description": "Movie Flag Ghost Busters",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDF_Ghostb.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag PulpFiction 2",
+    "slug": "flag-pulpfic1",
+    "classname": "Flag_PulpFic1",
+    "description": "Movie Flag Pulp Fiction",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDF_PulpFic_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag PulpFiction 1",
+    "slug": "flag-pulpfic2",
+    "classname": "Flag_PulpFic2",
+    "description": "Movie Flag Pulp Fiction 1",
+    "imageUrl": "/images/clan-flags/custom/Movie__TDL_PulpFic_3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Australien Flag",
+    "slug": "flag-austra",
+    "classname": "Flag_Austra",
+    "description": "Flag Australien",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Australien.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Brasil Flag",
+    "slug": "flag-brasil",
+    "classname": "Flag_Brasil",
+    "description": "Flag Brasil",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Brasil.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Panama Flag",
+    "slug": "flag-canad",
+    "classname": "Flag_Canad",
+    "description": "Flag Panama",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Panama.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Czech Republic Flag",
+    "slug": "flag-cz",
+    "classname": "Flag_CZ",
+    "description": "Flag Czech Republic",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_CZ.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Danish Flag",
+    "slug": "flag-danish",
+    "classname": "Flag_Danish",
+    "description": "Flag Danish",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Danish.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "England Flag",
+    "slug": "flag-eng",
+    "classname": "Flag_Eng",
+    "description": "Flag England",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Eng.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Finnland Flag",
+    "slug": "flag-fin",
+    "classname": "Flag_Fin",
+    "description": "Flag Finnland",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Fin.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "France Flag",
+    "slug": "flag-france",
+    "classname": "Flag_France",
+    "description": "Flag France",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_France.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Great Britain Flag",
+    "slug": "flag-gb",
+    "classname": "Flag_GB",
+    "description": "Flag Great Britain",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_GB.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Germany Flag",
+    "slug": "flag-ger",
+    "classname": "Flag_GER",
+    "description": "Flag Germany",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_GER.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Greece Flag",
+    "slug": "flag-greece",
+    "classname": "Flag_Greece",
+    "description": "Flag Greece",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Greece.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Hungary Flag",
+    "slug": "flag-hung",
+    "classname": "Flag_Hung",
+    "description": "Flag Hungary",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Hungary.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Japan Flag",
+    "slug": "flag-jap",
+    "classname": "Flag_Jap",
+    "description": "Flag Japan",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Japan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "New Zealand Flag",
+    "slug": "flag-nz",
+    "classname": "Flag_NZ",
+    "description": "Flag New Zealand",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_NewZ.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Netherlands Flag",
+    "slug": "flag-nl",
+    "classname": "Flag_NL",
+    "description": "Flag Netherlands",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_NL.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Poland Flag",
+    "slug": "flag-pl",
+    "classname": "Flag_PL",
+    "description": "Flag Poland",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Poland.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Chad Flag",
+    "slug": "flag-prc",
+    "classname": "Flag_PRC",
+    "description": "Flag Chad",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Chad.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Russia Flag",
+    "slug": "flag-russia",
+    "classname": "Flag_Russia",
+    "description": "Flag Russia",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Russia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Scotland Flag",
+    "slug": "flag-scotland",
+    "classname": "Flag_Scotland",
+    "description": "Flag Scotland",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_scot.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Slovakia Flag",
+    "slug": "flag-slovakia",
+    "classname": "Flag_Slovakia",
+    "description": "Flag Slovakia",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Slovak.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "South Africa Flag",
+    "slug": "flag-saf",
+    "classname": "Flag_SAF",
+    "description": "Flag South Africa",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_South_Africa.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Samoa Flag",
+    "slug": "flag-sam",
+    "classname": "Flag_SAM",
+    "description": "Flag Samoa",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Samoa.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Spain Flag",
+    "slug": "flag-esp",
+    "classname": "Flag_ESP",
+    "description": "Flag Spain",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_spain.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sweden Flag",
+    "slug": "flag-sw",
+    "classname": "Flag_SW",
+    "description": "Flag Sweden",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_SWE.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Turkey Flag",
+    "slug": "flag-tuk",
+    "classname": "Flag_Tuk",
+    "description": "Flag Turkey",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Turkey.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "USA Flag",
+    "slug": "flag-uka",
+    "classname": "Flag_UKA",
+    "description": "Flag USA",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_USA.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "USA blue Flag",
+    "slug": "flag-usa",
+    "classname": "Flag_USA",
+    "description": "Flag USA blue",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_USA_Blau_weis.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "3 Ape Flag",
+    "slug": "flag-3ape",
+    "classname": "Flag_3Ape",
+    "description": "Flag 3 Ape",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_3Ape.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Berlin Style Flag",
+    "slug": "flag-brl",
+    "classname": "Flag_BRL",
+    "description": "Flag Berlin Style",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_berlin.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bulldog Flag",
+    "slug": "flag-bulld",
+    "classname": "Flag_BullD",
+    "description": "Flag Bulldog",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_Bulldog.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cartel Flag",
+    "slug": "flag-cart",
+    "classname": "Flag_Cart",
+    "description": "Flag Cartel",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_cartel.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Circus Flag",
+    "slug": "flag-clowncir",
+    "classname": "Flag_ClownCir",
+    "description": "Flag Circus",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_ClownCap.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "THC Flag",
+    "slug": "flag-thc",
+    "classname": "Flag_THC",
+    "description": "Flag THC",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_FlagTHC.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Gun Ape Flag",
+    "slug": "flag-gunape",
+    "classname": "Flag_GunApe",
+    "description": "Flag Ape Gun",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_gun_ape.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Narco Flag",
+    "slug": "flag-narco",
+    "classname": "Flag_Narco",
+    "description": "Flag Narco",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_Narcoak.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Red Cross Flag",
+    "slug": "flag-redcross",
+    "classname": "Flag_RedCross",
+    "description": "Flag Red Cross",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_redcross.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Paint Skull Flag",
+    "slug": "flag-skullpaint",
+    "classname": "Flag_SkullPaint",
+    "description": "Flag Skull paint",
+    "imageUrl": "/images/clan-flags/custom/Other__BM_skullbunt.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Unicorn Flag",
+    "slug": "flag-unicorn",
+    "classname": "Flag_UniCorn",
+    "description": "Flag Unicorn",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_Einhorn.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "SW Star Flag",
+    "slug": "flag-starsw",
+    "classname": "Flag_StarSW",
+    "description": "Flag Star",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_Fsw_wh_Stern.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "PIN Flag",
+    "slug": "flag-pin",
+    "classname": "Flag_PIN",
+    "description": "Flag PIN",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_PIN.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Pirat 1 Flag",
+    "slug": "flag-pitar1",
+    "classname": "Flag_Pitar1",
+    "description": "Flag Pirat 1",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_Pirat_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Toxic 3",
+    "slug": "flag-tox2",
+    "classname": "Flag_Tox2",
+    "description": "Toxic 3",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_tox.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Drugs Flag",
+    "slug": "flag-usab",
+    "classname": "Flag_USAB",
+    "description": "Drugs Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_bb.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sudan Flag",
+    "slug": "flag-csd",
+    "classname": "Flag_CSD",
+    "description": "Flag Sudan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Sudan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Peru Flag",
+    "slug": "flag-pun",
+    "classname": "Flag_PUN",
+    "description": "Flag Peru",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Peru.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Toxic Flag",
+    "slug": "flag-tox1",
+    "classname": "Flag_Tox1",
+    "description": "Flag Toxic",
+    "imageUrl": "/images/clan-flags/custom/Other__TDF_Toxic_2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 10",
+    "slug": "flag-can10",
+    "classname": "Flag_Can10",
+    "description": "Anime Flag 10",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_wgirl.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag GM",
+    "slug": "flag-dayz-gm",
+    "classname": "Flag_DayZ_GM",
+    "description": "DayZ GM",
+    "imageUrl": "/images/clan-flags/custom/DayZ__DayZ_GM.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Simpsons",
+    "slug": "flag-simp2",
+    "classname": "Flag_Simp2",
+    "description": "Movie Simpsons",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_simp_bs22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Simpsons",
+    "slug": "flag-simp3",
+    "classname": "Flag_Simp3",
+    "description": "Movie Simpsons",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_simp_bs.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Spiderman",
+    "slug": "flag-spider",
+    "classname": "Flag_Spider",
+    "description": "Movie Flag Spiderman",
+    "imageUrl": "/images/clan-flags/custom/Movie__FL_spiderman7.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Superman",
+    "slug": "flag-supman",
+    "classname": "Flag_SupMan",
+    "description": "Movie Flag Superman",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_superman11.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Scarface",
+    "slug": "flag-scrfce",
+    "classname": "Flag_ScrFce",
+    "description": "Movie Flag Scarface",
+    "imageUrl": "/images/clan-flags/custom/Movie__FL_ScarFace.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Admin Base",
+    "slug": "flag-admbase",
+    "classname": "Flag_AdmBase",
+    "description": "Admin Base Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__Admin_flag.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bud Farms Flag",
+    "slug": "flag-budsfrm",
+    "classname": "Flag_BudsFrm",
+    "description": "Bud Farms Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Bud_Farms_Flag.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Admin Flag",
+    "slug": "flag-admflg",
+    "classname": "Flag_AdmFlg",
+    "description": "Admin Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__Admin_Base.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rainbow Color Flag",
+    "slug": "flag-rainbwcl",
+    "classname": "Flag_RainbwCl",
+    "description": "Rainbow Color Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Colorful2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "BOOOM Flag",
+    "slug": "flag-boom3",
+    "classname": "Flag_boom3",
+    "description": "BOOOM Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Comic_Boom.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "I dont Care Flag",
+    "slug": "flag-idc",
+    "classname": "Flag_IDC",
+    "description": "I dont Care Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_IDC_Tripy.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Loony Tuns Flag",
+    "slug": "flag-loonyt",
+    "classname": "Flag_LoonyT",
+    "description": "Loony Tuns Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Loony.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "RGB Flag",
+    "slug": "flag-rgb-neo",
+    "classname": "Flag_RGB_neo",
+    "description": "RGB Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Neon_RGB_Barcode_Flag.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag RickMorty 1",
+    "slug": "flag-rm2",
+    "classname": "Flag_RM2",
+    "description": "Movie Flag RickMorty 1",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_rm1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Stary Rose Flag",
+    "slug": "flag-rose1",
+    "classname": "Flag_Rose1",
+    "description": "Stary Rose Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Stary_rose.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rick & Morty",
+    "slug": "flag-rm3",
+    "classname": "Flag_RM3",
+    "description": "Rick & Morty",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_RM3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "TeaTime Flag",
+    "slug": "flag-teatime",
+    "classname": "Flag_TeaTime",
+    "description": "TeaTime Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Tea_time.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bob Marley Flag",
+    "slug": "flag-marley1",
+    "classname": "Flag_Marley1",
+    "description": "Bob Marley Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Bob_marley.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Trip Skull Flag",
+    "slug": "flag-tryskul",
+    "classname": "Flag_TrySkul",
+    "description": "Trip Skull Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__FL_Tripy_Skulls.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 1",
+    "slug": "flag-anm1",
+    "classname": "Flag_Anm1",
+    "description": "Anime Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_11.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 12",
+    "slug": "flag-anm2",
+    "classname": "Flag_Anm2",
+    "description": "Anime Flag 12",
+    "imageUrl": "/images/clan-flags/custom/Other__Flaggen_Update.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Game 3",
+    "slug": "flag-anm3",
+    "classname": "Flag_Anm3",
+    "description": "Game 3",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_game_cd.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 4",
+    "slug": "flag-anm4",
+    "classname": "Flag_Anm4",
+    "description": "Anime Flag 4",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_anime_554.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 5",
+    "slug": "flag-anm5",
+    "classname": "Flag_Anm5",
+    "description": "Anime Flag 5",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_cross.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 6",
+    "slug": "flag-anm6",
+    "classname": "Flag_Anm6",
+    "description": "Anime Flag 6",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_girl3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 7",
+    "slug": "flag-anm7",
+    "classname": "Flag_Anm7",
+    "description": "Anime Flag 7",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_girl89.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 8",
+    "slug": "flag-anm8",
+    "classname": "Flag_Anm8",
+    "description": "Anime Flag 8",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_anime_rav.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 9",
+    "slug": "flag-anm9",
+    "classname": "Flag_Anm9",
+    "description": "Anime Flag 9",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime_sword.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Anime Flag 11",
+    "slug": "flag-anm10",
+    "classname": "Flag_Anm10",
+    "description": "Anime Flag 11",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_anime1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Game 1",
+    "slug": "flag-anm11",
+    "classname": "Flag_Anm11",
+    "description": "Game 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_game_22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Game 2",
+    "slug": "flag-anm12",
+    "classname": "Flag_Anm12",
+    "description": "Game 2",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_game_332.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Drugs Flag",
+    "slug": "flag-drgs",
+    "classname": "Flag_Drgs",
+    "description": "Drugs Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_DayZ_chern.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Honduras Flag",
+    "slug": "flag-chras",
+    "classname": "Flag_Chras",
+    "description": "Flag Honduras",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Honduras.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag",
+    "slug": "flag-dayz2",
+    "classname": "Flag_DayZ2",
+    "description": "DayZ Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_dayZ_txt1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Drugs Flag 2",
+    "slug": "flag-drgs2",
+    "classname": "Flag_Drgs2",
+    "description": "Drugs Flag 2",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_drugs1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Family Guy 3",
+    "slug": "flag-famguy5",
+    "classname": "Flag_FamGuy5",
+    "description": "Movie Family Guy 3",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_fg5.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Family Guy 2",
+    "slug": "flag-famguy6",
+    "classname": "Flag_FamGuy6",
+    "description": "Movie Family Guy 2",
+    "imageUrl": "/images/clan-flags/custom/Movie__flag_fg3.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Game 4",
+    "slug": "flag-gme1",
+    "classname": "Flag_Gme1",
+    "description": "Game 4",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_Game1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Game 5",
+    "slug": "flag-gme2",
+    "classname": "Flag_Gme2",
+    "description": "Game 5",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_game2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Niger Flag",
+    "slug": "flag-gme3",
+    "classname": "Flag_Gme3",
+    "description": "Flag Niger",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Niger.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Yemen Flag",
+    "slug": "flag-gme4",
+    "classname": "Flag_Gme4",
+    "description": "Flag Yemen",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Yemen.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Joker",
+    "slug": "flag-jkr",
+    "classname": "Flag_Jkr",
+    "description": "Joker",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_joker22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rick & Morty",
+    "slug": "flag-rm4",
+    "classname": "Flag_RM4",
+    "description": "Rick & Morty",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_RM_1.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Toxic Gas Flag 1",
+    "slug": "flag-tox3",
+    "classname": "Flag_Tox3",
+    "description": "Toxic Gas Flag 1",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_toxgas.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Toxic 4",
+    "slug": "flag-tox4",
+    "classname": "Flag_Tox4",
+    "description": "Toxic 4",
+    "imageUrl": "/images/clan-flags/custom/Other__Flag_toxic_22.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Paraguay Flag",
+    "slug": "flag-famguy7",
+    "classname": "Flag_FamGuy7",
+    "description": "Flag Paraguay",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Paraguay.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Afganistan Flag",
+    "slug": "flag-afganistan",
+    "classname": "Flag_Afganistan",
+    "description": "Flag Afganistan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_afganistan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Albania Flag",
+    "slug": "flag-albania",
+    "classname": "Flag_Albania",
+    "description": "Flag Albania",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_albania.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Algeria Flag",
+    "slug": "flag-algeria",
+    "classname": "Flag_Algeria",
+    "description": "Flag Algeria",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_algeria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Andorra Flag",
+    "slug": "flag-andorra",
+    "classname": "Flag_Andorra",
+    "description": "Flag Andorra",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Andorra.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Angola Flag",
+    "slug": "flag-angola",
+    "classname": "Flag_Angola",
+    "description": "Flag Angola",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Angola.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Antigua & Barbuda Flag",
+    "slug": "flag-antigua-and-barbuda",
+    "classname": "Flag_Antigua_and_Barbuda",
+    "description": "Flag Antigua & Barbuda",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Antigua_and_Barbuda.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Azerbaijan Flag",
+    "slug": "flag-azerbaijan",
+    "classname": "Flag_Azerbaijan",
+    "description": "Flag Azerbaijan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Azerbaijan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bahamas Flag",
+    "slug": "flag-bahamas",
+    "classname": "Flag_Bahamas",
+    "description": "Flag Bahamas",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bahamas.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bahrain Flag",
+    "slug": "flag-bahrain",
+    "classname": "Flag_Bahrain",
+    "description": "Flag Bahrain",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bahrain.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bangladesh Flag",
+    "slug": "flag-bangladesh",
+    "classname": "Flag_Bangladesh",
+    "description": "Flag Bangladesh",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bangladesh.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Barbados Flag",
+    "slug": "flag-barbados",
+    "classname": "Flag_Barbados",
+    "description": "Flag Barbados",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Barbados.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Belarus Flag",
+    "slug": "flag-belarus",
+    "classname": "Flag_Belarus",
+    "description": "Flag Belarus",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Belarus.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Belize Flag",
+    "slug": "flag-belize",
+    "classname": "Flag_Belize",
+    "description": "Flag Belize",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Belize.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Benin Flag",
+    "slug": "flag-benin",
+    "classname": "Flag_Benin",
+    "description": "Flag Benin",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Benin.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bhutan Flag",
+    "slug": "flag-bhutan",
+    "classname": "Flag_Bhutan",
+    "description": "Flag Bhutan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bhutan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bolivia Flag",
+    "slug": "flag-bolivia",
+    "classname": "Flag_Bolivia",
+    "description": "Flag Bolivia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bolivia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Bosnia & Herzegovina Flag",
+    "slug": "flag-bosnia-and-herzegovina",
+    "classname": "Flag_Bosnia_and_Herzegovina",
+    "description": "Flag Bosnia & Herzegovina",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Bosnia_and_Herzegovina.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Brunei Flag",
+    "slug": "flag-brunei",
+    "classname": "Flag_Brunei",
+    "description": "Flag Brunei",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Brunei.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Burkina Flag",
+    "slug": "flag-burkina",
+    "classname": "Flag_Burkina",
+    "description": "Flag Burkina",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Burkina.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Burundi Flag",
+    "slug": "flag-burundi",
+    "classname": "Flag_Burundi",
+    "description": "Flag Burundi",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Burundi.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cabo Verde Flag",
+    "slug": "flag-cabo-verde",
+    "classname": "Flag_Cabo_Verde",
+    "description": "Flag Cabo Verde",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cabo_Verde.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cambodia Flag",
+    "slug": "flag-cambodia",
+    "classname": "Flag_Cambodia",
+    "description": "Flag Cambodia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cambodia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cameroon Flag",
+    "slug": "flag-cameroon",
+    "classname": "Flag_Cameroon",
+    "description": "Flag Cameroon",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cameroon.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Central African Republic Flag",
+    "slug": "flag-central-african-republic",
+    "classname": "Flag_Central_African_Republic",
+    "description": "Flag Central African Republic",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Central_African_Republic.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Ecuador Flag",
+    "slug": "flag-chad",
+    "classname": "Flag_Chad",
+    "description": "Flag Ecuador",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Ecuador.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Chile Flag",
+    "slug": "flag-chile",
+    "classname": "Flag_Chile",
+    "description": "Flag Chile",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Chile.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Colombia Flag",
+    "slug": "flag-colombia",
+    "classname": "Flag_Colombia",
+    "description": "Flag Colombia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Colombia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Comoros Flag",
+    "slug": "flag-comoros",
+    "classname": "Flag_Comoros",
+    "description": "Flag Comoros",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Comoros.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Congo Flag",
+    "slug": "flag-congo",
+    "classname": "Flag_Congo",
+    "description": "Flag Congo",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Congo.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Ethiopia Flag",
+    "slug": "flag-ethiopia",
+    "classname": "Flag_Ethiopia",
+    "description": "Flag Ethiopia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Ethiopia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Eswatini Flag",
+    "slug": "flag-eswatini",
+    "classname": "Flag_Eswatini",
+    "description": "Flag Eswatini",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Eswatini.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Estonia Flag",
+    "slug": "flag-estonia",
+    "classname": "Flag_Estonia",
+    "description": "Flag Estonia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Estonia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Eritrea Flag",
+    "slug": "flag-eritrea",
+    "classname": "Flag_Eritrea",
+    "description": "Flag Eritrea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Eritrea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Equatorial Guinea Flag",
+    "slug": "flag-equatorial-guinea",
+    "classname": "Flag_Equatorial_Guinea",
+    "description": "Flag Equatorial Guinea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Equatorial_Guinea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "El Salvador Flag",
+    "slug": "flag-el-salvador",
+    "classname": "Flag_El_Salvador",
+    "description": "Flag El Salvador",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_El_Salvador.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Egypt Flag",
+    "slug": "flag-egypt",
+    "classname": "Flag_Egypt",
+    "description": "Flag Egypt",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Egypt.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mexico Flag",
+    "slug": "flag-ecuador",
+    "classname": "Flag_Ecuador",
+    "description": "Flag Mexico",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mexico.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Dominican Republic Flag",
+    "slug": "flag-dominican-republic",
+    "classname": "Flag_Dominican_Republic",
+    "description": "Flag Dominican Republic",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Dominican_Republic.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Dominica Flag",
+    "slug": "flag-dominica",
+    "classname": "Flag_Dominica",
+    "description": "Flag Dominica",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Dominica.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Djibouti Flag",
+    "slug": "flag-djibouti",
+    "classname": "Flag_Djibouti",
+    "description": "Flag Djibouti",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Djibouti.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cyprus Flag",
+    "slug": "flag-cyprus",
+    "classname": "Flag_Cyprus",
+    "description": "Flag Cyprus",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cyprus.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Cote dIvoire Flag",
+    "slug": "flag-cote-divoire",
+    "classname": "Flag_Cote_dIvoire",
+    "description": "Flag Cote dIvoire",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Cote_dIvoire.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Congo Brazzaville Flag",
+    "slug": "flag-congo-brazzaville",
+    "classname": "Flag_Congo_Brazzaville",
+    "description": "Flag Congo Brazzaville",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Congo_Brazzaville.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Fiji Flag",
+    "slug": "flag-fiji",
+    "classname": "Flag_Fiji",
+    "description": "Flag Fiji",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Fiji.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Gabon Flag",
+    "slug": "flag-gabon",
+    "classname": "Flag_Gabon",
+    "description": "Flag Gabon",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Gabon.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Gambia Flag",
+    "slug": "flag-gambia",
+    "classname": "Flag_Gambia",
+    "description": "Flag Gambia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Gambia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Georgia Flag",
+    "slug": "flag-georgia",
+    "classname": "Flag_Georgia",
+    "description": "Flag Georgia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Georgia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Ghana Flag",
+    "slug": "flag-ghana",
+    "classname": "Flag_Ghana",
+    "description": "Flag Ghana",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Ghana.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Grenada Flag",
+    "slug": "flag-grenada",
+    "classname": "Flag_Grenada",
+    "description": "Flag Grenada",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Grenada.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Guatemala Flag",
+    "slug": "flag-guatemala",
+    "classname": "Flag_Guatemala",
+    "description": "Flag Guatemala",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Guatemala.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Guinea Flag",
+    "slug": "flag-guinea",
+    "classname": "Flag_Guinea",
+    "description": "Flag Guinea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Guinea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Guinea Bissau Flag",
+    "slug": "flag-guinea-bissau",
+    "classname": "Flag_Guinea_Bissau",
+    "description": "Flag Guinea Bissau",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Guinea_Bissau.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Guyana Flag",
+    "slug": "flag-guyana",
+    "classname": "Flag_Guyana",
+    "description": "Flag Guyana",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Guyana.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Haiti Flag",
+    "slug": "flag-haiti",
+    "classname": "Flag_Haiti",
+    "description": "Flag Haiti",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Haiti.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Holy See Flag",
+    "slug": "flag-holy-see",
+    "classname": "Flag_Holy_See",
+    "description": "Flag Holy See",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Holy_See.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "India Flag",
+    "slug": "flag-honduras",
+    "classname": "Flag_Honduras",
+    "description": "Flag India",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_India.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Iceland Flag",
+    "slug": "flag-iceland",
+    "classname": "Flag_Iceland",
+    "description": "Flag Iceland",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Iceland.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Indonesia Flag",
+    "slug": "flag-india",
+    "classname": "Flag_India",
+    "description": "Flag Indonesia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Indonesia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Liberia Flag",
+    "slug": "flag-liberia",
+    "classname": "Flag_Liberia",
+    "description": "Flag Liberia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Liberia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Lesotho Flag",
+    "slug": "flag-lesotho",
+    "classname": "Flag_Lesotho",
+    "description": "Flag Lesotho",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Lesotho.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Lebanon Flag",
+    "slug": "flag-lebanon",
+    "classname": "Flag_Lebanon",
+    "description": "Flag Lebanon",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Lebanon.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Latvia Flag",
+    "slug": "flag-latvia",
+    "classname": "Flag_Latvia",
+    "description": "Flag Latvia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Latvia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Laos Flag",
+    "slug": "flag-laos",
+    "classname": "Flag_Laos",
+    "description": "Flag Laos",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Laos.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Kyrgyzstan Flag",
+    "slug": "flag-kyrgyzstan",
+    "classname": "Flag_Kyrgyzstan",
+    "description": "Flag Kyrgyzstan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Kyrgyzstan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Kuwait Flag",
+    "slug": "flag-kuwait",
+    "classname": "Flag_Kuwait",
+    "description": "Flag Kuwait",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Kuwait.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Kiribati Flag",
+    "slug": "flag-kiribati",
+    "classname": "Flag_Kiribati",
+    "description": "Flag Kiribati",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Kiribati.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Kenya Flag",
+    "slug": "flag-kenya",
+    "classname": "Flag_Kenya",
+    "description": "Flag Kenya",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Kenya.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Kazakhstan Flag",
+    "slug": "flag-kazakhstan",
+    "classname": "Flag_Kazakhstan",
+    "description": "Flag Kazakhstan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Kazakhstan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Jordan Flag",
+    "slug": "flag-jordan",
+    "classname": "Flag_Jordan",
+    "description": "Flag Jordan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Jordan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Israel Flag",
+    "slug": "flag-israel",
+    "classname": "Flag_Israel",
+    "description": "Flag Israel",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Israel.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Iraq Flag",
+    "slug": "flag-iraq",
+    "classname": "Flag_Iraq",
+    "description": "Flag Iraq",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Iraq.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Iran Flag",
+    "slug": "flag-iran",
+    "classname": "Flag_Iran",
+    "description": "Flag Iran",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Iran.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Micronesia Flag",
+    "slug": "flag-indonesia",
+    "classname": "Flag_Indonesia",
+    "description": "Flag Micronesia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Micronesia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Libya Flag",
+    "slug": "flag-libya",
+    "classname": "Flag_Libya",
+    "description": "Flag Libya",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Libya.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Liechtenstein Flag",
+    "slug": "flag-liechtenstein",
+    "classname": "Flag_Liechtenstein",
+    "description": "Flag Liechtenstein",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Liechtenstein.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Lithuania Flag",
+    "slug": "flag-lithuania",
+    "classname": "Flag_Lithuania",
+    "description": "Flag Lithuania",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Lithuania.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Madagascar Flag",
+    "slug": "flag-madagascar",
+    "classname": "Flag_Madagascar",
+    "description": "Flag Madagascar",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Madagascar.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Malawi Flag",
+    "slug": "flag-malawi",
+    "classname": "Flag_Malawi",
+    "description": "Flag Malawi",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Malawi.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Malaysia Flag",
+    "slug": "flag-malaysia",
+    "classname": "Flag_Malaysia",
+    "description": "Flag Malaysia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Malaysia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Maldives Flag",
+    "slug": "flag-maldives",
+    "classname": "Flag_Maldives",
+    "description": "Flag Maldives",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Maldives.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mali Flag",
+    "slug": "flag-mali",
+    "classname": "Flag_Mali",
+    "description": "Flag Mali",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mali.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Malta Flag",
+    "slug": "flag-malta",
+    "classname": "Flag_Malta",
+    "description": "Flag Malta",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Malta.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Marshall Islands Flag",
+    "slug": "flag-marshall-islands",
+    "classname": "Flag_Marshall_Islands",
+    "description": "Flag Marshall Islands",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Marshall_Islands.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mauritania Flag",
+    "slug": "flag-mauritania",
+    "classname": "Flag_Mauritania",
+    "description": "Flag Mauritania",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mauritania.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mauritius Flag",
+    "slug": "flag-mauritius",
+    "classname": "Flag_Mauritius",
+    "description": "Flag Mauritius",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mauritius.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag RickMorty 2",
+    "slug": "flag-mexico",
+    "classname": "Flag_Mexico",
+    "description": "Movie Flag RickMorty 2",
+    "imageUrl": "/images/clan-flags/custom/Movie__glag_rm2.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mongolia Flag",
+    "slug": "flag-micronesia",
+    "classname": "Flag_Micronesia",
+    "description": "Flag Mongolia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mongolia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Moldova Flag",
+    "slug": "flag-moldova",
+    "classname": "Flag_Moldova",
+    "description": "Flag Moldova",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Moldova.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Palau Flag",
+    "slug": "flag-palau",
+    "classname": "Flag_Palau",
+    "description": "Flag Palau",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Palau.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Pakistan Flag",
+    "slug": "flag-pakistan",
+    "classname": "Flag_Pakistan",
+    "description": "Flag Pakistan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Pakistan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Oman Flag",
+    "slug": "flag-oman",
+    "classname": "Flag_Oman",
+    "description": "Flag Oman",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Oman.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "North Korea Flag",
+    "slug": "flag-north-korea",
+    "classname": "Flag_North_Korea",
+    "description": "Flag North Korea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_North_Korea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Nigeria Flag",
+    "slug": "flag-nigeria",
+    "classname": "Flag_Nigeria",
+    "description": "Flag Nigeria",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Nigeria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Punisher Flag",
+    "slug": "flag-niger",
+    "classname": "Flag_Niger",
+    "description": "Flag Punisher",
+    "imageUrl": "/images/clan-flags/custom/Other__TDL_Punisher.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Nicaragua Flag",
+    "slug": "flag-nicaragua",
+    "classname": "Flag_Nicaragua",
+    "description": "Flag Nicaragua",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Nicaragua.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Nepal Flag",
+    "slug": "flag-nepal",
+    "classname": "Flag_Nepal",
+    "description": "Flag Nepal",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Nepal.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Nauru Flag",
+    "slug": "flag-nauru",
+    "classname": "Flag_Nauru",
+    "description": "Flag Nauru",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Nauru.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Namibia Flag",
+    "slug": "flag-namibia",
+    "classname": "Flag_Namibia",
+    "description": "Flag Namibia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Namibia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Myanmar Flag",
+    "slug": "flag-myanmar",
+    "classname": "Flag_Myanmar",
+    "description": "Flag Myanmar",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Myanmar.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Mozambique Flag",
+    "slug": "flag-mozambique",
+    "classname": "Flag_Mozambique",
+    "description": "Flag Mozambique",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Mozambique.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Morocco Flag",
+    "slug": "flag-morocco",
+    "classname": "Flag_Morocco",
+    "description": "Flag Morocco",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Morocco.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Montenegro Flag",
+    "slug": "flag-montenegro",
+    "classname": "Flag_Montenegro",
+    "description": "Flag Montenegro",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Montenegro.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Tonga Flag",
+    "slug": "flag-mongolia",
+    "classname": "Flag_Mongolia",
+    "description": "Flag Tonga",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Tonga.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Palestine State Flag",
+    "slug": "flag-palestine-state",
+    "classname": "Flag_Palestine_State",
+    "description": "Flag Palestine State",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Palestine_State.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Tanzania Flag",
+    "slug": "flag-panama",
+    "classname": "Flag_Panama",
+    "description": "Flag Tanzania",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Tanzania.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Papua New Guinea Flag",
+    "slug": "flag-papua-new-guinea",
+    "classname": "Flag_Papua_New_Guinea",
+    "description": "Flag Papua New Guinea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Papua_New_Guinea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Pink Racing Flag",
+    "slug": "flag-paraguay",
+    "classname": "Flag_Paraguay",
+    "description": "Pink Racing Flag",
+    "imageUrl": "/images/clan-flags/custom/Other__flag_pkarr.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Movie Flag Family Guy Petoria",
+    "slug": "flag-peru",
+    "classname": "Flag_Peru",
+    "description": "Movie Family Guy Petoria",
+    "imageUrl": "/images/clan-flags/custom/Movie__Flag_Petoria.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Philippines Flag",
+    "slug": "flag-philippines",
+    "classname": "Flag_Philippines",
+    "description": "Flag Philippines",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Philippines.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Qatar Flag",
+    "slug": "flag-qatar",
+    "classname": "Flag_Qatar",
+    "description": "Flag Qatar",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Qatar.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Rwanda Flag",
+    "slug": "flag-rwanda",
+    "classname": "Flag_Rwanda",
+    "description": "Flag Rwanda",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Rwanda.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Saint Kitts And Nevis Flag",
+    "slug": "flag-saint-kitts-and-nevis",
+    "classname": "Flag_Saint_Kitts_And_Nevis",
+    "description": "Flag Saint Kitts And Nevis",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Saint_Kitts_And_Nevis.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Saint Lucia Flag",
+    "slug": "flag-saint-lucia",
+    "classname": "Flag_Saint_Lucia",
+    "description": "Flag Saint Lucia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Saint_Lucia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Saint Vincent & The Grenadines Flag",
+    "slug": "flag-saint-vincent-and-the-grenadines",
+    "classname": "Flag_Saint_Vincent_And_The_Grenadines",
+    "description": "Flag Saint Vincent & The Grenadines",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Saint_Vincent_And_The_Grenadines.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "San Marino Flag",
+    "slug": "flag-samoa",
+    "classname": "Flag_Samoa",
+    "description": "Flag San Marino",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_San_Marino.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sao Tome & Principe Flag",
+    "slug": "flag-san-marino",
+    "classname": "Flag_San_Marino",
+    "description": "Flag Sao Tome & Principe",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Sao_Tome_And_Principe.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "South America Flag",
+    "slug": "flag-sao-tome-and-principe",
+    "classname": "Flag_Sao_Tome_And_Principe",
+    "description": "Flag South America",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_South_America.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Senegal Flag",
+    "slug": "flag-senegal",
+    "classname": "Flag_Senegal",
+    "description": "Flag Senegal",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Senegal.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Timor Leste Flag",
+    "slug": "flag-timor-leste",
+    "classname": "Flag_Timor_Leste",
+    "description": "Flag Timor Leste",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Timor_Leste.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Thailand Flag",
+    "slug": "flag-thailand",
+    "classname": "Flag_Thailand",
+    "description": "Flag Thailand",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Thailand.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Zambia Flag",
+    "slug": "flag-tanzania",
+    "classname": "Flag_Tanzania",
+    "description": "Flag Zambia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Zambia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Tajikistan Flag",
+    "slug": "flag-tajikistan",
+    "classname": "Flag_Tajikistan",
+    "description": "Flag Tajikistan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Tajikistan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Suriname Flag",
+    "slug": "flag-suriname",
+    "classname": "Flag_Suriname",
+    "description": "Flag Suriname",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Suriname.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "South Sudan Flag",
+    "slug": "flag-sudan",
+    "classname": "Flag_Sudan",
+    "description": "Flag South Sudan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_South_Sudan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sri Lanka Flag",
+    "slug": "flag-sri-lanka",
+    "classname": "Flag_Sri_Lanka",
+    "description": "Flag Sri Lanka",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Sri_Lanka.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "South Korea Flag",
+    "slug": "flag-south-sudan",
+    "classname": "Flag_South_Sudan",
+    "description": "Flag South Korea",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_South_Korea.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Ukraine Flag",
+    "slug": "flag-south-korea",
+    "classname": "Flag_South_Korea",
+    "description": "Flag Ukraine",
+    "imageUrl": "/images/clan-flags/custom/Lands__BM_Ukraine.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Somalia Flag",
+    "slug": "flag-somalia",
+    "classname": "Flag_Somalia",
+    "description": "Flag Somalia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Somalia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Solomon Islands Flag",
+    "slug": "flag-solomon-islands",
+    "classname": "Flag_Solomon_Islands",
+    "description": "Flag Solomon Islands",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Solomon_Islands.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Singapore Flag",
+    "slug": "flag-singapore",
+    "classname": "Flag_Singapore",
+    "description": "Flag Singapore",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Singapore.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Sierra Leone Flag",
+    "slug": "flag-sierra-leone",
+    "classname": "Flag_Sierra_Leone",
+    "description": "Flag Sierra Leone",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Sierra_Leone.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Seychelles Flag",
+    "slug": "flag-seychelles",
+    "classname": "Flag_Seychelles",
+    "description": "Flag Seychelles",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Seychelles.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Serbia Flag",
+    "slug": "flag-serbia",
+    "classname": "Flag_Serbia",
+    "description": "Flag Serbia",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Serbia.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Zimbabwe Flag",
+    "slug": "flag-zimbabwe",
+    "classname": "Flag_Zimbabwe",
+    "description": "Flag Zimbabwe",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Zimbabwe.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "DayZ Flag Band",
+    "slug": "flag-zambia",
+    "classname": "Flag_Zambia",
+    "description": "DayZ Band",
+    "imageUrl": "/images/clan-flags/custom/DayZ__TDF_DayZ_Band_Big.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Wales Flag",
+    "slug": "flag-wales",
+    "classname": "Flag_Wales",
+    "description": "Flag Wales",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Wales.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Venezuela Flag",
+    "slug": "flag-venezuela",
+    "classname": "Flag_Venezuela",
+    "description": "Flag Venezuela",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Venezuela.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Vanuatu Flag",
+    "slug": "flag-vanuatu",
+    "classname": "Flag_Vanuatu",
+    "description": "Flag Vanuatu",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Vanuatu.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Uzbekistan Flag",
+    "slug": "flag-uzbekistan",
+    "classname": "Flag_Uzbekistan",
+    "description": "Flag Uzbekistan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Uzbekistan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "United Arab Emirates Flag",
+    "slug": "flag-united-arab-emirates",
+    "classname": "Flag_United_Arab_Emirates",
+    "description": "Flag United Arab Emirates",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_United_Arab_Emirates.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Uganda Flag",
+    "slug": "flag-uganda",
+    "classname": "Flag_Uganda",
+    "description": "Flag Uganda",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Uganda.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Tuvalu Flag",
+    "slug": "flag-tuvalu",
+    "classname": "Flag_Tuvalu",
+    "description": "Flag Tuvalu",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Tuvalu.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Turkmenistan Flag",
+    "slug": "flag-turkmenistan",
+    "classname": "Flag_Turkmenistan",
+    "description": "Flag Turkmenistan",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Turkmenistan.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Trinidad & Tobago Flag",
+    "slug": "flag-trinidad-and-tobago",
+    "classname": "Flag_Trinidad_And_Tobago",
+    "description": "Flag Trinidad & Tobago",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Trinidad_And_Tobago.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Togo Flag",
+    "slug": "flag-tonga",
+    "classname": "Flag_Tonga",
+    "description": "Flag Togo",
+    "imageUrl": "/images/clan-flags/custom/Lands__flag_Togo.png",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "APA (Vanilla)",
+    "slug": "vanilla-flag-apa",
+    "classname": "Flag_APA",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_apa.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Altis (Vanilla)",
+    "slug": "vanilla-flag-altis",
+    "classname": "Flag_Altis",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_altis.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "BabyDeer (Vanilla)",
+    "slug": "vanilla-flag-babydeer",
+    "classname": "Flag_BabyDeer",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_babydeer.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Bear (Vanilla)",
+    "slug": "vanilla-flag-bear",
+    "classname": "Flag_Bear",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_bear.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Bohemia (Vanilla)",
+    "slug": "vanilla-flag-bohemia",
+    "classname": "Flag_Bohemia",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_bohemia.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "BrainZ (Vanilla)",
+    "slug": "vanilla-flag-brainz",
+    "classname": "Flag_BrainZ",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_brainz.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "CDF (Vanilla)",
+    "slug": "vanilla-flag-cdf",
+    "classname": "Flag_CDF",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_cdf.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "CHEL (Vanilla)",
+    "slug": "vanilla-flag-chel",
+    "classname": "Flag_CHEL",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_chel.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "CMC (Vanilla)",
+    "slug": "vanilla-flag-cmc",
+    "classname": "Flag_CMC",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_cmc.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Cannibals (Vanilla)",
+    "slug": "vanilla-flag-cannibals",
+    "classname": "Flag_Cannibals",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_cannibals.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Chedaki (Vanilla)",
+    "slug": "vanilla-flag-chedaki",
+    "classname": "Flag_Chedaki",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_chedaki.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Chernarus (Vanilla)",
+    "slug": "vanilla-flag-chernarus",
+    "classname": "Flag_Chernarus",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_chernarus.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Crook (Vanilla)",
+    "slug": "vanilla-flag-crook",
+    "classname": "Flag_Crook",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_crook.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "DayZ (Vanilla)",
+    "slug": "vanilla-flag-dayz",
+    "classname": "Flag_DayZ",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_dayz.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "HunterZ (Vanilla)",
+    "slug": "vanilla-flag-hunterz",
+    "classname": "Flag_HunterZ",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_hunterz.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Livonia (Vanilla)",
+    "slug": "vanilla-flag-livonia",
+    "classname": "Flag_Livonia",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_livonia.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "LivoniaArmy (Vanilla)",
+    "slug": "vanilla-flag-livoniaarmy",
+    "classname": "Flag_LivoniaArmy",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_livoniaarmy.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "LivoniaPolice (Vanilla)",
+    "slug": "vanilla-flag-livoniapolice",
+    "classname": "Flag_LivoniaPolice",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_livoniapolice.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "NAPA (Vanilla)",
+    "slug": "vanilla-flag-napa",
+    "classname": "Flag_NAPA",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_napa.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "NSahrani (Vanilla)",
+    "slug": "vanilla-flag-nsahrani",
+    "classname": "Flag_NSahrani",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_nsahrani.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Pirates (Vanilla)",
+    "slug": "vanilla-flag-pirates",
+    "classname": "Flag_Pirates",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_pirates.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "RSTA (Vanilla)",
+    "slug": "vanilla-flag-rsta",
+    "classname": "Flag_RSTA",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_rsta.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Refuge (Vanilla)",
+    "slug": "vanilla-flag-refuge",
+    "classname": "Flag_Refuge",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_refuge.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Rex (Vanilla)",
+    "slug": "vanilla-flag-rex",
+    "classname": "Flag_Rex",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_rex.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Rooster (Vanilla)",
+    "slug": "vanilla-flag-rooster",
+    "classname": "Flag_Rooster",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_rooster.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "SSahrani (Vanilla)",
+    "slug": "vanilla-flag-ssahrani",
+    "classname": "Flag_SSahrani",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_ssahrani.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Snake (Vanilla)",
+    "slug": "vanilla-flag-snake",
+    "classname": "Flag_Snake",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_snake.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "TEC (Vanilla)",
+    "slug": "vanilla-flag-tec",
+    "classname": "Flag_TEC",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_tec.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "UEC (Vanilla)",
+    "slug": "vanilla-flag-uec",
+    "classname": "Flag_UEC",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_uec.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "White (Vanilla)",
+    "slug": "vanilla-flag-white",
+    "classname": "Flag_White",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_white.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Wolf (Vanilla)",
+    "slug": "vanilla-flag-wolf",
+    "classname": "Flag_Wolf",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_wolf.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Zagorky (Vanilla)",
+    "slug": "vanilla-flag-zagorky",
+    "classname": "Flag_Zagorky",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_zagorky.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "Zenit (Vanilla)",
+    "slug": "vanilla-flag-zenit",
+    "classname": "Flag_Zenit",
+    "description": "Bandeira vanilla do DayZ disponível em Chernarus.",
+    "imageUrl": "/images/clan-flags/vanilla/flag_zenit.svg",
+    "category": "VANILLA",
+    "shared": false
+  },
+  {
+    "name": "NO RAID",
+    "slug": "no-raid",
+    "classname": "Flag_NO_RAID",
+    "description": "Bandeira especial para clã NO RAID. Máximo de 5 membros; não pode raidar nem participar de raids e não pode receber raid.",
+    "imageUrl": "/images/clan-flags/no-raid.png",
+    "category": "NO_RAID",
+    "shared": true
+  },
+  {
+    "name": "QM Flag",
+    "slug": "flag-qm-mod",
+    "classname": "Flag_QM",
+    "description": "Bandeira do pack b000ooms (Flag_QM)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_QM.svg",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Gme5 Flag",
+    "slug": "flag-gme5-mod",
+    "classname": "Flag_Gme5",
+    "description": "Bandeira do pack b000ooms (Flag_Gme5)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_Gme5.svg",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "RM5 Flag",
+    "slug": "flag-rm5-mod",
+    "classname": "Flag_RM5",
+    "description": "Bandeira do pack b000ooms (Flag_RM5)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_RM5.svg",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Costa Rica Flag",
+    "slug": "flag-costa-rica-mod",
+    "classname": "Flag_Costa_Rica",
+    "description": "Bandeira do pack b000ooms (Flag_Costa_Rica)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_Costa_Rica.svg",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Yemen Flag",
+    "slug": "flag-yemen-mod",
+    "classname": "Flag_Yemen",
+    "description": "Bandeira do pack b000ooms (Flag_Yemen)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_Yemen.svg",
+    "category": "MOD",
+    "shared": false
+  },
+  {
+    "name": "Togo Flag",
+    "slug": "flag-togo-mod",
+    "classname": "Flag_Togo",
+    "description": "Bandeira do pack b000ooms (Flag_Togo)",
+    "imageUrl": "/images/clan-flags/custom/fallback__Flag_Togo.svg",
+    "category": "MOD",
+    "shared": false
+  }
+];

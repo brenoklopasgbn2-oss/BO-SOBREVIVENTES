@@ -8,6 +8,8 @@
   .clan-grid-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.clan-card-v106{position:relative;overflow:hidden;padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(160deg,rgba(10,14,24,.97),rgba(4,8,14,.96));box-shadow:0 18px 60px rgba(0,0,0,.26);display:grid;gap:14px;transform-style:preserve-3d;transition:.22s}.clan-card-v106:hover{transform:translateY(-5px) rotateX(2deg)}.clan-card-head-v106{display:flex;gap:14px;align-items:center}.clan-card-head-v106 img{width:78px;height:78px;object-fit:cover;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:#050913}.clan-card-head-v106 strong{display:block;font-size:1.08rem}.clan-card-head-v106 small{display:block;color:#a4b4ca;margin-top:6px}.clan-card-v106 p{margin:0;color:#d9e1eb;line-height:1.48}.clan-card-tags-v106{display:flex;gap:8px;flex-wrap:wrap}.clan-card-tags-v106 span{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.76rem;font-weight:800}.clan-card-actions-v106{display:flex;gap:10px;flex-wrap:wrap}.clan-card-actions-v106 .btn{flex:1;min-width:140px}
   .clan-form-layout-v106{display:grid;grid-template-columns:1fr;gap:18px}.clan-form-card-v106{padding:24px;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(9,13,22,.97),rgba(3,7,12,.97));display:grid;gap:18px;box-shadow:0 22px 70px rgba(0,0,0,.24)}.clan-form-grid-v106{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clan-create-head-v114{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.clan-create-head-v114>div:first-child{max-width:720px}.clan-status-wrap-v114{padding:16px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.075)}.clan-cta-v114{display:flex;gap:10px;flex-wrap:wrap}.clan-cta-v114 .btn{min-width:220px}.clan-create-form-v114{display:grid;gap:14px;padding-top:4px}.clan-form-card-v106 textarea,.clan-form-card-v106 input{width:100%}.clan-status-v106{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.clan-status-box-v106{padding:14px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.clan-status-box-v106 strong{display:block;font-size:1.2rem}.clan-status-box-v106 small{color:#9fb0c8}
   @media (max-width: 980px){.clan-hero-inner-v106,.clan-form-layout-v106{grid-template-columns:1fr}.clan-form-grid-v106{grid-template-columns:1fr}.clan-hero-v106 h1{font-size:2rem}}
+
+  .clan-mode-v620{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.clan-mode-card-v620{padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.04);cursor:pointer}.clan-mode-card-v620 input{margin-right:8px}.clan-mode-card-v620 strong{display:block;font-size:1.05rem;margin-bottom:4px}.clan-mode-card-v620 small{color:#9fb0c8}.flag-picker-v620{margin:16px 0}.flag-toolbar-v620{display:flex;gap:10px;align-items:center;margin-bottom:10px}.flag-toolbar-v620 input{flex:1}.flag-grid-v620{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;max-height:520px;overflow:auto;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(0,0,0,.2)}.flag-option-v620{display:block;padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.035);cursor:pointer}.flag-option-v620:hover{border-color:#d4af37}.flag-option-v620 img{width:100%;height:82px;object-fit:cover;border-radius:9px;background:#111}.flag-option-v620 b{display:block;margin-top:7px;font-size:.86rem}.flag-option-v620 small{display:block;color:#91a0b3;font-size:.7rem;word-break:break-all}.no-raid-preview-v620{display:none;grid-template-columns:180px 1fr;gap:18px;align-items:center;padding:16px;border-radius:18px;border:1px solid rgba(255,0,140,.55);background:rgba(255,0,140,.08);margin:16px 0}.no-raid-preview-v620 img{width:180px;border-radius:14px}.no-raid-preview-v620 strong{color:#ff4ab8;font-size:1.25rem}.clan-badge-noraid-v620{display:inline-flex;padding:5px 9px;border-radius:999px;background:#ff1493;color:#fff;font-weight:900;font-size:.72rem;letter-spacing:.05em}
 </style>
 <main class="container clan-hub-v106">
   <%- include('partials/alerts') %>
@@ -134,13 +136,37 @@
             <label>Contato / Discord
               <input name="recruitmentContact" maxlength="160" placeholder="Ex: falar com Ocleitin no Discord">
             </label>
-            <label>Imagem / logo do clã
-              <input type="file" name="flagImage" accept="image/png,image/jpeg,image/webp,image/gif">
-            </label>
             <label>Banner do clã
               <input type="file" name="bannerImage" accept="image/png,image/jpeg,image/webp,image/gif">
             </label>
           </div>
+
+          <div class="clan-mode-v620">
+            <label class="clan-mode-card-v620"><input type="radio" name="clanMode" value="raid" checked><strong>⚔️ Clã normal / RAID</strong><small>Até 10 jogadores verificados. Escolha uma bandeira exclusiva abaixo.</small></label>
+            <label class="clan-mode-card-v620"><input type="radio" name="clanMode" value="no_raid"><strong>🩷 Clã NO RAID</strong><small>Até 5 jogadores. Não pode raidar, participar de raid nem receber raid.</small></label>
+          </div>
+
+          <div id="normalFlagPicker" class="flag-picker-v620">
+            <h3>Escolha a bandeira exclusiva do clã</h3>
+            <p class="muted">Ao criar o clã, a bandeira escolhida fica reservada para ele e sai da lista dos outros clãs.</p>
+            <div class="flag-toolbar-v620"><input id="flagSearchV620" type="search" placeholder="Buscar por nome ou classname..."><span><%= (availableFlags || []).length %> disponíveis</span></div>
+            <div class="flag-grid-v620" id="flagGridV620">
+              <% (availableFlags || []).forEach(flag => { %>
+                <label class="flag-option-v620" data-flag-search="<%= ((flag.name||'')+' '+(flag.classname||'')+' '+(flag.category||'')).toLowerCase() %>">
+                  <img loading="lazy" src="/clan-flag-option/<%= flag.id %>" alt="<%= flag.name %>" onerror="this.style.display='none'">
+                  <b><input type="radio" name="flagId" value="<%= flag.id %>"> <%= flag.name %></b>
+                  <small><%= flag.classname || 'Sem classname' %></small>
+                  <small><%= flag.category === 'VANILLA' ? 'Vanilla DayZ' : 'Pack de bandeiras' %></small>
+                </label>
+              <% }) %>
+            </div>
+          </div>
+
+          <div id="noRaidPreview" class="no-raid-preview-v620">
+            <img src="/images/clan-flags/no-raid.png" alt="Bandeira NO RAID">
+            <div><strong>🩷 Bandeira NO RAID</strong><p>Essa bandeira é aplicada automaticamente ao clã NO RAID. Limite de 5 membros verificados. O clã não pode atacar bases em raid, ajudar raid, participar de missão/evento de raid ou receber raid.</p></div>
+          </div>
+
           <label>Descrição
             <textarea name="description" rows="4" maxlength="1200" placeholder="Fale sobre o clã, foco PvP, construção, organização e etc."></textarea>
           </label>
@@ -178,7 +204,7 @@
             </div>
           </div>
           <div class="clan-card-tags-v106">
-            <% if (clan.isRecruiting) { %><span>📢 Recrutando</span><% } %>
+            <% if (clan.isRecruiting) { %><span>📢 Recrutando</span><% } %><% if (clan.isNoRaid) { %><span class="clan-badge-noraid-v620">🩷 NO RAID</span><% } %>
             <% if ((clan.awards || []).length) { %><span>🏆 <%= clan.awards.length %> premiação(ões)</span><% } %>
           </div>
           <p><%= clan.description || clan.recruitmentMessage || 'Sem descrição cadastrada.' %></p>
@@ -191,4 +217,23 @@
     </div>
   </section>
 </main>
+
+<script>
+(() => {
+  const modes = [...document.querySelectorAll('input[name="clanMode"]')];
+  const normal = document.getElementById('normalFlagPicker');
+  const noRaid = document.getElementById('noRaidPreview');
+  const sync = () => {
+    const isNoRaid = document.querySelector('input[name="clanMode"]:checked')?.value === 'no_raid';
+    if (normal) normal.style.display = isNoRaid ? 'none' : 'block';
+    if (noRaid) noRaid.style.display = isNoRaid ? 'grid' : 'none';
+  };
+  modes.forEach(r => r.addEventListener('change', sync)); sync();
+  const search = document.getElementById('flagSearchV620');
+  if (search) search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    document.querySelectorAll('.flag-option-v620').forEach(card => card.style.display = !q || card.dataset.flagSearch.includes(q) ? 'block' : 'none');
+  });
+})();
+</script>
 <%- include('partials/footer') %>

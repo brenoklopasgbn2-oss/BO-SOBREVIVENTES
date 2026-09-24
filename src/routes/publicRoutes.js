@@ -839,9 +839,11 @@ publicRoutes.get('/killfeed/data', async (req, res) => {
 });
 
 publicRoutes.get('/clan-flag-option/:id', async (req, res) => {
-  const flag = await prisma.clanFlagOption.findUnique({ where: { id: req.params.id }, select: { imageData: true, imageMime: true } }).catch(() => null);
-  if (!flag?.imageData) return res.status(404).end();
-  res.type(flag.imageMime || 'image/png').send(Buffer.from(flag.imageData, 'base64'));
+  const flag = await prisma.clanFlagOption.findUnique({ where: { id: req.params.id }, select: { imageData: true, imageMime: true, imageUrl: true } }).catch(() => null);
+  if (!flag) return res.status(404).end();
+  if (flag.imageData) return res.type(flag.imageMime || 'image/png').send(Buffer.from(flag.imageData, 'base64'));
+  if (flag.imageUrl && String(flag.imageUrl).startsWith('/')) return res.redirect(302, flag.imageUrl);
+  return res.status(404).end();
 });
 
 publicRoutes.get('/eventos', async (req, res, next) => {
@@ -894,8 +896,11 @@ publicRoutes.get('/ranking/player/:steam64', async (req, res, next) => {
 
 publicRoutes.get('/clans', async (req, res, next) => {
   try {
-    const data = await getClanHubOverview({ playerId: req.player?.id || null });
-    res.render('clans', { title: 'Clãs & Recrutamento', ...data });
+    const [data, availableFlags] = await Promise.all([
+      getClanHubOverview({ playerId: req.player?.id || null }),
+      listAvailableClanFlags()
+    ]);
+    res.render('clans', { title: 'Clãs & Recrutamento', ...data, availableFlags });
   } catch (err) {
     next(err);
   }
@@ -1011,8 +1016,10 @@ publicRoutes.post('/my-clan/members/add', requirePlayer, async (req, res) => {
     const steam64 = String(req.body.steam64 || '').trim();
     if (!/^\d{17}$/.test(steam64)) throw new Error('Steam64 inválido.');
     const activeCount = await prisma.clanMember.count({ where: { clanId: membership.clanId, status: 'ACTIVE' } });
-    if (activeCount >= 10) throw new Error('O clã já atingiu o limite máximo de 10 integrantes.');
-    const player = await upsertPlayerBySteam64({ steam64, nickname: req.body.nickname || '' });
+    const memberLimit = membership.clan.isNoRaid ? 5 : 10;
+    if (activeCount >= memberLimit) throw new Error(`O clã já atingiu o limite máximo de ${memberLimit} integrantes${membership.clan.isNoRaid ? ' por ser NO RAID' : ''}.`);
+    const player = await prisma.player.findUnique({ where: { steam64 } });
+    if (!player?.discordId) throw new Error('Esse jogador ainda não está verificado. Apenas players com Discord ↔ Steam vinculado podem entrar em clãs.');
     const otherClan = await prisma.clanMember.findFirst({ where: { playerId: player.id, status: 'ACTIVE', clanId: { not: membership.clanId }, clan: { status: 'ACTIVE' } }, include: { clan: true } });
     if (otherClan) throw new Error(`Esse player já está no clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);
     const isCanonicalOwner = membership.clan.ownerPlayerId === player.id;

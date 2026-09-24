@@ -1143,7 +1143,7 @@ adminRoutes.post('/player-badges', async (req, res) => {
 adminRoutes.post('/clans/:id/delete', async (req, res) => {
   try {
     assertAdminPassword(req.body);
-    const clan = await prisma.clan.findUnique({ where: { id: req.params.id } });
+    const clan = await prisma.clan.findUnique({ where: { id: req.params.id }, include: { selectedFlag: true } });
     if (!clan) throw new Error('Clã não encontrado.');
     const normalizedTag = normalizeClanTagForDelete(clan.tag);
     const expected = `APAGAR ${normalizedTag}`;
@@ -1155,7 +1155,12 @@ adminRoutes.post('/clans/:id/delete', async (req, res) => {
       throw new Error(`Confirmação inválida. Atualize a página e tente apagar o clã novamente (${expected}).`);
     }
     await revokeClanManagedOutfitAccess(clan.id);
-    await prisma.clan.delete({ where: { id: clan.id } });
+    await prisma.$transaction(async (tx) => {
+      if (clan.selectedFlagId && !clan.selectedFlag?.shared) {
+        await tx.clanFlagOption.update({ where: { id: clan.selectedFlagId }, data: { status: 'AVAILABLE', reservedAt: null, deliveredAt: null } }).catch(() => null);
+      }
+      await tx.clan.delete({ where: { id: clan.id } });
+    });
     await logAudit({ actor: 'admin', action: 'clan.deleted.secure', target: clan.id, data: { name: clan.name, tag: clan.tag } });
     res.redirect('/admin/ranking?success=' + encodeURIComponent('Clã apagado com segurança.'));
   } catch (err) {

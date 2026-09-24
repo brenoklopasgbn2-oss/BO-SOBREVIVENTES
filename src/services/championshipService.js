@@ -6,7 +6,7 @@ export const MAX_CLAN_MEMBERS = 10;
 
 export async function listAvailableClanFlags() {
   return prisma.clanFlagOption.findMany({
-    where: { status: 'AVAILABLE' },
+    where: { status: 'AVAILABLE', shared: false },
     orderBy: [{ name: 'asc' }, { createdAt: 'asc' }]
   });
 }
@@ -42,7 +42,8 @@ export async function registerClanForChampionship({ clanId, playerId, flagId }) 
   if (!clan || clan.status !== 'ACTIVE') throw new Error('Clã não encontrado.');
   const manager = clan.members.find(member => member.playerId === playerId && ['OWNER', 'SUB_OWNER'].includes(member.role));
   if (!manager) throw new Error('Apenas dono ou sub dono pode inscrever o clã.');
-  if (clan.members.length > MAX_CLAN_MEMBERS) throw new Error(`O campeonato aceita no máximo ${MAX_CLAN_MEMBERS} integrantes por clã.`);
+  const memberLimit = clan.isNoRaid ? 5 : MAX_CLAN_MEMBERS;
+  if (clan.members.length > memberLimit) throw new Error(`Este clã aceita no máximo ${memberLimit} integrantes.`);
   if (!clan.members.length) throw new Error('O clã precisa ter integrantes.');
 
   const notLinked = clan.members.filter(member => !member.player?.discordId);
@@ -50,33 +51,29 @@ export async function registerClanForChampionship({ clanId, playerId, flagId }) 
     const names = notLinked.map(member => member.player?.nickname || member.steam64).join(', ');
     throw new Error(`Todos precisam vincular Discord ↔ Steam antes da inscrição. Falta: ${names}.`);
   }
-
-  if (clan.championshipRegistered && clan.selectedFlagId) throw new Error('Este clã já está inscrito no campeonato e já possui bandeira reservada.');
-  const cleanFlagId = String(flagId || '').trim();
-  if (!cleanFlagId) throw new Error('Escolha uma bandeira disponível.');
+  if (clan.championshipRegistered) throw new Error('Este clã já está inscrito no campeonato.');
 
   return prisma.$transaction(async (tx) => {
-    const flag = await tx.clanFlagOption.findUnique({ where: { id: cleanFlagId } });
-    if (!flag || flag.status !== 'AVAILABLE') throw new Error('Essa bandeira não está mais disponível. Atualize a página e escolha outra.');
-
-    const reserved = await tx.clanFlagOption.updateMany({
-      where: { id: flag.id, status: 'AVAILABLE' },
-      data: { status: 'RESERVED', reservedAt: new Date() }
-    });
-    if (reserved.count !== 1) throw new Error('Outro clã acabou de reservar essa bandeira. Escolha outra.');
+    let selectedFlag = clan.selectedFlag;
+    if (!selectedFlag) {
+      const cleanFlagId = String(flagId || '').trim();
+      if (!cleanFlagId) throw new Error('O clã ainda não possui bandeira reservada.');
+      const flag = await tx.clanFlagOption.findUnique({ where: { id: cleanFlagId } });
+      if (!flag || flag.shared || flag.status !== 'AVAILABLE') throw new Error('Essa bandeira não está mais disponível.');
+      const reserved = await tx.clanFlagOption.updateMany({ where: { id: flag.id, status: 'AVAILABLE', shared: false }, data: { status: 'RESERVED', reservedAt: new Date() } });
+      if (reserved.count !== 1) throw new Error('Outro clã acabou de reservar essa bandeira.');
+      selectedFlag = flag;
+    }
 
     const updatedClan = await tx.clan.update({
       where: { id: clan.id },
       data: {
         championshipRegistered: true,
         championshipRegisteredAt: new Date(),
-        selectedFlagId: flag.id,
-        flagDeliveryStatus: 'RESERVED'
+        ...(clan.selectedFlagId ? {} : { selectedFlagId: selectedFlag.id, flagDeliveryStatus: 'RESERVED' })
       }
     });
-
-    await enqueueDiscordEvent('FLAG_RESERVATION_TICKET', { clanId: clan.id, flagId: flag.id, requestedByPlayerId: playerId }, { tx });
-    return { clan: updatedClan, flag };
+    return { clan: updatedClan, flag: selectedFlag };
   });
 }
 
@@ -84,7 +81,9 @@ export async function markClanFlagDelivered({ clanId, actor = 'admin' }) {
   const clan = await prisma.clan.findUnique({ where: { id: clanId }, include: { selectedFlag: true } });
   if (!clan?.selectedFlagId) throw new Error('O clã ainda não possui bandeira reservada.');
   return prisma.$transaction(async tx => {
-    await tx.clanFlagOption.update({ where: { id: clan.selectedFlagId }, data: { status: 'DELIVERED', deliveredAt: new Date() } });
+    if (!clan.selectedFlag?.shared) {
+      await tx.clanFlagOption.update({ where: { id: clan.selectedFlagId }, data: { status: 'DELIVERED', deliveredAt: new Date() } });
+    }
     const updated = await tx.clan.update({ where: { id: clan.id }, data: { flagDeliveryStatus: 'DELIVERED', flagDeliveredAt: new Date() } });
     await enqueueDiscordEvent('FLAG_DELIVERED', { clanId: clan.id, flagId: clan.selectedFlagId, actor }, { tx });
     return updated;

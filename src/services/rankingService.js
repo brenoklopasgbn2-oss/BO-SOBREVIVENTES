@@ -144,7 +144,8 @@ function makeClanStat(clan) {
     serverType: clan.serverType,
     description: clan.description,
     accentColor: clan.accentColor || '#ef4444',
-    flagUrl: `/clan-flag/${clan.id}`,
+    flagUrl: clan.selectedFlag ? `/clan-flag-option/${clan.selectedFlag.id}` : `/clan-flag/${clan.id}`,
+    isNoRaid: Boolean(clan.isNoRaid),
     bannerUrl: `/clan-banner/${clan.id}`,
     awards: clan.awards || [],
     eventWins: clan.eventWins || 0,
@@ -248,7 +249,8 @@ export async function getRankingData({ server = 'global', period = 'weekly', pla
       },
       include: {
         members: { where: { status: 'ACTIVE' }, include: { player: { select: { id: true, steam64: true, nickname: true, avatarMime: true } } }, orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }] },
-        awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' }, take: 8 }
+        awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' }, take: 8 },
+        selectedFlag: true
       },
       orderBy: { createdAt: 'asc' }
     }),
@@ -430,7 +432,7 @@ export async function getPlayerRankingProfile({ steam64, server = 'global', view
     prisma.playerBadge.findMany({ where: { steam64: cleanSteam64, ...badgeWhereForServer(selectedServer) }, orderBy: [{ tier: 'desc' }, { awardedAt: 'desc' }], take: 500 }),
     prisma.clanMember.findFirst({
       where: { steam64: cleanSteam64, status: 'ACTIVE', clan: { status: 'ACTIVE' } },
-      include: { clan: { include: { awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' } }, members: { where: { status: 'ACTIVE' } } } } },
+      include: { clan: { include: { awards: { where: { visible: true }, orderBy: { awardedAt: 'desc' } }, members: { where: { status: 'ACTIVE' } }, selectedFlag: true } } },
       orderBy: { joinedAt: 'desc' }
     }),
     prisma.killEvent.findMany({ where: allRankingWhere, orderBy: { occurredAt: 'desc' }, take: 20000 }),
