@@ -94,6 +94,7 @@ const CHANNELS = {
   whiteFlag: '🏳️・bandeira-branca',
   clanFlags: '🚩・escolha-de-bandeira',
   rulePunishments: '⚖️・punicoes-de-ghost',
+  fobFlag: '🏴・bandeira-fob',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   streamerReferral: '🎥・quem-te-trouxe',
@@ -159,6 +160,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.whiteFlag]: ['bandeira-branca', 'regra-bandeira-branca', 'protecao-bandeira-branca'],
   [CHANNELS.clanFlags]: ['escolha-de-bandeira', 'bandeiras-dos-clas', 'bandeiras-clas'],
   [CHANNELS.rulePunishments]: ['punicoes-de-ghost', 'punicoes-quebra-de-regras', 'punicoes-regras', 'quebra-de-regras'],
+  [CHANNELS.fobFlag]: ['bandeira-fob', 'fob', 'regra-fob'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.streamerReferral]: ['quem-te-trouxe', 'indicacao-streamer', 'streamer-indicacao'],
@@ -216,7 +218,8 @@ const PANEL_IMAGES = {
   howToPlay: 'champions-z-bem-vindo.png',
   rulePunishments: 'champions-z-punicoes-regras.png',
   whiteFlag: 'champions-z-logo.png',
-  clanFlags: 'champions-z-logo.png'
+  clanFlags: 'champions-z-logo.png',
+  fobFlag: 'champions-z-bandeira-fob.png'
 };
 
 const CATEGORY_DEFINITIONS = [
@@ -246,7 +249,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.championshipRules, aliases: CHANNEL_ALIASES[CHANNELS.championshipRules], topic: 'Regras, participação, pontuação e premiações do Campeonato CHAMPIONS Z.', readOnly: true },
-      { type: 'text', name: CHANNELS.rulePunishments, aliases: CHANNEL_ALIASES[CHANNELS.rulePunishments], topic: 'Punições por ghost, stream sniping, raid indevida, exploração de falhas e perda de pontos do clã.', readOnly: true },
+      { type: 'text', name: CHANNELS.rulePunishments, aliases: CHANNEL_ALIASES[CHANNELS.rulePunishments], topic: 'Punições por ghost, stream sniping, raids indevidas, falhas e perda de pontos.', readOnly: true },
       { type: 'text', name: CHANNELS.howToPlay, aliases: CHANNEL_ALIASES[CHANNELS.howToPlay], topic: 'Guia rápido do CHAMPIONS Z em Chernarus: 1PP, PvP competitivo, bunkers e novas áreas.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IP e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Registro de banimentos e punições.', readOnly: true },
@@ -269,8 +272,9 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.megaKoth, aliases: CHANNEL_ALIASES[CHANNELS.megaKoth], topic: 'Guia oficial do MEGA KOTH CHAMPIONS Z: 30 minutos de domínio, loot premium e ranking próprio.', readOnly: true },
       { type: 'text', name: CHANNELS.antiHack, aliases: CHANNEL_ALIASES[CHANNELS.antiHack], topic: 'Sistema anti-hack do CHAMPIONS Z: scam ECHO diário, telagem profissional e tolerância zero com provas.', readOnly: true },
       { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true },
-      { type: 'text', name: CHANNELS.whiteFlag, aliases: CHANNEL_ALIASES[CHANNELS.whiteFlag], topic: 'Bandeira Branca: proteção de 14 dias para novos clãs durante a temporada.', readOnly: true },
-      { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: escolha pelo site e entrega controlada pela staff.', readOnly: true }
+      { type: 'text', name: CHANNELS.whiteFlag, aliases: CHANNEL_ALIASES[CHANNELS.whiteFlag], topic: 'Bandeira Branca: proteção inicial de 14 dias para novos clãs durante a temporada.', readOnly: true },
+      { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: escolha pelo site e entrega controlada pela staff.', readOnly: true },
+      { type: 'text', name: CHANNELS.fobFlag, aliases: CHANNEL_ALIASES[CHANNELS.fobFlag], topic: 'Regras da FOB: bandeira FOB obrigatória, janela diária de raid e autorização para bases sem bandeira.', readOnly: true }
     ]
   },
   {

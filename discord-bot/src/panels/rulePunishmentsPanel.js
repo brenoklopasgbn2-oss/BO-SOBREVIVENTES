@@ -10,7 +10,7 @@ function imageAttachment() {
 function buildRulePunishmentsPanel() {
   const hero = baseEmbed()
     .setColor(0xe3263e)
-    .setTitle('⚖️ PUNIÇÕES DE GHOST E VANTAGEM INDEVIDA • CHAMPIONS Z')
+    .setTitle('⚖️ PUNIÇÕES POR QUEBRA DE REGRAS • CHAMPIONS Z')
     .setDescription([
       '**Quebrar as regras do CHAMPIONS Z é extremamente proibido.**',
       '',
@@ -38,6 +38,9 @@ function buildRulePunishmentsPanel() {
       '• Tentar esconder, repetir, ensinar ou compartilhar uma exploração poderá aumentar a gravidade da punição.',
       '• Ajudar outro jogador a burlar uma regra também poderá ser tratado como participação na infração.',
       '',
+      '🏴 **FOB IRREGULAR — QUEBRA MÉDIA (-3 PONTOS)**',
+      'FOB com bandeira diferente da Bandeira FOB oficial poderá ser apagada e o clã perderá **3 pontos**. Raid em base sem bandeira sem autorização prévia da staff será tratado como **raid indevida**.',
+      '',
       '📹 **PROVAS**',
       'Clipes, logs, registros do servidor, telagem e outras evidências poderão ser usados na análise. Denúncias falsas ou provas manipuladas também estão sujeitas a punição.'
     ].join('\n'))
@@ -61,7 +64,7 @@ function buildRulePunishmentsPanel() {
     .setFooter({ text: 'CHAMPIONS Z • RESPEITE AS REGRAS E PROTEJA A PONTUAÇÃO DO SEU CLÃ' });
 
   return [
-    { embeds: [hero], files: [imageAttachment()], legacyTitles: ['⚖️ PUNIÇÕES POR QUEBRA DE REGRAS', '⚖️ PUNIÇÕES DE GHOST'] },
+    { embeds: [hero], files: [imageAttachment()], legacyTitles: ['⚖️ PUNIÇÕES POR QUEBRA DE REGRAS'] },
     { embeds: [violations] },
     { embeds: [points] }
   ];

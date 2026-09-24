@@ -34,6 +34,7 @@ const { buildAntiHackPanel } = require('../panels/antiHackPanel');
 const { buildGhillieCamonetPanel } = require('../panels/ghillieCamonetPanel');
 const { buildWhiteFlagPanel } = require('../panels/whiteFlagPanel');
 const { buildClanFlagsPanel } = require('../panels/clanFlagsPanel');
+const { buildFobFlagPanel } = require('../panels/fobFlagPanel');
 const { buildRulePunishmentsPanel } = require('../panels/rulePunishmentsPanel');
 const { buildStreamerReferralPanel } = require('../panels/streamerReferralPanel');
 const { buildStreamerStaffPanel } = require('../panels/streamerStaffPanel');
@@ -364,6 +365,7 @@ module.exports = {
     await clearAndSendPanel(findChannel(CHANNELS.whiteFlag), buildWhiteFlagPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.rulePunishments), buildRulePunishmentsPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.clanFlags), buildClanFlagsPanel, { replaceBotMessages: true });
+    await clearAndSendPanel(findChannel(CHANNELS.fobFlag), buildFobFlagPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerReferral), buildStreamerReferralPanel, { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.streamerStaffPanel), () => buildStreamerStaffPanel(guild.id), { replaceBotMessages: true });
     await clearAndSendPanel(findChannel(CHANNELS.openTicket), () => buildTicketPanel(guild), { replaceBotMessages: true });
