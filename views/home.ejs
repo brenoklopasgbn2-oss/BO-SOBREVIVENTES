@@ -9,7 +9,7 @@
       <span class="zz-banner-kicker">CHAMPIONS Z // CHERNARUS 1PP</span>
       <h1 class="zz-banner-title">COMPETIÇÃO. <b>CLÃS. CAMPEÕES.</b></h1>
       <p class="zz-banner-sub">Killfeed em tempo real, ranking de players e clãs, campeonato oficial, contas vinculadas e premiações administradas pela equipe.</p>
-      <div class="zz-banner-tags"><span>Killfeed via API</span><span>Clãs até 5</span><span>Campeonato</span><span>Sem Pay-to-Win</span></div>
+      <div class="zz-banner-tags"><span>Killfeed via API</span><span>Clãs até 10</span><span>Campeonato</span><span>Sem Pay-to-Win</span></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
         <a class="btn primary" href="/ranking">Ver placar</a><a class="btn" href="/killfeed">Killfeed</a><a class="btn" href="/clans">Clãs</a>
         <% if (player) { %><a class="btn" href="/vincular">Vincular Discord</a><a class="btn" href="/wallet">Comprar moedas</a><% } %>
@@ -26,7 +26,7 @@
   <section style="display:grid;grid-template-columns:1.1fr .9fr;gap:18px">
     <article style="padding:20px;border:1px solid #333;background:#111;border-radius:16px">
       <h2>🏆 Campeonato de Clãs</h2><p>Classificação oficial por pontos concedidos nos eventos da temporada.</p>
-      <% championshipClans.forEach((clan,i) => { %><div style="display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #292929"><b>#<%= i+1 %></b><div><strong>[<%= clan.tag %>] <%= clan.name %></strong><br><small><%= clan.members.length %>/5 membros • <%= clan.eventWins %> vitórias</small></div><strong><%= coins(clan.championshipPoints) %> pts</strong></div><% }) %>
+      <% championshipClans.forEach((clan,i) => { %><div style="display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #292929"><b>#<%= i+1 %></b><div><strong>[<%= clan.tag %>] <%= clan.name %></strong><br><small><%= clan.members.length %>/10 membros • <%= clan.eventWins %> vitórias</small></div><strong><%= coins(clan.championshipPoints) %> pts</strong></div><% }) %>
       <% if (!championshipClans.length) { %><p>A temporada ainda não possui clãs pontuados.</p><% } %>
     </article>
     <article style="padding:20px;border:1px solid #333;background:#111;border-radius:16px">

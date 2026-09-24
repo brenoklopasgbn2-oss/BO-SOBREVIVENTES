@@ -12,7 +12,7 @@ Este repositório contém **site + bot Discord + banco compartilhado**. O mod Da
 - placar de players e clãs usando o ranking já existente;
 - vínculo Discord ↔ Steam com código privado, uso único e expiração de 10 minutos;
 - alerta privado da staff quando alguém fica 30+ minutos online sem vínculo;
-- clãs com limite de 5 integrantes;
+- clãs com limite de 10 integrantes;
 - inscrição no campeonato exige todos os membros vinculados;
 - catálogo de bandeiras exclusivas; escolher a flag reserva imediatamente e cria ticket no Discord;
 - painel ADM para vínculos, bandeiras, entrega de flag, eventos e pontos;

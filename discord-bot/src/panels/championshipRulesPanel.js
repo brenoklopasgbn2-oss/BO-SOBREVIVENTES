@@ -17,7 +17,7 @@ function buildChampionshipRulesPanel() {
       'O **CHAMPIONS Z** chegou para trazer uma competição de temporada com eventos oficiais, ranking de clãs, premiações em PIX e recompensas exclusivas dentro do servidor.',
       '',
       '💰 **PREMIAÇÃO TOTAL: + DE R$ 3.000**',
-      '⚔️ Clãs de até **5 jogadores**',
+      '⚔️ Clãs de até **10 jogadores**',
       '📅 Eventos principalmente aos **sábados e domingos**',
       '📊 Pontos conquistados durante toda a temporada',
       '👑 No fim, o clã com mais pontos leva o título e a maior premiação.',
@@ -32,7 +32,7 @@ function buildChampionshipRulesPanel() {
     .setTitle('📋 PARTICIPAÇÃO E PONTUAÇÃO')
     .setDescription([
       '✅ **COMO PARTICIPAR**',
-      '• O clã pode ter **no máximo 5 jogadores**.',
+      '• O clã pode ter **no máximo 10 jogadores**.',
       '• **Todos os membros** precisam ter concluído a verificação do CHAMPIONS Z.',
       '• O clã precisa estar **criado e cadastrado em nosso painel**.',
       '• Todos os integrantes devem respeitar as **regras do servidor e do campeonato**.',

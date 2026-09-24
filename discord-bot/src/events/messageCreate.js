@@ -1,6 +1,6 @@
 const path = require('path');
 const { AttachmentBuilder, Events } = require('discord.js');
-const { CHANNELS, PANEL_IMAGES } = require('../config/constants');
+const { CHANNELS, CHANNEL_ALIASES, PANEL_IMAGES } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
@@ -23,8 +23,15 @@ function collectImageAttachments(message) {
   });
 }
 
+function matchesChannel(channelName, canonicalName) {
+  const current = String(channelName || '').trim().toLowerCase();
+  const names = [canonicalName, ...(CHANNEL_ALIASES?.[canonicalName] || [])]
+    .map((name) => String(name || '').trim().toLowerCase());
+  return names.includes(current);
+}
+
 function channelMode(channelName) {
-  if (channelName === CHANNELS.announcements) {
+  if (matchesChannel(channelName, CHANNELS.announcements)) {
     return {
       color: 0xf39c12,
       title: '📣 Comunicado Oficial',
@@ -33,7 +40,7 @@ function channelMode(channelName) {
     };
   }
 
-  if (channelName === CHANNELS.bans) {
+  if (matchesChannel(channelName, CHANNELS.bans)) {
     return {
       color: 0xc0392b,
       title: '🚫 Registro de Banimento / Punição',
@@ -42,7 +49,7 @@ function channelMode(channelName) {
     };
   }
 
-  if (channelName === CHANNELS.info) {
+  if (matchesChannel(channelName, CHANNELS.info)) {
     return {
       color: 0x3498db,
       title: '📘 Informação Importante',
@@ -150,15 +157,29 @@ module.exports = {
       .setFooter({ text: mode.footer })
       .setTimestamp();
 
-    const files = [];
+    let payload = { embeds: [embed] };
     if (attachment) {
       embed.setImage(attachment.url);
     } else {
-      files.push(localImage(mode.fallbackImage));
-      embed.setImage(`attachment://${mode.fallbackImage}`);
+      try {
+        const fallback = localImage(mode.fallbackImage);
+        embed.setImage(`attachment://${mode.fallbackImage}`);
+        payload = { embeds: [embed], files: [fallback] };
+      } catch (error) {
+        console.error('Imagem padrão do comunicado indisponível:', error?.message || error);
+      }
     }
 
-    const sent = await message.channel.send({ embeds: [embed], files }).catch(() => null);
+    let sent = await message.channel.send(payload).catch(async (error) => {
+      console.error('Falha ao publicar comunicado formatado:', error?.message || error);
+      // Se o anexo padrão falhar, tenta novamente apenas com o embed.
+      embed.setImage(null);
+      return message.channel.send({ embeds: [embed] }).catch((retryError) => {
+        console.error('Falha também no fallback do comunicado:', retryError?.message || retryError);
+        return null;
+      });
+    });
+    // A mensagem original só é apagada depois que a versão bonita foi confirmada.
     if (sent) await message.delete().catch(() => null);
   }
 };

@@ -1,11 +1,28 @@
-<%- include('../partials/head') %><link rel="stylesheet" href="/css/admin-v46.css"><%- include('_admin_nav') %>
-<main class="admin-page-v46" style="padding:24px"><%- include('../partials/alerts') %>
-<h1>🔗 Vínculos Discord ↔ Steam</h1><p>Central para identificar jogadores vinculados, online e pendentes. O bot alerta após 30 minutos jogando sem vínculo.</p>
-<section style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0">
-<article class="admin-card-v46" style="padding:16px"><small>Online agora</small><h2><%= presence.onlinePlayers.length %></h2></article>
-<article class="admin-card-v46" style="padding:16px"><small>Vinculados online</small><h2><%= presence.onlinePlayers.filter(p=>p.linked).length %></h2></article>
-<article class="admin-card-v46" style="padding:16px"><small>Sem vínculo online</small><h2><%= presence.onlinePlayers.filter(p=>!p.linked).length %></h2></article>
-</section>
-<section class="admin-card-v46" style="padding:18px;overflow:auto"><h2>Players ativos</h2><table style="width:100%;border-collapse:collapse"><thead><tr><th>Nick</th><th>Steam64</th><th>Discord</th><th>Online</th><th>Tempo</th><th>Servidor</th><th>Ação</th></tr></thead><tbody>
-<% players.forEach(p => { const live=presence.onlinePlayers.find(x=>x.id===p.id); %><tr style="border-top:1px solid #333"><td style="padding:9px"><b><%= p.nickname || '-' %></b></td><td><code><%= p.steam64 %></code></td><td><%= p.discordUsername || p.discordId || '❌ NÃO VINCULADO' %></td><td><%= live ? '🟢' : '⚫' %></td><td><%= live ? live.onlineMinutes+' min' : '-' %></td><td><%= p.lastSeenServerId || '-' %></td><td><% if(p.discordId){ %><form method="POST" action="/admin/links/<%= p.id %>/unlink" onsubmit="return confirm('Remover vínculo deste player?')"><button class="btn" type="submit">Desvincular</button></form><% } %></td></tr><% }) %>
-</tbody></table></section></main>
+<%- include('../partials/head') %>
+<main class="admin-shell-v46 linking-admin-v700">
+  <%- include('_admin_nav') %>
+  <section class="admin-content-v46">
+    <%- include('../partials/alerts') %>
+    <header class="admin-hero-v46">
+      <div><h1>🔗 Vínculos Discord ↔ Steam</h1><p>Central para identificar jogadores vinculados, online e pendentes. O bot alerta após 30 minutos jogando sem vínculo.</p></div>
+    </header>
+    <section class="link-stats-v700">
+      <article class="admin-card-v46"><small>Online agora</small><h2><%= presence.onlinePlayers.length %></h2></article>
+      <article class="admin-card-v46"><small>Vinculados online</small><h2><%= presence.onlinePlayers.filter(p=>p.linked).length %></h2></article>
+      <article class="admin-card-v46"><small>Sem vínculo online</small><h2><%= presence.onlinePlayers.filter(p=>!p.linked).length %></h2></article>
+    </section>
+    <section class="admin-card-v46 link-table-card-v700">
+      <div class="section-title-row-v46"><div><h2>Players ativos</h2><p>Discord, Steam64, presença e servidor em uma única tela.</p></div></div>
+      <div class="link-table-scroll-v700"><table class="link-table-v700"><thead><tr><th>Nick</th><th>Steam64</th><th>Discord</th><th>Vínculo</th><th>Online</th><th>Tempo</th><th>Servidor</th><th>Ação</th></tr></thead><tbody>
+      <% players.forEach(p => { const live=presence.onlinePlayers.find(x=>x.id===p.id); %>
+        <tr><td><b><%= p.nickname || '-' %></b></td><td><code><%= p.steam64 %></code></td><td><%= p.discordUsername || p.discordId || '—' %></td><td><%= p.discordId ? '✅ Vinculado' : '❌ Não vinculado' %></td><td><%= live ? '🟢 Online' : '⚫ Offline' %></td><td><%= live ? live.onlineMinutes+' min' : '-' %></td><td><%= p.lastSeenServerId || '-' %></td><td><% if(p.discordId){ %><form method="POST" action="/admin/links/<%= p.id %>/unlink" onsubmit="return confirm('Remover vínculo deste player?')"><button class="btn" type="submit">Desvincular</button></form><% } else { %>—<% } %></td></tr>
+      <% }) %>
+      <% if (!players.length) { %><tr><td colspan="8" class="link-empty-v700">Nenhum player encontrado.</td></tr><% } %>
+      </tbody></table></div>
+    </section>
+  </section>
+</main>
+<style>
+.link-stats-v700{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.link-stats-v700 .admin-card-v46{padding:18px}.link-stats-v700 small{color:#93a4b8;font-weight:900;text-transform:uppercase}.link-stats-v700 h2{margin:8px 0 0;font-size:2rem}.link-table-card-v700{padding:20px;min-width:0}.link-table-scroll-v700{overflow:auto;margin-top:14px}.link-table-v700{width:100%;min-width:980px;border-collapse:collapse}.link-table-v700 th,.link-table-v700 td{padding:11px 10px;text-align:left;border-bottom:1px solid rgba(148,163,184,.12)}.link-table-v700 th{color:#94a3b8;font-size:.7rem;text-transform:uppercase}.link-table-v700 code{white-space:nowrap}.link-empty-v700{text-align:center!important;color:#94a3b8;padding:30px!important}@media(max-width:800px){.link-stats-v700{grid-template-columns:1fr}}
+</style>
+<%- include('../partials/footer') %>

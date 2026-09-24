@@ -30,8 +30,8 @@ const RULES = [
     server: 'ZONA-Z • Alteria',
     category: 'Grupos',
     emoji: '👥',
-    title: 'Clã normal: até 15 jogadores',
-    description: 'Fora de raid, o limite do grupo/clã é de até 15 jogadores. Não use segundo grupo, aliança ou conta alternativa para atuar como um único grupo acima do limite.'
+    title: 'Clã normal: até 10 jogadores',
+    description: 'Fora de raid, o limite do grupo/clã é de até 10 jogadores. Não use segundo grupo, aliança ou conta alternativa para atuar como um único grupo acima do limite.'
   },
   {
     number: 5,

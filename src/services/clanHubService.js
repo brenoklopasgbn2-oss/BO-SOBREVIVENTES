@@ -368,7 +368,7 @@ export async function reviewClanApplication({ applicationId, reviewerPlayerId, a
   const otherClan = await playerHasAnotherClan(application.playerId, managerMembership.clanId);
   if (otherClan) throw new Error(`Esse player já está no clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);
   const activeMembers = await prisma.clanMember.count({ where: { clanId: managerMembership.clanId, status: 'ACTIVE' } });
-  if (activeMembers >= 5) throw new Error('O clã já atingiu o limite máximo de 5 integrantes.');
+  if (activeMembers >= 10) throw new Error('O clã já atingiu o limite máximo de 10 integrantes.');
 
   const approved = await prisma.$transaction(async (tx) => {
     await tx.clanMember.upsert({

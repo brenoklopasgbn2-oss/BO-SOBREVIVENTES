@@ -326,6 +326,20 @@ async function submitTicketForm(interaction, typeKey, selectedLanguage = 'pt') {
     files: [panelImage(imageName)]
   });
 
+  // Perfil completo visível dentro do próprio ticket para a equipe.
+  const staffProfileEmbed = baseEmbed()
+    .setColor(playerData?.linked ? 0x2ecc71 : 0xe74c3c)
+    .setTitle(playerData?.linked ? '✅ Perfil do jogador • VINCULADO' : '❌ Perfil do jogador • NÃO VINCULADO')
+    .setDescription(playerData?.linked
+      ? 'Dados consultados diretamente do banco no momento da abertura do ticket.'
+      : 'Nenhuma Steam64 está vinculada a este Discord no banco. Oriente o jogador a concluir o vínculo pelo fluxo oficial.')
+    .addFields(...staffProfileFields)
+    .setTimestamp();
+
+  await channel.send({ embeds: [staffProfileEmbed], allowedMentions: { parse: [] } }).catch((error) => {
+    console.error('Não foi possível publicar o perfil completo no ticket:', error?.message || error);
+  });
+
   const ticketLogFields = [
     { name: '🎫 Nick informado no ticket', value: gameNickname, inline: true },
     { name: '📂 Tipo', value: ticketType.label, inline: true },

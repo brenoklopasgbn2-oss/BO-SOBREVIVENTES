@@ -189,7 +189,7 @@
       <div><p class="eyebrow">CHAMPIONS Z • TEMPORADA</p><h2>🏆 Inscrição no campeonato</h2></div>
       <% const allLinked = (membership.clan.members || []).every(m => m.player?.discordId); %>
       <div class="myclan-badge-row-v106">
-        <span>Integrantes: <b><%= membership.clan.members.length %>/5</b></span>
+        <span>Integrantes: <b><%= membership.clan.members.length %>/10</b></span>
         <span>Vínculos: <b><%= allLinked ? '✅ Todos vinculados' : '⚠️ Pendente' %></b></span>
         <span>Pontos: <b><%= membership.clan.championshipPoints || 0 %></b></span>
         <span>Bandeira: <b><%= membership.clan.flagDeliveryStatus || 'NONE' %></b></span>

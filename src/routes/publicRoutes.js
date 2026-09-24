@@ -1011,7 +1011,7 @@ publicRoutes.post('/my-clan/members/add', requirePlayer, async (req, res) => {
     const steam64 = String(req.body.steam64 || '').trim();
     if (!/^\d{17}$/.test(steam64)) throw new Error('Steam64 inválido.');
     const activeCount = await prisma.clanMember.count({ where: { clanId: membership.clanId, status: 'ACTIVE' } });
-    if (activeCount >= 5) throw new Error('O clã já atingiu o limite máximo de 5 integrantes.');
+    if (activeCount >= 10) throw new Error('O clã já atingiu o limite máximo de 10 integrantes.');
     const player = await upsertPlayerBySteam64({ steam64, nickname: req.body.nickname || '' });
     const otherClan = await prisma.clanMember.findFirst({ where: { playerId: player.id, status: 'ACTIVE', clanId: { not: membership.clanId }, clan: { status: 'ACTIVE' } }, include: { clan: true } });
     if (otherClan) throw new Error(`Esse player já está no clã [${otherClan.clan.tag}] ${otherClan.clan.name}.`);

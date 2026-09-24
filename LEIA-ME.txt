@@ -1,0 +1,10 @@
+CHAMPIONS Z - PATCH CORRIGIDO
+
+Este ZIP contém somente os arquivos alterados, para evitar o erro de download do ZIP completo.
+Extraia por cima da raiz do projeto BO-SOBREVIVENTES-main e confirme a substituição dos arquivos.
+
+Inclui:
+- correção da página /admin/links (Vínculos);
+- correção/formatação do canal de avisos;
+- dados de vínculo/Steam/nick nos tickets;
+- limite de clã atualizado para 10 jogadores nas áreas alteradas.

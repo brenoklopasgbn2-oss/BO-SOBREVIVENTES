@@ -2,7 +2,7 @@ import { prisma } from '../db/prisma.js';
 import { slugify } from '../utils/slug.js';
 import { enqueueDiscordEvent } from './discordOutboxService.js';
 
-export const MAX_CLAN_MEMBERS = 5;
+export const MAX_CLAN_MEMBERS = 10;
 
 export async function listAvailableClanFlags() {
   return prisma.clanFlagOption.findMany({
