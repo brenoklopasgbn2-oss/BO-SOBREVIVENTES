@@ -1,0 +1,21 @@
+CHAMPIONS Z - PACOTE UNIFICADO
+
+1. Extraia por cima da raiz do projeto e confirme a substituição dos arquivos.
+2. Faça deploy/restart no Railway.
+3. No Discord, execute /setup com a conta autorizada.
+
+INCLUÍDO:
+- Correção do canal de avisos.
+- Correção da página de vínculos.
+- Dados de vínculo/Steam/nick nos tickets.
+- Clãs com limite de 10 jogadores.
+- Categoria LANÇAMENTO 03/10/2026.
+- Raid por falha: 10/10/2026.
+- Raid geral: 17/10/2026 e todo sábado.
+- Competição: 03/11/2026.
+- GUIAS > Bandeira Branca.
+- GUIAS > Punições por quebra de regras.
+- Categoria BANDEIRAS DOS CLÃS > escolha de bandeira.
+- Regras de stream sniping, ghosting, raid indevida, bugs/falhas e perda de pontos.
+
+OBS.: o canal de bandeiras explica o fluxo do site e entrega pela staff.

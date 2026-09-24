@@ -41,6 +41,7 @@ const CATEGORY_NAMES = {
   launch: '🚀・LANÇAMENTO • 03-10-2026',
   central: '📢・CENTRAL CHAMPIONS Z',
   guides: '🗺️・GUIAS CHAMPIONS Z',
+  flags: '🚩・BANDEIRAS DOS CLÃS',
   vanilla: '🧟・CHAMPIONS Z CHERNARUS', // chave interna antiga; mantida apenas para compatibilidade
   community: '🤝・COMUNIDADE',
   support: '🟡・SUPORTE',
@@ -55,6 +56,7 @@ const CATEGORY_ALIASES = {
   [CATEGORY_NAMES.launch]: ['🚀・LANÇAMENTO', '🚀 LANÇAMENTO', 'LANÇAMENTO DO SERVIDOR'],
   [CATEGORY_NAMES.central]: ['📢・CENTRAL ZONA-Z', '📢・CENTRAL RAID-Z', '📢・CENTRAL', '📢 CENTRAL', 'CENTRAL'],
   [CATEGORY_NAMES.guides]: ['🗺️・GUIAS', '🧭・GUIAS', 'GUIAS CHAMPIONS Z'],
+  [CATEGORY_NAMES.flags]: ['🚩・BANDEIRAS', '🚩 BANDEIRAS', 'BANDEIRAS DOS CLÃS'],
   [CATEGORY_NAMES.vanilla]: ['🔴・RAID-Z VANILLA', '🔴・VANILLA', '🧟 VANILLA', 'VANILLA', '🔴・SOBREVIVENTES Z VANILLA'],
   [CATEGORY_NAMES.community]: ['🤝・COMUNIDADE', '🤝 COMUNIDADE'],
   [CATEGORY_NAMES.support]: ['🎫・SUPORTE', '🎫 SUPORTE', '🟢・SUPORTE', '🟡・SUPORTE', '🔴・SUPORTE'],
@@ -91,6 +93,9 @@ const CHANNELS = {
   vehicleFlip: '🚗・flip-de-veiculos',
   planeCrash: '✈️・plane-crash',
   ghillieCamonet: '🥷・ghillie-camonet',
+  whiteFlag: '🏳️・bandeira-branca',
+  clanFlags: '🚩・escolha-de-bandeira',
+  rulePunishments: '⚖️・punicoes-quebra-de-regras',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   streamerReferral: '🎥・quem-te-trouxe',
@@ -153,6 +158,9 @@ const CHANNEL_ALIASES = {
   [CHANNELS.vehicleFlip]: ['flip-de-veiculos', 'flip-veiculos', 'desvirar-veiculo', 'desvirar-veiculos'],
   [CHANNELS.planeCrash]: ['plane-crash', 'plane-drop', 'plane-drop-container', 'airdrop-plane', 'plane-crash-airdrop'],
   [CHANNELS.ghillieCamonet]: ['ghillie-camonet', 'guile-camonet', 'ghillie', 'camonet-ghillie', 'guia-ghillie'],
+  [CHANNELS.whiteFlag]: ['bandeira-branca', 'regra-bandeira-branca', 'protecao-bandeira-branca'],
+  [CHANNELS.clanFlags]: ['escolha-de-bandeira', 'bandeiras-dos-clas', 'bandeiras-clas'],
+  [CHANNELS.rulePunishments]: ['punicoes-quebra-de-regras', 'punicoes-regras', 'quebra-de-regras'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.streamerReferral]: ['quem-te-trouxe', 'indicacao-streamer', 'streamer-indicacao'],
@@ -207,7 +215,10 @@ const PANEL_IMAGES = {
   megaKoth: 'champions-z-mega-koth-guia.png',
   antiHack: 'champions-z-sistema-anti-hack.png',
   airdrop: 'champions-z-logo.png',
-  howToPlay: 'champions-z-bem-vindo.png'
+  howToPlay: 'champions-z-bem-vindo.png',
+  rulePunishments: 'champions-z-punicoes-regras.png',
+  whiteFlag: 'champions-z-logo.png',
+  clanFlags: 'champions-z-logo.png'
 };
 
 const CATEGORY_DEFINITIONS = [
@@ -259,6 +270,14 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.megaKoth, aliases: CHANNEL_ALIASES[CHANNELS.megaKoth], topic: 'Guia oficial do MEGA KOTH CHAMPIONS Z: 30 minutos de domínio, loot premium e ranking próprio.', readOnly: true },
       { type: 'text', name: CHANNELS.antiHack, aliases: CHANNEL_ALIASES[CHANNELS.antiHack], topic: 'Sistema anti-hack do CHAMPIONS Z: scam ECHO diário, telagem profissional e tolerância zero com provas.', readOnly: true },
       { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true }
+    ]
+  },
+  {
+    name: CATEGORY_NAMES.flags,
+    aliases: CATEGORY_ALIASES[CATEGORY_NAMES.flags],
+    visibleToServerMembers: true,
+    channels: [
+      { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: crie o clã no site, escolha uma bandeira disponível e aguarde a entrega da staff.', readOnly: true }
     ]
   },
   {
