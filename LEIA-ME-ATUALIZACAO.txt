@@ -1,0 +1,14 @@
+CHAMPIONS Z — ALTERAÇÕES PRONTAS
+
+GUIAS CHAMPIONS Z:
+🏳️・bandeira-branca
+🚩・escolha-de-bandeira
+
+CENTRAL CHAMPIONS Z:
+⚖️・punicoes-de-ghost
+
+Regras do campeonato atualizadas com stream sniping/ghost,
+raid indevida, exploração de falhas e perda de pontos.
+
+Extraia sobre a raiz do projeto, substitua os arquivos,
+faça deploy/restart e execute /setup no Discord.

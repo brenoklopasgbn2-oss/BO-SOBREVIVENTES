@@ -10,7 +10,7 @@ function imageAttachment() {
 function buildRulePunishmentsPanel() {
   const hero = baseEmbed()
     .setColor(0xe3263e)
-    .setTitle('⚖️ PUNIÇÕES POR QUEBRA DE REGRAS • CHAMPIONS Z')
+    .setTitle('⚖️ PUNIÇÕES DE GHOST E VANTAGEM INDEVIDA • CHAMPIONS Z')
     .setDescription([
       '**Quebrar as regras do CHAMPIONS Z é extremamente proibido.**',
       '',
@@ -61,7 +61,7 @@ function buildRulePunishmentsPanel() {
     .setFooter({ text: 'CHAMPIONS Z • RESPEITE AS REGRAS E PROTEJA A PONTUAÇÃO DO SEU CLÃ' });
 
   return [
-    { embeds: [hero], files: [imageAttachment()], legacyTitles: ['⚖️ PUNIÇÕES POR QUEBRA DE REGRAS'] },
+    { embeds: [hero], files: [imageAttachment()], legacyTitles: ['⚖️ PUNIÇÕES POR QUEBRA DE REGRAS', '⚖️ PUNIÇÕES DE GHOST'] },
     { embeds: [violations] },
     { embeds: [points] }
   ];

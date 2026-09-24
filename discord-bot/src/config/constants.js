@@ -41,7 +41,6 @@ const CATEGORY_NAMES = {
   launch: '🚀・LANÇAMENTO • 03-10-2026',
   central: '📢・CENTRAL CHAMPIONS Z',
   guides: '🗺️・GUIAS CHAMPIONS Z',
-  flags: '🚩・BANDEIRAS DOS CLÃS',
   vanilla: '🧟・CHAMPIONS Z CHERNARUS', // chave interna antiga; mantida apenas para compatibilidade
   community: '🤝・COMUNIDADE',
   support: '🟡・SUPORTE',
@@ -56,7 +55,6 @@ const CATEGORY_ALIASES = {
   [CATEGORY_NAMES.launch]: ['🚀・LANÇAMENTO', '🚀 LANÇAMENTO', 'LANÇAMENTO DO SERVIDOR'],
   [CATEGORY_NAMES.central]: ['📢・CENTRAL ZONA-Z', '📢・CENTRAL RAID-Z', '📢・CENTRAL', '📢 CENTRAL', 'CENTRAL'],
   [CATEGORY_NAMES.guides]: ['🗺️・GUIAS', '🧭・GUIAS', 'GUIAS CHAMPIONS Z'],
-  [CATEGORY_NAMES.flags]: ['🚩・BANDEIRAS', '🚩 BANDEIRAS', 'BANDEIRAS DOS CLÃS'],
   [CATEGORY_NAMES.vanilla]: ['🔴・RAID-Z VANILLA', '🔴・VANILLA', '🧟 VANILLA', 'VANILLA', '🔴・SOBREVIVENTES Z VANILLA'],
   [CATEGORY_NAMES.community]: ['🤝・COMUNIDADE', '🤝 COMUNIDADE'],
   [CATEGORY_NAMES.support]: ['🎫・SUPORTE', '🎫 SUPORTE', '🟢・SUPORTE', '🟡・SUPORTE', '🔴・SUPORTE'],
@@ -95,7 +93,7 @@ const CHANNELS = {
   ghillieCamonet: '🥷・ghillie-camonet',
   whiteFlag: '🏳️・bandeira-branca',
   clanFlags: '🚩・escolha-de-bandeira',
-  rulePunishments: '⚖️・punicoes-quebra-de-regras',
+  rulePunishments: '⚖️・punicoes-de-ghost',
   logsStaff: '📜・logs-staff',
   staffRanking: '📊・ranking-staff',
   streamerReferral: '🎥・quem-te-trouxe',
@@ -160,7 +158,7 @@ const CHANNEL_ALIASES = {
   [CHANNELS.ghillieCamonet]: ['ghillie-camonet', 'guile-camonet', 'ghillie', 'camonet-ghillie', 'guia-ghillie'],
   [CHANNELS.whiteFlag]: ['bandeira-branca', 'regra-bandeira-branca', 'protecao-bandeira-branca'],
   [CHANNELS.clanFlags]: ['escolha-de-bandeira', 'bandeiras-dos-clas', 'bandeiras-clas'],
-  [CHANNELS.rulePunishments]: ['punicoes-quebra-de-regras', 'punicoes-regras', 'quebra-de-regras'],
+  [CHANNELS.rulePunishments]: ['punicoes-de-ghost', 'punicoes-quebra-de-regras', 'punicoes-regras', 'quebra-de-regras'],
   [CHANNELS.logsStaff]: ['logs-staff'],
   [CHANNELS.staffRanking]: ['ranking-staff', 'rank-staff', 'staff-ranking'],
   [CHANNELS.streamerReferral]: ['quem-te-trouxe', 'indicacao-streamer', 'streamer-indicacao'],
@@ -248,6 +246,7 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.announcements, aliases: CHANNEL_ALIASES[CHANNELS.announcements], topic: 'Comunicados oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.rules, aliases: CHANNEL_ALIASES[CHANNELS.rules], topic: 'Regras oficiais do CHAMPIONS Z.', readOnly: true },
       { type: 'text', name: CHANNELS.championshipRules, aliases: CHANNEL_ALIASES[CHANNELS.championshipRules], topic: 'Regras, participação, pontuação e premiações do Campeonato CHAMPIONS Z.', readOnly: true },
+      { type: 'text', name: CHANNELS.rulePunishments, aliases: CHANNEL_ALIASES[CHANNELS.rulePunishments], topic: 'Punições por ghost, stream sniping, raid indevida, exploração de falhas e perda de pontos do clã.', readOnly: true },
       { type: 'text', name: CHANNELS.howToPlay, aliases: CHANNEL_ALIASES[CHANNELS.howToPlay], topic: 'Guia rápido do CHAMPIONS Z em Chernarus: 1PP, PvP competitivo, bunkers e novas áreas.', readOnly: true },
       { type: 'text', name: CHANNELS.info, aliases: CHANNEL_ALIASES[CHANNELS.info], topic: 'Links, tutoriais, IP e informações úteis.', readOnly: true },
       { type: 'text', name: CHANNELS.bans, aliases: CHANNEL_ALIASES[CHANNELS.bans], topic: 'Registro de banimentos e punições.', readOnly: true },
@@ -269,15 +268,9 @@ const CATEGORY_DEFINITIONS = [
       { type: 'text', name: CHANNELS.koth, aliases: CHANNEL_ALIASES[CHANNELS.koth], topic: 'Guia oficial do KOTH CHAMPIONS Z: PvP, domínio de 15 minutos e recompensas especiais.', readOnly: true },
       { type: 'text', name: CHANNELS.megaKoth, aliases: CHANNEL_ALIASES[CHANNELS.megaKoth], topic: 'Guia oficial do MEGA KOTH CHAMPIONS Z: 30 minutos de domínio, loot premium e ranking próprio.', readOnly: true },
       { type: 'text', name: CHANNELS.antiHack, aliases: CHANNEL_ALIASES[CHANNELS.antiHack], topic: 'Sistema anti-hack do CHAMPIONS Z: scam ECHO diário, telagem profissional e tolerância zero com provas.', readOnly: true },
-      { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true }
-    ]
-  },
-  {
-    name: CATEGORY_NAMES.flags,
-    aliases: CATEGORY_ALIASES[CATEGORY_NAMES.flags],
-    visibleToServerMembers: true,
-    channels: [
-      { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: crie o clã no site, escolha uma bandeira disponível e aguarde a entrega da staff.', readOnly: true }
+      { type: 'text', name: CHANNELS.ghillieCamonet, aliases: CHANNEL_ALIASES[CHANNELS.ghillieCamonet], topic: 'Guia Ghillie Camonet: transforme seu camonet em um ghillie.', readOnly: true },
+      { type: 'text', name: CHANNELS.whiteFlag, aliases: CHANNEL_ALIASES[CHANNELS.whiteFlag], topic: 'Bandeira Branca: proteção de 14 dias para novos clãs durante a temporada.', readOnly: true },
+      { type: 'text', name: CHANNELS.clanFlags, aliases: CHANNEL_ALIASES[CHANNELS.clanFlags], topic: 'Bandeiras exclusivas dos clãs: escolha pelo site e entrega controlada pela staff.', readOnly: true }
     ]
   },
   {
