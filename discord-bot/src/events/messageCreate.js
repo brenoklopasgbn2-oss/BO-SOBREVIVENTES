@@ -1,6 +1,6 @@
 const path = require('path');
-const { AttachmentBuilder, Events } = require('discord.js');
-const { CHANNELS, CHANNEL_ALIASES, PANEL_IMAGES } = require('../config/constants');
+const { AttachmentBuilder, Events, PermissionFlagsBits } = require('discord.js');
+const { CHANNELS, CHANNEL_ALIASES, PANEL_IMAGES, OWNER_IDS } = require('../config/constants');
 const { baseEmbed } = require('../utils/embeds');
 const { getMainStaffRole, isStaffMember } = require('../panels/supportStatus');
 const { logEvent } = require('../utils/logger');
@@ -23,11 +23,28 @@ function collectImageAttachments(message) {
   });
 }
 
+function normalizeChannelName(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
 function matchesChannel(channelName, canonicalName) {
-  const current = String(channelName || '').trim().toLowerCase();
+  const current = normalizeChannelName(channelName);
   const names = [canonicalName, ...(CHANNEL_ALIASES?.[canonicalName] || [])]
-    .map((name) => String(name || '').trim().toLowerCase());
+    .map(normalizeChannelName);
   return names.includes(current);
+}
+
+function canPublishOfficialMessage(message) {
+  if (OWNER_IDS?.includes(message.author.id)) return true;
+  if (isStaffMember(message.member)) return true;
+  return Boolean(
+    message.member?.permissions?.has(PermissionFlagsBits.Administrator) ||
+    message.member?.permissions?.has(PermissionFlagsBits.ManageMessages)
+  );
 }
 
 function channelMode(channelName) {
@@ -142,7 +159,7 @@ module.exports = {
 
     const mode = channelMode(message.channel.name);
     if (!mode) return;
-    if (!isStaffMember(message.member)) return;
+    if (!canPublishOfficialMessage(message)) return;
 
     const attachments = collectImageAttachments(message);
     const attachment = attachments[0] || null;
